@@ -1,0 +1,43 @@
+//----------------------------------------------------------------------------
+namespace os {
+//----------------------------------------------------------------------------
+
+struct STimeValue
+{
+	unsigned Year, Month;
+	unsigned MonthDay, WeekDay;
+	unsigned Hour, Minute, Second, Milisecond;
+};
+
+//! returns the current operation system version as string.
+E_OS_VERSION getOperationSystemVersion();
+
+//! copies text to the clipboard
+void copyToClipboard(const char* text);
+
+//! gets text from the clipboard
+//! \return Returns 0 if no string is in there.
+const char* getTextFromClipboard(); 
+
+//! getting monitor brightness
+float getMonitorBrightness();
+
+//! setting monitor brightness
+bool setMonitorBrightness(float r_gamma, unsigned  bits);
+	
+//! switchs monitor to fullscreen
+bool switchMonitorToFullScreen(unsigned width, unsigned height, unsigned  bits);
+
+//! restore monotor settings (brighteness/resolution) to initial values
+void restoreMonitorSettings();
+
+//! return name of the curren running process
+const char* getCurrentProcessName(bool file_name_only = true);
+
+//! return time values
+const STimeValue& getCurrentTime();
+const char* getCurrentTimeString(E_TIME_STRING_FORMAT format = ETSF_STANDARD);
+
+//----------------------------------------------------------------------------
+} // end namespace os
+//----------------------------------------------------------------------------

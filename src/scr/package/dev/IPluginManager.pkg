@@ -1,0 +1,30 @@
+//-----------------------------------------------------------------
+namespace dev {
+//-----------------------------------------------------------------
+
+class IPluginManager
+{
+    static IPluginManager& getSingleton();
+
+    //! registering external plugin, return true on success
+    //! \param plugin_name: string name of the plugin
+    //! \param module_name: file name of the plugin (*.dll)
+    bool registerPlugin(char* plugin_name, char* module_name);
+
+    //! unregistering external plugin, return true on success
+    //! \param plugin_name: string name of the plugin, we want to unregister
+    void unregisterPlugin(char* plugin_name);
+
+    //! run external plugin, return true on success
+    bool startPlugin(char* plugin_name);
+
+    //! shut external plugin, return true on success
+    bool shutPlugin(char* plugin_name);
+
+    //! shut all external plugins
+    void shutAllPlugins();
+};
+
+//-----------------------------------------------------------------
+} // end namespace dev
+//-----------------------------------------------------------------

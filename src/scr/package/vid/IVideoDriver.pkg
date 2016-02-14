@@ -1,0 +1,254 @@
+//----------------------------------------------------------------------------
+namespace vid {
+//----------------------------------------------------------------------------
+
+//! Interface to driver which is able to perform 2d and 3d gfx functions.
+//! The IVideoDriver interface is one of the most important interfaces of
+//! the Irrlicht Engine: All rendering and texture manipulating is done with
+//! this interface. You are able to use the Irrlicht Engine by only invoking methods
+//! of this interface if you would like to, although the my::scn::ISceneManager interface
+//! provides a lot of powerful classes and methods to make the programmers life
+//! easier.
+class IVideoDriver
+{
+    //! Return singleton object
+    static IVideoDriver& getSingleton();
+
+	//! Set this to true if you want to render in separate thread,
+	//! otherwise base thread will be used for game logic and rendering.
+	//! Default value is false.
+	void useMultiThreadRendering ( bool value );
+
+    void render();
+
+    //! Presents the rendered image on the screen.
+    //! Applications must call this method after performing any rendering. 
+    //! \return Returns false if failed and true if succeeded.
+    bool swapBuffers();
+
+	bool isRendering();
+
+	//! Returns the maximal amount of dynamic lights the device can handle
+    //! \return Maximal amount of dynamic lights.
+    unsigned getDynamicLightsMaximalAmount() const;
+
+    //! Returns current amount of dynamic lights set
+    //! \return Current amount of dynamic lights set
+    int getDynamicLightsCount();
+
+    //! Returns the size of the screen or render window.
+    //! \return Size of screen or render window.
+	const core::dimension2di& getScreenSize() const;
+
+    //! Returns current frames per second value.
+    //! \return Returns amount of frames per second drawn.
+    int getCurrentFPS();
+
+    //! Returns average frames per second value.
+    //! \return Returns average amount of frames per second drawn.
+    int getAverageFPS();
+
+    //! Returns amount of triangle) which were drawn in the last frame.
+    //! very useful method for statistics.
+    //! \return Amount of primitives drawn in the last frame.
+    unsigned getRenderedTrianglesCount ( E_RENDER_PASS pass );
+	unsigned getRenderedTrianglesCount ();
+
+	//! returns amount of DIP calls were drawn in the last frame.
+	//! very useful method for statistics.
+	//! \return Amount of dip calls in the last frame.
+	unsigned getRenderedDIPsCount ( E_RENDER_PASS pass );
+	unsigned getRenderedDIPsCount ();
+
+	//! Returns the maximal amount of texture units in single render pass
+    //! \return Maximal amount of texture units
+    unsigned getMaximalTextureUnitsAmount() const;
+
+	//! Returns the maximal resolution of texture
+    //! \return Maximal texture resolution
+	const core::dimension2di& getMaximalTextureSize() const;
+
+	//! Sets the global scene ambient color. The default color is
+    //! (0,0,0,0) which means it is dark.
+    //! \param color: New color of the ambient light.
+    void setGlobalAmbientColor(const img::SColorf& color);
+		
+	//! gets the global scene ambient color.
+    const img::SColorf& getGlobalAmbientColor() const;
+
+	//! Sets the global light
+    void setGlobalLightParams(const SLight& light);
+		
+	//! gets the global light
+    const SLight& getGlobalLightParams();
+
+	//! Sets the color of stencil buffers shadows drawed by the scene manager.
+    void setShadowColor(const img::SColor &color);
+
+    //! Returns the current color of shadows.
+    const img::SColor& getShadowColor() const;
+
+    //! \return Returns the name of the video driver. Example: In case of the DirectX9
+    //! driver, it would return "Direct3D9".
+    const char* getName();
+	
+	//! Returns a pointer to a texture. Loads the texture if it is not
+    //! already loaded, and generates mipmap levels if wished.
+    ITexture* getTexture(const char* filename);
+
+	//! Creates a texture from a loaded IImage.
+	ITexture* addTexture(const char* name, img::IImage* image);
+    
+ 	//! Returns pointer to the font with the specified file name. Loads the font if 
+    //! it was not loaded before. Returns 0 if the font could not be loaded.
+    IFont* getFont(const char* filename);
+
+    //! Returns the default built-in font.
+    IFont* getBuiltInFont();
+
+    //! Enables or disables a texture creation flag. This flag defines how
+    //! textures should be created. 
+    void setTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag, bool enabled);
+
+    //! Returns if a texture creation flag is enabled or disabled.
+    //! You can change this value using setTextureCreationMode().
+    bool getTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag);
+
+    //! getting video driver type
+    E_DRIVER_TYPE getDriverType();
+
+    //! getting video driver family
+    E_DRIVER_FAMILY getDriverFamily();
+
+	//! Setting Background Color
+    void setBackgroundColor(const img::SColor &color);
+
+    //! Setting Background Color
+    void setBackgroundColor(const img::SColor &color);
+
+	//! looks if the image is already loaded
+    vid::ITexture* findTexture(const char *name);
+
+	//! looks if the image is already loaded
+	const char* findTextureName(vid::ITexture *texture);
+
+	//! set up texture name
+	bool setTextureName(vid::ITexture *texture, const char *name);
+
+    //! Gets the area of the current viewport. 
+    const core::recti& getViewPort() const;
+
+    void setFog(const SFog &fog);
+
+    const SFog& getFog();
+
+	//! Gets a list with all video modes available.
+    IVideoModeList* getVideoModeList();
+
+	//! Calculates 2d screen coordinates from a 3d position.
+	// This coordinates looks like:
+	// (0,0) o---------------------|
+	//       |                     | 
+	//       |                     |
+	//       |                     |
+	//       |          o          |
+	//       |  (Width/2,Height/2) |
+	//       |                     |
+	//       |                     |
+	//       |---------------------o (Width,Height)
+	const core::position2di& getScreenCoordinatesFrom3DPosition(
+		const core::vector3df &pos3d) const;
+
+	//! Calculates 2d screen coordinates from a 3d position.
+	// This coordinates looks like:
+	// (0,0) o----------o----------o (1,0)
+	//       |          |          | 
+	//       |          |          |
+	//       |          |(0.5,0.5) |
+	//       o----------o----------o
+	//       |          |          |
+	//       |          |          |
+	//       |          |          |
+	// (0,1) o----------o----------o (1,1)
+	const core::position2df& getScreenRelativeCoordinatesFrom3DPosition(
+		const core::vector3df &pos3d) const;
+
+	//! Calculates 2d screen coordinates from a 3d position.
+	// This coordinates looks like:
+	// (-1,1) o----------o----------o (1,1)
+	//        |          |          |
+	//        |          |          |
+	//        |          |(0,0)     |
+	//        o----------o----------o
+	//        |          |          |
+	//        |          |          |
+	//        |          |          |
+	// (-1,1) o----------o----------o (1,-1)
+	const core::position2df& getScreenProjectionCoordinatesFrom3DPosition(
+		const core::vector3df &pos3d) const;
+
+	//! Calculates 2d screen rectangle from a 3d volume.
+	const core::recti& getScreenRectFrom3DVolume(
+		const core::aabbox3df &box3d) const;
+
+	//! register 2D image for future rendering
+    void register2DImageForRendering (
+		const SMaterial & material,
+		const core::rectf & drawRect, const core::rectf & texRect,
+		img::SColor color );
+	
+	void register2DImageForRendering (
+		ITexture * texture,
+		const core::rectf & drawRect, const core::rectf & texRect, 
+        img::SColor color, 
+        bool useAlphaBlending, bool useColorBlending );
+
+	//! register GUI image for future rendering
+    void registerGUIImageForRendering (
+		ITexture * texture,
+		const core::rectf & drawRect, const core::rectf & texRect, 
+        const img::SColor & color, 
+        bool useAlphaBlending, bool useColorBlending );
+
+	//! register GUI rectangle with color for future rendering
+    void registerGUIRectangleForRendering (
+		const core::rectf & drawRect,
+		const img::SColor & color,
+		bool useAlphaBlending, bool useColorBlending );
+
+	const char* findGPUProgramFileName(vid::IGPUProgram *gpu_prog);
+	const char* findGPUProgramFullFileName(vid::IGPUProgram *gpu_prog);
+
+	IGPUProgram* addGPUProgram(
+		vid::E_VERTEX_TYPE vertex_type, const vid::SRenderPass &pass,
+		unsigned uniforms, unsigned lightcnt,
+		E_VERTEX_SHADER_VERSION vertex_shader_ver, const char *vertex_shader,
+		E_PIXEL_SHADER_VERSION pixel_shader_ver, const char *pixel_shader,
+		const char *tag);
+
+	IGPUProgram* getGPUProgram(
+		vid::E_VERTEX_TYPE vertex_type, const SRenderPass &pass, unsigned lightcnt);
+
+	IGPUProgram* getGPUProgram(
+		vid::E_VERTEX_TYPE vertex_type, u64 hash, unsigned lightcnt);
+
+	IGPUProgram* getGPUProgram(const char *file_name);
+	IGPUProgram* getGPUProgram(const char *file_name, const char *tag, bool reload_if_exists);
+
+	void loadGPUProgramsFromDir(const char *dir);
+	void loadGPUProgramsFromDir(const char *dir, const char *tag, bool reload_if_exists);
+
+	bool compileGPUSources(unsigned uniforms, unsigned lights_count,
+		E_VERTEX_SHADER_VERSION vertex_shader_ver, const char *vertex_shader,
+		E_PIXEL_SHADER_VERSION pixel_shader_ver, const char *pixel_shader);
+
+	//! Setting polygon fill mode
+	void setPolygonFillMode(E_POLYGON_FILL_MODE mode);
+
+	//! Getting polygon fill mode
+	E_POLYGON_FILL_MODE getPolygonFillMode();
+};
+
+//----------------------------------------------------------------------------
+} // end namespace vid 
+//----------------------------------------------------------------------------

@@ -1,0 +1,40 @@
+//----------------------------------------------------------------------------
+namespace vid {
+//----------------------------------------------------------------------------
+
+class ITexture
+{
+	//! Lock function. Locks the Texture and returns a pointer to access the 
+    //! pixels. After lock() has been called and all operations on the pixels
+    //! are done, you must call unlock().
+    //! \return Returns a pointer to the pixel data. The format of the pixel can
+    //! be determinated by using getColorFormat(). NULL is returned, if
+    //! the texture cannot be locked.
+	virtual img::IImage* lock();
+
+    //! Unlock function. Must be called after a lock() to the texture.
+    virtual void unlock();
+
+    //! Returns original size of the texture. The texture is usually
+    //! scaled, if it was created with an unoptimal size. For example if the size
+    //! of the texture file it was loaded from was not a power of two. This returns
+    //! the size of the texture, it had before it was scaled. Can be useful
+    //! when drawing 2d images on the screen, which should have the exact size
+    //! of the original texture. Use ITexture::getSize() if you want to know 
+    //! the real size it has now stored in the system.
+    //! \return Returns the original size of the texture.
+    virtual const core::dimension2di& getOriginalSize();
+
+    //! Returns (=size) of the texture.
+    //! \return Returns the size of the texture.
+    virtual const core::dimension2di& getSize();
+
+    //! Returns the color format of texture. This format is in most cases
+    //! ECF_A1R5G5B5 or ECF_A8R8G8B8.
+    //! \return Returns the color format of texture.
+    virtual img::E_COLOR_FORMAT getColorFormat();
+};
+
+//----------------------------------------------------------------------------
+} // end namespace vid 
+//----------------------------------------------------------------------------

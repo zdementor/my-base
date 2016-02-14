@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Helper.FileDialog.Root" >
+        <Property Name="UnifiedAreaRect" Value="{{0.00125,0},{8.37189e-006,0},{1.00125,0},{1.00001,0}}" />
+        <Window Type="MyHelper/FrameWindow" Name="Helper.FileDialog.Frame" >
+            <Property Name="Font" Value="Tahoma-12" />
+            <Property Name="Text" Value="Open file" />
+            <Property Name="TitlebarFont" Value="Tahoma-12" />
+            <Property Name="TitlebarEnabled" Value="True" />
+            <Property Name="UnifiedAreaRect" Value="{{0.181563,0},{0.14169,0},{0.790157,0},{0.863299,0}}" />
+            <Window Type="MyHelper/Editbox" Name="Helper.FileDialog.FileNameEditbox" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,87},{0.776085,0},{0.974417,0},{0.843195,0}}" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyHelper/Combobox" Name="Helper.FileDialog.FileTypeCombobox" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Tooltip" Value="Supported file types" />
+                <Property Name="ReadOnly" Value="True" />
+                <Property Name="ClippedByParent" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,89},{0.8676,0},{0.650159,0},{1.15338,0}}" />
+                <Property Name="MaxEditTextLength" Value="1073741823" />
+            </Window>
+            <Window Type="MyHelper/StaticText" Name="Helper.FileDialog.FileNameStaticText" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Name:" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,12},{0.776085,0},{0,87},{0.840085,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyHelper/StaticText" Name="Helper.FileDialog.FileTypeStaticText" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Types:" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,12},{0.864778,0},{0,90},{0.928778,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.FileDialog.AcceptButton" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="Open" />
+                <Property Name="UnifiedAreaRect" Value="{{0.66162,0},{0.8676,0},{0.810193,0},{0.941108,0}}" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.FileDialog.CancelButton" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="Cancel" />
+                <Property Name="Tooltip" Value="Cancel and close dialog" />
+                <Property Name="UnifiedAreaRect" Value="{{0.82485,0},{0.8676,0},{0.973423,0},{0.941108,0}}" />
+            </Window>
+            <Window Type="MyHelper/StaticText" Name="Helper.FileDialog.LookInStaticText" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Path:" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,15},{0.0327194,0},{0,63},{0.0920463,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.FileDialog.RefreshButton" >
+                <Property Name="Tooltip" Value="Refresh files list" />
+                <Property Name="UnifiedAreaRect" Value="{{0.912481,0},{0.0302064,0},{0.972383,0},{0.0973164,0}}" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.FileDialog.GoUpButton" >
+                <Property Name="Tooltip" Value="Go up level directory" />
+                <Property Name="UnifiedAreaRect" Value="{{0.843669,0},{0.0302064,0},{0.903571,0},{0.0973164,0}}" />
+            </Window>
+            <Window Type="MyHelper/MultiColumnList" Name="Helper.FileDialog.FileListbox" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0237621,0},{0.119551,0},{0.97615,0},{0.752644,0}}" />
+            </Window>
+            <Window Type="MyHelper/StaticText" Name="Helper.FileDialog.PathStaticText" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{0,72},{0.030206,0},{0.826177,0},{0.097316,0}}" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

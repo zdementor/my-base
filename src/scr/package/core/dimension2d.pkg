@@ -1,0 +1,35 @@
+//----------------------------------------------------------------------------
+namespace core {
+//----------------------------------------------------------------------------
+
+class dimension2di
+{
+    dimension2di();
+    dimension2di(int width, int height);
+    dimension2di(const dimension2di& other);
+	~dimension2di();
+
+    void set(int width, int height);    
+    void set(const dimension2di& other);
+
+    int Width, Height;
+};
+
+//---------------------------------------------------------------------------
+
+class dimension2df
+{
+    dimension2df();
+    dimension2df(float width, float height);
+    dimension2df(const dimension2df& other);
+	~dimension2df();
+
+    void set(float width, float height);
+    void set(const dimension2df& other);
+
+    float Width, Height;
+};
+
+//----------------------------------------------------------------------------
+} // end namespace core 
+//----------------------------------------------------------------------------

@@ -1,0 +1,79 @@
+//----------------------------------------------------------------------------
+namespace scn {
+//----------------------------------------------------------------------------
+
+struct STileSet
+{
+	const char* getSplatMapFileName() const;
+
+	vid::ITexture* getTile0Texture() const;
+	vid::ITexture* getTile1Texture() const;
+	vid::ITexture* getTile2Texture() const;
+};
+
+//----------------------------------------------------------------------------
+
+//! A terrain scene node using simple geomipmapping.
+class ITerrainSceneNode : public ISceneNode
+{
+	//! create the terrain 
+    //! \param heightmap, image with height values 
+    //! \param gridPointSpacing, spacing between the gridpoints of the heightfield 
+    //! \param heightScale, scaling value for image height values        
+    bool setMaps(const char* hmap_filename, const char* fogmap_filename,
+        float gridPointSpacing, float heightScale);
+
+	//! return file name of the height map image
+	const char* getHeightMapFileName();
+
+	//! returns geometry size beetween terrain greed cells
+	float getGridPointSpacing();
+
+	//! returns height scale factor
+	float getHeightScale();
+
+	//! add tile set to the terrain texturing
+	bool addTileSet(
+		const char *tile0tex_file_name,
+		const char *tile1tex_file_name,
+		const char *tile2tex_file_name,
+		const char *splatmap_file_name);
+
+	//! set tile set
+	bool setTileSet(unsigned idx,
+		const char *tile0tex_file_name,
+		const char *tile1tex_file_name,
+		const char *tile2tex_file_name,
+		const char *splatmap_file_name);
+
+	//! removes tile set by its index
+	bool removeTileSet(unsigned idx);
+
+	//! return texture tile set by its index
+	const STileSet& getTileSet(unsigned idx);
+
+	//! return tile sets count
+	unsigned getTileSetsCount();
+
+	//! get the length of the square size of the heightfield 
+    unsigned getHeightFieldSize();
+
+	//! calculates position of the point (i, j) in the terrain
+	const core::vector3df& getCellPosition(int cell_x, int cell_y);
+
+	//! get the height
+    float getCellHeight(int cell_x, int cell_y);
+
+    //! set tiles number for the detail map
+	void setTileRepeatNumber(unsigned value);
+
+	//! returns tiles number for the detail map
+    unsigned getTileRepeatNumber();
+
+	//! returns heightmap texture
+	vid::ITexture* getHeightMapTexture();
+};
+
+//---------------------------------------------------------------------------- 
+} // end namespace scn
+//----------------------------------------------------------------------------

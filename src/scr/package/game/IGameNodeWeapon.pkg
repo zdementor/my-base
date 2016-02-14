@@ -1,0 +1,157 @@
+//---------------------------------------------------------------------------
+namespace game {
+//---------------------------------------------------------------------------
+
+struct SWeaponParameters
+{
+    SWeaponParameters();
+
+    float FirePerSecond;
+    float Mass;
+    float SelectSpeed;
+    float WaitBeforeFire;
+};
+
+//--------------------------------------------------------------------------
+
+struct SWeaponBulletParameters
+{
+    SWeaponBulletParameters();
+
+    float MaxAmmoCount, AutoFeelBulletsPerSecond;
+    core::stringc KeyName;
+};
+
+//--------------------------------------------------------------------------
+
+struct SBulletParameters
+{
+    SBulletParameters();
+
+    float MaxFlyTime;
+    float Damage;
+    float Mass;
+    float Range;
+    core::vector3df Dispersion;
+};
+
+//----------------------------------------------------------------------------
+
+class IGameNodeWeapon
+{      
+    //! setting firing flash radius
+    void setFlashRadius(float r);
+
+    //! getting firing flash radius
+    float getFlashRadius();
+
+    //! setting firing flash color
+    void setFlashColor(img::SColorf &c);
+
+    //! getting firing flash color
+    img::SColorf getFlashColor();
+
+    //! setting firing point
+    void setFirePoint(core::vector3df &pos);
+
+    //! getting firing point
+    core::vector3df getFirePoint();
+
+    //! binding bullet node for this weapon (multiple allowed)
+    bool bindBullet(const char* fname, const SWeaponBulletParameters& params);
+
+    //! 
+    int getBulletsCount();
+
+    //! bindins fire effect (multiple allowed)
+    void bindFireEffect(scn::ISceneNode *fireeffect, const core::vector3df &pos);
+
+    //! start firing
+    bool startFire(bool with_delay=true);
+
+    //! stop firing
+    void stopFire();
+
+    //! return true if firing now
+    bool isFiring();
+
+    //! firing at dir
+    bool fire();
+
+    void aimAtPos(const core::vector3df &pos);
+
+    void aimByDir(const core::vector3df &dir);
+
+    void aimByRay(const core::line3df &ray);
+
+    void setAimedPos(const core::vector3df &aimed_pos);
+
+    //! getting weapon parameters
+    const SWeaponParameters& getWeaponParameters() const;
+
+    //! getting bullet parameters
+    const SBulletParameters& getBulletParameters(int bullet_idx) const;
+
+    //! getting weapon bullet parameters
+    const SWeaponBulletParameters& getWeaponBulletParameters(int bullet_idx) const;
+    
+    //! getting owner game node of this weapon
+    IGameNodeAI* getOwner();
+
+    //! setting owner game node for this weapon
+    void setOwner(IGameNodeAI* owner);  
+
+    void select();
+
+    void deSelect();
+
+    int getFireCount();
+
+    bool chooseBullet(int bullet_idx);
+
+    int getChoosedBulletIndex();
+
+    int getBulletIndexByKeyName(const char* key_name);
+    
+    bool feelBulletAmmo(int bullet_idx, int ammo);
+
+    int getBulletAmmoCount(int bullet_idx);
+
+    int getBulletMaxAmmoCount(int bullet_idx);
+
+    float getFireRange();
+
+    const char* getBindedBoneName();
+
+    void setBindedBoneName(const char* binded_bone_name);  
+
+    void setFlashLightPosition(const core::vector3df &lpos);
+
+    const core::vector3df& getFlashLightPosition();
+
+    void setWeaponEnabled(bool enabled);
+
+    virtual bool isWeaponEnabled();
+
+    //! setting weapon image name
+    void setWeaponImageName(const char* image_name);
+
+    //! return weapon image name
+    const char* getWeaponImageName();
+
+    //! setting weapon selected image name
+    void setWeaponSelectedImageName(const char* image_name);
+
+    //! return weapon selected image name
+    const char* getWeaponSelectedImageName();
+
+    //! setting weapon item key name
+    void setWeaponItemKeyName(const char* item_key_name);
+    
+    //! return weapon item key name
+    const char* getWeaponItemKeyName(); 
+};
+
+//----------------------------------------------------------------------------
+} // namespace game
+//----------------------------------------------------------------------------

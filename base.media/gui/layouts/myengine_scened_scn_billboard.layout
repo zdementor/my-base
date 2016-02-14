@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Scened.Scene.Billboard.Root" >
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="DefaultWindow" Name="Scened.Scene.Billboard.Tex.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.0156655,0},{0.0346275,0},{0.22317,0},{0.870198,0}}" />
+            <Window Type="MyScened/ScrollablePane" Name="Scened.Scene.Billboard.Tex.ScrollArea" >
+                <Property Name="ContentArea" Value="l:0 t:0 r:206 b:331" />
+                <Property Name="HorzStepSize" Value="0.1" />
+                <Property Name="VertStepSize" Value="0.1" />
+                <Property Name="HorzOverlapSize" Value="0.01" />
+                <Property Name="UnifiedAreaRect" Value="{{0,0},{0,5},{1,0},{0.975,0}}" />
+                <Property Name="VertOverlapSize" Value="0.01" />
+                <Property Name="HorzScrollPosition" Value="0" />
+                <Property Name="VertScrollPosition" Value="0" />
+                <AutoWindow NameSuffix="__auto_container__" >
+                    <Property Name="ContentArea" Value="l:0 t:0 r:206 b:331" />
+                    <Property Name="ChildExtentsArea" Value="l:0 t:0 r:206 b:331" />
+                    <Window Type="MyScened/MultiColumnList" Name="Scened.Scene.Billboard.Tex.List" >
+                        <Property Name="Font" Value="Tahoma-6" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.025,0},{0,36},{0.975,0},{0,196}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.Billboard.Tex.AddBtn" >
+                        <Property Name="Tooltip" Value="Add new texture" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,12},{0,2},{0,43},{0,32}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.Billboard.Tex.RemBtn" >
+                        <Property Name="Tooltip" Value="Remove texture" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,44},{0,2},{0,75},{0,32}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.Billboard.Tex.ParamsArea" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.025,0},{0,201},{0.975,0},{0,331}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Billboard.Tex.ViewBtn" >
+                            <Property Name="Tooltip" Value="View texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,131},{0,5},{0,162},{0,35}}" />
+                        </Window>
+                        <Window Type="TaharezLook/StaticText" Name="Scened.Scene.Billboard.Tex.ImageArea" >
+                            <Property Name="UnifiedAreaRect" Value="{{0,5},{0,5},{0,125},{0,125}}" />
+                            <Window Type="TaharezLook/StaticImage" Name="Scened.Scene.Billboard.Tex.Image" >
+                                <Property Name="FrameEnabled" Value="False" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,5},{0,5},{0,115},{0,115}}" />
+                                <Property Name="BackgroundEnabled" Value="False" />
+                            </Window>
+                        </Window>
+                        <Window Type="TaharezLook/StaticText" Name="Scened.Scene.Billboard.Tex.InfoLabel" >
+                            <Property Name="Font" Value="Cour-10" />
+                            <Property Name="Text" >2048
+x
+2048</Property>
+                            <Property Name="FrameEnabled" Value="False" />
+                            <Property Name="HorzFormatting" Value="HorzCentred" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,131},{0,45},{1,0},{0,110}}" />
+                            <Property Name="BackgroundEnabled" Value="False" />
+                        </Window>
+                    </Window>
+                </AutoWindow>
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Scene.Billboard.Anim.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.257853,0},{0.0346275,0},{0.525514,0},{0.794674,0}}" />
+            <Window Type="MyScened/ScrollablePane" Name="Scened.Scene.Billboard.Anim.ScrollArea" >
+                <Property Name="ContentArea" Value="l:0 t:0 r:258 b:447" />
+                <Property Name="HorzStepSize" Value="0.1" />
+                <Property Name="VertStepSize" Value="0.1" />
+                <Property Name="HorzOverlapSize" Value="0.01" />
+                <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                <Property Name="VertOverlapSize" Value="0.01" />
+                <Property Name="HorzScrollPosition" Value="0" />
+                <Property Name="VertScrollPosition" Value="0" />
+                <AutoWindow NameSuffix="__auto_container__" >
+                    <Property Name="ContentArea" Value="l:0 t:0 r:258 b:447" />
+                    <Property Name="ChildExtentsArea" Value="l:0 t:0 r:258 b:447" />
+                    <Window Type="MyScened/MultiColumnList" Name="Scened.Scene.Billboard.Anim.List" >
+                        <Property Name="Font" Value="Tahoma-6" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,40},{0,2},{0.95,0},{-0.008137,94}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.Billboard.Anim.AddBtn" >
+                        <Property Name="Tooltip" Value="Add new animation" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,6},{0,2},{0,37},{0,32}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.Billboard.Anim.RemBtn" >
+                        <Property Name="Tooltip" Value="Remove animation" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,6},{0,31},{0,37},{0,61}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.Billboard.Anim.ParamsArea" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,92},{0.95,0},{0,447}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Billboard.Anim.PlayBtn" >
+                            <Property Name="Tooltip" Value="Play animation" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,218},{0,5},{0,249},{0,35}}" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Billboard.Anim.PauseBtn" >
+                            <Property Name="Tooltip" Value="Pause animation" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,187},{0,5},{0,218},{0,35}}" />
+                        </Window>
+                        <Window Type="MyScened/StaticText" Name="Scened.Scene.Billboard.Anim.SpeedLabel" >
+                            <Property Name="Font" Value="Tahoma-6" />
+                            <Property Name="Text" Value="Speed:" />
+                            <Property Name="FrameEnabled" Value="False" />
+                            <Property Name="HorzFormatting" Value="RightAligned" />
+                            <Property Name="UnifiedAreaRect" Value="{{0.02801,0},{0,5},{0,60},{0,27}}" />
+                            <Property Name="BackgroundEnabled" Value="False" />
+                        </Window>
+                        <Window Type="MyScened/Editbox" Name="Scened.Scene.Billboard.Anim.SpeedEditbox" >
+                            <Property Name="Font" Value="Tahoma-6" />
+                            <Property Name="MaxTextLength" Value="1073741823" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,64},{0,5},{0,101},{0,27}}" />
+                            <Property Name="TextParsingEnabled" Value="False" />
+                        </Window>
+                        <Window Type="MyScened/Checkbox" Name="Scened.Scene.Billboard.Anim.LoopedCheck" >
+                            <Property Name="Font" Value="Tahoma-6" />
+                            <Property Name="Text" Value="Looped" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,106},{0,5},{0,184},{0,27}}" />
+                        </Window>
+                        <Window Type="MyScened/MultiColumnList" Name="Scened.Scene.Billboard.Anim.DirList" >
+                            <Property Name="Font" Value="Tahoma-6" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,146},{0,49},{0.996928,0},{0,134}}" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Billboard.Anim.DirAddBtn" >
+                            <Property Name="Tooltip" Value="Add new animation" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,113},{0,49},{0,144},{0,79}}" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Billboard.Anim.DirRemBtn" >
+                            <Property Name="Tooltip" Value="Remove animation" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,113},{0,78},{0,144},{0,108}}" />
+                        </Window>
+                        <Window Type="TaharezLook/StaticText" Name="Scened.Scene.Billboard.Anim.FrameImageBorder" >
+                            <Property Name="UnifiedAreaRect" Value="{{0.0614485,0},{0,49},{0,105},{0,134}}" />
+                            <Window Type="TaharezLook/StaticImage" Name="Scened.Scene.Billboard.Anim.FrameImage" >
+                                <Property Name="FrameEnabled" Value="False" />
+                                <Property Name="UnifiedAreaRect" Value="{{0.05,0},{0.05,0},{0.95,0},{0.95,0}}" />
+                            </Window>
+                        </Window>
+                        <Window Type="MyScened/StaticText" Name="Scened.Scene.Billboard.Anim.DirParamsArea" >
+                            <Property Name="FrameEnabled" Value="False" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,0},{0,142},{1,0},{0.9975,0}}" />
+                            <Property Name="BackgroundEnabled" Value="False" />
+                            <Window Type="MyScened/MultiColumnList" Name="Scened.Scene.Billboard.Anim.FrameList" >
+                                <Property Name="Font" Value="Tahoma-6" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,110},{0,6},{1,0},{0,98}}" />
+                            </Window>
+                            <Window Type="MyScened/Button" Name="Scened.Scene.Billboard.Anim.FrameAddBtn" >
+                                <Property Name="Tooltip" Value="Add new animation" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,75},{0,7},{0,106},{0,37}}" />
+                            </Window>
+                            <Window Type="MyScened/Button" Name="Scened.Scene.Billboard.Anim.FrameRemBtn" >
+                                <Property Name="Tooltip" Value="Remove animation" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,75},{0,36},{0,106},{0,66}}" />
+                            </Window>
+                            <Window Type="MyScened/StaticText" Name="Scened.Scene.Billboard.Anim.FrameParamsArea" >
+                                <Property Name="FrameEnabled" Value="False" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,0},{0,101},{1,0},{1,0}}" />
+                                <Property Name="BackgroundEnabled" Value="False" />
+                                <Window Type="MyScened/StaticText" Name="Scened.Scene.Billboard.Anim.FrameTexLabel" >
+                                    <Property Name="Font" Value="Tahoma-6" />
+                                    <Property Name="Text" Value="Texture:" />
+                                    <Property Name="FrameEnabled" Value="False" />
+                                    <Property Name="HorzFormatting" Value="RightAligned" />
+                                    <Property Name="UnifiedAreaRect" Value="{{0,7},{0,18},{0,76},{0,38}}" />
+                                    <Property Name="BackgroundEnabled" Value="False" />
+                                </Window>
+                                <Window Type="MyScened/Spinner" Name="Scened.Scene.Billboard.Anim.FrameTexSpinner" >
+                                    <Property Name="Font" Value="Tahoma-8" />
+                                    <Property Name="StepSize" Value="1" />
+                                    <Property Name="CurrentValue" Value="0" />
+                                    <Property Name="MaximumValue" Value="0" />
+                                    <Property Name="MinimumValue" Value="0" />
+                                    <Property Name="UnifiedAreaRect" Value="{{0,26},{0,37},{0,91},{0,59}}" />
+                                </Window>
+                                <Window Type="TaharezLook/Editbox" Name="Scened.Scene.Billboard.Anim.FrameTCLeftEditbox" >
+                                    <Property Name="Font" Value="Tahoma-6" />
+                                    <Property Name="MaxTextLength" Value="1073741823" />
+                                    <Property Name="UnifiedAreaRect" Value="{{0,169},{0,20},{0,209},{0,42}}" />
+                                    <Property Name="TextParsingEnabled" Value="False" />
+                                </Window>
+                                <Window Type="MyScened/StaticText" Name="Scened.Scene.Billboard.Anim.FrameTCLeftTopLabel" >
+                                    <Property Name="Font" Value="Tahoma-6" />
+                                    <Property Name="Text" Value="Left/Top:" />
+                                    <Property Name="FrameEnabled" Value="False" />
+                                    <Property Name="HorzFormatting" Value="RightAligned" />
+                                    <Property Name="UnifiedAreaRect" Value="{{0,97},{0,20},{0,166},{0,42}}" />
+                                    <Property Name="BackgroundEnabled" Value="False" />
+                                </Window>
+                                <Window Type="TaharezLook/Editbox" Name="Scened.Scene.Billboard.Anim.FrameTCTopEditbox" >
+                                    <Property Name="Font" Value="Tahoma-6" />
+                                    <Property Name="MaxTextLength" Value="1073741823" />
+                                    <Property Name="UnifiedAreaRect" Value="{{0,208},{0,20},{0,248},{0,42}}" />
+                                    <Property Name="TextParsingEnabled" Value="False" />
+                                </Window>
+                                <Window Type="MyScened/StaticText" Name="Scened.Scene.Billboard.Anim.FrameTCRightBottomLabel" >
+                                    <Property Name="Font" Value="Tahoma-6" />
+                                    <Property Name="Text" >Right/
+Bottom:</Property>
+                                    <Property Name="FrameEnabled" Value="False" />
+                                    <Property Name="HorzFormatting" Value="RightAligned" />
+                                    <Property Name="UnifiedAreaRect" Value="{{0,97},{0,46},{0,166},{0,68}}" />
+                                    <Property Name="BackgroundEnabled" Value="False" />
+                                </Window>
+                                <Window Type="TaharezLook/Editbox" Name="Scened.Scene.Billboard.Anim.FrameTCRightEditbox" >
+                                    <Property Name="Font" Value="Tahoma-6" />
+                                    <Property Name="MaxTextLength" Value="1073741823" />
+                                    <Property Name="UnifiedAreaRect" Value="{{0,169},{0,46},{0,209},{0,68}}" />
+                                    <Property Name="TextParsingEnabled" Value="False" />
+                                </Window>
+                                <Window Type="TaharezLook/Editbox" Name="Scened.Scene.Billboard.Anim.FrameTCBottomEditbox" >
+                                    <Property Name="Font" Value="Tahoma-6" />
+                                    <Property Name="MaxTextLength" Value="1073741823" />
+                                    <Property Name="UnifiedAreaRect" Value="{{0,208},{0,46},{0,248},{0,68}}" />
+                                    <Property Name="TextParsingEnabled" Value="False" />
+                                </Window>
+                                <Window Type="MyScened/StaticText" Name="Scened.Scene.Billboard.Anim.FrameTCOffsetXYLabel" >
+                                    <Property Name="Font" Value="Tahoma-6" />
+                                    <Property Name="Text" Value="Offset X/Y:" />
+                                    <Property Name="FrameEnabled" Value="False" />
+                                    <Property Name="HorzFormatting" Value="RightAligned" />
+                                    <Property Name="UnifiedAreaRect" Value="{{0,97},{0,72},{0,166},{0,94}}" />
+                                    <Property Name="BackgroundEnabled" Value="False" />
+                                </Window>
+                                <Window Type="TaharezLook/Editbox" Name="Scened.Scene.Billboard.Anim.FrameTCOffsetXEditbox" >
+                                    <Property Name="Font" Value="Tahoma-6" />
+                                    <Property Name="MaxTextLength" Value="1073741823" />
+                                    <Property Name="UnifiedAreaRect" Value="{{0,169},{0,72},{0,209},{0,94}}" />
+                                    <Property Name="TextParsingEnabled" Value="False" />
+                                </Window>
+                                <Window Type="TaharezLook/Editbox" Name="Scened.Scene.Billboard.Anim.FrameTCOffsetYEditbox" >
+                                    <Property Name="Font" Value="Tahoma-6" />
+                                    <Property Name="MaxTextLength" Value="1073741823" />
+                                    <Property Name="UnifiedAreaRect" Value="{{0,208},{0,72},{0,248},{0,94}}" />
+                                    <Property Name="TextParsingEnabled" Value="False" />
+                                </Window>
+                            </Window>
+                        </Window>
+                    </Window>
+                </AutoWindow>
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

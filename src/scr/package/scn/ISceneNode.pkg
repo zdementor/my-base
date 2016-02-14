@@ -1,0 +1,405 @@
+//----------------------------------------------------------------------------
+namespace scn {
+//----------------------------------------------------------------------------
+
+struct SSceneNodeParameters
+{
+    SSceneNodeParameters();
+    SSceneNodeParameters(const SSceneNodeParameters &p);
+
+    void set(const SSceneNodeParameters &p);
+
+    core::stringc Name;
+    int ID;
+    int ParentID;
+    E_SCENE_NODE_TYPE Type;
+};
+
+//---------------------------------------------------------------------------------
+
+struct SSceneNodeMaterial
+{
+	SSceneNodeMaterial();
+
+	void set(const SSceneNodeMaterial &p);
+
+    vid::SMaterial Material;
+};
+
+//---------------------------------------------------------------------------------
+
+struct SSceneNodeTransformation
+{
+	SSceneNodeTransformation();
+
+	void set(const SSceneNodeTransformation &p);
+
+    core::vector3df Position;
+    core::vector3df Rotation;
+    core::vector3df Scale;
+};
+
+//---------------------------------------------------------------------------------
+
+struct SSceneNodeCommonParams
+{
+	SSceneNodeCommonParams() {}
+	SSceneNodeCommonParams(const SSceneNodeCommonParams &p);
+
+	void set(const SSceneNodeCommonParams &p);
+
+    SSceneNodeParameters     Parameters;     
+    SSceneNodeMaterial       Material;
+    SSceneNodeTransformation Transformation;
+};
+
+//----------------------------------------------------------------------------  
+
+struct SImposterParameters
+{
+	SImposterParameters();
+
+	const char* getFileName() const;
+	void setFileName(const char *file_name);	
+
+    void set(const SImposterParameters &p);
+
+	bool equal(const SImposterParameters &p) const;
+
+	bool operator == (const SImposterParameters &p) const;
+
+    core::vector3df ShiftCustom;
+    float ViewOffset;
+    bool Centered;
+};
+
+//----------------------------------------------------------------------------  
+
+struct SImposterCreationParameters
+{
+	SImposterCreationParameters();
+
+    void set(const SImposterCreationParameters& p);
+
+	bool equal(const SImposterCreationParameters &p) const;
+
+	bool operator == (const SImposterCreationParameters &p) const;
+
+    int ViewsCount;
+    core::vector2df CameraViewScale;
+    core::vector2df SizeScale;
+    int TextureResolution;
+    int AnimationFrameStep; 
+    float OptimalViewAngle;
+	img::SColor AmbientColor, DiffuseColor, SpecularColor;
+	bool Compress;
+};
+
+//----------------------------------------------------------------------------  
+
+class ISceneNode //: public IUnknown
+{
+	// **********************
+	// class IUnknown
+	//! return true if this object locked by some other object
+	bool isLocked();
+	//! lock this object
+	void lockObject();
+	//! lock this object
+	void unlockObject();
+	// **********************
+
+	unsigned getRenderBuffersCount();
+
+	vid::IRenderBuffer* getRenderBuffer(unsigned i);
+
+    //! Returns the name of the scene node.
+    //! \return Returns name as wide character string.
+    const char* getName() const;
+
+    //! Sets the name of the scene node
+    //! \param name: New name of the scene node.
+    void setName(const char* name);
+
+    //! Returns the filename of the node.
+    //! \return Returns filename as wide character string.
+    const char* getFileName() const;
+
+    //! Sets the filename of the node.
+    //! \param name: New filename of the scene node.
+    void setFileName(const char* name);
+
+    //! Returns the axis aligned, not transformed bounding box of this node.
+    //! This means that if this node is a animated 3d character, moving in a room,
+    //! the bounding box will always be around the origin. To get the box in
+    //! real world coordinates, just transform it with the matrix you receive with
+    //! getAbsoluteTransformation() or simply use getTransformedBoundingBox(),
+    //! which does the same.
+    const core::aabbox3df& getBoundingBox() const;
+
+    //! Returns the axis aligned, transformed and animated absolute bounding box
+    //! of this node.
+    const core::aabbox3df& getTransformedBoundingBox() const;
+
+    //! Returns true if the node is visible. This is only an option, set by the user and has
+    //! nothing to do with geometry culling
+    bool isVisible();
+
+    //! Sets if the node should be visible or not. All children of this node won't be visible too.
+    void setVisible(bool isVisible);
+
+    //! Returns the id of the scene node. This id can be used to identify the node.
+    int getID();
+
+    //! sets the id of the scene node. This id can be used to identify the node.
+    //! ( also performing checking unique of new node identificator )
+    bool setID(int id);
+
+    //! Adds a child to this scene node. If the scene node already
+    //! has got a parent, it is removed from there as child.
+    void addChild(scn::ISceneNode* child);
+
+    //! Removes a child from this scene node.
+    //! \return Returns true if the child could be removed, and false if not.
+    bool removeChild(scn::ISceneNode* child);
+
+    //! Removes all children of this scene node
+    void removeAll();
+
+    //! Removes this scene node from the scene, deleting it.
+    bool remove();
+
+    //! Adds an animator which should animate this node.
+    void addAnimator(scn::ISceneNodeAnimator* animator);
+
+    //! Removes an animator from this scene node.
+    void removeAnimator(scn::ISceneNodeAnimator* animator);
+
+    //! Removes all animators from this scene node.
+    void removeAnimators();
+
+    //! Returns the material based on the zero based index i. To get the amount
+    //! of materials used by this scene node, use getMaterialsCount().
+    //! This function is needed for inserting the node into the scene hirachy on a
+    //! optimal position for minimizing renderstate changes, but can also be used
+    //! to directly modify the material of a scene node.
+    //! \param i: Zero based index i. The maximal value for this may be getMaterialsCount() - 1.
+    //! \return Returns the material of that index.
+    vid::SMaterial& getMaterial(int i);
+
+    //! Returns amount of materials used by this scene node.
+    //! \return Returns current count of materials used by this scene node.
+    int getMaterialsCount();
+
+    //! set material
+    void setMaterial(vid::SMaterial& mat);
+
+    //! Gets the scale of the scene node. 
+    //! \return Returns the scale of the scene node.
+    const core::vector3df& getScale() const;
+
+    //! Gets the rotation of the node. Note that this is
+    //! the relative rotation of the node.
+    //! \return Current relative rotation of the scene node.
+    const core::vector3df& getRotation() const;
+
+    //! Gets the position of the node. Note that the position is
+    //! relative to the parent.
+    //! \return Returns the current position of the node relative to the parent.
+    const core::vector3df& getPosition() const;
+
+    //! Sets the scale of the scene node. 
+    //! \param scale: New scale of the node
+    void setScale(const core::vector3df& scale);
+
+    //! Sets the rotation of the node. This only modifies
+    //! the relative rotation of the node.
+    //! \param roation: New rotation of the node in degrees.
+    void setRotation(const core::vector3df& rotation);
+
+    //! Sets the position of the node. Note that the position is
+    //! relative to the parent.
+    //! \param newpos: New relative postition of the scene node.
+    void setPosition(const core::vector3df& newpos);
+
+    //! Gets the abolute position of the node. The position is absolute.
+    //! \return Returns the current absolute position of the scene node.
+    const core::vector3df& getAbsolutePosition();
+
+    //! returns the absolute transformation of the node. 
+    //! Is recalculated every OnPostRender()-call.
+    const core::matrix4& getAbsoluteTransformation();
+    
+    //!
+    const core::matrix4& getRelativeTransformation();
+
+    //! updates the absolute position based on the relative and the parents position
+    void updateAbsoluteTransformation();
+
+    //! 
+    void storeTransformation();
+
+    //! 
+    void restoreTransformation();
+
+    //! Sets if debug data like bounding boxes should be drawed.
+    //! Please note that not all scene nodes support this feature.
+    void setDebugDataVisible(bool visible);
+
+    //! Returns if debug data like bounding boxes are drawed.
+    bool isDebugDataVisible();
+
+    //! Changes the parent of the scene node.
+    void setParent(scn::ISceneNode* newParent);
+
+    //! Returning parent of this scene node.
+    scn::ISceneNode* getParent();
+    
+    //!
+    bool setParentID(int parent_id);
+
+    //!
+    int getParentID();
+
+    //! return true if this scene node attached to main player
+    bool isMainPlayer();
+
+    //!
+    void setIsMainPlayer(bool mp);
+
+    //! Adds shadow to this scene node    
+    scn::IShadow* attachShadow(E_SHADOW_TYPE type);
+
+    //! Remove shadow this scene node    
+    bool detachShadow();
+
+    //! returns shadow scene node
+    scn::IShadow* getShadow();
+
+    //! Adds caption to this scene node    
+    scn::ITextSceneNode* attachCaption(
+        vid::IFont* font=NULL, const char *text = "Caption",
+        img::SColor color=img::SColor(100,255,255,255));
+
+    //! Remove caption this scene node    
+    bool detachCaption();
+
+    //! returns caption scene node
+    scn::ITextSceneNode* getCaption();
+
+    //! Show/hide caption of this scene node    
+    bool showCaption(bool show); 
+
+    //! Adds dynamic object to this scene node
+    dyn::IDynamicObject* attachDynamicObject(dyn::SDynamicObjectParams &ode_obj_params);
+
+    //! Remove Dynamic object from this scene node
+    bool detachDynamicObject();
+
+    //! returns dynamic object
+    dyn::IDynamicObject* getDynamicObject();
+
+    //! Adds game node to this scene node
+    game::IGameNode* attachGameNode(game::SGameNodeParams &game_node_params);
+
+    //! Remove game node from this scene node
+    bool detachGameNode();
+
+    //! returns game node attached to this scene node
+    game::IGameNode* getGameNode();
+
+    //! Adds imposter to this scene node node
+    scn::ISceneNode* attachImposter(
+		const scn::SImposterCreationParameters &creation_params,
+		const scn::SImposterParameters &params,
+		bool recreate_if_exists = false);
+
+    //! Adds imposter to this scene node node
+    bool attachImposter(
+		scn::ISceneNode* imposter, 
+		const scn::SImposterCreationParameters &creat_params,
+		const scn::SImposterParameters &params);
+
+    //! Remove imposter from this scene node node
+    bool detachImposter();    
+
+    //! getting imposter to this scene node node
+    scn::ISceneNode* getImposter();
+
+    //! return type of this scene node
+    E_SCENE_NODE_TYPE getSceneNodeType();
+
+    //! return camera attached to this scene node
+    scn::ICameraSceneNode* getCamera();
+
+    //! return true if this node was renered in this frame
+    bool isRendered();
+
+    //! getting imposter common parameters
+    const scn::SImposterParameters* getImposterParameters();
+
+	//! setting imposter common parameters
+	bool setImposterParameters(const SImposterParameters &params);
+
+    //!
+    const scn::SImposterCreationParameters* getImposterCreationParameters();
+
+    //! getting scene node params
+    scn::SSceneNodeCommonParams getParameters();
+
+    //! setting scene node params
+    void setParameters(scn::SSceneNodeCommonParams &params);
+
+    //! setting scene node params
+    void setParameters(scn::SSceneNodeParameters &parameters);
+
+    //! setting scene node params
+    void setParameters(scn::SSceneNodeTransformation &transformation);
+
+    //! setting scene node params
+    void setParameters(scn::SSceneNodeMaterial &material);
+
+    //! setting occluder indication for this scene node,
+    //! this mean that scene node can occlude other nodes in scene 
+    bool setOccluder(bool occluder);
+
+    //! return true if this scene node occluding other nodes in scene
+    bool isOccluder();
+
+    //! getting culling filter for this scene node
+    E_CULLING_TESTS getCullingFilter();
+
+    //! setting culling filter for this scene node
+    void setCullingFilter(E_CULLING_TESTS cull_filter);
+
+    //! setting scene node properties from other scene node
+    bool set(scn::ISceneNode* other);
+
+	//! return string with scene node's core properties in xml format
+	const char* getSceneCorePropertiesXMLString();
+
+    //! Geting animations count 
+    int getAnimationsCount();
+
+	//! Starts a special animation. 
+    bool setCurrentAnimation(unsigned anim, float delay=0.0f);
+
+    //! Getint current animation. 
+    unsigned getCurrentAnimation();
+
+	//! Sets the progress of the current animation (value between [0,1])
+	bool setCurrentAnimationProgress(float progress);
+
+	//! Gets the progress of the current animation (value between [0,1])
+	float getCurrentAnimationProgress();
+};
+
+//----------------------------------------------------------------------------  
+
+class ISceneNodeAnimator
+{       
+};
+
+//---------------------------------------------------------------------------- 
+} // end namespace scn
+//----------------------------------------------------------------------------

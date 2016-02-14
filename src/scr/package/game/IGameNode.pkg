@@ -1,0 +1,175 @@
+//---------------------------------------------------------------------------
+namespace game {
+//---------------------------------------------------------------------------
+
+//! game node params
+struct SGameNodeParams
+{
+    SGameNodeParams();
+    SGameNodeParams(E_GAME_NODE_TYPE gntype, char *class_name);
+    SGameNodeParams(const SGameNodeParams& p);
+    SGameNodeParams(const SGameNodeParams& p, E_GAME_NODE_TYPE gntype);
+
+    void set(const SGameNodeParams& p);
+
+    bool operator==(const SGameNodeParams& p);
+
+    core::stringc ClassName;
+    E_GAME_NODE_TYPE Type;
+    float MovSpeed, RotSpeed, Life;
+};
+
+//----------------------------------------------------------------------------
+
+//! Game node common params - used scene node, dynamic object and game node
+struct SGameNodeCommonParams
+{
+    SGameNodeCommonParams();
+    SGameNodeCommonParams(const SGameNodeCommonParams& p);
+
+    void set(const SGameNodeCommonParams& p);
+
+    scn::SSceneNodeCommonParams Scene;
+    dyn::SDynamicObjectParams   Dynamic;
+    game::SGameNodeParams       Game;
+};     
+
+//----------------------------------------------------------------------------
+
+class IGameNode
+{
+    IGameInventory& getInventory();
+
+    //! return type of game node
+    E_GAME_NODE_TYPE getGameNodeType();
+
+    //! get game node parameters
+    const SGameNodeParams& getParameters();
+
+    //! setting game node parameters
+    void setParameters(SGameNodeParams &game_params);
+    
+    //! returns scene node assotiated with this game node
+    scn::ISceneNode* getSceneNode();
+
+    //! returns dynamic object assotiated with this game node
+    dyn::IDynamicObject* getDynamicObject();
+
+    //! return true if this game node attached to main player
+    bool isMainPlayer();
+
+    //! ading sound effect to this game node
+    void addSoundEffect(mm::ISound *sound);
+
+    //! playing sound effect, attached to this game node
+    bool playSoundEffect(int idx=0);
+
+    //! playing sound effect, attached to this game node
+    bool stopSoundEffect(int idx=0);
+
+    bool isPlayingSoundEffect(int idx);
+
+    //! return sound effect, attached to this game node
+    mm::ISound* getSoundEffect(int idx);
+
+    //! return sound effects count
+    int getSoundEffectsCount();
+
+    //! removing all sound effects from this game node
+    void removeAllSoundEffects();
+
+    //! removing sound effect from this game node
+    bool removeSoundEffect(mm::ISound *sound);
+
+    //! setting sound effects volume
+    void setSoundEffectsVolume(float volume);
+
+    //! setting auto created flag
+    void setAutoCreatedFlag(bool value);
+
+    //! getting auto created flag
+    bool isAutoCreated();
+
+    const core::vector3df& getLastDislocation() const;
+
+    const core::vector3df& getDislocation()  const;
+
+    const core::vector3df& getLastOrientation() const;
+
+    const core::vector3df& getOrientation()  const;
+
+    const core::matrix4& getTransformation() const;
+
+    const core::vector3df& getMoveDir() const;
+
+    const core::aabbox3df& getBoundingBox() const;
+
+    const core::aabbox3df& getTransformedBBox() const;
+
+    const core::vector3df& getTransformedBBoxCenter() const;
+
+    float getNodeSphereRadius() const;
+
+    float getMoveSpeed();
+
+    const char* getGameClassName();
+
+    bool isEnabled();
+
+    void setEnabled(bool enabled);
+
+    bool isRendered();
+
+    bool isGaming();         
+
+    //! return curent animation played index
+    int getAnimation();
+
+    //! return curent animation progress (0.0 - 1.0)
+    float getAnimationProgress();
+
+    //! return true if this ai node dead
+    bool isDead();
+
+    //! return true if this ai node live
+    bool isLive();
+
+    //! increase/decrease life
+    void addLife(float add_val);
+
+    //! return life value
+    float getLife();
+
+    //! setting life value
+    void setLife(float val);
+
+    //! setting max life value
+    void setMaxLife(float val);
+
+    //! getting max life value
+    float getMaxLife();
+
+    //! updating status
+    bool update();
+
+    //! gets game common parameters
+    const SGameNodeCommonParams& getGameCommonParams() const;
+
+    //! gets game common parameters
+    void updateGameCommonParams();
+
+    E_WAR_SIDE getWarSide();
+
+	//! return string with scene node's core properties in xml format
+	const char* getSceneCorePropertiesXMLString();
+
+	//! return string with dynamic object's core properties in xml format
+	const char* getDynamicCorePropertiesXMLString();
+
+	//! return string with game node's core properties in xml format
+	const char* getGameCorePropertiesXMLString();
+};
+
+//----------------------------------------------------------------------------
+} // namespace game
+//----------------------------------------------------------------------------

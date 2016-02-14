@@ -1,0 +1,172 @@
+//----------------------------------------------------------------------------
+namespace core {
+//----------------------------------------------------------------------------
+
+//! Very simple string class with some useful features.
+class stringc
+{
+
+    //! Constructors
+    stringc();
+    stringc(const stringc& other);
+    stringc(const char* c, int lenght);
+    stringc(const char* c);
+
+    //------------------------------------------------------------
+
+    //! destructor
+    ~stringc();
+
+    //------------------------------------------------------------
+
+	stringc& set(const stringc& other);
+    stringc& set(const char* c);
+
+    //------------------------------------------------------------
+
+    //! Add operator
+    stringc& operator+(const stringc& other);
+
+    //------------------------------------------------------------
+
+    //! Add operator for strings, ascii and unicode
+    stringc& operator+(const char* c);
+
+    //------------------------------------------------------------
+
+    //! Direct access operator
+    char& operator [](const int index) const;
+
+    //------------------------------------------------------------
+
+    //! Comparison operator
+    bool operator ==(const stringc& other) const;
+
+    //------------------------------------------------------------
+
+    //! Is smaller operator
+    bool operator <(const stringc& other) const;
+
+    //------------------------------------------------------------
+
+    //! Returns length of stringc
+    //! \return Returns length of the stringc in characters.
+    int size() const;
+
+    //------------------------------------------------------------
+
+    //! Returns character stringc
+    //! \return Returns pointer to C-style zero terminated stringc.
+    const char* c_str() const;
+
+    //------------------------------------------------------------
+
+    //! Makes the stringc lower case.
+    void make_lower();
+
+    //------------------------------------------------------------
+
+    //! Makes the stringc upper case.
+    void make_upper();
+
+    //------------------------------------------------------------
+
+    //! Compares the stringc ignoring case.
+    //! \param other: Other stringc to compare.
+    //! \return Returns true if the stringc are equal ignoring case.
+    bool equals_ignore_case(const stringc& other) const;
+
+    //------------------------------------------------------------
+
+    //! Appends a character to this stringc
+    //! \param character: Character to append.
+    void append(char character);
+
+    //------------------------------------------------------------
+
+    //! Appends a stringc to this stringc
+    //! \param other: String to append.
+    void append(const stringc& other);
+
+    //------------------------------------------------------------
+
+    //! Appends a stringc of the length l to this stringc.
+    //! \param other: other String to append to this stringc.
+    //! \param length: How much characters of the other stringc to add to this one.
+    void append(const stringc& other, int length);
+
+	//------------------------------------------------------------
+
+	void append(const char *other);
+	void append(const char *other, int length);
+
+    //------------------------------------------------------------
+
+    //! Reserves some memory.
+    //! \param count: Amount of characters to reserve.
+    void reserve(int count);
+
+    //------------------------------------------------------------
+
+    //! finds first occurrence of character in stringc
+    //! \param c: Character to search for.
+    //! \return Returns position where the character has been found,
+    //! or -1 if not found.
+    int find_first(char c) const;
+
+    //------------------------------------------------------------
+
+    //! replacing character in stringc
+    //! \param old_char: Character which must be replased
+    //! \param new_char: Character to replace
+    void replace_char(char old_char, char new_char);
+
+    //------------------------------------------------------------
+
+    //! finds next occurrence of character in stringc
+    //! \param c: Character to search for.
+    //! \param startPos: Position in stringc to start searching.
+    //! \return Returns position where the character has been found,
+    //! or -1 if not found.
+    int find_next(char c, int startPos) const;
+
+    //------------------------------------------------------------
+
+    //! finds last occurrence of character in stringc
+    //! \param c: Character to search for.
+    //! \return Returns position where the character has been found,
+    //! or -1 if not found.
+    int find_last(char c) const;
+
+    //------------------------------------------------------------
+
+    //! Returns a substring
+    //! \param begin: Start of substring.
+    //! \param length: Length of substring.
+    stringc sub_string(int begin, int length);
+};
+
+//----------------------------------------------------------------------------
+
+const char*	Utf8ToAnsi(const char* utf8);
+const char*	AnsiToUtf8(const char* ansi);
+void		CP866ToCP1251(char *s);
+const char*	ToHexStr(unsigned v);
+const char*	ToHexStr64(u64 v);
+
+//----------------------------------------------------------------------------
+
+// calculating relative path between two directories
+// \param from_dir = "H:/My_Engine/media/models/decorations/trees/"
+// \param to_dir   = "H:/My_Engine/media/textures/decorations/"
+// \return           "../../../textures/decorations/"
+const char* getRelativePathBetweenDirectories(const char *from_dir, const char *to_dir);
+
+const char* extractFilePath(const char *sourceStr);
+const char* extractFileName(const char *sourceStr);
+const char* extractFileName(const char *sourceStr, bool noExt);
+const char* extractFileExt(const char *sourceStr);
+
+//----------------------------------------------------------------------------
+} // end namespace core 
+//----------------------------------------------------------------------------

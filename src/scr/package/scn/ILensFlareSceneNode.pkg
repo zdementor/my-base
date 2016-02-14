@@ -1,0 +1,59 @@
+//----------------------------------------------------------------------------
+namespace scn {
+//----------------------------------------------------------------------------
+
+struct SLens
+{
+	vid::ITexture* getTexture() const;
+
+	float spaceConst;
+};
+
+//---------------------------------------------------------------------------- 
+
+//! interfase for using Lens Flare scene node
+class ILensFlareSceneNode : public ISceneNode
+{
+	//! getting lens count
+	unsigned getLensCount();
+
+	//! setting lens, return true on success
+	bool setLens(unsigned idx, vid::ITexture *tex, float space);
+
+	//! adding lens
+	void addLens(vid::ITexture *tex, float space);
+
+	//! getting lens
+	const SLens& getLens(unsigned idx) const;
+
+	//! removing lens
+	void removeLens(unsigned idx);
+
+	//! clearing all lens
+	void clearLens();
+
+	//! setting corona
+	void setCorona(vid::ITexture *tex);
+
+	//! getting corona
+	vid::ITexture* getCorona() const;
+
+	//! setting general lens color
+	void setColor(const img::SColor &color);
+
+	//! getting general lens color
+	const img::SColor& getColor();
+
+	//! setting etalon screen size (in which scale of the lens is 1.0)
+	void setEtalonScreenSize(unsigned width, unsigned height);
+
+	//! getting etalon screen size (in which scale of the lens is 1.0)
+	const core::dimension2di& getEtalonScreenSize() const;
+
+	//! return screen position of this lensflare
+	const core::position2di& getScreenPosition() const;
+};
+
+//---------------------------------------------------------------------------- 
+} // end namespace scn
+//----------------------------------------------------------------------------

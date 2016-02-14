@@ -1,0 +1,222 @@
+//---------------------------------------------------------------------------
+namespace game {
+//---------------------------------------------------------------------------
+
+struct SSceneProps
+{
+    SSceneProps();
+    SSceneProps(const SSceneProps &p);
+    ~SSceneProps();
+
+    void set(const SSceneProps& p);
+    
+    float LODDistances[scn::E_LOD_LEVEL_COUNT];
+};
+
+//----------------------------------------------------------------------------
+
+struct SVideoProps
+{
+    SVideoProps();
+    SVideoProps(const SVideoProps &p);
+    ~SVideoProps();
+
+    void set(const SVideoProps& p);
+
+    img::SColor  ShadowColor;
+    vid::SFog    DistanceFog;
+    img::SColor  GroundFogColor;
+    img::SColorf GlobalAmbientColor;
+    vid::SLight  GlobalLight;
+};
+
+//----------------------------------------------------------------------------
+
+struct SGameSceneProps
+{
+    SGameSceneProps();
+    SGameSceneProps(const SGameSceneProps &p);
+    ~SGameSceneProps();
+
+    void set(const SGameSceneProps& p);
+
+    SSceneProps Scene;
+    SVideoProps Video;
+};   
+
+//----------------------------------------------------------------------------
+
+class IGameManager
+{
+    //! Return singleton object
+    static IGameManager& getSingleton();
+
+    //! retrieve game node by index
+    IGameNode* getGameNode(int idx);
+
+    //! retrieve game nodes count
+    int getGameNodesCount();
+
+    //! retrieve active game nodes count
+    int getActiveGameNodesCount();
+
+    //! retrieve game node by type and index
+    IGameNode* getGameNode( E_GAME_NODE_TYPE gntype, int idx=0 );
+
+    //! retrieve game nodes count by type
+    int getGameNodesCount(E_GAME_NODE_TYPE gntype);
+
+    //! retrieve game node type and index
+    E_GAME_NODE_TYPE getGameNodeType (IGameNode* game_node);
+    int              getGameNodeIndex(IGameNode* game_node);
+
+    //! apply scenenodes common parameters to the selected scenenode
+    void applyGameNodeCommonParams(
+        scn::ISceneNode *node, SGameNodeCommonParams &node_params
+        );
+
+     //! Adds Game Units formation 
+    IGameUnitsFormation* addGameUnitsFormation(core::dimension2di dim, int formation_id);
+
+    //! Adds Game Units formation 
+    IGameUnitsFormation* getGameUnitsFormationFromID( int formation_id);
+
+    //! Adds Game node to the scene graph.
+    IGameNode* addGameNode(SGameNodeCommonParams &node_params, scn::ISceneNode* scene_node);
+
+    //! Creating Game node (return new created game node)
+    IGameNode* createGameNode(SGameNodeCommonParams &node_params, bool log_info = false);
+
+    //! Cloning Game node (return new created game node)
+    IGameNode* cloneGameNode(IGameNode *game_node, bool log_info = false);
+
+    //! reloads Game node
+    IGameNode* reloadGameNode(IGameNode* gn);
+
+	//! load Game node from the file.
+	IGameNode* loadGameNode(const char* fname);
+	IGameNode* loadGameNode(game::E_GAME_NODE_TYPE gntype, const char* fname);
+    IGameNode* loadGameNode(SGameNodeCommonParams &node_params, const char* fname);
+
+    //! loading game scene from file
+    void loadGameSceneLater(const char* filename);
+
+    //! load game scene from file
+    bool loadGameScene(const char* filename);
+
+    //! saving scene to xml-file
+    bool saveGameScene(const char* filename = NULL);
+
+    //! clear all game scene
+    void clearGameScene(bool clear_resourses=true);
+
+    const char* getGameSceneFileName();
+
+    //! setting current main player
+    IGameNodeMainPlayer* setCurrentMainPlayer(int idx);
+
+    //! getting main players count
+    int getMainPlayersCount();
+
+    //! getting current main player game node object
+    IGameNodeMainPlayer* getMainPlayerGameNode();
+
+    //! getting current main player scene node object
+    scn::ISceneNode* getMainPlayerSceneNode();
+
+    //! getting current main player dynamic object
+    dyn::IDynamicObject* getMainPlayerDynamicObject();
+
+    //! getting current main player camera
+    scn::ICameraSceneNode* getMainPlayerCamera();
+
+	//! choosing game node from screen coordinates
+	IGameNode* getGameNodeFromScreenCoordinates(const core::position2di &scr_pos);
+
+    //! stopping the game
+    void stopGame();
+
+    //! resuming the game
+    void startGame();
+
+    //! do game step
+    void doGame();
+
+    //! called each time before render frame
+    void preRenderFrame();
+
+    //! called each time after render frame
+    void postRenderFrame();
+
+    //! show/hide wait window
+    void showMessageBox(
+        bool show, const char *caption = "", const char *message = "");
+
+    //! returns current dynamic calculation per second value
+    int getDynamicPS();
+
+    //! returns current game calculation per second value
+    int getGamePS();
+
+	//! returns current script parsing per second value
+    int getScriptPS();
+
+    //! return true if game is started, otherwise false
+    bool isGameStarted();
+
+    //! setting file name of game script
+    void setGameScriptFileName(core::stringc &scr_fname);
+
+    //! Return file name of game script
+    core::stringc getGameScriptFileName();
+
+    //! adding game sound track
+    void addSoundTrack(core::stringc &snd_fname);
+
+    //! removing game sound tracks
+    void removeAllSoundTracks();
+        
+    //! return game sound track object by its index
+    mm::ISound* getSoundTrack(int idx);
+
+    //! return overal count of game sound tracks
+    int getSoundTracksCount();
+
+    //! starts playing sound track
+    bool playSoundTrack(int idx);
+
+    //! paused playing sound track
+    bool pauseSoundTrack(int idx);
+
+    //! stopps all playing sound tracks
+    void stopAllSoundTracks();
+
+    //! setting sound tracks volume (0.0f - 1.0f) 
+    void setSoundTracksVolume(float volume);
+
+    //! getting sound tracks volume (0.0f - 1.0f)
+    float getSoundTracksVolume();
+
+    //! setting sound effects volume (0.0f - 1.0f)
+    void setSoundEffectsVolume(float volume);
+
+    //! getting sound effects volume (0.0f - 1.0f)
+    float getSoundEffectsVolume();
+
+    //! getting game node params
+    SGameNodeParams getGameNodeParams(IGameNode *gnode);
+
+    //! setting game node params
+    void applyGameNodeParams(IGameNode *gnode, SGameNodeParams &params);
+
+    IPathFindTask* createPathFindTask();
+
+    const SGameSceneProps& getGameSceneProps(); 
+
+    void setGameSceneProps(const SGameSceneProps& props); 
+
+};
+
+//----------------------------------------------------------------------------
+} // namespace game
+//----------------------------------------------------------------------------

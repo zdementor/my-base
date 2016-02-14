@@ -1,0 +1,250 @@
+//---------------------------------------------------------------------------
+namespace game {
+//---------------------------------------------------------------------------
+                                                 
+//! enumaretion for all kinds of game nodes types
+enum E_GAME_NODE_TYPE
+{
+    //! Main Player node
+    EGNT_MAIN_PLAYER = 0,
+
+    //! Person node
+    EGNT_PERSON,
+
+    //! Decoration node
+    EGNT_DECORATION,
+
+    //! Level Map
+    EGNT_LEVEL_MAP,
+
+    //! Terrain
+    EGNT_TERRAIN,
+
+    //! Sky Dome
+    EGNT_SKY_DOME,
+
+    //! Light 
+    EGNT_LIGHT, 
+
+    //! Trigger 
+    EGNT_TRIGGER,
+
+    //! Door
+    EGNT_DOOR,
+
+    //! Platform
+    EGNT_PLATFORM,
+
+    //! Button
+    EGNT_BUTTON,
+
+    //! Item
+    EGNT_ITEM,
+
+    //! Weapon
+    EGNT_WEAPON,
+
+    //! Units formation
+    EGNT_UNITS_FORMATION,
+
+    //! Unknown game node type
+    EGNT_UNKNOWN,
+
+    //! Not used, only for counting enumeration
+    E_GAME_NODE_TYPE_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+const char* getGameNodeTypeName(E_GAME_NODE_TYPE type);
+const char* getGameNodeTypeReadableName(E_GAME_NODE_TYPE type);
+
+//----------------------------------------------------------------------------
+
+//! enumeration for all kind of game triigers
+enum E_GAME_TRIGGER_TYPE
+{
+    EGTT_TRAP =0,
+    EGTT_PUSH,
+
+    E_GAME_TRIGGER_TYPE_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+enum E_GAME_AI_EVENT_TYPE
+{
+    EGAIET_ENEMY_VISUAL_CONTACT = 0,
+    EGAIET_ENEMY_SOUND_CONTACT,
+    EGAIET_ENEMY_PHYSIC_CONTACT,
+
+    EGAIET_FRIEND_VISUAL_CONTACT,
+    EGAIET_FRIEND_SOUND_CONTACT,
+    EGAIET_FRIEND_PHYSIC_CONTACT,
+
+    E_GAME_AI_EVENT_TYPE_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+enum E_GAME_EVENT_TYPE
+{
+    EGET_SOUND=0,
+    EGET_PHYSIC,
+
+    E_GAME_EVENT_TYPE_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+//! enumeration for all kinds of game actions
+enum E_GAME_TASK_TYPE
+{
+    EGTT_LOAD_SCENE=0,
+    EGTT_ACTIVATE,  
+    EGTT_ATTACK,
+    EGTT_HITED, 
+    EGTT_DIE,
+    EGTT_FIND_PATH_AND_MOVE,
+    EGTT_ORIENT,
+
+    E_GAME_TASK_TYPE_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+//! Defines player states
+enum EPLAYER_STATE
+{   
+    EPS_RUNNING=0,
+    EPS_STANDING,
+    EPS_JUMPING,
+
+    EPLAYER_STATE_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+enum E_OBJECT_ACTIVATE_MODE
+{
+    EOAM_AUTOMATIC = 0,
+    EOAM_BY_BUTTON,
+    EOAM_BY_KEY,
+
+    E_OBJECT_ACTIVATE_MODE_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+enum E_AI_STATE
+{
+    EAIS_IDLE = 0,  
+    EAIS_SEEKING,   
+    EAIS_ATTACKING,
+    EAIS_FINISHING_ATTACK,
+    EAIS_FINISHED_ATTACK,
+    EAIS_WAIT_A_TURN,
+    EAIS_DYING,
+    EAIS_DEAD,
+
+    E_AI_STATE_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+enum E_BUTTON_STATE
+{
+    EBS_UNPUSHED = 0,
+    EBS_PUSHING,
+    EBS_WAITING,
+    EBS_UNPUSHING,
+
+    E_BUTTON_STATE_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+enum E_DOOR_STATE
+{
+    EDS_CLOSED = 0,
+    EDS_OPENING,
+    EDS_WAITING,
+    EDS_CLOSING,
+
+    E_DOOR_STATE_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+enum E_GAME_ITEM_TYPE
+{
+    EGIT_MEDPACK = 0,
+    EGIT_ARMOR,
+    EGIT_KEY,
+    EGIT_WEAPON,
+    EGIT_AMMO,
+
+    E_GAME_ITEM_TYPE_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+enum E_PLATFORM_STATE
+{
+    EPS_WAITING_AT_START = 0,
+    EPS_MOVING_FORWARD,
+    EPS_MOVING_BACKWARD,
+    EPS_WAITING_AT_END,
+
+    E_PLATFORM_STATE_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+//! The three formation states.
+enum E_FORMATION_STATES
+{
+    EFS_BROKEN=0,
+    EFS_FORMING,
+    EFS_FORMED,
+
+    E_FORMATION_STATES_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+//! enumeration for actions. Used for example in the FPS Camera.
+enum E_GAME_ACTION
+{    
+    EGA_MOVE_FORWARD = 0,        // go forward
+    EGA_MOVE_BACKWARD,           // go backward
+    EGA_MOVE_LEFT_STRAFE,        // strafe left
+    EGA_MOVE_RIGHT_STRAFE,       // strafe right
+ 	EGA_VIEW_ZOOM_IN,            // zoom in
+	EGA_VIEW_ZOOM_OUT,           // zoom out
+	EGA_ATTACK_PRIMARY,          // 
+	EGA_SELECT_PREV_WEAPON,      // prev weapon
+	EGA_SELECT_NEXT_WEAPON,      // next weapon
+	EGA_SELECT_WEAPON_0,         // weapon 0
+	EGA_SELECT_WEAPON_1,         // weapon 1
+	EGA_SELECT_WEAPON_2,         // weapon 2
+	EGA_ENTER_INVENTORY,         // inventory
+    E_GAME_ACTION_COUNT
+};
+
+//!---------------------------------------------------------------------------
+
+enum E_WAR_SIDE
+{
+    EWS_FRIEND  = 0x00000001,
+    EWS_ENEMY   = 0x00000003,
+    EWS_NEUTRAL = 0
+};
+
+//----------------------------------------------------------------------------
+
+const char* getGameNodeCorePropertiesTagValue();
+
+//----------------------------------------------------------------------------
+} // end namespace game
+//----------------------------------------------------------------------------

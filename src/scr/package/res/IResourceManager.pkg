@@ -1,0 +1,29 @@
+//----------------------------------------------------------------------------
+namespace res {
+//----------------------------------------------------------------------------
+
+class IResourceManager
+{
+    //! Return singleton object
+    static IResourceManager& getSingleton();
+
+	//! sets relative media directory
+	virtual void setMediaDirRel(E_MEDIA_TYPE mt, const char *dir);
+	virtual void setCommonMediaDirRel(E_MEDIA_TYPE mt, const char *dir);
+
+	//! return relative media directory
+	virtual const char* getMediaDirRel(E_MEDIA_TYPE mt);
+	virtual const char* getCommonMediaDirRel(E_MEDIA_TYPE mt);
+
+	//! return full media directory 
+	virtual const char* getMediaDirFull(E_MEDIA_TYPE mt);
+	virtual const char* getCommonMediaDirFull(E_MEDIA_TYPE mt);
+
+	//! return relative file name to the media resource
+	virtual const char*	getMediaFileNameRel(E_MEDIA_TYPE mt, const char *full_file_name);	
+	virtual const char*	getCommonMediaFileNameRel(E_MEDIA_TYPE mt, const char *full_file_name);
+};
+
+//----------------------------------------------------------------------------
+} // namespace res 
+//----------------------------------------------------------------------------

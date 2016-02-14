@@ -1,0 +1,140 @@
+//----------------------------------------------------------------------------
+namespace core {
+//----------------------------------------------------------------------------
+
+//! Enumeration for intersection relations of 3d objects
+enum E_INTERSECTION_RELATION_3D 
+{
+    EIREL3D_FRONT = 0,
+    EIREL3D_BEHIND,
+    EIREL3D_PLANAR
+};
+
+//-----------------------------------------------------------------------------
+
+//! Template plane class with some intersection testing methods.
+class plane3df
+{
+    //------------------------------------------------------------------------
+    // Constr / Destr
+    //------------------------------------------------------------------------
+
+    plane3df();
+    plane3df(const vector3df& point, const vector3df& normal);
+    plane3df(float px, float py, float pz, float nx, float ny, float nz);
+    plane3df(const plane3df& other);
+    plane3df(const vector3df& p1, const vector3df& p2, const vector3df& p3);
+	~plane3df();
+
+    //------------------------------------------------------------------------
+    // operators
+    //------------------------------------------------------------------------
+
+    bool operator==(const plane3df& other) const;
+
+    //------------------------------------------------------------------------
+    // functions
+    //------------------------------------------------------------------------
+
+    void set(const vector3df& point, const vector3df& nvector);
+    void set(const vector3df& nvect, float d);
+    void set(const vector3df& p1, const vector3df& p2, const vector3df& p3);
+
+    //! Returns an intersection with a 3d line.
+    //! \param lineVect: Vector of the line to intersect with.
+    //! \param linePoint: Point of the line to intersect with.
+    //! \param outIntersection: Place to store the intersection point, if there is one.
+    //! \return Returns true if there was an intersection, false if there was not.
+    bool getIntersectionWithLine(
+        const vector3df& linePoint, const vector3df& lineVect,
+        vector3df& outIntersection
+        ) const;
+
+    //! Returns an intersection with a 3d line.
+    //! \param line: line to intersect with.
+    //! \param outIntersection: Place to store the intersection point, if there is one.
+    //! \return Returns true if there was an intersection, false if there was not.
+    bool getIntersectionWithLine(
+        const line3df& line, vector3df& outIntersection
+        ) const;
+
+    //! Returns an intersection with a 3d line, limited between two 3d points.
+    //! \param linePoint1: Point 1 of the line.
+    //! \param linePoint2: Point 2 of the line.
+    //! \param outIntersection: Place to store the intersection point, if there is one.
+    //! \return Returns true if there was an intersection, false if there was not.
+    bool getIntersectionWithLimitedLine(
+        const vector3df& linePoint1, const vector3df& linePoint2, 
+        vector3df& outIntersection
+        ) const;
+
+    //! Returns an intersection with a 3d line, limited between two 3d points.
+    //! \param line: line to intersect with.
+    //! \param outIntersection: Place to store the intersection point, if there is one.
+    //! \return Returns true if there was an intersection, false if there was not.
+    bool getIntersectionWithLimitedLine(
+        const line3df& line, vector3df& outIntersection
+        ) const;
+
+    //! Returns a projection of the vector
+    vector3df getProjection( const vector3df& vec ) const;
+
+    //! Classifies the relation of a point to this plane.
+    //! \param point: Point to classify its relation.
+    //! \return Returns EIREL3D_FRONT if the point is in front of the plane,
+    //! EIREL3D_BEHIND if the point is behind of the plane, and
+    //! EIREL3D_PLANAR if the point is within the plane.
+    E_INTERSECTION_RELATION_3D classifyPointRelation(const vector3df& point) const;  
+
+	//! Classifies the relation of a sphere to this plane.    
+	//! \param center: Center of the sphere to classify its relation.	
+	//! \param radius: Radius of the sphere to classify its relation.    
+	//! \return Returns EIREL3D_FRONT if the sphere is in front of the plane,    
+	//! EIREL3D_BEHIND if the sphere is behind of the plane, and    
+	//! EIREL3D_PLANAR if the sphere is intersects with the plane.
+	E_INTERSECTION_RELATION_3D classifySphereRelation( const core::vector3df& center, float radius ) const;
+
+    //! Recalculates the distance from origin by applying
+    //! a new member point to the plane.
+    void recalculateD(const vector3df& MPoint);
+
+    //!\return Returns a member point of the plane.
+    vector3df getMemberPoint() const;
+
+    //! Tests if there is a intersection between this plane and another
+    //! \return Returns true if there is a intersection.
+    bool existsInterSection(const plane3df& other) const;
+
+    //! Intersects this plane with another.
+    //! \return Returns true if there is a intersection, false if not.
+    bool getIntersectionWithPlane(
+        const plane3df& other, vector3df& outLinePoint, vector3df& outLineVect
+        ) const;
+
+    //! Returns the intersection point with two other planes if there is one.
+    bool getIntersectionWithPlanes(
+        const plane3df& o1, const plane3df& o2, vector3df& outPoint
+        ) const;
+
+    //! Returns if the plane is front of backfacing. Note that this only
+    //! works if the normal is Normalized.
+    //! \param lookDirection: Look direction.
+    //! \return Returns true if the plane is front facing, which mean it would
+    //! be visible, and false if it is backfacing.
+    bool isFrontFacing(const vector3df& lookDirection) const;
+
+    //! Returns the distance to a point.  Note that this only
+    //! works if the normal is Normalized.
+    float getDistanceTo(const vector3df& point) const;
+
+    //------------------------------------------------------------------------
+    // member variables
+    //------------------------------------------------------------------------
+
+    float D;              // distance from origin
+    vector3df Normal;     // normal vector
+};
+
+//----------------------------------------------------------------------------
+} // end namespace core 
+//----------------------------------------------------------------------------

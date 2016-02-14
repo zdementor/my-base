@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Helper.TypeSelectionDialog.Root" >
+        <Property Name="UnifiedAreaRect" Value="{{0.00078125,0},{-0.0013986,0},{1.00078,0},{0.998601,0}}" />
+        <Window Type="MyScened/FrameWindow" Name="Helper.TypeSelectionDialog.Frame" >
+            <Property Name="Font" Value="Tahoma-12" />
+            <Property Name="Text" Value="Select type" />
+            <Property Name="Tooltip" Value="Commit selection" />
+            <Property Name="TitlebarFont" Value="Tahoma-12" />
+            <Property Name="SizingEnabled" Value="False" />
+            <Property Name="TitlebarEnabled" Value="True" />
+            <Property Name="UnifiedAreaRect" Value="{{0,14},{0,26},{0,362},{0,225}}" />
+            <Window Type="MyScened/Combobox" Name="Helper.TypeSelectionDialog.TypesCombo" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Tooltip" Value="Game node type" />
+                <Property Name="ReadOnly" Value="True" />
+                <Property Name="UnifiedAreaRect" Value="{{0,36},{0,34},{0.885161,0},{0.901971,0}}" />
+                <Property Name="MaxEditTextLength" Value="1073741823" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Helper.TypeSelectionDialog.TypeCaption" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Type:" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,36},{0,14},{0.25,179},{0,34}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Helper.TypeSelectionDialog.CancelBtn" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Cancel" />
+                <Property Name="Tooltip" Value="Cancel selection" />
+                <Property Name="UnifiedAreaRect" Value="{{0.534122,0},{0,101},{0.771672,0},{0,133}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Helper.TypeSelectionDialog.OKBtn" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="OK" />
+                <Property Name="Tooltip" Value="Create new node" />
+                <Property Name="UnifiedAreaRect" Value="{{0.228216,0},{0,101},{0.453109,0},{0,133}}" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

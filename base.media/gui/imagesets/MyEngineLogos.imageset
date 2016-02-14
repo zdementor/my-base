@@ -1,0 +1,4 @@
+<?xml version="1.0" ?>
+<Imageset Name="MyEngineLogos" Imagefile="MyEngineLogos.tga" NativeHorzRes="800" NativeVertRes="600" AutoScaled="true" ResourceGroup="CommonImagesets">
+    <Image Name="MyEngineLogoImage" XPos="1" YPos="1" Width="298" Height="106" />
+</Imageset>

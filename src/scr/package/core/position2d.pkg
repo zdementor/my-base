@@ -1,0 +1,33 @@
+//----------------------------------------------------------------------------
+namespace core {
+//----------------------------------------------------------------------------
+
+class position2di
+{
+    position2di();
+    position2di(int x, int y);
+    position2di(const position2di& other);
+	~position2di();
+
+    void set(const int& x, const int& y);
+
+    int X, Y;
+};
+
+//---------------------------------------------------------------------------
+
+class position2df
+{
+    position2df();
+    position2df(float x, float y);
+    position2df(const position2df& other);
+	~position2df();
+
+    void set(const float& x, const float& y);
+
+    float X, Y;
+};
+
+//----------------------------------------------------------------------------
+} // end namespace core 
+//----------------------------------------------------------------------------

@@ -1,0 +1,53 @@
+//----------------------------------------------------------------------------
+namespace vid {
+//----------------------------------------------------------------------------
+
+//! Font interface.
+class IFont
+{
+public:
+
+    //! set size (only for ttf-font)
+	bool setSize(unsigned size);
+
+    //! get size (only for ttf-font, for graphic always return 1)
+	int getSize();
+
+    //! Draws an text and clips it to the specified rectangle if wanted
+    //! \param text: Text to draw
+    //! \param position: Ractangle spceifying position where to draw the text.
+    //! \param color: Color of the text
+    //! \param hcenter: Specifiies if the text should be centered horizontally into the rectangle.
+    //! \param vcenter: Specifiies if the text should be centered vertically into the rectangle.
+    //! If the pointer is null, no clipping will be done.
+    void registerForRendering (
+		const char *text, unsigned text_len, const core::recti& position, 
+        img::SColor color, bool hcenter = false, bool vcenter = false,
+		const core::recti *clipRect = NULL);
+
+    //! Calculates the dimension of a text.
+    //! \return Returns width and height of the area covered by the text if it would be
+    //! drawn.
+	core::dimension2di getDimension(const char *text);
+	core::dimension2di getDimension(unsigned text_len);
+
+    //! Calculates the index of the character in the text which is on a specific position.
+    //! \param text: Text string.
+    //! \param pixel_x: X pixel position of which the index of the character will be returned.
+    //! \return Returns zero based index of the character in the text, and -1 if no no character
+    //! is on this position. (=the text is too short).
+	int getCharacterFromPos(const char *text, int pixel_x);
+
+	//! returns font filename
+	const char* getFileName();
+
+	//! turn on/off font monospace mode
+	void setMonospaceMode(bool on);
+
+	//! return true if font monospace mode turned on
+	bool isMonospaceMode();
+};
+
+//----------------------------------------------------------------------------
+} // end namespace vid
+//----------------------------------------------------------------------------

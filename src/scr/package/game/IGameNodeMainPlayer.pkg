@@ -1,0 +1,31 @@
+//---------------------------------------------------------------------------
+namespace game {
+//---------------------------------------------------------------------------
+
+class IGameNodeMainPlayer : public IGameNodeAI
+{                             
+    //! getting game camera styles count
+    int getCameraStylesCount();
+
+    //! setting game camera style by index
+    bool setCameraStyle(int idx);
+
+    //! setting game camera style by name
+    bool setCameraStyle(const char* name);
+
+    //! setting camera auto zoom flag value
+    void setCameraAutoZoom(bool auto_zoom);
+
+    //! getting camera auto zoom flag value
+    bool isCameraAutoZoom();
+
+    //! setting camera zoom value [ 0.0 - 1.0 ]
+    void setCameraZoom(float zoom);
+
+    //! getting camera zoom value [ 0.0 - 1.0 ]
+    float getCameraZoom();
+};
+
+//----------------------------------------------------------------------------
+} // namespace game
+//----------------------------------------------------------------------------

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Scened.Scene.KTree.TopRoot" >
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="DefaultWindow" Name="Scened.Scene.KTree.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.017518,0},{0.0300004,0},{0.289208,0},{0.845908,0}}" />
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.KTree.MeshLabel" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="Mesh:" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,13},{0,18},{0,149},{0,37}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/MultiLineEditbox" Name="Scened.Scene.Ktree.MeshEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" >
+</Property>
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,58},{0,47},{0.975332,0},{0,101}}" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Scene.KTree.MeshBtn" >
+                <Property Name="UnifiedAreaRect" Value="{{0,22},{0,71},{0,53},{0,101}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Scene.KTree.PhysMeshBtn" >
+                <Property Name="UnifiedAreaRect" Value="{{0,22},{0,187},{0,53},{0,217}}" />
+            </Window>
+            <Window Type="MyScened/MultiLineEditbox" Name="Scened.Scene.KTree.PhysMeshEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" >
+</Property>
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,58},{0,163},{0.975332,0},{0,217}}" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Scene.KTree.MaxTreesEditbox" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,58},{0,294},{-0.31343,327},{0,328}}" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.PhysMeshLabel" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="Physical mesh:" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,13},{0,131},{0,329},{0,156}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.Ktree.MaxTreesLabel" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="Max triangles per node:" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,13},{0,247},{0,329},{0,297}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

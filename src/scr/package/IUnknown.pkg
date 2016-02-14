@@ -1,0 +1,12 @@
+
+//! Base class of most objects of the MyEngine.
+//! Most objects of the MyEngine are derived from IUnknown, 
+class IUnknown
+{
+	//! return true if this object locked by some other object
+	bool isLocked();
+	//! lock this object
+	void lockObject();
+	//! lock this object
+	void unlockObject();
+};

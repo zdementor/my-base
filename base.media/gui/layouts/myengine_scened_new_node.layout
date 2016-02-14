@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Scened.NewNode.Root" >
+        <Property Name="UnifiedAreaRect" Value="{{0.00078125,0},{-0.0013986,0},{1.00078,0},{0.998601,0}}" />
+        <Window Type="MyScened/FrameWindow" Name="Scened.NewNode.Frame" >
+            <Property Name="Font" Value="Tahoma-12" />
+            <Property Name="Text" Value="Create new node" />
+            <Property Name="TitlebarFont" Value="Tahoma-12" />
+            <Property Name="SizingEnabled" Value="False" />
+            <Property Name="TitlebarEnabled" Value="True" />
+            <Property Name="UnifiedAreaRect" Value="{{0,14},{0,26},{0,362},{0,339}}" />
+            <Window Type="MyScened/Combobox" Name="Scened.NewNode.SceneNodeTypeCombo" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Tooltip" Value="Scene node type" />
+                <Property Name="ReadOnly" Value="True" />
+                <Property Name="UnifiedAreaRect" Value="{{0,16},{0,30},{0.869536,0},{0.941133,-14}}" />
+                <Property Name="MaxEditTextLength" Value="1073741823" />
+            </Window>
+            <Window Type="MyScened/Combobox" Name="Scened.NewNode.DynamicObjectTypeCombo" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Tooltip" Value="Dynamic object type" />
+                <Property Name="ReadOnly" Value="True" />
+                <Property Name="UnifiedAreaRect" Value="{{0,16},{0,146},{0.869536,0},{0.952628,0}}" />
+                <Property Name="MaxEditTextLength" Value="1073741823" />
+            </Window>
+            <Window Type="MyScened/Combobox" Name="Scened.NewNode.GameNodeTypeCombo" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Tooltip" Value="Game node type" />
+                <Property Name="ReadOnly" Value="True" />
+                <Property Name="UnifiedAreaRect" Value="{{0,16},{0,88},{0.869536,0},{0.941133,0}}" />
+                <Property Name="MaxEditTextLength" Value="1073741823" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.NewNode.SceneNodeTypeCaption" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Scene node:" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,16},{0,9},{0.25,149},{0,29}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+				<Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.NewNode.DynamicObjectTypeCaption" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Dynamic object:" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,16},{0,126},{0.25,141},{0,146}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+				<Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.NewNode.GameNodeTypeCaption" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Game node:" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,16},{0,68},{0.25,159},{0,88}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+				<Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.NewNode.ClearGameNodeTypeBtn" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Tooltip" Value="Clear" />
+                <Property Name="UnifiedAreaRect" Value="{{0.885504,0},{0,87},{0.976312,0},{0,117}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.NewNode.CancelBtn" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Cancel" />
+                <Property Name="Tooltip" Value="Cancel node creation" />
+                <Property Name="UnifiedAreaRect" Value="{{0.534122,0},{0,206},{0.771672,0},{0,238}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.NewNode.OKBtn" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="OK" />
+                <Property Name="Tooltip" Value="Create new node" />
+                <Property Name="UnifiedAreaRect" Value="{{0.228216,0},{0,206},{0.453109,0},{0,238}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.NewNode.ClearDynamicObjectTypeBtn" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Tooltip" Value="Clear" />
+                <Property Name="UnifiedAreaRect" Value="{{0.883161,0},{0,146},{0.976312,0},{0,176}}" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

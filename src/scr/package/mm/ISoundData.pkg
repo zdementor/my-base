@@ -1,0 +1,35 @@
+//---------------------------------------------------------------------------
+namespace mm {
+//---------------------------------------------------------------------------
+
+class ISoundData
+{
+    virtual	int	getNumChannels () const;
+	virtual	int	getFrequency () const;
+	virtual	int	getBitsPerSample () const;	
+
+	// get size in bytes of unpacked audio data
+	virtual	int	getSize () const;
+
+	// fill buffer with next audio data
+	virtual	int	read ( char* buf, int size = -1 );
+
+	// position in sound (in seconds)
+	virtual	bool seek ( float time );
+
+	// return position in sound (in seconds)
+	virtual	float getTime ();
+	
+	// whether we're at end of sound data
+	virtual	bool atEnd () const;
+
+	// returns sound data file name
+	virtual	const char* getFileName () const;
+
+	//! return sound type
+	virtual	E_SOUND_DATA_TYPE getType();
+};
+
+//----------------------------------------------------------------------------
+} // namespace mm
+//----------------------------------------------------------------------------

@@ -1,0 +1,110 @@
+//---------------------------------------------------------------------------
+namespace game {
+//----------------------------------------------------------------------------
+
+//! game node params
+struct SGameNodeAIParams
+{    
+    int MeleAttackRange, MeleAttackDamage, MeleAttackAngle;
+    int FireAttackHorizMaxAngle, FireAttackVertMaxAngle; 
+    int Armor, Power, Dexterity, Accuracy;
+    int StandReadyMaxTimeMs;
+    int ViewDist;
+    int MemoryTime;
+    float FriendlyDamageCoeff;
+
+    SGameNodeAIParams();
+};
+
+//----------------------------------------------------------------------------
+
+class IGameNodeAI : public IGameNode
+{
+    bool addToFormation(IGameUnitsFormation* formation);
+
+    void removeFromFormation();
+
+    game::IGameUnitsFormation* getFormation();
+
+    bool inFormation();
+
+    bool isCanSee(IGameNode* gnode);
+
+    //! increase/decrease life
+    void addLife(float add_val);
+
+    bool isReadyToAttack(IGameNode *other, bool& can_mele_attack);
+
+    //! return true if this ai node dead
+    bool isDead();
+
+    void setState(E_AI_STATE state);
+
+    E_AI_STATE getState();
+
+    const SGameNodeAIParams& getParametersAI();
+
+    void setParametersAI(SGameNodeAIParams &params_ai);
+
+    //! binding new weapon to the bone and index
+    bool bindWeapon(int number, IGameNodeWeapon* weapon, const char *target_bone);
+
+    //! selecting to use weapon, by its number
+    bool selectWeapon(int number, bool select=true);
+
+    //! selecting to use previous weapon
+    bool selectPrevWeapon();
+
+    //! selecting to use next weapon
+    bool selectNextWeapon();
+
+	//! getting selected weapon number
+	int getSelectedWeaponNumber();
+
+    //! fire weapon
+    bool aimWeaponByRay(const core::line3df& ray);
+
+    //! fire weapon
+    bool aimWeaponAtPos(const core::vector3df& pos);
+
+    //! fire weapon
+    bool fireWeapon(bool fire=true, bool with_delay=true);
+
+    //! return true if firing weapon, or false
+    bool isFiring();
+
+    int getFireCount();
+
+    //! updating status
+    bool update();
+
+    core::vector3df getLookDir();
+
+    core::vector3df getRightDir();
+
+    core::vector3df getTopDir();
+
+    bool moveByVec(const core::vector3df &vec);
+
+    bool moveToPos(const core::vector3df &pos);
+
+    bool pushByForce(const core::vector3df &force);
+
+    bool pushToPos(const core::vector3df &pos);
+    
+    bool pushInDir(core::vector3df dir, float speed = 1.0f);
+
+    bool orientInHorizDir(core::vector3df dir, float speed = 1.0f);
+
+    bool orientByAngles(core::vector3df angles, float speed = 1.0f);
+                            
+    E_WAR_SIDE getWarSide();
+
+    bool isGaming();
+
+    bool isWarWith(IGameNodeAI* other);
+};
+
+//----------------------------------------------------------------------------
+} // namespace game
+//----------------------------------------------------------------------------

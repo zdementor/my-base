@@ -1,0 +1,93 @@
+//----------------------------------------------------------------------------
+namespace core {
+//----------------------------------------------------------------------------
+
+//! 2d vector template class with lots of operators and methods.
+
+//----------------------------------------------------------------------------
+
+class vector2di
+{
+    //------------------------------------------------------------------------
+    // Constr / Destr
+    //------------------------------------------------------------------------
+
+    vector2di();
+    vector2di(int nx, int ny);
+    vector2di(const vector2di& other);
+	~vector2di();
+
+    //------------------------------------------------------------------------
+    // operators
+    //------------------------------------------------------------------------
+
+    vector2di operator+(const vector2di& other) const;
+    vector2di operator-(const vector2di& other) const;
+    vector2di operator*(const vector2di& other) const;
+    vector2di operator*(const int v) const;
+    vector2di operator/(const vector2di& other) const;
+    vector2di operator/(const int v) const;
+    bool operator==(const vector2di& other) const;
+
+    //------------------------------------------------------------------------
+    // functions
+    //------------------------------------------------------------------------
+
+    void set(int nx, int ny);
+    void set(const vector2di& p);
+
+    //! Normalizes the vector.
+    vector2di& normalize();
+
+    //------------------------------------------------------------------------
+    // member variables
+    //------------------------------------------------------------------------
+
+    int X, Y;
+};
+
+//----------------------------------------------------------------------------
+
+class vector2df  
+{
+    //------------------------------------------------------------------------
+    // Constr / Destr
+    //------------------------------------------------------------------------
+
+    vector2df();
+    vector2df(float nx, float ny);
+    vector2df(const vector2df& other);
+	~vector2df();
+
+    //------------------------------------------------------------------------
+    // operators
+    //------------------------------------------------------------------------
+
+    vector2df operator+(const vector2df& other) const;
+    vector2df operator-(const vector2df& other) const;
+    vector2df operator*(const vector2df& other) const;
+    vector2df operator*(const float v) const;
+    vector2df operator/(const vector2df& other) const;
+    vector2df operator/(const float v) const;
+    bool operator==(const vector2df& other) const;
+
+    //------------------------------------------------------------------------
+    // functions
+    //------------------------------------------------------------------------
+
+    void set(float nx, float ny);
+    void set(const vector2df& p);
+
+    //! Normalizes the vector.
+    vector2df& normalize();
+
+    //------------------------------------------------------------------------
+    // member variables
+    //------------------------------------------------------------------------
+
+    float X, Y;
+};
+
+//----------------------------------------------------------------------------
+} // end namespace core 
+//----------------------------------------------------------------------------

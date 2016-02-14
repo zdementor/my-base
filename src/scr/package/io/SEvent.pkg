@@ -1,0 +1,66 @@
+//----------------------------------------------------------------------------
+namespace io {
+//----------------------------------------------------------------------------
+
+struct SKeyEvent
+{
+    E_KEY_CODE Key; // Key pressed
+    bool Shift; // true if shift was also pressed
+    bool Control; // true if ctrl was also pressed
+    
+    //! type of key event
+    E_KEY_INPUT_EVENT Event;
+};
+
+//----------------------------------------------------------------------------
+
+struct SMouseEvent
+{
+    int X, Y; // mouse positions
+	int DeltaX, DeltaY; // mouse position change
+
+    bool Shift; // true if shift key was also pressed
+    bool Control; // true if ctrl key was also pressed
+
+    //! mouse wheel delta, usually 1.0 or -1.0. Only valid if event was
+    //! EMIE_MOUSE_WHEEL
+    float Wheel; 
+
+    //! type of mouse event
+    E_MOUSE_INPUT_EVENT Event;
+};
+
+//---------------------------------------------------------------------------
+
+struct SPaintEvent
+{
+	int X, Y;
+	unsigned Width, Height;
+};
+
+//---------------------------------------------------------------------------
+
+struct SLogEvent
+{
+	const char* Text;
+    E_LOG_LEVEL Level;
+};
+
+//----------------------------------------------------------------------------
+
+struct SEvent
+{
+    EEVENT_TYPE EventType;
+
+    SEvent();
+    ~SEvent();
+    
+    SKeyEvent   KeyInput;    
+    SMouseEvent MouseInput;
+	SPaintEvent PaintEvent;
+	SLogEvent	LogEvent;
+};
+
+//----------------------------------------------------------------------------
+} // end namespace io
+//----------------------------------------------------------------------------

@@ -1,0 +1,82 @@
+//----------------------------------------------------------------------------
+namespace scn {
+//----------------------------------------------------------------------------
+
+struct SBillboardParams
+{
+	SBillboardParams();
+	~SBillboardParams();
+	
+	void set(const SBillboardParams &other);
+
+	core::dimension2df Size;
+	core::dimension2di FrameResolution;
+
+	E_AXIS_ALIGMENT_TYPE AxisAligmentType;
+
+	core::vector3df AlignAxis;
+	core::vector3df UpAxis;
+
+	bool FlipWidth, FlipHeight;
+};
+
+//----------------------------------------------------------------------------
+
+struct SAnimationFrameParameters
+{	 
+	unsigned TimePerFrame; 
+	bool Loop;
+};
+
+//----------------------------------------------------------------------------
+
+struct SAnimationFrame
+{	 
+	SAnimationFrame();
+	~SAnimationFrame();
+
+	void set(const SAnimationFrame &other);
+
+	vid::ITexture	*Texture; 
+	core::rectf		TCoords;
+	core::vector2df	TOffset;
+};
+
+//---------------------------------------------------------------------------- 
+
+//! A billboard scene node.
+//! A billboard is like a 3d sprite: A 2d element,
+//! which always looks to the camera. It is usually used for explosions, fire,
+//! lensflares, particles and things like that.
+//! Interface for a K-Tree Scene Node
+class IBillboardSceneNode : public ISceneNode
+{
+	//! Sets the size of the billboard.
+	void setSize(const core::dimension2df &size);
+
+	//! Returns the size of the billboard.
+	const core::dimension2df& getSize();
+
+	//! return billboard parameters
+	const SBillboardParams& getBillboardParameters();
+
+	//! setting billboard parameters
+	void setBillboardParameters(const SBillboardParams &bill_params);
+
+	//! getting animation textures direction set for each type of animation
+	const SAnimationFrame& getAnimationDirectionSetFrame(
+		unsigned animation_idx, unsigned direction_idx, unsigned frame_idx);
+
+	//! getting animation textures direction set parameters
+	const SAnimationFrameParameters& getAnimationFramesParameters(unsigned animation_idx);
+
+	//! getting textures direction sets count for each type of animation
+	unsigned getAnimationDirectionSetsCount(unsigned animation_idx);
+
+	//! getting frames count for animation/direction
+	unsigned getAnimationDirectionSetFramesCount(unsigned animation_idx, unsigned direction_idx);
+};
+
+//---------------------------------------------------------------------------- 
+} // end namespace scn
+//----------------------------------------------------------------------------

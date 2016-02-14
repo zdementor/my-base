@@ -1,0 +1,19 @@
+//----------------------------------------------------------------------------
+namespace scr {
+//----------------------------------------------------------------------------
+
+class IScriptManager : public ICoreScriptManagerInterface
+{
+	//! Return singleton object
+    static IScriptManager& getSingleton();
+
+	//! parsing script text
+	bool runScriptText(const char* script_text);
+
+	//! set script callback
+	void setScriptCallback(E_SCRIPT_CALLBACK_TYPE type, const char *func);
+};
+
+//----------------------------------------------------------------------------
+} // end namespace scr
+//----------------------------------------------------------------------------

@@ -1,0 +1,27 @@
+//----------------------------------------------------------------------------
+namespace vid {
+//----------------------------------------------------------------------------
+
+//! A list of all available video modes.
+class IVideoModeList
+{
+public:
+
+	//! Gets amount of video modes in the list.
+    //! \return Returns amount of video modes.
+    int getVideoModeCount();
+
+    //! Returns the screen size of a video mode in pixels.
+    //! \param modeNumber: zero based index of the video mode.
+    //! \return Returns size of screen in pixels of the specified video mode.
+    core::dimension2di getVideoModeResolution(int modeNumber);
+
+    //! Returns the pixel depth of a video mode in bits.
+    //! \param modeNumber: zero based index of the video mode.
+    //! \return Returns the size of each pixel of the specified video mode in bits.
+    int getVideoModeDepth(int modeNumber);
+};
+
+//----------------------------------------------------------------------------
+} // end namespace vid 
+//----------------------------------------------------------------------------

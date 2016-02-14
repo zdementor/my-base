@@ -1,0 +1,76 @@
+//----------------------------------------------------------------------------
+namespace img {
+//----------------------------------------------------------------------------
+
+class IImage
+{
+public:
+
+	//! Returns width and height of image data.
+	virtual const core::dimension2di& getDimension() const;
+
+	//! returns a pixel
+	virtual SColor getPixel(int x, int y) const;
+
+	//! set pixel color
+	virtual void setPixel(int x, int y, const SColor &color);
+
+	//! operate on image
+	virtual void operate(E_IMAGE_OPERATION op, float arg);
+
+	//! merge two images into one
+	virtual void blendWith(const IImage *img, E_IMAGE_OPERATION op);
+
+	//! simple smoothing filter of the image
+	virtual void smoothingFilter();
+
+	//! stamping filter of the image
+	virtual void stampingFilter();
+
+	//! returns the color format
+	virtual E_COLOR_FORMAT getColorFormat();
+
+	//! converting image format
+    virtual bool convertTo(E_COLOR_FORMAT new_color_format);
+
+    //! copies this surface into another
+    virtual bool copyTo(IImage* target, int x, int y);
+
+    //! copies this surface into another
+    virtual bool copyTo(IImage* target, const core::position2di& pos);
+
+    //! copies this surface into another
+    virtual bool copyTo(IImage* target, const core::position2di& pos, const core::recti& sourceRect, const core::recti* clipRect=0);
+
+    //! fills the surface with color
+    virtual void fill(const SColor &color);
+
+    //! fills the surface with color
+    virtual void floodFill(int startx, int starty, const SColor &color, const SColor &with_color);
+
+	//! draws a border
+    virtual void drawBorder(const core::recti& r, const SColor &color);
+
+    //! draws a border
+    virtual void drawBorder(int x, int y, int x2, int y2, const SColor &color);
+
+	//! copies this surface into another, scaling it to fit it.
+    virtual bool copyTo(IImage* target);
+
+    //! resizes the surface to a new size
+    virtual bool resizeTo(const core::dimension2di &size);
+	
+    //! Modifies an alpha channel of the image based of an color key.
+    virtual bool makeColorKey(const img::SColor &color);
+
+    //! Modifies an alpha channel of the image based of an color key position.
+    virtual bool makeColorKey(const core::position2di &colorKeyPixelPos);
+
+	//! Creating normal map from heightmap image
+	//! \param amplitude: Constant value by which the height information is multiplied.
+    virtual bool makeNormalMap(float amplitude=1.0f);	
+};
+
+//----------------------------------------------------------------------------
+} // end namespace img 
+//----------------------------------------------------------------------------

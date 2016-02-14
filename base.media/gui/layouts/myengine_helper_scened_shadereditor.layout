@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Helper.ShaderEditor.Root" >
+        <Property Name="UnifiedAreaRect" Value="{{0.00125,0},{-0.00666667,0},{1.00125,0},{0.993333,0}}" />
+        <Window Type="MyHelper/FrameWindow" Name="Helper.ShaderEditor.Frame" >
+            <Property Name="Font" Value="Tahoma-12" />
+            <Property Name="Text" Value="Shader editor" />
+            <Property Name="TitlebarFont" Value="Tahoma-12" />
+            <Property Name="TitlebarEnabled" Value="True" />
+            <Property Name="UnifiedAreaRect" Value="{{0,54},{0.0530769,0},{0,754},{0,620}}" />
+            <Window Type="MyHelper/TabControl" Name="Helper.ShaderEditor.TabControl" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="TabHeight" Value="{0,30}" />
+                <Property Name="TabTextPadding" Value="{0,5}" />
+                <Property Name="TabPanePosition" Value="Top" />
+                <Property Name="UnifiedAreaRect" Value="{{0.008947,0},{0,48},{0.984298,0},{0.886395,0}}" />
+                <Window Type="DefaultWindow" Name="Helper.ShaderEditor.ParametersTab" >
+                    <Property Name="Text" Value="Parameters" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                    <Window Type="TaharezLook/StaticText" Name="Helper.ShaderEditor.UniformsLabel" >
+                        <Property Name="Font" Value="Tahoma-12" />
+                        <Property Name="Text" Value="Uniforms:" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,22},{0,10},{0.276213,0},{0,26}}" />
+                    </Window>
+                    <Window Type="TaharezLook/ScrollablePane" Name="Helper.ShaderEditor.Uniforms.ScrollArea" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="ContentArea" Value="l:0 t:0 r:0 b:0" />
+                        <Property Name="HorzStepSize" Value="0.1" />
+                        <Property Name="VertStepSize" Value="0.1" />
+                        <Property Name="HorzOverlapSize" Value="0.01" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,15},{0,32},{0,249},{0.971309,0}}" />
+                        <Property Name="VertOverlapSize" Value="0.01" />
+                        <Property Name="HorzScrollPosition" Value="0" />
+                        <Property Name="VertScrollPosition" Value="0" />
+                        <AutoWindow NameSuffix="__auto_container__" >
+                            <Property Name="ContentArea" Value="l:0 t:0 r:0 b:0" />
+                            <Property Name="ChildExtentsArea" Value="l:0 t:0 r:0 b:0" />
+                        </AutoWindow>
+                    </Window>
+                    <Window Type="TaharezLook/StaticText" Name="Helper.ShaderEditor.VertexShaderVerLabel" >
+                        <Property Name="Font" Value="Tahoma-12" />
+                        <Property Name="Text" Value="Vertex shader version:" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,258},{0,8},{0,536},{0,35}}" />
+                    </Window>
+                    <Window Type="TaharezLook/StaticText" Name="Helper.ShaderEditor.PixelShaderVerLabel" >
+                        <Property Name="Font" Value="Tahoma-12" />
+                        <Property Name="Text" Value="Pixel shader version:" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,258},{0,72},{0,536},{0,99}}" />
+                    </Window>
+                    <Window Type="TaharezLook/Combobox" Name="Helper.ShaderEditor.VertexShaderVerCombobox" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,261},{0,34},{0,466},{0,300}}" />
+                        <Property Name="MaxEditTextLength" Value="1073741823" />
+                    </Window>
+                    <Window Type="TaharezLook/Combobox" Name="Helper.ShaderEditor.PixelShaderVerCombobox" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,261},{0,98},{0,466},{0,364}}" />
+                        <Property Name="MaxEditTextLength" Value="1073741823" />
+                    </Window>
+                    <Window Type="TaharezLook/StaticText" Name="Helper.ShaderEditor.LightsCountLabel" >
+                        <Property Name="Font" Value="Tahoma-12" />
+                        <Property Name="Text" Value="Allowed lights count:" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,258},{0,201},{0,536},{0,228}}" />
+                    </Window>
+                    <Window Type="TaharezLook/Spinner" Name="Helper.ShaderEditor.LightsCountSpinner" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="StepSize" Value="1" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="256" />
+                        <Property Name="MinimumValue" Value="0" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,261},{0,230},{0,466},{0,257}}" />
+                    </Window>
+                    <Window Type="TaharezLook/StaticText" Name="Helper.ShaderEditor.TagLabel" >
+                        <Property Name="Font" Value="Tahoma-12" />
+                        <Property Name="Text" Value="Tag:" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,258},{0,134},{0,536},{0,161}}" />
+                    </Window>
+                    <Window Type="TaharezLook/Combobox" Name="Helper.ShaderEditor.TagCombobox" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,261},{0,162},{0,466},{0,285}}" />
+                        <Property Name="MaxEditTextLength" Value="1073741823" />
+                    </Window>
+                </Window>
+                <Window Type="DefaultWindow" Name="Helper.ShaderEditor.VertexShaderTab" >
+                    <Property Name="Text" Value="Vertex shader" />
+                    <Property Name="Visible" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                    <Window Type="MyHelper/MultiLineEditbox" Name="Helper.ShaderEditor.VertexShaderEditbox" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" >
+</Property>
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.01,0},{0.02,0},{0.99,0},{0.98,0}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                </Window>
+                <Window Type="DefaultWindow" Name="Helper.ShaderEditor.PixelShaderTab" >
+                    <Property Name="Text" Value="Pixel shader" />
+                    <Property Name="Visible" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                    <Window Type="MyHelper/MultiLineEditbox" Name="Helper.ShaderEditor.PixelShaderEditbox" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" >
+</Property>
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.01,0},{0.02,0},{0.99,0},{0.98,0}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                </Window>
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.ShaderEditor.OpenButton" >
+                <Property Name="Tooltip" Value="Open GPU program" />
+                <Property Name="UnifiedAreaRect" Value="{{0,8},{0,7},{0,41},{0,40}}" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.ShaderEditor.SaveAsButton" >
+                <Property Name="Tooltip" Value="Save GPU program" />
+                <Property Name="UnifiedAreaRect" Value="{{0,43},{0,7},{0,76},{0,40}}" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.ShaderEditor.CompileButton" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="Compile" />
+                <Property Name="Tooltip" Value="Compile GPU program" />
+                <Property Name="UnifiedAreaRect" Value="{{0,10},{0.902763,0},{0,115},{0.963994,0}}" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.ShaderEditor.OKButton" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="OK" />
+                <Property Name="UnifiedAreaRect" Value="{{0,-115},{0.902763,0},{0,-50},{0.963994,0}}" />
+                <Property Name="HorizontalAlignment" Value="Right" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.ShaderEditor.CancelButton" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="Cancel" />
+                <Property Name="UnifiedAreaRect" Value="{{0,-18},{0.902763,0},{0,70},{0.963994,0}}" />
+                <Property Name="HorizontalAlignment" Value="Right" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.ShaderEditor.DecFontButton" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Font-" />
+                <Property Name="Tooltip" Value="Decrease font size" />
+                <Property Name="UnifiedAreaRect" Value="{{0,-50},{0,5},{0,-15},{0,40}}" />
+                <Property Name="HorizontalAlignment" Value="Right" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.ShaderEditor.IncFontButton" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Font+" />
+                <Property Name="Tooltip" Value="Increase font size" />
+                <Property Name="UnifiedAreaRect" Value="{{0,-10},{0,5},{0,25},{0,40}}" />
+                <Property Name="HorizontalAlignment" Value="Right" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.ShaderEditor.LeftAlignButton" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Left" />
+                <Property Name="Tooltip" Value="Left aligned view" />
+                <Property Name="UnifiedAreaRect" Value="{{0,-138},{0,5},{0,-103},{0,40}}" />
+                <Property Name="HorizontalAlignment" Value="Right" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.ShaderEditor.TopAlignButton" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Top" />
+                <Property Name="Tooltip" Value="Top aligned view" />
+                <Property Name="UnifiedAreaRect" Value="{{0,-176},{0,5},{0,-141},{0,40}}" />
+                <Property Name="HorizontalAlignment" Value="Right" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.ShaderEditor.RightAlignButton" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Right" />
+                <Property Name="Tooltip" Value="Right aligned view" />
+                <Property Name="UnifiedAreaRect" Value="{{0,-100},{0,5},{0,-65},{0,40}}" />
+                <Property Name="HorizontalAlignment" Value="Right" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.ShaderEditor.BottomAlignButton" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Bottom" />
+                <Property Name="Tooltip" Value="Bottom aligned view" />
+                <Property Name="UnifiedAreaRect" Value="{{0,-214},{0,5},{0,-179},{0,40}}" />
+                <Property Name="HorizontalAlignment" Value="Right" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.ShaderEditor.WindowedButton" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Win" />
+                <Property Name="Tooltip" Value="Windowed view" />
+                <Property Name="UnifiedAreaRect" Value="{{0,-252},{0,5},{0,-217},{0,40}}" />
+                <Property Name="HorizontalAlignment" Value="Right" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.ShaderEditor.FullscreenButton" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Full" />
+                <Property Name="Tooltip" Value="Fullscreen view" />
+                <Property Name="UnifiedAreaRect" Value="{{0,-290},{0,5},{0,-255},{0,40}}" />
+                <Property Name="HorizontalAlignment" Value="Right" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.ShaderEditor.ReloadButton" >
+                <Property Name="Tooltip" Value="Save GPU program As..." />
+                <Property Name="UnifiedAreaRect" Value="{{0,78},{0,7},{0,111},{0,40}}" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

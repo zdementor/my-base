@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Setup.Root" >
+        <Property Name="InheritsAlpha" Value="False" />
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="AquaLook/FrameWindow" Name="Setup.MainFrame" >
+            <Property Name="Font" Value="BlueHighway-16" />
+            <Property Name="Text" Value="MyEngine setup" />
+            <Property Name="AlwaysOnTop" Value="True" />
+            <Property Name="TitlebarFont" Value="BlueHighway-16" />
+            <Property Name="SizingEnabled" Value="False" />
+            <Property Name="TitlebarEnabled" Value="True" />
+            <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+            <Property Name="DragMovingEnabled" Value="False" />
+            <Property Name="CloseButtonEnabled" Value="False" />
+            <Window Type="MySetup/Button" Name="ButtonRun" >
+                <Property Name="Font" Value="BlueHighway-16" />
+                <Property Name="Text" Value="Run" />
+                <Property Name="UnifiedAreaRect" Value="{{0.212499,0},{0.909168,0},{0.479688,0},{0.971667,0}}" />
+            </Window>
+            <Window Type="MySetup/Button" Name="ButtonExit" >
+                <Property Name="Font" Value="BlueHighway-16" />
+                <Property Name="Text" Value="Exit" />
+                <Property Name="UnifiedAreaRect" Value="{{0.523436,0},{0.909168,0},{0.790625,0},{0.971667,0}}" />
+            </Window>
+            <Window Type="MySetup/FrameWindow" Name="FrameRendererSettings" >
+                <Property Name="Font" Value="BlueHighway-14" />
+                <Property Name="Text" Value="Renderer settings" />
+                <Property Name="AlwaysOnTop" Value="True" />
+                <Property Name="TitlebarFont" Value="BlueHighway-16" />
+                <Property Name="SizingEnabled" Value="False" />
+                <Property Name="TitlebarEnabled" Value="True" />
+                <Property Name="UnifiedAreaRect" Value="{{0.00546926,0},{0.254168,0},{0.99453,0},{0.508332,0}}" />
+                <Property Name="DragMovingEnabled" Value="False" />
+                <Property Name="CloseButtonEnabled" Value="False" />
+                <Window Type="MySetup/StaticText" Name="LabelDriverType" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="Text" Value="Driver type" />
+                    <Property Name="TextColours" Value="tl:FF000000 tr:FF000000 bl:FF000000 br:FF000000" />
+                    <Property Name="FrameEnabled" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.0109379,0},{0.0787133,0},{0.23698,0},{0.335195,0}}" />
+                    <Property Name="BackgroundEnabled" Value="False" />
+                </Window>
+                <Window Type="MySetup/StaticText" Name="LabelResolution" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="Text" Value="Resolution" />
+                    <Property Name="TextColours" Value="tl:FF000000 tr:FF000000 bl:FF000000 br:FF000000" />
+                    <Property Name="FrameEnabled" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.0109379,0},{0.694638,0},{0.23698,0},{0.951119,0}}" />
+                    <Property Name="BackgroundEnabled" Value="False" />
+                </Window>
+                <Window Type="MySetup/StaticText" Name="LabelRenderPath" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="Text" Value="Render path" />
+                    <Property Name="TextColours" Value="tl:FF000000 tr:FF000000 bl:FF000000 br:FF000000" />
+                    <Property Name="FrameEnabled" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.0109379,0},{0.40199,0},{0.23698,0},{0.658471,0}}" />
+                    <Property Name="BackgroundEnabled" Value="False" />
+                </Window>
+                <Window Type="MySetup/Checkbox" Name="CheckVSync" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="Text" Value="Vertical sync." />
+                    <Property Name="UnifiedAreaRect" Value="{{0.679087,0},{0.390067,0},{0.972633,0},{0.55183,0}}" />
+                </Window>
+                <Window Type="MySetup/Checkbox" Name="CheckFullscreen" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="Text" Value="Fullscreen" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.679087,0},{0.188203,0},{0.972633,0},{0.349967,0}}" />
+                </Window>
+                <Window Type="MySetup/Combobox" Name="ComboResolution" >
+                    <Property Name="Font" Value="BlueHighway-14" />
+                    <Property Name="ReadOnly" Value="True" />
+                    <Property Name="AlwaysOnTop" Value="True" />
+                    <Property Name="ClippedByParent" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.2699,0},{0.68819,0},{0.8631,0},{3.4,0}}" />
+                    <Property Name="MaxEditTextLength" Value="1073741823" />
+                </Window>
+                <Window Type="MySetup/Combobox" Name="ComboRenderPath" >
+                    <Property Name="Font" Value="BlueHighway-14" />
+                    <Property Name="ReadOnly" Value="True" />
+                    <Property Name="AlwaysOnTop" Value="True" />
+                    <Property Name="ClippedByParent" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.2699,0},{0.373641,0},{0.629607,0},{1.49079,0}}" />
+                    <Property Name="MaxEditTextLength" Value="1073741823" />
+                </Window>
+                <Window Type="MySetup/Combobox" Name="ComboDriverType" >
+                    <Property Name="Font" Value="BlueHighway-14" />
+                    <Property Name="ReadOnly" Value="True" />
+                    <Property Name="AlwaysOnTop" Value="True" />
+                    <Property Name="ClippedByParent" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.2699,0},{0.062419,0},{0.629607,0},{1.4,0}}" />
+                    <Property Name="MaxEditTextLength" Value="1073741823" />
+                </Window>
+            </Window>
+            <Window Type="MySetup/FrameWindow" Name="FrameGraphicQuality" >
+                <Property Name="Font" Value="BlueHighway-14" />
+                <Property Name="Text" Value="Graphic quality" />
+                <Property Name="AlwaysOnTop" Value="True" />
+                <Property Name="TitlebarFont" Value="BlueHighway-16" />
+                <Property Name="SizingEnabled" Value="False" />
+                <Property Name="TitlebarEnabled" Value="True" />
+                <Property Name="UnifiedAreaRect" Value="{{0.00546926,0},{0.512499,0},{0.99453,0},{0.874534,0}}" />
+                <Property Name="DragMovingEnabled" Value="False" />
+                <Property Name="CloseButtonEnabled" Value="False" />
+                <Window Type="MySetup/StaticText" Name="LabelTexFilter" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="Text" Value="Texture filter" />
+                    <Property Name="TextColours" Value="tl:FF000000 tr:FF000000 bl:FF000000 br:FF000000" />
+                    <Property Name="FrameEnabled" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.00671295,0},{0.0985668,0},{0.290961,0},{0.234461,0}}" />
+                    <Property Name="BackgroundEnabled" Value="False" />
+                </Window>
+                <Window Type="MySetup/StaticText" Name="LabelGeomDetail" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="Text" Value="Geometry detail" />
+                    <Property Name="TextColours" Value="tl:FF000000 tr:FF000000 bl:FF000000 br:FF000000" />
+                    <Property Name="FrameEnabled" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.00671295,0},{0.286068,0},{0.290961,0},{0.421962,0}}" />
+                    <Property Name="BackgroundEnabled" Value="False" />
+                </Window>
+                <Window Type="MySetup/StaticText" Name="LabelLightingQuality" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="Text" Value="Lighting" />
+                    <Property Name="TextColours" Value="tl:FF000000 tr:FF000000 bl:FF000000 br:FF000000" />
+                    <Property Name="FrameEnabled" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.00671295,0},{0.472595,0},{0.290961,0},{0.608489,0}}" />
+                    <Property Name="BackgroundEnabled" Value="False" />
+                </Window>
+                <Window Type="MySetup/StaticText" Name="LabelAnimationQuality" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="Text" Value="Animation" />
+                    <Property Name="TextColours" Value="tl:FF000000 tr:FF000000 bl:FF000000 br:FF000000" />
+                    <Property Name="FrameEnabled" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.00671295,0},{0.664054,0},{0.290961,0},{0.799947,0}}" />
+                    <Property Name="BackgroundEnabled" Value="False" />
+                </Window>
+                <Window Type="MySetup/StaticText" Name="LabelDriverType121" >
+                    <Property Name="Font" Value="BlueHighway-14" />
+                    <Property Name="Text" >Overal
+graphic level</Property>
+                    <Property Name="TextColours" Value="tl:FF000000 tr:FF000000 bl:FF000000 br:FF000000" />
+                    <Property Name="FrameEnabled" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.705969,0},{0.0587419,0},{0.987883,0},{0.370029,0}}" />
+                    <Property Name="BackgroundEnabled" Value="False" />
+                </Window>
+                <Window Type="MySetup/Checkbox" Name="CheckShadows" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="Text" Value="Shadows" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.715115,0},{0.603388,0},{0.95961,0},{0.765152,0}}" />
+                </Window>
+                <Window Type="MySetup/Checkbox" Name="CheckDirt" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="Text" Value="Dirt on level" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.715115,0},{0.734243,0},{0.95961,0},{0.896008,0}}" />
+                </Window>
+                <Window Type="MySetup/StaticText" Name="LabelShadersQuality" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="Text" Value="Shaders" />
+                    <Property Name="TextColours" Value="tl:FF000000 tr:FF000000 bl:FF000000 br:FF000000" />
+                    <Property Name="FrameEnabled" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.00671295,0},{0.853051,0},{0.290961,0},{0.988945,0}}" />
+                    <Property Name="BackgroundEnabled" Value="False" />
+                </Window>
+                <Window Type="MySetup/Combobox" Name="ComboGraphicDetail" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="ReadOnly" Value="True" />
+                    <Property Name="AlwaysOnTop" Value="True" />
+                    <Property Name="ClippedByParent" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.692895,0},{0.378151,0},{0.964589,0},{1.30267,0}}" />
+                    <Property Name="MaxEditTextLength" Value="1073741823" />
+                </Window>
+                <Window Type="MySetup/Combobox" Name="ComboShaders" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="ReadOnly" Value="True" />
+                    <Property Name="AlwaysOnTop" Value="True" />
+                    <Property Name="ClippedByParent" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.295319,0},{0.826806,0},{0.647849,0},{1.41543,0}}" />
+                    <Property Name="MaxEditTextLength" Value="1073741823" />
+                </Window>
+                <Window Type="MySetup/Combobox" Name="ComboAnimation" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="ReadOnly" Value="True" />
+                    <Property Name="AlwaysOnTop" Value="True" />
+                    <Property Name="ClippedByParent" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.295319,0},{0.631056,0},{0.647849,0},{1.24269,0}}" />
+                    <Property Name="MaxEditTextLength" Value="1073741823" />
+                </Window>
+                <Window Type="MySetup/Combobox" Name="ComboLighting" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="ReadOnly" Value="True" />
+                    <Property Name="AlwaysOnTop" Value="True" />
+                    <Property Name="ClippedByParent" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.295319,0},{0.433599,0},{0.647849,0},{1.1618,0}}" />
+                    <Property Name="MaxEditTextLength" Value="1073741823" />
+                </Window>
+                <Window Type="MySetup/Combobox" Name="ComboGeomDetail" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="ReadOnly" Value="True" />
+                    <Property Name="AlwaysOnTop" Value="True" />
+                    <Property Name="ClippedByParent" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.295319,0},{0.244387,0},{0.647849,0},{0.846815,0}}" />
+                    <Property Name="MaxEditTextLength" Value="1073741823" />
+                </Window>
+                <Window Type="MySetup/Combobox" Name="ComboTexFilter" >
+                    <Property Name="Font" Value="BlueHighway-12" />
+                    <Property Name="ReadOnly" Value="True" />
+                    <Property Name="AlwaysOnTop" Value="True" />
+                    <Property Name="ClippedByParent" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.295319,0},{0.0457862,0},{0.647849,0},{0.924122,0}}" />
+                    <Property Name="MaxEditTextLength" Value="1073741823" />
+                </Window>
+            </Window>
+            <Window Type="MySetup/StaticImage" Name="MyEngineLogo" >
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.119712,0},{0.0160034,0},{0.87328,0},{0.2325,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

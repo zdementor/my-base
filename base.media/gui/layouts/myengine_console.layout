@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Console.Root" >
+        <Property Name="UnifiedAreaRect" Value="{{0.0025,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="MyConsole/StaticText" Name="Console.Main" >
+            <Property Name="Alpha" Value="0.8" />
+            <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+            <Window Type="MyConsole/Editbox" Name="Console.CmdLine" >
+                <Property Name="Font" Value="Tahoma-14" />
+                <Property Name="InheritsAlpha" Value="False" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0.00997573,0},{0.937457,0},{0.985551,0},{0.983181,0}}" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyConsole/Listbox" Name="Console.Log" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="UnifiedAreaRect" Value="{{0.00997573,0},{0.0135509,0},{0.985551,0},{0.922213,0}}" />
+            </Window>
+            <Window Type="MyConsole/StaticImage" Name="Console.LogoImage" >
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.625321,0},{0.69243,0},{0.96613,0},{0.89336,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+                <Window Type="MyConsole/StaticText" Name="Console.RendererTypeText" >
+                    <Property Name="Font" Value="Tahoma-18" />
+                    <Property Name="Text" Value="Renderer Type" />
+                    <Property Name="FrameEnabled" Value="False" />
+                    <Property Name="HorzFormatting" Value="HorzCentred" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.0242122,0},{0.63179,0},{0.982436,0},{0.923265,0}}" />
+                    <Property Name="BackgroundEnabled" Value="False" />
+                </Window>
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

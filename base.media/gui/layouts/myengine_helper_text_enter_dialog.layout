@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Helper.TextEnterDialog.Root" >
+        <Property Name="UnifiedAreaRect" Value="{{0.00078125,0},{-0.0013986,0},{1.00078,0},{0.998601,0}}" />
+        <Window Type="MyScened/FrameWindow" Name="Helper.TextEnterDialog.Frame" >
+            <Property Name="Font" Value="Tahoma-12" />
+            <Property Name="Text" Value="Enter text" />
+            <Property Name="Tooltip" Value="Commit selection" />
+            <Property Name="TitlebarFont" Value="Tahoma-12" />
+            <Property Name="SizingEnabled" Value="False" />
+            <Property Name="TitlebarEnabled" Value="True" />
+            <Property Name="UnifiedAreaRect" Value="{{0,14},{0,26},{0,362},{0,240}}" />
+            <Window Type="MyScened/Button" Name="Helper.TextEnterDialog.CancelBtn" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Cancel" />
+                <Property Name="Tooltip" Value="Cancel" />
+                <Property Name="UnifiedAreaRect" Value="{{0.534122,0},{0,125},{0.771672,0},{0,157}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Helper.TextEnterDialog.OKBtn" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="OK" />
+                <Property Name="Tooltip" Value="Accept" />
+                <Property Name="UnifiedAreaRect" Value="{{0.228216,0},{0,125},{0.453109,0},{0,157}}" />
+            </Window>
+            <Window Type="MyScened/MultiLineEditbox" Name="Helper.TextEnterDialog.TextEditbox" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" >
+</Property>
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,10},{0,12},{0,325},{0,112}}" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

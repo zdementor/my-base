@@ -1,0 +1,38 @@
+//----------------------------------------------------------------------------
+namespace vid {
+//----------------------------------------------------------------------------
+
+//! Class for holding a hardware vertex buffer
+class IVertexBuffer
+{
+public:
+    E_VERTEX_TYPE getType();
+};
+
+//---------------------------------------------------------------------------
+
+//! Class for holding a hardware index buffer
+class IIndexBuffer
+{
+public:
+	E_INDEX_TYPE getType();
+};
+
+//---------------------------------------------------------------------------
+
+//! Class for holding a hardware render buffer,
+//! which consists from vertex and index buffer
+class IRenderBuffer
+{
+public:
+	E_RENDER_BUFFER_TYPE getType();
+
+	E_DRAW_PRIMITIVE_TYPE getDrawPrimitiveType();
+
+	IIndexBuffer* getIndices();
+	IVertexBuffer* getVertices();
+};
+
+//----------------------------------------------------------------------------
+} // end namespace vid 
+//----------------------------------------------------------------------------

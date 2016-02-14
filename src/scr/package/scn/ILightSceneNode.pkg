@@ -1,0 +1,25 @@
+//----------------------------------------------------------------------------
+namespace scn {
+//----------------------------------------------------------------------------
+
+//! Scene node which is a dynamic light. 
+//! You can switch the light on and off by 
+//! making it visible or not, and let it be animated by ordinary scene node animators.
+class ILightSceneNode : public ISceneNode
+{
+    //! \return Returns the light data.
+    const vid::SLight& getLightParameters() const;
+
+    //! Set the light data.
+    void setLightParameters(const vid::SLight &lparams) = 0;
+
+	const core::vector3df& getLightedVolumeCenterOffset();
+	void setLightedVolumeCenterOffset(const core::vector3df& offset);
+
+	const core::vector3df& getLightedVolumeSizeChange();
+	void setLightedVolumeSizeChange(const core::vector3df& change);
+};
+
+//---------------------------------------------------------------------------- 
+} // end namespace scn
+//----------------------------------------------------------------------------

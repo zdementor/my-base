@@ -1,0 +1,55 @@
+//----------------------------------------------------------------------------
+namespace os {
+//---------------------------------------------------------------------------
+
+class ITimer
+{
+    //! returns current time in milliseconds. This value does not start
+    //! with 0 when the application starts. For example in one implementation
+    //! the value returne could be the amount of milliseconds which
+    //! have elapsed since the system was started.
+	//! This value increasing, even if timer stopped.
+	unsigned getSystemTime();
+
+    //! returns current time in milliseconds. This value does not start
+    //! with 0 when the application starts. For example in one implementation
+    //! the value returne could be the amount of milliseconds which
+    //! have elapsed since the system was started.
+	//! This value does not increasing, when timer stopped.
+    unsigned getTime();
+
+	//! returns current time in seconds.
+	double getSystemTimeSec();
+
+	//! returns current time in seconds.
+	double getTimeSec();
+
+	//! suspending timer
+	void suspend();
+
+	//! resuming timer
+	void resume();
+
+	//! returns true if timer is in suspended mode
+	bool isSuspended();
+};
+
+//----------------------------------------------------------------------------
+
+class ITimerMain : public ITimer
+{
+    //! Return singleton object
+    static ITimerMain& getSingleton();
+};
+
+//----------------------------------------------------------------------------
+
+class ITimerSecond : public ITimer
+{
+    //! Return singleton object
+    static ITimerSecond& getSingleton();
+};
+
+//----------------------------------------------------------------------------
+} // end namespace io
+//----------------------------------------------------------------------------

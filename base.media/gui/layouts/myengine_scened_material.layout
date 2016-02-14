@@ -1,0 +1,929 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Scened.Material.TopRoot" >
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="DefaultWindow" Name="Scened.Material.Root" >
+            <Property Name="Text" Value="Material" />
+            <Property Name="UnifiedAreaRect" Value="{{0.0120492,0},{0.0230074,0},{0.21749,0},{0.243855,0}}" />
+            <Window Type="MyScened/Button" Name="Scened.Material.PassAddBtn" >
+                <Property Name="Tooltip" Value="Add render pass" />
+                <Property Name="UnifiedAreaRect" Value="{{0,7},{0,9},{0,38},{0,39}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Material.PassRemBtn" >
+                <Property Name="Tooltip" Value="Remove render pass" />
+                <Property Name="UnifiedAreaRect" Value="{{0,7},{0,43},{0,38},{0,73}}" />
+            </Window>
+            <Window Type="MyScened/Listbox" Name="Scened.Material.PassesListbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Tooltip" Value="Passes list" />
+                <Property Name="UnifiedAreaRect" Value="{{0,41},{0,11},{0,152},{0,74}}" />
+            </Window>
+            <Window Type="MyScened/TabControl" Name="Scened.Material.Pass.TabControl" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="TabHeight" Value="{0,25}" />
+                <Property Name="TabTextPadding" Value="{0,5}" />
+                <Property Name="TabPanePosition" Value="Top" />
+                <Property Name="UnifiedAreaRect" Value="{{0.02,0},{0,79},{0.98,0},{0.98,0}}" />
+                <Window Type="DefaultWindow" Name="Scened.Material.Pass.Props.Tab" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="Text" Value="Properties" />
+                    <Property Name="Visible" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                </Window>
+                <Window Type="DefaultWindow" Name="Scened.Material.Pass.Layers.Tab" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="Text" Value="Layers" />
+                    <Property Name="Visible" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                </Window>
+                <Window Type="DefaultWindow" Name="Scened.Material.Pass.Shader.Tab" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="Text" Value="Shader" />
+                    <Property Name="Visible" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                </Window>
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Material.OpenBtn" >
+                <Property Name="Tooltip" Value="Open material" />
+                <Property Name="UnifiedAreaRect" Value="{{0,174},{0,9},{0,205},{0,39}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Material.ChooseBtn" >
+                <Property Name="Tooltip" Value="Choose from library" />
+                <Property Name="UnifiedAreaRect" Value="{{0,174},{0,43},{0,205},{0,73}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Material.SaveBtn" >
+                <Property Name="Tooltip" Value="Save material" />
+                <Property Name="UnifiedAreaRect" Value="{{0,208},{0,9},{0,239},{0,39}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Material.AddBtn" >
+                <Property Name="Tooltip" Value="Add to library" />
+                <Property Name="UnifiedAreaRect" Value="{{0,208},{0,43},{0,239},{0,73}}" />
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Material.Pass.Props.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.235937,0},{0.0069934,0},{0.460157,0},{0.991609,0}}" />
+            <Window Type="MyScened/ScrollablePane" Name="Scened.Material.Pass.Props.ScrollArea" >
+                <Property Name="ContentArea" Value="l:0 t:0 r:287 b:660" />
+                <Property Name="HorzStepSize" Value="0.1" />
+                <Property Name="VertStepSize" Value="0.1" />
+                <Property Name="HorzOverlapSize" Value="0.01" />
+                <Property Name="UnifiedAreaRect" Value="{{0,0},{0.025,0},{1,0},{0.975,0}}" />
+                <Property Name="VertOverlapSize" Value="0.01" />
+                <Property Name="HorzScrollPosition" Value="0" />
+                <Property Name="VertScrollPosition" Value="0" />
+                <AutoWindow NameSuffix="__auto_container__" >
+                    <Property Name="ContentArea" Value="l:0 t:0 r:287 b:660" />
+                    <Property Name="ChildExtentsArea" Value="l:0 t:0 r:287 b:660" />
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.DiffuseLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Diffuse" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,49},{0,129},{0,80}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.ShininessLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Shininess" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,170},{0,131},{0,195}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Material.Pass.Props.ShininessSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Tooltip" Value="Shininess coeff." />
+                        <Property Name="StepSize" Value="1" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="128" />
+                        <Property Name="MinimumValue" Value="0" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,137},{0,170},{0.95398,0},{0,195}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticImage" Name="Scened.Material.Pass.Props.EmissiveImage" >
+                        <Property Name="UnifiedAreaRect" Value="{{0,137},{0,109},{0,200},{0,140}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Material.Pass.Props.DiffuseBtn" >
+                        <Property Name="Font" Value="Tahoma-12" />
+                        <Property Name="Text" Value="..." />
+                        <Property Name="Tooltip" Value="Select diffuse color" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,201},{0,48},{0,232},{0,79}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticImage" Name="Scened.Material.Pass.Props.AmbientImage" >
+                        <Property Name="UnifiedAreaRect" Value="{{0,137},{0,79},{0,200},{0,110}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Material.Pass.Props.AmbientBtn" >
+                        <Property Name="Font" Value="Tahoma-12" />
+                        <Property Name="Text" Value="..." />
+                        <Property Name="Tooltip" Value="Select ambient color" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,201},{0,79},{0,232},{0,110}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.SpecularLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Specular" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,139},{0,129},{0,170}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.EmissiveLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Emissive" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,109},{0,129},{0,140}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.AmbientLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Ambient" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,79},{0,129},{0,110}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticImage" Name="Scened.Material.Pass.Props.DiffuseImage" >
+                        <Property Name="UnifiedAreaRect" Value="{{0,137},{0,49},{0,200},{0,80}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticImage" Name="Scened.Material.Pass.Props.SpecularImage" >
+                        <Property Name="UnifiedAreaRect" Value="{{0,137},{0,139},{0,200},{0,170}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Material.Pass.Props.SpecularBtn" >
+                        <Property Name="Font" Value="Tahoma-12" />
+                        <Property Name="Text" Value="..." />
+                        <Property Name="Tooltip" Value="Select specular color" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,201},{0,138},{0,232},{0,169}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Material.Pass.Props.EmissiveBtn" >
+                        <Property Name="Font" Value="Tahoma-12" />
+                        <Property Name="Text" Value="..." />
+                        <Property Name="Tooltip" Value="Select emissive color" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,201},{0,108},{0,232},{0,139}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.FlagsGroup" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,71},{0,509},{1,0},{0,660}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                        <Window Type="MyScened/Checkbox" Name="Scened.Material.Pass.Props.Flag0Checkbox" >
+                            <Property Name="Font" Value="Tahoma-8" />
+                            <Property Name="Text" Value="Flag0" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,10},{-0.0164473,0},{0.928262,0},{-0.0164473,20}}" />
+                        </Window>
+                        <Window Type="MyScened/Checkbox" Name="Scened.Material.Pass.Props.Flag1Checkbox" >
+                            <Property Name="Font" Value="Tahoma-8" />
+                            <Property Name="Text" Value="Flag1" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,10},{0,18},{0.928262,0},{0,38}}" />
+                        </Window>
+                        <Window Type="MyScened/Checkbox" Name="Scened.Material.Pass.Props.Flag2Checkbox" >
+                            <Property Name="Font" Value="Tahoma-8" />
+                            <Property Name="Text" Value="Flag2" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,10},{0,38},{0.928262,0},{0,58}}" />
+                        </Window>
+                        <Window Type="MyScened/Checkbox" Name="Scened.Material.Pass.Props.Flag4Checkbox" >
+                            <Property Name="Font" Value="Tahoma-8" />
+                            <Property Name="Text" Value="Flag4" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,10},{0,78},{0.928262,0},{0,98}}" />
+                        </Window>
+                        <Window Type="MyScened/Checkbox" Name="Scened.Material.Pass.Props.Flag3Checkbox" >
+                            <Property Name="Font" Value="Tahoma-8" />
+                            <Property Name="Text" Value="Flag3" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,10},{0,58},{0.928262,0},{0,78}}" />
+                        </Window>
+                        <Window Type="MyScened/Checkbox" Name="Scened.Material.Pass.Props.Flag6Checkbox" >
+                            <Property Name="Font" Value="Tahoma-8" />
+                            <Property Name="Text" Value="Flag6" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,10},{0,118},{0.928262,0},{0,138}}" />
+                        </Window>
+                        <Window Type="MyScened/Checkbox" Name="Scened.Material.Pass.Props.Flag5Checkbox" >
+                            <Property Name="Font" Value="Tahoma-8" />
+                            <Property Name="Text" Value="Flag5" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,10},{0,98},{0.928262,0},{0,118}}" />
+                        </Window>
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.FlagsLabel" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Flags:" />
+                        <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,2},{0,500},{0,77},{0,520}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Combobox" Name="Scened.Material.Pass.Props.ColorGenCombo" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Tooltip" Value="Color gen. mode" />
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,76},{0,344},{0,201},{0,449}}" />
+                        <Property Name="MaxEditTextLength" Value="1073741823" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Material.Pass.Props.ColorGenBtn" >
+                        <Property Name="Font" Value="Tahoma-12" />
+                        <Property Name="Text" Value="..." />
+                        <Property Name="Tooltip" Value="Setup color gen. function" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,202},{0,344},{0,233},{0,373}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.DepthTestLable" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Depth" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.0034843,0},{0,432},{0,65},{0,457}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.AlphaGenLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Alpha" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,373},{0,69},{0,398}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Combobox" Name="Scened.Material.Pass.Props.AlphaGenCombo" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Tooltip" Value="Alpha gen. mode" />
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,76},{0,373},{0,201},{0,478}}" />
+                        <Property Name="MaxEditTextLength" Value="1073741823" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Material.Pass.Props.AlphaGenBtn" >
+                        <Property Name="Font" Value="Tahoma-12" />
+                        <Property Name="Text" Value="..." />
+                        <Property Name="Tooltip" Value="Setup alpha gen. function" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,202},{0,373},{0,233},{0,402}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.ColorGenLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Color" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,344},{0,69},{0,369}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.AlphaTestLablel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Alpha" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.0034843,0},{0,460},{0,64},{0,485}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Combobox" Name="Scened.Material.Pass.Props.DepthTestCombo" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Tooltip" Value="Depth test" />
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,77},{0,431},{0,234},{0,581}}" />
+                        <Property Name="MaxEditTextLength" Value="1073741823" />
+                    </Window>
+                    <Window Type="MyScened/Combobox" Name="Scened.Material.Pass.Props.AlphaTestCombo" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Tooltip" Value="Alpha test" />
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,77},{0,460},{0,234},{0,581}}" />
+                        <Property Name="MaxEditTextLength" Value="1073741823" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.DestBlendLable" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Dest." />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,4},{0,287},{0,71},{0,312}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.SourceBlendLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Source" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,4},{0,258},{0,71},{0,283}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Combobox" Name="Scened.Material.Pass.Props.SourceBlendCombo" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Tooltip" Value="Flen source function" />
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,81},{0,258},{0,231},{0,373}}" />
+                        <Property Name="MaxEditTextLength" Value="1073741823" />
+                    </Window>
+                    <Window Type="MyScened/Combobox" Name="Scened.Material.Pass.Props.DestBlendCombo" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Tooltip" Value="Blent dest. function" />
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,81},{0,287},{0,231},{0,402}}" />
+                        <Property Name="MaxEditTextLength" Value="1073741823" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.BlendFuncLabel" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Blend function:" />
+                        <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,2},{0,205},{0,168},{0,225}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.ColuringLabel" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Colouring:" />
+                        <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,2},{0,27},{0,129},{0,50}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Checkbox" Name="Scened.Material.Pass.Props.LightingCheck" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Lighting" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,62},{0,3},{0,223},{0,27}}" />
+                    </Window>
+                    <Window Type="MyScened/Combobox" Name="Scened.Material.Pass.Props.EqBlendCombo" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Tooltip" Value="Blend Equation" />
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,81},{0,229},{0,231},{0,344}}" />
+                        <Property Name="MaxEditTextLength" Value="1073741823" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.EqBlendLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Eq." />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,4},{0,229},{0,71},{0,254}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.TestLabel" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Test:" />
+                        <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,2},{0,406},{0,91},{0,426}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.GenLabel" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Generation mode:" />
+                        <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,319},{0,204},{0,339}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                </AutoWindow>
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Material.Pass.Layers.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.0142188,0},{0.498042,0},{0.218125,0},{0.978732,0}}" />
+            <Window Type="MyScened/Button" Name="Scened.Material.Pass.Layers.AddBtn" >
+                <Property Name="Tooltip" Value="Add texture layer" />
+                <Property Name="UnifiedAreaRect" Value="{{0,8},{0,5},{0,39},{0,35}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Material.Pass.Layers.RemBtn" >
+                <Property Name="Tooltip" Value="Remove texture layer" />
+                <Property Name="UnifiedAreaRect" Value="{{0,9},{0,37},{0,40},{0,67}}" />
+            </Window>
+            <Window Type="MyScened/Listbox" Name="Scened.Material.Pass.Layers.Listbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Tooltip" Value="Layers list" />
+                <Property Name="UnifiedAreaRect" Value="{{0,43},{0,5},{0,188},{0,74}}" />
+            </Window>
+            <Window Type="MyScened/TabControl" Name="Scened.Material.Pass.Layers.TabControl" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="TabHeight" Value="{0,25}" />
+                <Property Name="TabTextPadding" Value="{0,5}" />
+                <Property Name="TabPanePosition" Value="Top" />
+                <Property Name="UnifiedAreaRect" Value="{{0.02,0},{0,82},{0.98,0},{0.98,0}}" />
+                <Window Type="DefaultWindow" Name="Scened.Material.Pass.Layers.Tex.Tab" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="Text" Value="Tex." />
+                    <Property Name="Visible" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                </Window>
+                <Window Type="DefaultWindow" Name="Scened.Material.Pass.Layers.TCoord.Tab" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="Text" Value="TCoord." />
+                    <Property Name="Visible" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                </Window>
+                <Window Type="DefaultWindow" Name="Scened.Material.Pass.Layers.TCMod.Tab" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="Text" Value="TCMod." />
+                    <Property Name="Visible" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                </Window>
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Material.Pass.Layers.MoveDownBtn" >
+                <Property Name="Tooltip" Value="Move down" />
+                <Property Name="UnifiedAreaRect" Value="{{0,192},{0,37},{0,223},{0,67}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Material.Pass.Layers.MoveUpBtn" >
+                <Property Name="Tooltip" Value="Move up" />
+                <Property Name="UnifiedAreaRect" Value="{{0,192},{0,5},{0,223},{0,35}}" />
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Material.Pass.Shader.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.0142191,0},{0.255734,0},{0.19625,0},{0.529432,0}}" />
+            <Window Type="MyScened/ScrollablePane" Name="Scened.Material.Pass.Shader.ScrollArea" >
+                <Property Name="ContentArea" Value="l:0 t:0 r:222 b:147" />
+                <Property Name="HorzStepSize" Value="0.1" />
+                <Property Name="VertStepSize" Value="0.1" />
+                <Property Name="HorzOverlapSize" Value="0.01" />
+                <Property Name="UnifiedAreaRect" Value="{{0,0},{0.025,0},{1,0},{0.975,0}}" />
+                <Property Name="VertOverlapSize" Value="0.01" />
+                <Property Name="HorzScrollPosition" Value="0" />
+                <Property Name="VertScrollPosition" Value="0" />
+                <AutoWindow NameSuffix="__auto_container__" >
+                    <Property Name="ContentArea" Value="l:0 t:0 r:222 b:147" />
+                    <Property Name="ChildExtentsArea" Value="l:0 t:0 r:222 b:147" />
+                    <Window Type="MyScened/Button" Name="Scened.Material.Pass.Shader.OpenBtn" >
+                        <Property Name="Tooltip" Value="Choose shader" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,65},{0,5},{0,96},{0,35}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Material.Pass.Shader.ClearBtn" >
+                        <Property Name="Tooltip" Value="Clear shader" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,183},{0,5},{0,214},{0,35}}" />
+                    </Window>
+                    <Window Type="MyScened/MultiLineEditbox" Name="Scened.Material.Pass.Shader.FileNameEditbox" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" >
+</Property>
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,10},{0,39},{0.953538,0},{0,147}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.ShaderLabel" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="File:" />
+                        <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.05,0},{0.0198872,0},{0.05,51},{0.05,21}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Material.Pass.Shader.ReloadBtn" >
+                        <Property Name="Tooltip" Value="Reload shader" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,133},{0,5},{0,164},{0,35}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Material.Pass.Shader.EditBtn" >
+                        <Property Name="Tooltip" Value="Edit shader" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,99},{0,5},{0,130},{0,35}}" />
+                    </Window>
+                </AutoWindow>
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Material.Pass.Layers.Tex.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.751718,0},{0.00923048,0},{0.948593,0},{0.357056,0}}" />
+            <Window Type="MyScened/ScrollablePane" Name="Scened.Material.Pass.Layers.Tex.ScrollArea" >
+                <Property Name="ContentArea" Value="l:0 t:0 r:245 b:247" />
+                <Property Name="HorzStepSize" Value="0.1" />
+                <Property Name="VertStepSize" Value="0.1" />
+                <Property Name="HorzOverlapSize" Value="0.01" />
+                <Property Name="UnifiedAreaRect" Value="{{0,0},{0.025,0},{1,0},{0.975,0}}" />
+                <Property Name="VertOverlapSize" Value="0.01" />
+                <Property Name="HorzScrollPosition" Value="0" />
+                <Property Name="VertScrollPosition" Value="0" />
+                <AutoWindow NameSuffix="__auto_container__" >
+                    <Property Name="ContentArea" Value="l:0 t:0 r:245 b:247" />
+                    <Property Name="ChildExtentsArea" Value="l:0 t:0 r:245 b:247" />
+                    <Window Type="MyScened/StaticImage" Name="Scened.Material.Pass.Layers.Tex.Image" >
+                        <Property Name="UnifiedAreaRect" Value="{{0,7},{0,39},{0,83},{0,107}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Layers.Tex.Label" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Texture" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,14},{0,5},{0,92},{0,29}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Material.Pass.Layers.Tex.OpenBtn" >
+                        <Property Name="Tooltip" Value="Choose texture" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,88},{0,5},{0,119},{0,35}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Material.Pass.Layers.Tex.ClearBtn" >
+                        <Property Name="Tooltip" Value="Clear texture" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,122},{0,5},{0,153},{0,35}}" />
+                    </Window>
+                    <Window Type="MyScened/MultiLineEditbox" Name="Scened.Material.Pass.Layers.Tex.NameEditbox" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" >
+</Property>
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,87},{0,39},{0.973379,0},{0,107}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Layers.Tex.TypeLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Type" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,14},{0,123},{0,152},{0,148}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Combobox" Name="Scened.Material.Pass.Layers.Tex.TypeCombo" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,59},{0,125},{0,231},{0,247}}" />
+                        <Property Name="MaxEditTextLength" Value="1073741823" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Layers.Tex.RGBScaleLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value=" RGB scale" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,164},{0,128},{0,189}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Material.Pass.Layers.Tex.RGBScaleSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="1" />
+                        <Property Name="CurrentValue" Value="1" />
+                        <Property Name="MaximumValue" Value="3" />
+                        <Property Name="MinimumValue" Value="1" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,136},{0,164},{0.950496,0},{0,189}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Checkbox" Name="Scened.Material.Pass.Layers.Tex.FilterCheck" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Filter enabled" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,45},{0,211},{0.86508,0},{0,231}}" />
+                    </Window>
+                </AutoWindow>
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Material.Pass.Layers.TCoord.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.750938,0},{0.362725,0},{0.949374,0},{0.865747,0}}" />
+            <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Layers.TCoord.AddrLabel" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Addr." />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,7},{0,40},{0,56},{0,62}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Combobox" Name="Scened.Material.Pass.Layers.TCoord.GenCombo" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Tooltip" Value="Generation mode" />
+                <Property Name="ReadOnly" Value="True" />
+                <Property Name="UnifiedAreaRect" Value="{{0,54},{0,71},{0,225},{0,177}}" />
+                <Property Name="MaxEditTextLength" Value="1073741823" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Layers.TCoord.GenLabel" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Gen." />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,7},{0,72},{0,52},{0,95}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Combobox" Name="Scened.Material.Pass.Layers.TCoord.AddrCombo" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Tooltip" Value="Address mode" />
+                <Property Name="ReadOnly" Value="True" />
+                <Property Name="UnifiedAreaRect" Value="{{0,55},{0,41},{0,225},{0,149}}" />
+                <Property Name="MaxEditTextLength" Value="1073741823" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Layers.TCoord.ChannelLabel" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Channel " />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{-0.0257512,0},{0,9},{0,120},{0,34}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Spinner" Name="Scened.Material.Pass.Layers.TCoord.ChannelSpinner" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="StepSize" Value="1" />
+                <Property Name="CurrentValue" Value="0" />
+                <Property Name="MaximumValue" Value="1" />
+                <Property Name="MinimumValue" Value="0" />
+                <Property Name="UnifiedAreaRect" Value="{{0,125},{0,10},{0.903285,0},{0,35}}" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/ScrollablePane" Name="Scened.Material.Pass.Layers.TCoord.Gen.Root" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="ContentArea" Value="l:0 t:0 r:229 b:230" />
+                <Property Name="HorzStepSize" Value="0.1" />
+                <Property Name="VertStepSize" Value="0.1" />
+                <Property Name="HorzOverlapSize" Value="0.01" />
+                <Property Name="UnifiedAreaRect" Value="{{0,0},{0,111},{1,0},{0.925,0}}" />
+                <Property Name="VertOverlapSize" Value="0.01" />
+                <Property Name="HorzScrollPosition" Value="0" />
+                <Property Name="VertScrollPosition" Value="0" />
+                <AutoWindow NameSuffix="__auto_container__" >
+                    <Property Name="ContentArea" Value="l:0 t:0 r:229 b:230" />
+                    <Property Name="ChildExtentsArea" Value="l:0 t:0 r:229 b:230" />
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Layers.TCoord.Gen.ProjSizeLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" >Size (width/
+height)</Property>
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,7},{0,24},{0,113},{0,67}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCoord.Gen.ProjWidth" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,6},{0,66},{0,113},{0,93}}" />
+                        <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCoord.Gen.ProjHeight" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,6},{0,93},{0,113},{0,120}}" />
+                        <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCoord.Gen.ProjPosX" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,122},{0,38},{0,229},{0,65}}" />
+                        <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCoord.Gen.ProjPosY" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,122},{0,65},{0,229},{0,92}}" />
+                        <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Layers.TCoord.Gen.ProjPosLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Pos.(X/Y/Z)" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,122},{0,11},{0,212},{0,35}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCoord.Gen.ProjPosZ" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,122},{0,92},{0,229},{0,119}}" />
+                        <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Layers.TCoord.Gen.ProjDirLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Dir.(X/Y/Z)" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,7},{0,125},{0,97},{0,147}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCoord.Gen.ProjDirX" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,6},{0,149},{0,113},{0,176}}" />
+                        <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCoord.Gen.ProjDirY" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,6},{0,176},{0,113},{0,203}}" />
+                        <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCoord.Gen.ProjDirZ" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,6},{0,203},{0,113},{0,230}}" />
+                        <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Layers.TCoord.Gen.ProjUpLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Up (X/Y/Z)" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,129},{0,125},{0,219},{0,147}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCoord.Gen.ProjUpX" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,122},{0,149},{0,229},{0,176}}" />
+                        <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCoord.Gen.ProjUpY" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,122},{0,176},{0,229},{0,203}}" />
+                        <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCoord.Gen.ProjUpZ" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,122},{0,203},{0,229},{0,230}}" />
+                        <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Props.ProjLabel" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Projection:" />
+                        <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0,113},{0,24}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                </AutoWindow>
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Material.Pass.Layers.TCMod.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.475156,0},{0.0155228,0},{0.680624,0},{0.329775,0}}" />
+            <Window Type="MyScened/ScrollablePane" Name="Scened.Material.Pass.Layers.TCMod.ScrollArea" >
+                <Property Name="ContentArea" Value="l:0 t:0 r:251 b:278" />
+                <Property Name="HorzStepSize" Value="0.1" />
+                <Property Name="VertStepSize" Value="0.1" />
+                <Property Name="HorzOverlapSize" Value="0.01" />
+                <Property Name="UnifiedAreaRect" Value="{{0,0},{0.025,0},{1,0},{1.03089,0}}" />
+                <Property Name="VertOverlapSize" Value="0.01" />
+                <Property Name="HorzScrollPosition" Value="0" />
+                <Property Name="VertScrollPosition" Value="0" />
+                <AutoWindow NameSuffix="__auto_container__" >
+                    <Property Name="ContentArea" Value="l:0 t:0 r:251 b:278" />
+                    <Property Name="ChildExtentsArea" Value="l:0 t:0 r:251 b:278" />
+                    <Window Type="MyScened/Listbox" Name="Scened.Material.Pass.Layers.TCMod.Listbox" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,41},{0,6},{0,188},{0,71}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Material.Pass.Layers.TCMod.AddBtn" >
+                        <Property Name="Tooltip" Value="Add TC modificator" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,7},{0,6},{0,38},{0,36}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Material.Pass.Layers.TCMod.RemBtn" >
+                        <Property Name="Tooltip" Value="Remove TC modificator" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,7},{0,40},{0,38},{0,70}}" />
+                    </Window>
+                    <Window Type="DefaultWindow" Name="Scened.Material.Pass.Layers.TCMod.ClientAreaRoot" >
+                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,76},{1,0},{0,278}}" />
+                        <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Layers.TCMod.TypeLabel" >
+                            <Property Name="Font" Value="Tahoma-8" />
+                            <Property Name="Text" Value="Type" />
+                            <Property Name="FrameEnabled" Value="False" />
+                            <Property Name="HorzFormatting" Value="RightAligned" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,7},{0.0121381,0},{0,65},{0,27}}" />
+                            <Property Name="BackgroundEnabled" Value="False" />
+                        </Window>
+                        <Window Type="MyScened/Combobox" Name="Scened.Material.Pass.Layers.TCMod.TypeCombo" >
+                            <Property Name="Font" Value="Tahoma-8" />
+                            <Property Name="ReadOnly" Value="True" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,73},{0,4},{0,224},{0,121}}" />
+                            <Property Name="MaxEditTextLength" Value="1073741823" />
+                        </Window>
+                        <Window Type="DefaultWindow" Name="Scened.Material.Pass.Layers.TCMod.ClientArea" >
+                            <Property Name="UnifiedAreaRect" Value="{{0,0},{0,35},{1,0},{1,0}}" />
+                        </Window>
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Material.Pass.Layers.TCMod.MoveUpBtn" >
+                        <Property Name="Tooltip" Value="Move up" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,192},{0,6},{0,223},{0,36}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Material.Pass.Layers.TCMod.MoveDownBtn" >
+                        <Property Name="Tooltip" Value="Move down" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,192},{0,40},{0,223},{0,70}}" />
+                    </Window>
+                </AutoWindow>
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Material.Pass.Layers.TCMod.Transform.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.489062,0},{0.347553,0},{0.676563,0},{0.565386,0}}" />
+            <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Layers.TCMod.Transform.MatrixLabel" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Matrix" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,7},{0,5},{0,86},{0,32}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCMod.Transform.Matrix00Edit" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,9},{0,31},{0,113},{0,58}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCMod.Transform.Matrix10Edit" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,9},{0,58},{0,113},{0,85}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCMod.Transform.Matrix11Edit" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,122},{0,57},{0,229},{0,84}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCMod.Transform.Matrix01Edit" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,122},{0,30},{0,229},{0,57}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Layers.TCMod.Transform.TranslateLabel" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Translate U/V" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,7},{0,91},{0,154},{0,118}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCMod.Transform.Translate0Edit" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,9},{0,117},{0,113},{0,144}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCMod.Transform.Translate1Edit" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,122},{0,116},{0,229},{0,143}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Material.Pass.Layers.TCMod.Scale.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.489063,0},{0.576574,0},{0.676563,0},{0.678321,0}}" />
+            <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Layers.TCMod.Scale.Label" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Scale U/V" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,7},{0,4},{0,126},{0,31}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCMod.Scale.Scale0Edit" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,9},{0,30},{0,113},{0,57}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCMod.Scale.Scale1Edit" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,122},{0,29},{0,229},{0,56}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Material.Pass.Layers.TCMod.Scroll.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.491407,0},{0.675524,0},{0.678907,0},{0.777272,0}}" />
+            <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Layers.TCMod.Scroll.Label" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Scroll U/V" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,7},{0,4},{0,101},{0,31}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCMod.Scroll.Scroll0Edit" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,9},{0,30},{0,113},{0,57}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCMod.Scroll.Scroll1Edit" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,122},{0,29},{0,229},{0,56}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Material.Pass.Layers.TCMod.Rotate.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.755469,0},{0.881818,0},{0.946877,0},{0.97098,0}}" />
+            <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Layers.TCMod.RotateLabel" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" >Rot. speed
+(- ccw, + cw)</Property>
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,11},{0,14},{0,127},{0,56}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Material.Pass.Layers.TCMod.Rotate.RotateSpeedEdit" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,127},{0,17},{0,234},{0,44}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Material.Pass.Layers.TCMod.Turbulent.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.491407,0},{0.815035,0},{0.678907,0},{0.964335,0}}" />
+            <Window Type="MyScened/StaticText" Name="Scened.Material.Pass.Layers.TCMod.Turbulent.Label" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" >Func: {
+base
+ampl
+phase
+freq}</Property>
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="VertFormatting" Value="TopAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{0,7},{0,12},{0,186},{0,101}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Material.Pass.Layers.TCMod.Turbulent.Btn" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="..." />
+                <Property Name="Tooltip" Value="Setup color gen. function" />
+                <Property Name="UnifiedAreaRect" Value="{{0,198},{0,13},{0,229},{0,44}}" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

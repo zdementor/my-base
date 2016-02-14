@@ -1,0 +1,251 @@
+
+$#include <my.h>
+$#include <io/IEventReceiver.h>
+$#include <dev/IDevice.h>
+$#include <dev/IPluginManager.h>
+$#include <res/IResourceManager.h>
+$#include <img/SColor.h>
+$#include <os/os.h>
+$#include <vid/IVideoDriver.h>
+$#include <io/ILogger.h>
+$#include <io/IFileSystem.h>
+$#include <io/IFileList.h>
+$#include <scr/IScriptManager.h>
+$#include <game/IGameManager.h>
+$#include <game/IGameNodeWeapon.h>
+$#include <game/IGameNodeMainPlayer.h>
+$#include <game/IGameUnitsFormation.h>
+$#include <game/IGameTasksManager.h>
+$#include <game/IGameEventsDispatcher.h>
+$#include <game/IGameAIModule.h>
+$#include <scn/ISceneManager.h>
+$#include <scn/ISceneNode.h>
+$#include <scn/IMaterialsManager.h>
+$#include <scn/IMaterialsManager.h>
+$#include <scn/ICullingSystem.h>
+$#include <scn/IParticleSystemSceneNode.h>
+$#include <scn/IAnimatedMeshSceneNode.h>
+$#include <scn/IBillboardSceneNode.h>
+$#include <scn/IDummyTransformationSceneNode.h>
+$#include <scn/IKTreeSceneNode.h>
+$#include <scn/ILensFlareSceneNode.h>
+$#include <scn/ILightSceneNode.h>
+$#include <scn/ISkyBoxSceneNode.h>
+$#include <scn/ITerrainSceneNode.h>
+$#include <scn/ITestSceneNode.h>
+$#include <io/IInputDispatcher.h>
+$#include <io/ICursorControl.h>
+$#include <img/SColor.h>
+$#include <scn/ISceneNodeAnimator.h>
+$#include <scn/ITextSceneNode.h>
+$#include <gui/MyCEGUISystem.h>
+$#include <mm/ISoundDriver.h>
+$#include <mm/ISound.h>
+$#include <mm/ISoundData.h>
+$#include <img/IImage.h>
+$#include <vid/IFont.h>
+$#include <dev/IProfiler.h>
+$#include <dyn/IDynamicManager.h>
+$//
+$using namespace my;
+$//
+$#define IUnknown my::IUnknown
+$//
+$// disable: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+$#pragma warning (disable : 4800)
+$//
+$namespace MyCEGUI {
+$	bool create(const char* cegui_ini_file_name)
+$	{ return MyCEGUI::create(cegui_ini_file_name, SCRIPT_MANAGER.getCoreScripterPtr()); }}
+
+$namespace my {
+$namespace core {
+$	bool isPtrsEq(void *p1, void *p2)
+$	{ return p1 == p2; }}}
+
+namespace core {
+bool isPtrsEq(void *p1, void *p2);
+}
+
+//! Enumeration for all index types there are.
+enum E_INDEX_TYPE
+{
+	//! 16 bit index type
+    EIT_16_BIT = 0, 
+
+    //! 32 bit index type
+    EIT_32_BIT,
+
+	E_INDEX_TYPE_COUNT,
+};
+
+$pfile "IUnknown.pkg"
+
+$pfile "Const.pkg"
+
+$pfile "core/Core.pkg"
+
+//////////////////////////////////////////////////////
+
+$pfile "io/ICursorControl.pkg"
+
+$pfile "io/IFileSystem.pkg"
+
+$pfile "io/IFileList.pkg"
+
+$pfile "io/IInputDispatcher.pkg"
+
+$pfile "io/ILogger.pkg"
+
+$pfile "io/SEvent.pkg"
+
+//////////////////////////////////////////////////////
+
+$pfile "dev/IDevice.pkg"
+
+$pfile "dev/IPluginManager.pkg"
+
+$pfile "dev/IProfiler.pkg"
+
+namespace dev {
+
+IDevice* createDevice(
+	//! Type of the device. 
+	vid::E_DRIVER_TYPE driverType,
+	//! Size of the window or the video mode in fullscreen mode.
+	unsigned windowWidth, unsigned windowHeight,
+	//! Bits per pixel in fullscreen mode. Ignored if windowed mode.
+	unsigned bits,
+	//! Texture filter
+	vid::E_TEXTURE_FILTER textureFilter,
+	//! Device creation flags
+	unsigned flags);
+	
+bool destroyDevice();
+
+} // end namespace dev
+
+//////////////////////////////////////////////////////
+
+$pfile "res/IResourceManager.pkg"
+
+//////////////////////////////////////////////////////
+
+$pfile "scn/ICameraSceneNode.pkg"
+
+$pfile "scn/IMaterialsManager.pkg"
+
+$pfile "scn/ISceneManager.pkg"
+
+$pfile "scn/ISceneNode.pkg"
+
+$pfile "scn/IShadow.pkg"
+
+$pfile "scn/ICullingSystem.pkg"
+
+$pfile "scn/IParticleSystemSceneNode.pkg"
+
+$pfile "scn/IAnimatedMeshSceneNode.pkg"
+
+$pfile "scn/IMesh.pkg"
+
+$pfile "scn/IAnimatedMesh.pkg"
+
+$pfile "scn/IBillboardSceneNode.pkg"
+
+$pfile "scn/IDummyTransformationSceneNode.pkg"
+
+$pfile "scn/IKTreeSceneNode.pkg"
+
+$pfile "scn/ILensFlareSceneNode.pkg"
+
+$pfile "scn/ILightSceneNode.pkg"
+
+$pfile "scn/ISkyBoxSceneNode.pkg"
+
+$pfile "scn/ITerrainSceneNode.pkg"
+
+$pfile "scn/ITestSceneNode.pkg"
+
+//////////////////////////////////////////////////////
+
+$pfile "game/IGameInventory.pkg"    
+
+$pfile "game/IGameManager.pkg" 
+
+$pfile "game/IGameNode.pkg"
+
+$pfile "game/IGameNodeAI.pkg" 
+
+$pfile "game/IGameNodeItem.pkg" 
+
+$pfile "game/IGameNodeMainPlayer.pkg"
+
+$pfile "game/IGameNodeWeapon.pkg"  
+
+$pfile "game/IGameUnitsFormation.pkg"
+
+$pfile "game/IPathFindTask.pkg"      
+
+$pfile "game/IGameTasksManager.pkg"
+
+$pfile "game/IGameEventsDispatcher.pkg"
+
+$pfile "game/IGameAIModule.pkg"
+
+//////////////////////////////////////////////////////
+
+$pfile "img/SColor.pkg"
+
+$pfile "img/IImage.pkg"
+
+$pfile "img/IImageLibrary.pkg"
+
+//////////////////////////////////////////////////////
+
+$pfile "gui/MyCEGUISystem.pkg"
+
+//////////////////////////////////////////////////////
+
+$pfile "vid/ITexture.pkg" 
+
+$pfile "vid/IVideoDriver.pkg"
+
+$pfile "vid/IVideoModeList.pkg"
+
+$pfile "vid/SMaterial.pkg"
+
+$pfile "vid/SFog.pkg"
+
+$pfile "vid/SLight.pkg"
+
+$pfile "vid/IFont.pkg"
+
+$pfile "vid/IGPUProgram.pkg"
+
+$pfile "vid/IRenderBuffer.pkg"
+
+//////////////////////////////////////////////////////
+
+$pfile "os/os.pkg"
+
+$pfile "os/ITimer.pkg"
+
+//////////////////////////////////////////////////////
+
+$pfile "scr/IScriptManager.pkg"
+
+$pfile "scr/ICoreScriptManager.pkg"
+
+//////////////////////////////////////////////////////
+
+$pfile "mm/ISoundDriver.pkg"
+
+$pfile "mm/ISoundData.pkg"
+
+$pfile "mm/ISound.pkg"
+
+//////////////////////////////////////////////////////
+
+$pfile "dyn/IDynamicManager.pkg"
+$pfile "dyn/IDynamicObject.pkg"

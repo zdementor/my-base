@@ -1,0 +1,187 @@
+//----------------------------------------------------------------------------
+namespace core {
+//----------------------------------------------------------------------------
+
+//! 4x4 matrix. Mostly used as transformation matrix for 3d calculations.
+//! Matrix4 is mainly used by the Irrlicht engine for doing transformations.
+//! The matrix is a D3D style matrix, row major with translations in the 4th row.
+class matrix4
+{
+    //! Default Constructor
+    matrix4();
+
+    //! Constructor
+    matrix4(
+        float m0,  float m1,  float m2,  float m3, 
+        float m4,  float m5,  float m6,  float m7, 
+        float m8,  float m9,  float m10, float m11, 
+        float m12, float m13, float m14, float m15  
+        );
+
+	//! Destructor
+	~matrix4();
+
+    //! Returns true if other matrix is equal to this matrix.
+    bool operator==(const matrix4 &other) const;
+
+    //! Multiply by another matrix.
+    matrix4 operator*(const matrix4& other) const;
+
+    //! Multiply by number.
+    matrix4 operator*(const float number) const;
+
+    //! Simple operator for linearly accessing every element of the matrix.
+    float& operator[](int index);
+
+    //! Simple operator for linearly accessing every element of the matrix.
+    const float& operator[](int index) const;
+
+    //! Set matrix to identity. 
+    void makeIdentity();
+
+    //! Returns true if the matrix is the identity matrix
+    bool isIdentity();
+
+    //! Set the translation of the current matrix. Will erase any previous values.
+    void setTranslation( const vector3df& translation );            
+
+    //! Gets the current translation
+    vector3df getTranslation() const;
+
+    //! Make a rotation matrix from Euler angles. The 4th row and column are unmodified.
+    void setRotationRadians( const vector3df& rotation );           
+
+    //! Make a rotation matrix from Euler angles. The 4th row and column are unmodified.
+    void setRotationDegrees( const vector3df& rotation );           
+
+    //! Returns the rotation, as set by setRotationDegrees()
+    vector3df getRotationDegrees() const;  
+
+    //! Make an inverted rotation matrix from Euler angles. The 4th row and column are unmodified.
+    void setInverseRotationRadians( const vector3df& rotation );    
+
+    //! Make an inverted rotation matrix from Euler angles. The 4th row and column are unmodified.
+    void setInverseRotationDegrees( const vector3df& rotation );    
+
+    //! Set Scale
+    void setScale( const vector3df& scale );
+    
+    //! Translate a vector by the inverse of the translation part of this matrix.
+    void inverseTranslateVect( vector3df& vect ) const;         
+
+    //! Rotate a vector by the inverse of the rotation part of this matrix.
+    void inverseRotateVect( vector3df& vect ) const;                
+
+    //! Rotate a vector by the rotation part of this matrix.
+    void rotateVect( vector3df& vect ) const;               
+
+    //! Transforms the vector by this matrix
+    void transformVect( vector3df& vect) const;
+
+    //! Transforms input vector by this matrix and stores result in output vector 
+    void transformVect( const vector3df& in, vector3df& out) const;
+
+    //! Translate a vector by the translation part of this matrix.
+    void translateVect( vector3df& vect ) const;
+
+    //! Transforms a plane by this matrix
+    void transformPlane( plane3df &plane) const;
+
+    //! Transforms a plane by this matrix
+    void transformPlane( const plane3df &in, plane3df &out) const;
+
+    //! Transforms a axis aligned bounding box
+    void transformBox( aabbox3df &box) const;
+
+    //! Multiplies this matrix by a 1x4 matrix
+    void multiplyWith1x4Matrix(float* matrix) const;
+
+    //! Calculates inverse of matrix. Slow.
+    //! \return Returns false if there is no inverse matrix.
+    bool makeInversed();
+
+    //! returns the inversed matrix of this one
+    //! \param Target, where result matrix is written to.
+    //! \return Returns false if there is no inverse matrix.
+    bool getInversed(matrix4& out) const;
+
+    //! returns the inversed matrix of this one
+    matrix4 getInversed() const;
+
+    //! return z near value from projection matrix
+    float getZNear();
+
+    //! return z far value from projection matrix
+    float getZFar();
+
+    //! Builds a right-handed perspective projection matrix based on a field of view
+    void buildProjectionMatrixPerspectiveRH(float fov, float aspect, float zn, float zf);
+
+    //! Builds a left-handed perspective projection matrix based on a field of view
+    void buildProjectionMatrixPerspectiveLH(float fov, float aspect, float zn, float zf);
+
+    //! Builds a left-handed orthogonal projection matrix.
+    void buildProjectionMatrixOrthoLH(float width, float height, float zn, float zf);
+
+    //! Builds a right-handed orthogonal projection matrix.
+    void buildProjectionMatrixOrthoRH(float width, float height, float zn, float zf);
+
+    //! Builds a left-handed look-at matrix.
+    void buildViewMatrixLH(const vector3df& pos, const vector3df& tgt_pos, const vector3df& up_vec);
+
+    //! Builds a right-handed look-at matrix.
+    void buildViewMatrixRH(const vector3df& pos, const vector3df& tgt_pos, const vector3df& up_vec);
+    
+    //! Builds a matrix that flattens geometry into a plane.
+    //! \param light: light source
+    //! \param plane: plane into which the geometry if flattened into
+    //! \param point: value between 0 and 1, describing the light source. 
+    //! If this is 1, it is a point light, if it is 0, it is a directional light.
+    void buildShadowMatrix(vector3df light, plane3df plane, float point=1.0f);
+    
+    //! creates a new matrix as interpolated matrix from to other ones.
+    //! \param b: other matrix to interpolate with
+    //! \param time: Must be a value between 0 and 1.
+    matrix4 interpolate(matrix4& b, float time);
+
+    //! Build a reflection matrix for the passed in plane.
+    void buildReflectionMatrix(const plane3df &p);
+
+    //! Build a rotation matrix around vector by some angle (degrees)
+    void buildRotationDegreesMatrix(float theta, core::vector3df &V);
+
+    //! Build a rotation matrix around vector by some angle (radians)
+    void buildRotationRadiansMatrix(float theta, core::vector3df &V);
+
+    //! Converting to D3D texture matrix
+    float* toD3DTextureMatrix() const;
+
+    //! Converting to OGL texture matrix
+    float* toOGLTextureMatrix() const;
+
+    //! Returns pointer to internal array
+    const float* pointer() const { return M; }
+
+    //! Returns pointer to internal array
+    float* pointer() { return M; }
+
+    //! calculates matrix determinant
+    float determinant() const;
+
+    //! returns transposed matrix
+    matrix4 getTransposed() const;
+
+    //! returns transposed matrix to a plain 4x4 float matrix
+    void getTransposed( matrix4& dest ) const;
+
+    //! Matrix data, stored in row-major order
+    // 0  1  2  3
+    // 4  5  6  7
+    // 8  9  10 11
+    // 12 13 14 15
+    // float M[16];
+};
+
+//----------------------------------------------------------------------------
+} // end namespace core 
+//----------------------------------------------------------------------------

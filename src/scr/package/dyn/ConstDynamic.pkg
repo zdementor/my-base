@@ -1,0 +1,106 @@
+//-----------------------------------------------------------------
+namespace dyn {
+//---------------------------------------------------------------------------
+
+//! dynamic types enumeration
+enum E_DYNAMIC_OBJECT_TYPE
+{	
+	EDOT_NONE = 0,
+    EDOT_MONOLITH,
+	EDOT_DYNAMIC,
+	EDOT_PSEUDO_DYNAMIC,
+	EDOT_SENSELESS,
+
+	E_DYNAMIC_OBJECT_TYPE_COUNT,	
+
+	E_DYNAMIC_OBJECT_TYPE_FORCE_32BIT = 0xffffffff
+};
+
+//----------------------------------------------------------------------------
+
+const char* getDynamicObjectTypeName(E_DYNAMIC_OBJECT_TYPE type);
+const char* getDynamicObjectTypeReadableName(E_DYNAMIC_OBJECT_TYPE type);
+
+//---------------------------------------------------------------------------
+
+//! dynamic types enumeration
+enum E_DYN_COLLID_FILTER
+{	
+	EDCF_NONE_COLLID            = 0x00000000,
+    EDCF_MONOLITH_COLLID        = 0x00000001,
+	EDCF_DYNAMIC_COLLID         = 0x00000002,
+	EDCF_PSEUDO_DYNAMIC_COLLID  = 0x00000004,
+	EDCF_SENSELESS_COLLID       = 0x00000008,
+
+	E_DYN_COLLID_FILTER_COUNT = E_DYNAMIC_OBJECT_TYPE_COUNT,
+
+	E_DYN_COLLID_FILTER_FORCE_32BIT = 0xffffffff
+};
+
+//----------------------------------------------------------------------------
+
+//! geom form enumeration
+enum E_DYN_OBJ_GEOM_FORM
+{
+	EDOGF_BOX = 0,    // cube
+    EDOGF_SPHERE,     // sphere
+    EDOGF_XCCYLINDER, // capped cylinder with main axis X
+    EDOGF_YCCYLINDER, // capped cylinder with main axis Y
+    EDOGF_ZCCYLINDER, // capped cylinder with main axis Z
+	EDOGF_MESH,
+	EDOGF_HEIGHTMAP,
+
+	E_DYN_OBJ_GEOM_FORM_COUNT,
+
+	E_DYN_OBJ_GEOM_FORM_FORCE_32BIT = 0xffffffff
+};
+
+//----------------------------------------------------------------------------
+
+const char* getGeomFormName(E_DYN_OBJ_GEOM_FORM type);
+const char* getGeomFormReadableName(E_DYN_OBJ_GEOM_FORM type);
+
+//----------------------------------------------------------------------------
+
+//! enumeratin for dynamic object states
+enum E_DYN_OBJ_STATE
+{
+	EDOS_UNKNOWN = 0,
+    EDOS_WALKING,
+    EDOS_START_FALLING,
+    EDOS_FALLING,
+    EDOS_STOP_FALLING,
+
+	//! for counting enumeration
+	E_DYN_OBJ_STATE_COUNT,
+
+	//! not used
+	E_DYN_OBJ_STATE_FORCE_32BIT = 0xffffffff
+};
+
+//----------------------------------------------------------------------------
+
+enum E_DYN_TRANSF_CONSTRAINT
+{
+	EDTC_NO_TRANSF,
+	EDTC_ROTX,
+	EDTC_ROTY,
+	EDTC_ROTZ,
+	EDTC_ROTXYZ,
+	EDTC_MOVX,
+	EDTC_MOVY,
+	EDTC_MOVZ,
+	EDTC_MOVXYZ,
+	EDTC_ALL_TRANSF,
+
+	//! not used
+	E_DYN_TRANSF_CONSTRAINT_FORCE_32BIT = 0xffffffff
+};
+
+//----------------------------------------------------------------------------
+
+const char* getDynamicObjectCorePropertiesTagValue();
+
+//----------------------------------------------------------------------------
+} // end namespace dyn
+//-----------------------------------------------------------------

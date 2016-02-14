@@ -1,0 +1,23 @@
+
+$pfile "io/ConstInOut.pkg"
+
+$pfile "dev/ConstDevice.pkg"
+
+$pfile "res/ConstResource.pkg"
+
+$pfile "scn/ConstScene.pkg"
+
+$pfile "game/ConstGame.pkg"
+
+$pfile "img/ConstImgLib.pkg"
+
+$pfile "vid/ConstVideo.pkg"
+
+$pfile "os/ConstOpSys.pkg"
+
+$pfile "scr/ConstScript.pkg"
+
+$pfile "mm/ConstMultimed.pkg"
+
+$pfile "dyn/ConstDynamic.pkg"
+

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Helper.MessageBox.Root" >
+        <Property Name="UnifiedAreaRect" Value="{{0.00078125,0},{-0.0013986,0},{1.00078,0},{0.998601,0}}" />
+        <Window Type="MyScened/FrameWindow" Name="Helper.MessageBox.Frame" >
+            <Property Name="Font" Value="Tahoma-12" />
+            <Property Name="Text" Value="Message" />
+            <Property Name="Tooltip" Value="Commit selection" />
+            <Property Name="TitlebarFont" Value="Tahoma-12" />
+            <Property Name="SizingEnabled" Value="False" />
+            <Property Name="TitlebarEnabled" Value="True" />
+            <Property Name="UnifiedAreaRect" Value="{{0,13},{0,26},{0,361},{0,251}}" />
+            <Window Type="MyScened/Button" Name="Helper.MessageBox.OKBtn" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="OK" />
+                <Property Name="Tooltip" Value="Accept" />
+                <Property Name="UnifiedAreaRect" Value="{{0.387591,0},{0,143},{0.612485,0},{0,175}}" />
+            </Window>
+            <Window Type="MyHelper/StaticText" Name="Helper.MessageBox.MessageText" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Message text" />
+                <Property Name="HorzFormatting" Value="WordWrapCentred" />
+                <Property Name="UnifiedAreaRect" Value="{{0,12},{0,11},{0,324},{0,127}}" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

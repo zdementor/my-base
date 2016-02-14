@@ -1,0 +1,28 @@
+//----------------------------------------------------------------------------
+namespace scn {
+//----------------------------------------------------------------------------  
+
+class ITextSceneNode : public ISceneNode
+{     
+    //! sets the font of the text
+    void setFont(gui::IFont* font);
+
+    //! returns the font of the text
+    gui::IFont* getFont() const;
+
+    //! sets the text string
+    void setText(const wchar_t* text);
+
+    //! returns the text string
+    const wchar_t* getText() const;
+
+    //! sets the color of the text
+    void setTextColor(img::SColor color);   
+
+    //! returns the color of the text
+    const img::SColor& getTextColor() const;    
+};
+
+//---------------------------------------------------------------------------- 
+} // end namespace scn
+//----------------------------------------------------------------------------

@@ -1,0 +1,59 @@
+//----------------------------------------------------------------------------
+namespace io {
+//---------------------------------------------------------------------------
+
+class IFileSystem
+{
+    //! Return singleton object
+    static IFileSystem& getSingleton();
+
+    //! Adds an zip archive to the file system.
+    //! \param filename: Filename of the zip archive to add to the file system.
+    //! \param ignoreCase: If set to true, files in the archive can be accessed without
+    //! writing all letters in the right case.
+    //! \param ignorePaths: If set to true, files in the added archive can be accessed
+    //! without its complete path.
+    //! \return Returns true if the archive was added successful, false if not.
+    bool addZipFileArchive(const char* filename, bool ignoreCase = true, bool ignorePaths = true);
+
+    //! Returns the string of the current working directory.
+	const char* getWorkingDirectory();
+
+    //! Changes the current Working Directory to the overgiven string.
+    //! \param
+    //! newDirectory is a string specifiing the new working directory.
+    //! The string is operating system dependent. Under Windows it has
+    //! the form "<drive>:\<directory>\<sudirectory>\<..>". An example would be: "C:\Windows\"
+    //! \return Returns true if successful, otherwise false.
+    bool changeWorkingDirectoryTo(const char* newDirectory);
+
+    //! Returns a list of files and directories in the current working directory 
+    //! and returns it.
+    //! \return a Pointer to the created IFileList is returned.
+	const IFileList* getFileList();
+
+    //! determinates if a file exists and would be able to be opened.
+    //! \param filename is the string identifying the file which should be tested for existance.
+    //! \return Returns true if file exsits, and false if it does not exist or an error occured.
+    bool existFile(const char *filename);
+	bool existFileInZip(const char *filename);
+	bool existFileOnDisk(const char *filename);
+
+	//! determinates if a directory exists and would be able to be opened.
+    //! \param dirname is the string identifying the dir which should be tested for existance.
+    //! \return Returns true if dir exsits, and false if it does not exist or an error occured.
+	bool existDir(const char* dirname);
+
+	//! creates directory
+    //! \param dirname is the string identifying the dir which should be created.
+    //! \return Returns true if operation was succeded, and false if it does not or an error occured.
+	bool makeDir(const char * dirname);
+
+	//! Optimizing the directory string
+	//! 'c:\game\saves\..\media\textures' convert to 'c:\game\media\textures'
+	const char* optimizeDirectoryString(const char *dir_to_optimize);
+};
+
+//----------------------------------------------------------------------------
+} // end namespace io
+//----------------------------------------------------------------------------

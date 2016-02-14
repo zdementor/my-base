@@ -1,0 +1,46 @@
+//----------------------------------------------------------------------------
+namespace io {
+//---------------------------------------------------------------------------
+
+class IInputDispatcher
+{
+    //! Return singleton object
+    static IInputDispatcher& getSingleton();
+    
+	//! getting keyboard input events filter flags
+	bool getKeyInputFilterFlag(E_KEY_INPUT_EVENT flag);
+
+	//! setting keyboard input events filter flags
+	void setKeyInputFilterFlag(E_KEY_INPUT_EVENT flag, bool value);
+
+	//! getting mouse input events filter flags
+	bool getMouseInputFilterFlag(E_MOUSE_INPUT_EVENT flag);
+
+	//! setting mouse input events filter flags
+	void setMouseInputFilterFlag(E_MOUSE_INPUT_EVENT flag, bool value);
+    
+    //! assosiate keyboard key with game action
+    void mapKey(E_KEY_CODE key, game::E_GAME_ACTION action);
+
+    //! assosiate mouse button with game action
+    void mapMouse(E_MOUSE_CODE mbutton, game::E_GAME_ACTION action);
+
+    //! return key assotiated with action
+    E_KEY_CODE getActionKey(game::E_GAME_ACTION action);
+
+    //! return mouse button assotiated with action
+    E_MOUSE_CODE getActionMouse(game::E_GAME_ACTION action);
+
+    //! return action assotiated with key 
+    game::E_GAME_ACTION getKeyAction(E_KEY_CODE kcode);
+
+    //! return action assotiated with mouse button  
+    game::E_GAME_ACTION getMouseAction(E_MOUSE_CODE mcode);
+
+	//! returns current input dispatch per second value
+    int getInputPS();
+};
+
+//----------------------------------------------------------------------------
+} // end namespace io
+//----------------------------------------------------------------------------

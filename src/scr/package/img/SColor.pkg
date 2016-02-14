@@ -1,0 +1,172 @@
+//----------------------------------------------------------------------------
+namespace img {
+//----------------------------------------------------------------------------
+
+struct SColor
+{
+    //! Constructor of the Color. Does nothing. The color value is not
+    //! initialized to save time.
+    SColor();
+
+    SColor(const SColor &other);
+	
+	SColor(const SColorf &other);
+
+    //! Constructs the color from 4 values representing the alpha, red, green and
+    //! blue components of the color. Must be values between 0 and 255.
+    SColor (unsigned char a, unsigned char r, unsigned char g, unsigned char b);
+
+    //! Constructs the color from a 32 bit value. Could be another color.
+    SColor(unsigned clr);
+
+	//! Destructor
+	~SColor();
+
+    //! Returns the alpha component of the color. The alpha component
+    //! defines how transparent a color should be.
+    //! 0 means not transparent, 255 means fully transparent.
+    int getAlpha();
+
+    //! Returns the red component of the color. 
+    //! \return Returns a value between 0 and 255, specifying how red the color is.
+    //! 0 means dark, 255 means full red.
+    int getRed();
+
+    //! Returns the green component of the color. 
+    //! \return Returns a value between 0 and 255, specifying how green the color is.
+    //! 0 means dark, 255 means full green.
+    int getGreen();
+
+    //! Returns the blue component of the color.
+    //! \return Returns a value between 0 and 255, specifying how blue the color is.
+    //! 0 means dark, 255 means full blue.
+    int getBlue();
+
+    //! Sets the alpha comonent of the Color. The alpha component
+    //! defines how transparent a color should be.
+    //! \param a: Has to be a value between 0 and 255. 
+    //! 0 means not transparent, 255 means fully transparent.
+    void setAlpha(int a);
+
+    //! Sets the red comonent of the Color. 
+    //! \param r: Has to be a value between 0 and 255. 
+    //! 0 means dark red (=black), 255 means full red.
+    void setRed(int r);
+
+    //! Sets the green comonent of the Color. 
+    //! \param g: Has to be a value between 0 and 255. 
+    //! 0 means dark green (=black), 255 means full green.
+    void setGreen(int g);
+
+    //! Sets the blue comonent of the Color. 
+    //! \param b: Has to be a value between 0 and 255. 
+    //! 0 means dark blue (=black), 255 means full blue.
+    void setBlue(int b);
+  
+    //! Sets all four components of the color at once.
+    //! Constructs the color from 4 values representing the alpha, red, green and 
+    //! blue components of the color. Must be values between 0 and 255.
+    //! \param a: Alpha component of the color. 
+    //! The alpha component defines how transparent a color should be.
+    //! Has to be a value between 0 and 255. 
+    //! 0 means not transparent, 255 means fully transparent.
+    //! \param r: Sets the red comonent of the Color. 
+    //! Has to be a value between 0 and 255. 
+    //! 0 means dark red (=black), 255 means full red.
+    //! \param g: Sets the green comonent of the Color. 
+    //! Has to be a value between 0 and 255. 
+    //! 0 means dark green (=black), 255 means full green.
+    //! \param b: Sets the blue comonent of the Color. 
+    //! Has to be a value between 0 and 255.
+    //! 0 means dark blue (=black), 255 means full blue.
+    void set(unsigned char a, unsigned char r, unsigned char g, unsigned char b);
+
+	void set(const SColor &other);
+	void set(const SColorf &other);
+
+    //! Interpolates the color with a float value to an other color 
+    //! \param other: Other color
+    //! \param d: value between 0.0f and 1.0f
+    //! \return Returns interpolated color.
+    SColor getInterpolated(SColor other, float d) const;
+
+    //! color in A8R8G8B8 Format
+    unsigned color;
+	unsigned char blue, green, red, alpha;
+};
+
+//----------------------------------------------------------------------------
+
+//! Class representing a color with four floats.
+//! The color values for red, green, blue
+//! and alpha are each stored in a 32 bit floating point variable.
+//! So all four values may be between 0.0f and 1.0f.
+//! This class is used rarely used by the Irrlicht Engine
+//! to specify a color. An other, faster way is using the class Color, which
+//! stores the color values in a single 32 bit integer.
+struct SColorf
+{
+    //! Constructs a color. All values are initialised with 0.0f, resulting
+    //! in a black color.
+    SColorf();
+
+    //! Constructs a color from three color values: red, green and blue.
+    //! \param r: Red color component. Should be a value between 0.0f meaning
+    //! very dark red (=black) and 1.0f, meaning full red.
+    //! \param g: Green color component. Should be a value between 0.0f meaning
+    //! very dark green (=black) and 1.0f, meaning full green.
+    //! \param b: Blue color component. Should be a value between 0.0f meaning
+    //! very dark blue (=black) and 1.0f, meaning full blue.
+    SColorf(float r, float g, float b);
+
+    //! Constructs a color from four color values: alpha, red, green and blue.
+    //! \param a: Alpha color component of the color.
+    //! The alpha component defines how transparent a color should be.
+    //! Has to be a value between 0.0f and 1.0f,
+    //! 0.0f means not transparent, 1.0f means fully transparent.
+    //! \param r: Red color component. Should be a value between 0.0f meaning
+    //! very dark red (=black) and 1.0f, meaning full red.
+    //! \param g: Green color component. Should be a value between 0.0f meaning
+    //! very dark green (=black) and 1.0f, meaning full green.
+    //! \param b: Blue color component. Should be a value between 0.0f meaning
+    //! very dark blue (=black) and 1.0f, meaning full blue.
+    SColorf(float r, float g, float b, float a);
+
+    //! Constructs a color from 32 bit Color.
+    //! \param c: 32 bit color value from which this Colorf class is
+    //! constructed from.
+	SColorf(const SColor &other);
+
+    SColorf(const SColorf &other);
+
+    ~SColorf();
+
+    //! red color component
+    float r;
+
+    //! green color component
+    float g;
+
+    //! blue component
+    float b;
+
+    //! alpha color component
+    float a;
+
+    //! Sets the three color comonents to new values at once.
+    //! \param rr: Red color component. Should be a value between 0.0f meaning
+    //! very dark red (=black) and 1.0f, meaning full red.
+    //! \param gg: Green color component. Should be a value between 0.0f meaning
+    //! very dark green (=black) and 1.0f, meaning full green.
+    //! \param bb: Blue color component. Should be a value between 0.0f meaning
+    //! very dark blue (=black) and 1.0f, meaning full blue.
+    void set(float rr, float gg, float bb);
+    void set(float rr, float gg, float bb, float aa);
+
+	void set(const SColor &other);
+    void set(const SColorf &other);
+};
+
+//----------------------------------------------------------------------------
+} // end namespace img 
+//----------------------------------------------------------------------------

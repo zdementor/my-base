@@ -1,0 +1,35 @@
+
+//---------------------------------------------------------------------------
+namespace core { 
+//---------------------------------------------------------------------------
+
+class wave
+{
+public:
+
+	E_FUNC_TYPE func;
+
+	float base;
+	float amplitude;
+	float phase;
+	float frequency;
+
+	wave();
+	wave(E_FUNC_TYPE type);
+	wave(E_FUNC_TYPE type, float base, float amplitude, float phase, float frequency);
+	
+	//! Compare operator <
+    bool operator < (const wave &w) const;
+
+	//! Compare operator ==
+    bool operator == (const wave &w) const;
+
+	wave& set(const wave &other);
+
+	//! getting current wave value
+	float get_value(unsigned curr_time_ms) const;
+}; 
+
+//---------------------------------------------------------------------------
+} // end namespace core
+//---------------------------------------------------------------------------

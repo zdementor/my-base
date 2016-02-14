@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Helper.WaveSetupDialog.Root" >
+        <Property Name="UnifiedAreaRect" Value="{{0.00078125,0},{-0.0013986,0},{1.00078,0},{0.998601,0}}" />
+        <Window Type="MyScened/FrameWindow" Name="Helper.WaveSetupDialog.Frame" >
+            <Property Name="Font" Value="Tahoma-12" />
+            <Property Name="Text" Value="Wave setup" />
+            <Property Name="TitlebarFont" Value="Tahoma-12" />
+            <Property Name="SizingEnabled" Value="False" />
+            <Property Name="TitlebarEnabled" Value="True" />
+            <Property Name="UnifiedAreaRect" Value="{{0,141},{0,60},{0,518},{0,337}}" />
+            <Window Type="MyScened/Combobox" Name="Helper.WaveSetupDialog.TypeCombo" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Tooltip" Value="Game node type" />
+                <Property Name="ReadOnly" Value="True" />
+                <Property Name="UnifiedAreaRect" Value="{{0,86},{0,19},{0,279},{0.880991,0}}" />
+                <Property Name="MaxEditTextLength" Value="1073741823" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Helper.WaveSetupDialog.TypeCaption" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Type:" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{0,7},{0,19},{0,74},{0,39}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Helper.WaveSetupDialog.CancelBtn" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Cancel" />
+                <Property Name="Tooltip" Value="Cancel node creation" />
+                <Property Name="UnifiedAreaRect" Value="{{0.536466,0},{0,187},{0.774016,0},{0,219}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Helper.WaveSetupDialog.OKBtn" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="OK" />
+                <Property Name="Tooltip" Value="Create new node" />
+                <Property Name="UnifiedAreaRect" Value="{{0.23056,0},{0,187},{0.455453,0},{0,219}}" />
+            </Window>
+            <Window Type="MyHelper/Editbox" Name="Helper.WaveSetupDialog.BaseEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,279},{0,59},{0,347},{0,86}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Helper.WaveSetupDialog.BaseCaption" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" >Base:
+</Property>
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{0.00390625,0},{0,59},{0,71},{0,86}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Helper.WaveSetupDialog.FreqCaption" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" >Freq.:
+</Property>
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{0.003125,0},{0,140},{0,70},{0,167}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyHelper/Editbox" Name="Helper.WaveSetupDialog.AmplEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,279},{0,88},{0,347},{0,115}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Helper.WaveSetupDialog.PhaseCaption" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" >Phase:
+</Property>
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{0.003125,0},{0,114},{0,70},{0,141}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyHelper/Editbox" Name="Helper.WaveSetupDialog.PhaseEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,279},{0,114},{0,347},{0,141}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Helper.WaveSetupDialog.AmplCaption" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" >Ampl.:
+</Property>
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{0.003125,0},{0,88},{0,70},{0,115}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyHelper/Editbox" Name="Helper.WaveSetupDialog.FreqEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,279},{0,140},{0,347},{0,167}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyHelper/HorizontalScrollbar" Name="Helper.WaveSetupDialog.BaseScroll" >
+                <Property Name="PageSize" Value="0" />
+                <Property Name="StepSize" Value="0.00625" />
+                <Property Name="OverlapSize" Value="0" />
+                <Property Name="DocumentSize" Value="1" />
+                <Property Name="ScrollPosition" Value="0" />
+                <Property Name="UnifiedAreaRect" Value="{{0,76},{0,64},{0,274},{0,82}}" />
+            </Window>
+            <Window Type="MyHelper/HorizontalScrollbar" Name="Helper.WaveSetupDialog.AmplScroll" >
+                <Property Name="PageSize" Value="0" />
+                <Property Name="StepSize" Value="0.00625" />
+                <Property Name="OverlapSize" Value="0" />
+                <Property Name="DocumentSize" Value="1" />
+                <Property Name="ScrollPosition" Value="0" />
+                <Property Name="UnifiedAreaRect" Value="{{0,76},{0,91},{0,274},{0,109}}" />
+            </Window>
+            <Window Type="MyHelper/HorizontalScrollbar" Name="Helper.WaveSetupDialog.PhaseScroll" >
+                <Property Name="PageSize" Value="0" />
+                <Property Name="StepSize" Value="0.00625" />
+                <Property Name="OverlapSize" Value="0" />
+                <Property Name="DocumentSize" Value="1" />
+                <Property Name="ScrollPosition" Value="0" />
+                <Property Name="UnifiedAreaRect" Value="{{0,76},{0,118},{0,274},{0,136}}" />
+            </Window>
+            <Window Type="MyHelper/HorizontalScrollbar" Name="Helper.WaveSetupDialog.FreqScroll" >
+                <Property Name="PageSize" Value="0" />
+                <Property Name="StepSize" Value="0.00625" />
+                <Property Name="OverlapSize" Value="0" />
+                <Property Name="DocumentSize" Value="1" />
+                <Property Name="ScrollPosition" Value="0" />
+                <Property Name="UnifiedAreaRect" Value="{{0,76},{0,145},{0,274},{0,163}}" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

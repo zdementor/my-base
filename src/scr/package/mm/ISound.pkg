@@ -1,0 +1,36 @@
+//---------------------------------------------------------------------------
+namespace mm {
+//---------------------------------------------------------------------------
+
+class ISound
+{
+	virtual core::vector3df getPos() const;
+	virtual core::vector3df getVelocity() const;
+	virtual float getGain() const;
+	virtual float getVolume() const;
+	virtual float getPitch() const;
+	virtual bool isLooping() const;
+	virtual bool isPlaying() const;
+	virtual bool atEnd() const;	
+	virtual bool isAutoDelete() const;	
+
+	virtual void moveTo( const core::vector3df& newPos );
+	virtual void moveBy( const core::vector3df& delta  );
+
+	virtual void setVelocity ( const core::vector3df& newVel );
+	virtual void setPitch    ( float newPitch );
+	virtual void setGain     ( float newGain  );
+	virtual void setVolume   ( float newVolume);
+	virtual void setLooping  ( bool flag      );
+
+	virtual void play();
+	virtual void pause();
+	virtual void stop();
+	virtual void rewind();
+
+	virtual ISoundData* getSoundData();
+};
+
+//----------------------------------------------------------------------------
+} // namespace mm
+//----------------------------------------------------------------------------

@@ -1,0 +1,94 @@
+//-----------------------------------------------------------------
+namespace dyn {
+//-----------------------------------------------------------------
+
+//! dynamic object parameters
+struct SDynamicObjectParams
+{
+	SDynamicObjectParams ();
+    SDynamicObjectParams(const SDynamicObjectParams& params);
+
+    void set(const SDynamicObjectParams &params);
+
+	//! dynamic type of this ode-object
+    E_DYNAMIC_OBJECT_TYPE Type;
+
+	//! geom form of this ode-object
+    E_DYN_OBJ_GEOM_FORM GeomForm;
+
+	//! mass value of this ode-object
+    float  MassValue;
+
+	//! if player controlling this dynamic object, 
+	//! this flag must be true, otherwise - false
+    bool ControledByPlayer;
+
+	//! dynamic constraints
+    int DynamicConstraints;
+
+	//! dynamic ignore filter
+	int DynamicIgnoreFilter;
+
+    //! Coulomb friction coefficient (0..1)
+    //! 0 - frictionless contact
+	//! 1 - maximum friction
+    float  SurfMu;
+
+    //! Restitution parameter (0..1)
+    //! 0 - surfaces are not bouncy at all, 1 - maximum bouncyness
+    float  SurfBounce;
+
+	//! The minimum incoming velocity necessary for bounce (in m/s). 
+    float  SurfBounceVel;
+
+    //! Contact normal 'softness' parameter
+    float SurfSoft;
+};
+
+//----------------------------------------------------------------------------
+
+struct __MY_DYN_LIB_API__ SCollisionPoint
+{
+	SCollisionPoint();
+	SCollisionPoint(
+		const core::vector3df &pos, const core::vector3df &normal, IDynamicObject* dobj;
+
+	core::vector3df Pos;
+	core::vector3df Normal;
+    IDynamicObject* DynObj;
+};
+
+//----------------------------------------------------------------------------
+
+struct SCollisionPoints
+{   
+	SCollisionPoints();
+    ~SCollisionPoints();
+
+	//! add new collision point to buffer
+    void add(const SCollisionPoint &point);
+
+	//! clear collision points
+    void clear();
+
+	//! find index of the nearest collision point
+    int getNearestTo(core::vector3df p) const;
+
+	//! return point by its index
+    const SCollisionPoint& getPoint(unsigned idx) const;
+
+	//! find average collision point
+	core::vector3df getAveragePos() const;
+
+	//! return true if there is no any collision points in buffer array
+	bool isEmpty() const;};
+
+//-----------------------------------------------------------------
+
+class IDynamicObject
+{
+};
+
+//-----------------------------------------------------------------
+} // end namespace dyn
+//-----------------------------------------------------------------

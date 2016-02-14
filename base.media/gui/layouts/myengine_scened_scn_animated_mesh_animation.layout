@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Scened.Scene.Animation.Root" >
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="MyScened/FrameWindow" Name="Scened.Scene.Animation.Frame" >
+            <Property Name="Font" Value="Tahoma-10" />
+            <Property Name="Text" Value="Animation" />
+            <Property Name="TitlebarFont" Value="Tahoma-10" />
+            <Property Name="SizingEnabled" Value="False" />
+            <Property Name="TitlebarEnabled" Value="True" />
+            <Property Name="UnifiedAreaRect" Value="{{0,49},{0,48},{0,439},{0,251}}" />
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.Animation.KeyFrame" >
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,4},{0,8},{0.9905,0},{0,98}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+                <Window Type="MyScened/Spinner" Name="Scened.Scene.Animation.EndFrameSpinner" >
+                    <Property Name="Font" Value="Tahoma-10" />
+                    <Property Name="StepSize" Value="1" />
+                    <Property Name="CurrentValue" Value="0" />
+                    <Property Name="MaximumValue" Value="32767" />
+                    <Property Name="MinimumValue" Value="-32768" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,135},{0,50},{0,220},{0,77}}" />
+                </Window>
+                <Window Type="MyScened/Spinner" Name="Scened.Scene.Animation.BeginFrameSpinner" >
+                    <Property Name="Font" Value="Tahoma-10" />
+                    <Property Name="StepSize" Value="1" />
+                    <Property Name="CurrentValue" Value="0" />
+                    <Property Name="MaximumValue" Value="32767" />
+                    <Property Name="MinimumValue" Value="-32768" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,135},{0,20},{0,220},{0,47}}" />
+                </Window>
+                <Window Type="MyScened/StaticText" Name="Scened.Scene.Animation.BeginFrameLabel" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="Text" Value="Begin frame:" />
+                    <Property Name="FrameEnabled" Value="False" />
+                    <Property Name="HorzFormatting" Value="RightAligned" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,22},{0,20},{0,129},{0,47}}" />
+                    <Property Name="BackgroundEnabled" Value="False" />
+                </Window>
+                <Window Type="MyScened/StaticText" Name="Scened.Scene.Animation.EndFrameLabel" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="Text" Value="End frame:" />
+                    <Property Name="FrameEnabled" Value="False" />
+                    <Property Name="HorzFormatting" Value="RightAligned" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,21},{0,50},{0,129},{0,77}}" />
+                    <Property Name="BackgroundEnabled" Value="False" />
+                </Window>
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Scene.Animation.OKBtn" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="OK" />
+                <Property Name="UnifiedAreaRect" Value="{{0.213281,0},{0,117},{0.464567,0},{0,148}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Scene.Animation.CancelBtn" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="Cancel" />
+                <Property Name="UnifiedAreaRect" Value="{{0.523438,0},{0,117},{0.774723,0},{0,148}}" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

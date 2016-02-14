@@ -1,0 +1,66 @@
+//-----------------------------------------------------------------
+namespace dev {
+//-----------------------------------------------------------------
+
+class IDevice
+{
+    static IDevice& getSingleton();
+
+    static bool isDebug();
+
+    //! return engine description string
+    const char* getDescriptionString();
+
+	//! Show device main window
+	void show();
+
+	//! Hide device main window
+	void hide();
+    
+    //! Notifies the device that it should close itself.
+    void close();
+
+    //! getting current device time (ms)
+    int getDeviceTime();
+
+    //! getting current device system time (ms)
+    int getDeviceSystemTime();
+
+	//! return device flag value
+	bool getDeviceFlagValue(E_DEVICE_CREATION_FLAG flag);
+
+    //! Sets the caption of the window.    
+    void setWindowCaption(const char * text);
+
+    //! \return Returns true if window is active.
+    bool isWindowActive();
+
+    //! Runs the device. Returns false if device wants to be deleted.
+    bool run();
+
+    //! Returns the version of the engine. The returned string
+    //! will look like this: "1.2.3" or this: "1.2". 
+    const char* getVersionString();
+    
+	//! getting monitor brightness
+	float getMonitorBrightness();
+
+	//! setting monitor brightness
+	bool setMonitorBrightness(float r_gamma);
+		
+	//! switchs monitor to fullscreen
+	bool switchMonitorToFullScreen();
+
+	//! restore monotor settings (brighteness/resolution) to initial values
+	void restoreMonitorSettings();
+
+	//! Set window icon
+	void setWindowIcon(const char *iconFileName, unsigned width, unsigned height);
+
+	void setMinimalRunPeriod(unsigned msec);
+	unsigned getMinimalRunPeriod();
+};
+
+//-----------------------------------------------------------------
+} // end namespace dev
+//-----------------------------------------------------------------

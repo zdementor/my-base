@@ -1,0 +1,153 @@
+//----------------------------------------------------------------------------
+namespace scn {
+//----------------------------------------------------------------------------
+
+//! State of animation
+struct SAnimationState
+{
+	int Animation;
+	float AnimationTime, AnimationTimeSec, AnimationDurationSec;
+	bool Looped;	
+};
+
+//----------------------------------------------------------------------------
+
+//! Interface for an animated mesh.
+class IAnimatedMesh : public IUnknown
+{
+	//! Returns the IMesh interface according to the current animation
+    IMesh* getMesh();
+
+	//! Returns the IMesh interface according to the specified key frame
+	IMesh* getMesh(float frame);
+
+    //! Returns an axis aligned bounding box of the mesh.
+    //! \return A bounding box of this mesh is returned.
+    const core::aabbox3df& getBoundingBox() const;
+
+	//! calc bounding box
+    void recalculateBoundingBox();
+
+    //! Returns the type of the animated mesh.
+    //! In most cases it is not neccessary to use this method.
+    //! This is useful for making a save downcast, for example
+    //! if getMeshType() returns EMT_MD2, its save to cast the
+    //! IAnimatedMesh to IAnimatedMeshMD2.
+    //! \returns Type of the mesh.
+    E_MESH_TYPE getAnimatedMeshType() const;
+
+	//! Gets the frame count of the animated mesh.
+    //! \return Returns the amount of frames. If the amount is 1, it is a static, non animated mesh.
+    unsigned getOveralFramesCount();
+
+    //! Geting animations count 
+    unsigned getAnimationFramesCount(unsigned idx);
+
+	//! Geting animations count 
+    unsigned getAnimationsCount();
+
+	//! rescale normals
+	void rescaleAnimatedMeshNormals(core::vector3df &newScale);
+
+	//! setting animation
+	bool setCurrentAnimation(unsigned idx, float delay=0.0f);
+
+	//! getting animation index
+	unsigned getCurrentAnimationIndex() ;
+
+	//! Must be called bebore registerig new animations
+	void startRegisteringAnimations();
+
+	//! Registering new animation as frames cycle
+	//! (must be called between start/end RegisteringAnimations)
+	bool registerAnimation(unsigned start_frame, unsigned end_frame, float speed, bool looped);
+
+	//! Registering new animation which stored in file
+	//! (must be called between start/end RegisteringAnimations)
+	bool registerAnimation(const char *filename, float speed, bool looped);
+
+	//! Unregistering/removing animation from this mesh
+	//! (must be called between start/end RegisteringAnimations)
+	bool unregisterAnimation(unsigned idx);
+
+	//! Swap animations,
+	//! (must be called between start/end RegisteringAnimations)
+	bool swapAnimations(unsigned idx1, unsigned idx2);
+
+	//! Calling after registerig new animations
+	void endRegisteringAnimations();
+
+	//! return special animation by its index
+	const char*	getAnimationFileName	(unsigned idx);
+	unsigned	getAnimationBeginFrame	(unsigned idx);
+	unsigned	getAnimationEndFrame	(unsigned idx);
+	float		getAnimationSpeed		(unsigned idx);
+	bool		getAnimationLoopMode	(unsigned idx);
+
+	//! set special animation parameters
+	void setAnimationBeginFrame	(unsigned idx, unsigned frame);
+	void setAnimationEndFrame	(unsigned idx, unsigned frame);
+	void setAnimationSpeed		(unsigned idx, float speed);
+	void setAnimationLoopMode	(unsigned idx, bool looped);
+
+    //! Sets the speed with wich all animations are played.
+    void setAnimationOveralSpeed(float speed);
+
+    //! gets the speed with wich all animations are played.
+    float getAnimationOveralSpeed();
+
+	//! Setting on/off smooth animation flag
+	void setAnimationOveralSmooth(bool flag);
+
+	//! Return true if smooth animation set to true
+	bool isAnimationOveralSmooth();
+
+	//! Returns the animation time in seconds.
+	float getAnimationTimeSec();
+
+	//! Returns the animation duration in seconds.
+	float getAnimationDurationSec();
+
+	//! Getting animation fps
+	int getAnimationFPS();
+
+	//! Setting animation fps
+	void setAnimationFPS(int fps);
+
+	//! returning current animation state
+	bool getAnimationState(SAnimationState& ani_state);
+
+	//! updating mesh animation
+	void updateMesh(int delta_ms);
+
+	//! setting current animation state
+	bool setAnimationState(const SAnimationState &animstate);
+
+	bool isInterpolateAnimation();
+
+	//! must be called before modifying any animations
+	static void startRegisteringAnimations(scn::IAnimatedMeshSceneNode *node);
+
+	//! Registering new animation as frames cycle
+	//! (must be called between start/end RegisteringAnimations)
+	static bool registerAnimation(scn::IAnimatedMeshSceneNode *node, unsigned start_frame, unsigned end_frame, float speed, bool looped);
+
+	//! Registering new animation which stored in file
+	//! (must be called between start/end RegisteringAnimations)
+	static bool registerAnimation(scn::IAnimatedMeshSceneNode *node, const char *filename, float speed, bool looped);
+
+	//! Unregistering/removing animation from this mesh
+	//! (must be called between start/end RegisteringAnimations)
+	static bool unregisterAnimation(scn::IAnimatedMeshSceneNode *node, unsigned idx);
+
+	//! Swap animations
+	//! (must be called between start/end RegisteringAnimations)
+	static bool swapAnimations(scn::IAnimatedMeshSceneNode *node, unsigned idx1, unsigned idx2);
+
+	//! must be called after modifying any animations
+	static void endRegisteringAnimations(scn::IAnimatedMeshSceneNode *node);
+};
+
+//---------------------------------------------------------------------------- 
+} // end namespace scn
+//----------------------------------------------------------------------------

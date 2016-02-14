@@ -1,0 +1,16 @@
+//---------------------------------------------------------------------------
+namespace game {
+//---------------------------------------------------------------------------
+
+class IGameEventsDispatcher
+{
+    //! Return singleton object
+    static IGameEventsDispatcher& getSingleton();
+
+	//! getting game events count 
+	int getGameEventsCount();
+};
+
+//----------------------------------------------------------------------------
+} // namespace game
+//----------------------------------------------------------------------------

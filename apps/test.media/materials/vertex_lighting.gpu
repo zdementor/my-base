@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<GPUProgram lights="4">
+<Shader driver="EDT_OPENGL21"
+uniform_names="ModelViewProjMatrix,ModelViewMatrix,NormalMatrix,GlobalAmbientColor,MaterialColors,MaterialShininess,Lighting,Texture0"
+vertex_ver="EVSV_GLSL_1_2" vertex_fname="vertex_lighting-OGL21.vsh"
+pixel_ver="EPSV_GLSL_1_2"  pixel_fname="vertex_lighting-OGL21.psh" />
+<Shader driver="EDT_DIRECTX9"
+uniform_names="ModelViewProjMatrix,ModelViewMatrix,NormalMatrix,GlobalAmbientColor,MaterialColors,MaterialShininess,Lighting,Texture0"
+vertex_ver="EVSV_HLSL_2_a" vertex_fname="vertex_lighting-DX9.vsh"
+pixel_ver="EPSV_HLSL_2_a" pixel_fname="vertex_lighting-DX9.psh" />
+</GPUProgram>

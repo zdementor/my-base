@@ -1,0 +1,52 @@
+//---------------------------------------------------------------------------
+namespace game {
+//---------------------------------------------------------------------------
+
+class IGameInventory
+{      
+    //! add Weapon to inventory
+    bool addWeapon(IGameNodeWeapon *weapon, int number); 
+
+    //! return Weapon from inventory
+    IGameNodeWeapon* getWeapon(int number, int idx); 
+
+    //! return Weapons count in inventory
+    int getWeaponsCount(); 
+
+    //! return Weapons sub count in inventory
+    int getWeaponsSubCount(int number); 
+
+	//! remove Weapon from inventory
+	bool removeWeapon(IGameNodeWeapon *weapon); 
+
+    //! add Item to inventory
+    bool addItem(IGameNodeItem *item); 
+
+    //! return Item from inventory
+    IGameNodeItem* getItem(int idx); 
+
+    //! return Item count in inventory
+    int getItemsCount(); 
+
+	//! remove Item from inventory
+	bool removeItem(IGameNodeItem *item); 
+
+    //! add Game Node to inventory
+    bool addObject(IGameNode *gnode); 
+
+    //! return Game Node from inventory
+    IGameNode* getObject(int idx); 
+
+    //! return Game Nodes count in inventory
+    int getObjectsCount(); 
+
+    //! remove Object from inventory
+    bool removeObject(IGameNode *gnode); 
+
+    //! remove all Objects from inventory
+    void removeAllObjects(); 
+};
+
+//----------------------------------------------------------------------------
+} // namespace game
+//----------------------------------------------------------------------------

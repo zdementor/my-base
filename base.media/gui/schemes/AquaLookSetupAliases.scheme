@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<GUIScheme Name="AquaLookSetupAliases">
+	<WindowAlias Alias="MySetup/Button"						Target="AquaLook/Button"					 />
+	<WindowAlias Alias="MySetup/Checkbox"					Target="AquaLook/Checkbox"					 />
+	<WindowAlias Alias="MySetup/ImageButton"				Target="AquaLook/ImageButton"				 />
+	<WindowAlias Alias="MySetup/RadioButton"				Target="AquaLook/RadioButton"				 />
+	<WindowAlias Alias="MySetup/FrameWindow"				Target="AquaLook/FrameWindow"				 />
+	<WindowAlias Alias="MySetup/Titlebar"					Target="AquaLook/Titlebar"					 />
+	<WindowAlias Alias="MySetup/SystemButton"				Target="AquaLook/SystemButton"				 />
+	<WindowAlias Alias="MySetup/Editbox"					Target="AquaLook/Editbox"					 />
+	<WindowAlias Alias="MySetup/MultiLineEditbox"			Target="AquaLook/MultiLineEditbox"			 />
+	<WindowAlias Alias="MySetup/Menubar"					Target="AquaLook/Menubar"					 />
+	<WindowAlias Alias="MySetup/PopupMenu"					Target="AquaLook/PopupMenu"					 />
+	<WindowAlias Alias="MySetup/MenuItem"					Target="AquaLook/MenuItem"					 />
+	<WindowAlias Alias="MySetup/ProgressBar"				Target="AquaLook/ProgressBar"				 />
+	<WindowAlias Alias="MySetup/VerticalScrollbar"			Target="AquaLook/VerticalScrollbar"			 />
+	<WindowAlias Alias="MySetup/HorizontalScrollbar"		Target="AquaLook/HorizontalScrollbar"		 />
+	<WindowAlias Alias="MySetup/VerticalScrollbarThumb"		Target="AquaLook/VerticalScrollbarThumb"	 />
+	<WindowAlias Alias="MySetup/HorizontalScrollbarThumb"	Target="AquaLook/HorizontalScrollbarThumb"	 />
+	<WindowAlias Alias="MySetup/TabButton"					Target="AquaLook/TabButton"					 />
+	<WindowAlias Alias="MySetup/TabControl"					Target="AquaLook/TabControl"				 />
+	<WindowAlias Alias="MySetup/TabContentPane"				Target="AquaLook/TabContentPane"			 />
+	<WindowAlias Alias="MySetup/TabButtonPane"				Target="AquaLook/TabButtonPane"				 />
+	<WindowAlias Alias="MySetup/ComboDropList"				Target="AquaLook/ComboDropList"				 />
+	<WindowAlias Alias="MySetup/ComboEditbox"				Target="AquaLook/ComboEditbox"				 />
+	<WindowAlias Alias="MySetup/Combobox"					Target="AquaLook/Combobox"					 />
+	<WindowAlias Alias="MySetup/Listbox"					Target="AquaLook/Listbox"					 />
+	<WindowAlias Alias="MySetup/ListHeader"					Target="AquaLook/ListHeader"				 />
+	<WindowAlias Alias="MySetup/ListHeaderSegment"			Target="AquaLook/ListHeaderSegment"			 />
+	<WindowAlias Alias="MySetup/MultiColumnList"			Target="AquaLook/MultiColumnList"			 />
+	<WindowAlias Alias="MySetup/Slider"						Target="AquaLook/Slider"					 />
+	<WindowAlias Alias="MySetup/SliderThumb"				Target="AquaLook/SliderThumb"				 />
+	<WindowAlias Alias="MySetup/SliderHoriz"				Target="AquaLook/SliderHoriz"				 />
+	<WindowAlias Alias="MySetup/SliderHorizThumb"			Target="AquaLook/SliderHorizThumb"			 />
+	<WindowAlias Alias="MySetup/ScrollablePane"				Target="AquaLook/ScrollablePane"			 />
+	<WindowAlias Alias="MySetup/Spinner"					Target="AquaLook/Spinner"					 />
+	<WindowAlias Alias="MySetup/Tooltip"					Target="AquaLook/Tooltip"					 />
+	<WindowAlias Alias="MySetup/StaticImage"				Target="AquaLook/StaticImage"				 />
+	<WindowAlias Alias="MySetup/StaticText"					Target="AquaLook/StaticText"				 />
+</GUIScheme>
+
+

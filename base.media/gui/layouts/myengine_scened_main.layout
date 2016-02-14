@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Scened.Root" >
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="MyScened/Menubar" Name="Scened.Menu" >
+            <Property Name="Font" Value="Tahoma-14" />
+            <Property Name="ItemSpacing" Value="10" />
+            <Property Name="UnifiedAreaRect" Value="{{0.0025,0},{0.000167568,0},{0.351718,0},{0.0441375,0}}" />
+        </Window>
+        <Window Type="MyScened/StaticText" Name="Scened.NodeExplorer" >
+            <Property Name="Font" Value="Tahoma-10" />
+            <Property Name="Alpha" Value="0.7" />
+            <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{0,285},{1,0}}" />
+            <Property Name="HorizontalAlignment" Value="Right" />
+            <Window Type="MyScened/Combobox" Name="Scened.NodeTypeCombo" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Tooltip" Value="Node types list" />
+                <Property Name="ReadOnly" Value="True" />
+                <Property Name="InheritsAlpha" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.025326,0},{0,28},{0.981167,0},{0,450}}" />
+                <Property Name="MaxEditTextLength" Value="1073741823" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.NodeNameCaption" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Name:" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0602648,0},{0,60},{0.410936,0},{0,79}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.NodeTypeCaption" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Type:" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.060265,0},{0,5},{0.410936,0},{0,24}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Combobox" Name="Scened.NodeNameCombo" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Tooltip" Value="Nodes list" />
+                <Property Name="ReadOnly" Value="True" />
+                <Property Name="InheritsAlpha" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.025326,0},{0,80},{0.981167,0},{0.958751,0}}" />
+                <Property Name="MaxEditTextLength" Value="1073741823" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.OpenNodeButton" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Open" />
+                <Property Name="Tooltip" Value="Open node" />
+                <Property Name="InheritsAlpha" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.268006,0},{0,117},{0.381383,0},{0,149}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.NewNodeButton" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="New" />
+                <Property Name="Tooltip" Value="New node" />
+                <Property Name="InheritsAlpha" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0268885,0},{0,117},{0.140267,0},{0,149}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.SaveNodeButton" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Save" />
+                <Property Name="Tooltip" Value="Save" />
+                <Property Name="InheritsAlpha" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.385662,0},{0,117},{0.499041,0},{0,149}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.ReloadNodeButton" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Reload" />
+                <Property Name="Tooltip" Value="Reload" />
+                <Property Name="InheritsAlpha" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.626136,0},{0,117},{0.739515,0},{0,149}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.DropNodeButton" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Drop" />
+                <Property Name="Tooltip" Value="Drop" />
+                <Property Name="InheritsAlpha" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.864447,0},{0,117},{0.977826,0},{0,149}}" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.ClientArea" >
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="InheritsAlpha" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,0},{0,158},{1,0},{0.96,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+                <Window Type="MyScened/TabControl" Name="Scened.SceneNodeTabControl" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="TabHeight" Value="{0,30}" />
+                    <Property Name="TabTextPadding" Value="{0,5}" />
+                    <Property Name="TabPanePosition" Value="Top" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                    <Window Type="DefaultWindow" Name="Scened.CommonTab" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Common" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                        <Window Type="MyScened/TabControl" Name="Scened.CommonTabControl" >
+                            <Property Name="Font" Value="Tahoma-8" />
+                            <Property Name="TabHeight" Value="{0,25}" />
+                            <Property Name="TabTextPadding" Value="{0,5}" />
+                            <Property Name="TabPanePosition" Value="Top" />
+                            <Property Name="UnifiedAreaRect" Value="{{0.0175062,0},{0.0158495,0},{0.982494,0},{0.981886,0}}" />
+                            <Window Type="DefaultWindow" Name="Scened.TransformTab" >
+                                <Property Name="Text" Value="Transf." />
+                                <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                            </Window>
+                            <Window Type="DefaultWindow" Name="Scened.PropertiesTab" >
+                                <Property Name="Text" Value="Properties" />
+                                <Property Name="Visible" Value="False" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                            </Window>
+                        </Window>
+                    </Window>
+                    <Window Type="DefaultWindow" Name="Scened.SceneTab" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Scene" />
+                        <Property Name="Visible" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                    </Window>
+                    <Window Type="DefaultWindow" Name="Scened.DynamicTab" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Dyn." />
+                        <Property Name="Visible" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                    </Window>
+                    <Window Type="DefaultWindow" Name="Scened.GameTab" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Game" />
+                        <Property Name="Visible" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                    </Window>
+                </Window>
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.EditNodeButton" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Edit" />
+                <Property Name="Tooltip" Value="Edit XML" />
+                <Property Name="InheritsAlpha" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.745113,0},{0,117},{0.858492,0},{0,149}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.HideButton" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Tooltip" Value="Hide panel" />
+                <Property Name="InheritsAlpha" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.421339,0},{0.00184255,0},{0.57092,0},{0.0264935,0}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.SaveAsNodeButton" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Save as" />
+                <Property Name="Tooltip" Value="Save as..." />
+                <Property Name="InheritsAlpha" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.505872,0},{0,117},{0.619251,0},{0,149}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.CloneNodeButton" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Clone" />
+                <Property Name="Tooltip" Value="Clone" />
+                <Property Name="InheritsAlpha" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.146834,0},{0,117},{0.260213,0},{0,149}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.ShowButton" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Tooltip" Value="Show panel" />
+                <Property Name="AlwaysOnTop" Value="True" />
+                <Property Name="InheritsAlpha" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.421339,0},{0.970275,0},{0.57092,0},{0.994926,0}}" />
+            </Window>
+        </Window>
+        <Window Type="MyScened/StaticText" Name="Scened.StatusInfoText" >
+            <Property Name="Font" Value="Cour-10" />
+            <Property Name="Text" >1st string
+2nd string
+3rd string
+Status info text:</Property>
+            <Property Name="FrameEnabled" Value="False" />
+            <Property Name="VertFormatting" Value="BottomAligned" />
+            <Property Name="UnifiedAreaRect" Value="{{0.025,0},{0.874039,0},{0.685,0},{0.979984,0}}" />
+            <Property Name="BackgroundEnabled" Value="False" />
+        </Window>
+    </Window>
+</GUILayout>

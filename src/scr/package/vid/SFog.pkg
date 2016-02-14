@@ -1,0 +1,38 @@
+//----------------------------------------------------------------------------
+namespace vid {
+//----------------------------------------------------------------------------
+
+//! Fog properties
+struct SFog
+{
+    SFog();
+    SFog(
+        E_FOG_TYPE _Type, 
+        img::SColor _Color, float _Start, float _End, float _Density
+        );
+    
+    void set(const SFog &_FogParams);
+    void set(
+        E_FOG_TYPE _Type, 
+        img::SColor _Color, float _Start, float _End, float _Density
+        );
+
+    //! Fog type
+    E_FOG_TYPE Type;
+
+    //! Color of the fog
+    img::SColor Color;
+
+    //! Only used in linear fog mode. Specifies where fog starts.
+    float Start;
+
+    //! Only used in linear fog mode. Specifies where fog ends.
+    float End;
+
+    //! Only used in expotential fog mode. Must be a value between 0 and 1.
+    float Density;
+};
+
+//----------------------------------------------------------------------------
+} // end namespace vid 
+//----------------------------------------------------------------------------

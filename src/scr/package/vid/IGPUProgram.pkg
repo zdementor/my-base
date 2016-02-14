@@ -1,0 +1,84 @@
+//----------------------------------------------------------------------------
+namespace vid {
+//----------------------------------------------------------------------------
+
+struct SGPUProgramShaderInfo
+{
+	unsigned                Uniforms;
+    E_DRIVER_TYPE           Driver;
+	E_VERTEX_SHADER_VERSION VertexVer;
+	E_PIXEL_SHADER_VERSION  PixelVer;
+
+	const char* getTag() const;
+	const char* getVertexFileName() const;
+	const char* getPixelFileName() const;
+};
+
+//---------------------------------------------------------------------------
+
+struct SGPUProgramInfo
+{
+	vid::E_VERTEX_TYPE          VertexType;
+	unsigned                    LightsCount;
+	u64                         Hash;
+	unsigned                    TaggedShadersCount;
+	unsigned                    OtherShadersCount;
+
+	const SGPUProgramShaderInfo *getTaggedShaderInfo(unsigned i) const;
+	const SGPUProgramShaderInfo *getOtherShaderInfo(unsigned i) const;
+};
+
+//---------------------------------------------------------------------------
+
+//! Interface for working with Direct3D/OpenGL GPU programm
+class IGPUProgram
+{
+public:
+
+	//! Sets a constant for the program
+	bool setUniformfv(E_UNIFORM_TYPE uniform,
+		const float* floats, unsigned size_bytes);
+	bool setUniformiv(E_UNIFORM_TYPE uniform,
+		const int* integers, unsigned size_bytes);
+	bool setUniform1f(E_UNIFORM_TYPE uniform, float float_val);
+	bool setUniform1i(E_UNIFORM_TYPE uniform, int int_val);
+
+	//! Return Uniform constans mask
+	unsigned getUniformMask();
+
+	//! Return true id GPU program sucessfully loaded, compiled and linked
+	bool isOK();
+
+	bool recreate(unsigned uniforms, unsigned lights_count,
+		E_VERTEX_SHADER_VERSION vertex_shader_ver, const char *vertex_shader,
+		E_PIXEL_SHADER_VERSION pixel_shader_ver, const char *pixel_shader);
+
+	unsigned getLightsCount();
+};
+
+//---------------------------------------------------------------------------
+
+const SGPUProgramInfo* loadGPUProgramInfo(
+	const char *file_name, const char *tag);
+
+const SGPUProgramInfo* initIdentityGPUProgramInfo(
+	unsigned lights_count);
+
+bool setGPUProgramInfoLightsCount(const SGPUProgramInfo *prog_info,
+	unsigned lights_count);
+
+bool appendGPUProgramInfo(const SGPUProgramInfo *prog_info,
+	unsigned                uniforms,
+    E_DRIVER_TYPE           driver,
+	const char              *tag,
+	E_VERTEX_SHADER_VERSION vertex_ver,
+	const char              *vertex_file_name,
+	E_PIXEL_SHADER_VERSION  pixel_ver,
+	const char              *pixel_file_name);
+
+bool writeGPUProgramInfo(
+	const char *file_name, const SGPUProgramInfo *prog_info);
+
+//----------------------------------------------------------------------------
+} // end namespace vid 
+//----------------------------------------------------------------------------

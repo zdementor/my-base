@@ -1,0 +1,32 @@
+//----------------------------------------------------------------------------
+namespace img {
+//----------------------------------------------------------------------------
+
+class IImageLibrary
+{
+    //! Return singleton object
+    static IImageLibrary& getSingleton();
+
+	//! Returns a pointer to a image. Loads the image if it is not
+    //! already loaded.
+	IImage* getImage(const char* filename);
+
+    //! Removes an image from the images cache and deletes it. Please note that 
+	//! after calling this, the pointer to this IImage
+    //! may not be longer valid, if it was not grabbed before by other parts of 
+    //! the engine for storing it longer.
+    bool removeImage(IImage* image);
+
+    //! Removes all unused images from the images cache and deletes them, freeing lot of
+    //! memory. Please note that after calling this, the pointer to all IImage
+    //! may not be longer valid
+    void clearUnusedImageCache();
+
+	//! Saves a software image to a file.
+	bool saveImageToFile(IImage* image, const char* filename);
+
+};
+
+//----------------------------------------------------------------------------
+} // end namespace img
+//----------------------------------------------------------------------------

@@ -1,0 +1,49 @@
+//----------------------------------------------------------------------------
+namespace io {
+//---------------------------------------------------------------------------
+
+class ILogger
+{
+    //! Return singleton object
+    static ILogger& getSingleton();
+
+    //! Returns the current set log level.
+    E_LOG_LEVEL getLogLevel();
+
+    //! Sets a new log level. With this value, texts which are sent to
+    //! the logger are filtered out. For example setting this value to
+    //! io::ELL_WARNING, only warnings and
+    //! errors are printed out. Setting it to io::ELL_INFORMATION, which is
+    //! the default setting, warnings,
+    //! errors and informational texts are printed out.
+    //! \param ll: new log level filter value.
+    void setLogLevel(E_LOG_LEVEL ll);
+
+    //! Prints out a text into the log
+    //! \param text: Text to print out.
+    //! \param ll: Log level of the text. If the text is an error, set
+    //! it to io::ELL_ERROR, if it is warning set it to io::ELL_WARNING, and if it
+    //! is just an informational text, set it to io::ELL_INFORMATION. Texts are
+    //! filtered with these levels. If you want to be a text displayed,
+    //! independent on what level filter is set, use ELL_NONE.
+	void log(io::E_LOG_LEVEL ll, const char *text);
+	void logErr(const char *text);
+	void logWarn(const char *text);
+	void logInfo(const char *text);
+
+    //! Making idntity output format level
+    void setIdentityFormatLevel();
+
+	void setFormatLevel(unsigned level);
+	unsigned getFormatLevel();
+
+    //! Increasing output format level
+    void increaseFormatLevel();
+
+    //! Decreasing output format level
+    void decreaseFormatLevel();
+};
+
+//----------------------------------------------------------------------------
+} // end namespace io
+//----------------------------------------------------------------------------

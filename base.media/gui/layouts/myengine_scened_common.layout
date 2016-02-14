@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Scened.Common.Root" >
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="MyScened/StaticText" Name="Scened.Transf.Root" >
+            <Property Name="FrameEnabled" Value="False" />
+            <Property Name="UnifiedAreaRect" Value="{{0.0075014,0},{0.0033335,0},{0.281249,0},{0.599999,0}}" />
+            <Property Name="BackgroundEnabled" Value="False" />
+            <Window Type="MyScened/StaticText" Name="Scened.Transf.PositionCaption" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="Position:" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0374014,0},{0.0649503,0},{0.44087,0},{0.116388,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Transf.RotationCaption" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="Rotation:" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0374014,0},{0.374417,0},{0.44087,0},{0.425856,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Transf.SclCaption" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="Scale:" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0374014,0},{0.682936,0},{0.44087,0},{0.732292,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Transf.PosXEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="100000000.0" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0708246,0},{0.12799,0},{0.446608,0},{0.197935,0}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Transf.SclXLabel" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="X" />
+                <Property Name="TextColours" Value="tl:FFFFFFFF tr:FFFFFFFF bl:FFFF5050 br:FFFF5050" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{-0.00957025,0},{0.743688,0},{0.065798,0},{0.813634,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Transf.PosYLabel" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Y" />
+                <Property Name="TextColours" Value="tl:FFFFFFFF tr:FFFFFFFF bl:FF50FF50 br:FF50FF50" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{-0.00957025,0},{0.204569,0},{0.065798,0},{0.274516,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Transf.PosYEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="100000000.0" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0708246,0},{0.204569,0},{0.446608,0},{0.274516,0}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Transf.PosZLabel" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Z" />
+                <Property Name="TextColours" Value="tl:FFFFFFFF tr:FFFFFFFF bl:FF5050FF br:FF5050FF" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{-0.00957025,0},{0.281438,0},{0.065798,0},{0.351386,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Transf.PosZEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="100000000.0" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0708246,0},{0.281438,0},{0.446608,0},{0.351386,0}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Transf.PosXLabel" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="X" />
+                <Property Name="TextColours" Value="tl:FFFFFFFF tr:FFFFFFFF bl:FFFF5050 br:FFFF5050" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{-0.00957025,0},{0.12799,0},{0.065798,0},{0.197935,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Transf.RotYLabel" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Y" />
+                <Property Name="TextColours" Value="tl:FFFFFFFF tr:FFFFFFFF bl:FF50FF50 br:FF50FF50" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{-0.00957025,0},{0.512732,0},{0.065798,0},{0.582679,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Transf.RotZLabel" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Z" />
+                <Property Name="TextColours" Value="tl:FFFFFFFF tr:FFFFFFFF bl:FF5050FF br:FF5050FF" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{-0.00957025,0},{0.591671,0},{0.065798,0},{0.661619,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Transf.RotZEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="100000000.0" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0708246,0},{0.591671,0},{0.446608,0},{0.661619,0}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Transf.RotYEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="100000000.0" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0708246,0},{0.512732,0},{0.446608,0},{0.582679,0}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Transf.RotXEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="100000000.0" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0708246,0},{0.436152,0},{0.446608,0},{0.506098,0}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Transf.RotXLabel" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="X" />
+                <Property Name="TextColours" Value="tl:FFFFFFFF tr:FFFFFFFF bl:FFFF5050 br:FFFF5050" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{-0.00957025,0},{0.436152,0},{0.065798,0},{0.506098,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Transf.SclYLabel" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Y" />
+                <Property Name="TextColours" Value="tl:FFFFFFFF tr:FFFFFFFF bl:FF50FF50 br:FF50FF50" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{-0.00957025,0},{0.820269,0},{0.065798,0},{0.890215,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Transf.SclZLabel" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Z" />
+                <Property Name="TextColours" Value="tl:FFFFFFFF tr:FFFFFFFF bl:FF5050FF br:FF5050FF" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{-0.00957025,0},{0.899207,0},{0.065798,0},{0.969153,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Transf.SclZEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="100000000.0" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0708246,0},{0.899207,0},{0.446608,0},{0.969153,0}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Transf.SclYEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="100000000.0" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0708246,0},{0.820269,0},{0.446608,0},{0.890215,0}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Transf.SclXEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="100000000.0" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0708246,0},{0.743688,0},{0.446608,0},{0.813634,0}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Transf.ButtonsGroup" >
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.463483,0},{0,0},{1,0},{1,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+                <Window Type="MyScened/Button" Name="Scened.Transf.SclMinusZBtn" >
+                    <Property Name="Font" Value="Tahoma-12" />
+                    <Property Name="Text" Value="-Z" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.00112604,0},{0.899207,0},{0.265624,0},{0.969153,0}}" />
+                    <Property Name="NormalTextColour" Value="FF0000FF" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.SclMinusXBtn" >
+                    <Property Name="Font" Value="Tahoma-12" />
+                    <Property Name="Text" Value="-X" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.00112604,0},{0.820269,0},{0.265624,0},{0.890215,0}}" />
+                    <Property Name="NormalTextColour" Value="FFFF0000" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.RotMinusZBtn" >
+                    <Property Name="Font" Value="Tahoma-12" />
+                    <Property Name="Text" Value="-Z" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.00112604,0},{0.591671,0},{0.265624,0},{0.661619,0}}" />
+                    <Property Name="NormalTextColour" Value="FF0000FF" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.RotMinusXBtn" >
+                    <Property Name="Font" Value="Tahoma-12" />
+                    <Property Name="Text" Value="-X" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.00112604,0},{0.512732,0},{0.265624,0},{0.582679,0}}" />
+                    <Property Name="NormalTextColour" Value="FFFF0000" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.PosMinusZBtn" >
+                    <Property Name="Font" Value="Tahoma-12" />
+                    <Property Name="Text" Value="-Z" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.00112604,0},{0.281438,0},{0.265624,0},{0.351386,0}}" />
+                    <Property Name="NormalTextColour" Value="FF0000FF" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.PosMinusXBtn" >
+                    <Property Name="Font" Value="Tahoma-12" />
+                    <Property Name="Text" Value="-X" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.00112604,0},{0.204569,0},{0.265624,0},{0.274516,0}}" />
+                    <Property Name="NormalTextColour" Value="FFFF0000" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.PosPlusYBtn" >
+                    <Property Name="Font" Value="Tahoma-12" />
+                    <Property Name="Text" Value="+Y" />
+                    <Property Name="Tooltip" Value="Move up" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.267856,0},{0.12799,0},{0.63803,0},{0.197935,0}}" />
+                    <Property Name="NormalTextColour" Value="FF00FF00" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Editbox" Name="Scened.Transf.PosDeltaEditbox" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="Text" Value="100.0" />
+                    <Property Name="MaxTextLength" Value="1073741823" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.267856,0},{0.204569,0},{0.63803,0},{0.274516,0}}" />
+                    <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                    <Property Name="TextParsingEnabled" Value="False" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.PosMinusYBtn" >
+                    <Property Name="Font" Value="Tahoma-12" />
+                    <Property Name="Text" Value="-Y" />
+                    <Property Name="Tooltip" Value="Move down" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.267856,0},{0.281438,0},{0.63803,0},{0.351386,0}}" />
+                    <Property Name="NormalTextColour" Value="FF00FF00" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.RotPlusYBtn" >
+                    <Property Name="Font" Value="Tahoma-12" />
+                    <Property Name="Text" Value="+Y" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.267856,0},{0.436152,0},{0.63803,0},{0.506098,0}}" />
+                    <Property Name="NormalTextColour" Value="FF00FF00" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Editbox" Name="Scened.Transf.RotDeltaEditbox" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="Text" Value="15.0" />
+                    <Property Name="MaxTextLength" Value="1073741823" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.267856,0},{0.512732,0},{0.63803,0},{0.582679,0}}" />
+                    <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                    <Property Name="TextParsingEnabled" Value="False" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.RotMinusYBtn" >
+                    <Property Name="Font" Value="Tahoma-12" />
+                    <Property Name="Text" Value="-Y" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.267856,0},{0.591671,0},{0.63803,0},{0.661619,0}}" />
+                    <Property Name="NormalTextColour" Value="FF00FF00" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.SclPlusYBtn" >
+                    <Property Name="Font" Value="Tahoma-12" />
+                    <Property Name="Text" Value="+Y" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.267856,0},{0.743688,0},{0.63803,0},{0.813634,0}}" />
+                    <Property Name="NormalTextColour" Value="FF00FF00" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Editbox" Name="Scened.Transf.SclDeltaEditbox" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="Text" Value="0.1" />
+                    <Property Name="MaxTextLength" Value="1073741823" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.267856,0},{0.820269,0},{0.63803,0},{0.890215,0}}" />
+                    <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                    <Property Name="TextParsingEnabled" Value="False" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.SclMinusYBtn" >
+                    <Property Name="Font" Value="Tahoma-12" />
+                    <Property Name="Text" Value="-Y" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.267856,0},{0.899207,0},{0.63803,0},{0.969153,0}}" />
+                    <Property Name="NormalTextColour" Value="FF00FF00" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.SclPlusXBtn" >
+                    <Property Name="Font" Value="Tahoma-14" />
+                    <Property Name="Text" Value="+X" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.643924,0},{0.820269,0},{0.908422,0},{0.890215,0}}" />
+                    <Property Name="NormalTextColour" Value="FFFF0000" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Checkbox" Name="Scened.Transf.LockScaleCheck" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="Text" Value="Lock" />
+                    <Property Name="Selected" Value="True" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.647455,0},{0.904087,0},{1.04711,0},{0.958345,0}}" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.SclPlusZBtn" >
+                    <Property Name="Font" Value="Tahoma-12" />
+                    <Property Name="Text" Value="+Z" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.643924,0},{0.743688,0},{0.908422,0},{0.813634,0}}" />
+                    <Property Name="NormalTextColour" Value="FF0000FF" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.RotPlusXBtn" >
+                    <Property Name="Font" Value="Tahoma-14" />
+                    <Property Name="Text" Value="+X" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.643924,0},{0.512732,0},{0.908422,0},{0.582679,0}}" />
+                    <Property Name="NormalTextColour" Value="FFFF0000" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.RotPlusZBtn" >
+                    <Property Name="Font" Value="Tahoma-14" />
+                    <Property Name="Text" Value="+Z" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.643924,0},{0.436152,0},{0.908422,0},{0.506098,0}}" />
+                    <Property Name="NormalTextColour" Value="FF0000FF" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.PosPlusXBtn" >
+                    <Property Name="Font" Value="Tahoma-12" />
+                    <Property Name="Text" Value="+X" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.643924,0},{0.204569,0},{0.908422,0},{0.274516,0}}" />
+                    <Property Name="NormalTextColour" Value="FFFF0000" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.PosPlusZBtn" >
+                    <Property Name="Font" Value="Tahoma-12" />
+                    <Property Name="Text" Value="+Z" />
+                    <Property Name="HoverTextColour" Value="FFC26408" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.643924,0},{0.12799,0},{0.908422,0},{0.197935,0}}" />
+                    <Property Name="NormalTextColour" Value="FF0000FF" />
+                    <Property Name="PushedTextColour" Value="FFFFFF00" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.MoveHereBtn" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="Text" Value="Move" />
+                    <Property Name="Tooltip" Value="Move here" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,-60},{0.018433,0},{0,-20},{0.08838,0}}" />
+                    <Property Name="HorizontalAlignment" Value="Right" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Transf.JumpToBtn" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="Text" Value="Jump" />
+                    <Property Name="Tooltip" Value="Jump to" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,-10},{0.018433,0},{0,30},{0.08838,0}}" />
+                    <Property Name="HorizontalAlignment" Value="Right" />
+                </Window>
+            </Window>
+        </Window>
+        <Window Type="MyScened/StaticText" Name="Scened.Props.Root" >
+            <Property Name="FrameEnabled" Value="False" />
+            <Property Name="UnifiedAreaRect" Value="{{0.51,0},{0.101666,0},{0.807967,0},{0.691512,0}}" />
+            <Property Name="BackgroundEnabled" Value="False" />
+            <Window Type="MyScened/StaticText" Name="Scened.Props.NameLabel" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="Name:" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,20},{0,6},{0.597873,78},{0,29}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/MultiLineEditbox" Name="Scened.Props.NameEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" >
+</Property>
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,10},{0,30},{0.95189,0},{0,94}}" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Props.ParentIDEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="ReadOnly" Value="True" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,10},{0,308},{0.820185,0},{0,342}}" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Props.IDLabel" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="ID:" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,20},{0,107},{0.597873,78},{0,130}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Props.ParentIDLabel" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="Parent ID:" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,20},{0,284},{0.597873,78},{0,307}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Props.IDEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,10},{0,130},{0.94965,1},{0,164}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Props.ParentNameLabel" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="Parent name:" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,20},{0,180},{0.597873,78},{0,203}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/MultiLineEditbox" Name="Scened.Props.ParentNameEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" >
+</Property>
+                <Property Name="ReadOnly" Value="True" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,10},{0,203},{0.94965,1},{0,267}}" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Props.FindParentBtn" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="Find" />
+                <Property Name="Tooltip" Value="Find parent" />
+                <Property Name="HoverTextColour" Value="FFFF0000" />
+                <Property Name="UnifiedAreaRect" Value="{{0.830038,0},{0,308},{0.950964,0},{0,342}}" />
+                <Property Name="NormalTextColour" Value="FFFF0000" />
+                <Property Name="PushedTextColour" Value="FFFFFF00" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Helper.MaterialSelectionDialog.Root" >
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="MyHelper/FrameWindow" Name="Helper.MaterialSelectionDialog.Frame" >
+            <Property Name="Font" Value="Tahoma-10" />
+            <Property Name="Text" Value="Materials library" />
+            <Property Name="TitlebarFont" Value="Tahoma-10" />
+            <Property Name="TitlebarEnabled" Value="True" />
+            <Property Name="UnifiedAreaRect" Value="{{0.242969,0},{0.0951049,0},{0.702809,0},{0.868848,0}}" />
+            <Window Type="MyHelper/MultiColumnList" Name="Helper.MaterialSelectionDialog.Listbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0202566,0},{0,43},{0.982455,0},{0.898095,0}}" />
+            </Window>
+            <Window Type="MyHelper/StaticText" Name="Helper.MaterialSelectionDialog.MaterialsLabel" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Materials list:" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{0,16},{0,12},{0,156},{0,34}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.MaterialSelectionDialog.OKBtn" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="OK" />
+                <Property Name="UnifiedAreaRect" Value="{{0.29792,0},{0.914992,0},{0.482703,0},{0.977689,0}}" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.MaterialSelectionDialog.CancelBtn" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Cancel" />
+                <Property Name="UnifiedAreaRect" Value="{{0.505854,0},{0.914992,0},{0.690636,0},{0.977689,0}}" />
+            </Window>
+            <Window Type="MyHelper/Button" Name="Helper.MaterialSelectionDialog.ReloadBtn" >
+                <Property Name="UnifiedAreaRect" Value="{{0,161},{0,5},{0,199},{0,39}}" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

@@ -1,0 +1,66 @@
+//----------------------------------------------------------------------------
+namespace scn {
+//----------------------------------------------------------------------------
+
+//! Scene node, with animated mesh attached to
+class IAnimatedMeshSceneNode : public ISceneNode
+{
+	const char* getCurrentAnimationFileName();
+	unsigned getCurrentAnimationBeginFrame();
+	unsigned getCurrentAnimationEndFrame();
+	float getCurrentAnimationSpeed();
+	bool getCurrentAnimationLoopMode();
+
+	void setCurrentAnimationBeginFrame(unsigned frame);
+	void setCurrentAnimationEndFrame(unsigned frame);
+	void setCurrentAnimationSpeed(float speed);
+	void setCurrentAnimationLoopMode(bool looped);
+
+	const char* getAnimationFileName(unsigned idx);
+	unsigned getAnimationBeginFrame(unsigned idx);
+	unsigned getAnimationEndFrame(unsigned idx);
+	float getAnimationSpeed(unsigned idx);
+	bool getAnimationLoopMode(unsigned idx);
+
+	void setAnimationBeginFrame(unsigned idx, unsigned frame);
+	void setAnimationEndFrame(unsigned idx, unsigned frame);
+	void setAnimationSpeed(unsigned idx, float speed);
+	void setAnimationLoopMode(unsigned idx, bool looped);
+
+	//! Sets the speed with witch the animation is played.
+	void setAnimationOveralSpeed(float speed);
+
+    //! Sets the speed with witch the animation is played.
+    float getAnimationOveralSpeed();
+
+	//! Return true if smooth animation set to true
+	bool isAnimationOveralSmooth();
+
+	//! Setting on/off smooth animation flag
+	void setAnimationOveralSmooth(bool flag) = 0;
+
+    //! Geting overal animations count 
+    unsigned getAnimationOveralFramesCount() = 0;
+
+	//! returns animated mesh of this scene node
+	IAnimatedMesh* getAnimatedMesh(E_LOD_LEVEL lodlevel=ELL_LOD_NEAREST);
+
+	//! setting animated mesh of this scene node
+	//! this works with scene nodes with animated meshes 
+	void setAnimatedMesh(IAnimatedMesh* amesh, E_LOD_LEVEL lodlevel=ELL_LOD_NEAREST);
+
+	//! return current frame of animated mesh
+	IMesh* getMesh(E_LOD_LEVEL lodlevel=ELL_LOD_NEAREST);
+
+	//! Return numbered frame of animated mesh.
+	//! Note, that frame can be a float value, in such case returned mesh interpolated
+	//! between nearest frames
+	IMesh* getMesh(float frame, E_LOD_LEVEL lodlevel=ELL_LOD_NEAREST);
+
+	//! Attaching another scene node to named skeleton bone, return true on success
+	bool attachToBone(ISceneNode* node, const char *bone_name);
+};
+
+//---------------------------------------------------------------------------- 
+} // end namespace scn
+//----------------------------------------------------------------------------

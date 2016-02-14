@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Scened.Scene.AnimatedMesh.Root" >
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="DefaultWindow" Name="Scened.Scene.AnimatedMesh.Imposter.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.42867,0},{0.0385061,0},{0.662009,0},{0.84051,0}}" />
+            <Window Type="DefaultWindow" Name="Scened.Scene.AnimatedMesh.Imposter.ClientArea" >
+                <Property Name="UnifiedAreaRect" Value="{{0,0},{0,5},{1,0},{0.975,0}}" />
+                <Window Type="MyScened/Checkbox" Name="Scened.Scene.AnimatedMesh.Imposter.EnabledCheckbox" >
+                    <Property Name="Font" Value="Tahoma-10" />
+                    <Property Name="Text" Value="Enabled" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,52},{0,10},{0,180},{0,28}}" />
+                </Window>
+                <Window Type="DefaultWindow" Name="Scened.Scene.AnimatedMesh.Imposter.ParamsArea" >
+                    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,33},{1,0},{1,0}}" />
+                    <Window Type="TaharezLook/TabControl" Name="Scened.Scene.AnimatedMesh.Imposter.ParamsTabControl" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="TabHeight" Value="{0,30}" />
+                        <Property Name="TabTextPadding" Value="{0,5}" />
+                        <Property Name="TabPanePosition" Value="Top" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.025,0},{0,6},{0.975,0},{1,0}}" />
+                        <Window Type="DefaultWindow" Name="Scened.Scene.AnimatedMesh.Imposter.CommonParamsTab" >
+                            <Property Name="Text" Value="Common" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                            <Window Type="MyScened/Editbox" Name="Scened.Scene.AnimatedMesh.Imposter.ShiftXEditbox" >
+                                <Property Name="Font" Value="Tahoma-8" />
+                                <Property Name="MaxTextLength" Value="1073741823" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,103},{0,111},{0,198},{0,136}}" />
+                                <Property Name="TextParsingEnabled" Value="False" />
+                            </Window>
+                            <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Imposter.ShiftXLabel" >
+                                <Property Name="Font" Value="Tahoma-8" />
+                                <Property Name="Text" Value="Shift X:" />
+                                <Property Name="FrameEnabled" Value="False" />
+                                <Property Name="HorzFormatting" Value="RightAligned" />
+                                <Property Name="UnifiedAreaRect" Value="{{0.0343939,0},{0,111},{0,98},{0,136}}" />
+                                <Property Name="BackgroundEnabled" Value="False" />
+                            </Window>
+                            <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Imposter.ShiftYLabel" >
+                                <Property Name="Font" Value="Tahoma-8" />
+                                <Property Name="Text" Value="Shift Y:" />
+                                <Property Name="FrameEnabled" Value="False" />
+                                <Property Name="HorzFormatting" Value="RightAligned" />
+                                <Property Name="UnifiedAreaRect" Value="{{0.0343939,0},{0,136},{0,98},{0,161}}" />
+                                <Property Name="BackgroundEnabled" Value="False" />
+                            </Window>
+                            <Window Type="MyScened/Editbox" Name="Scened.Scene.AnimatedMesh.Imposter.ShiftYEditbox" >
+                                <Property Name="Font" Value="Tahoma-8" />
+                                <Property Name="MaxTextLength" Value="1073741823" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,103},{0,136},{0,198},{0,161}}" />
+                                <Property Name="TextParsingEnabled" Value="False" />
+                            </Window>
+                            <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Imposter.ShiftZLabel" >
+                                <Property Name="Font" Value="Tahoma-8" />
+                                <Property Name="Text" Value="Shift Z:" />
+                                <Property Name="FrameEnabled" Value="False" />
+                                <Property Name="HorzFormatting" Value="RightAligned" />
+                                <Property Name="UnifiedAreaRect" Value="{{0.0343939,0},{0,160},{0,98},{0,185}}" />
+                                <Property Name="BackgroundEnabled" Value="False" />
+                            </Window>
+                            <Window Type="MyScened/Editbox" Name="Scened.Scene.AnimatedMesh.Imposter.ShiftZEditbox" >
+                                <Property Name="Font" Value="Tahoma-8" />
+                                <Property Name="MaxTextLength" Value="1073741823" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,103},{0,160},{0,198},{0,185}}" />
+                                <Property Name="TextParsingEnabled" Value="False" />
+                            </Window>
+                            <Window Type="MyScened/Checkbox" Name="Scened.Scene.AnimatedMesh.Imposter.CenteredCheckbox" >
+                                <Property Name="Font" Value="Tahoma-8" />
+                                <Property Name="Text" Value="Centered" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,82},{0,245},{0,210},{0,265}}" />
+                            </Window>
+                            <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Imposter.ViewOffsetLabel" >
+                                <Property Name="Font" Value="Tahoma-8" />
+                                <Property Name="Text" >View
+offset:</Property>
+                                <Property Name="FrameEnabled" Value="False" />
+                                <Property Name="HorzFormatting" Value="RightAligned" />
+                                <Property Name="UnifiedAreaRect" Value="{{0.0343939,0},{0,198},{0,98},{0,226}}" />
+                                <Property Name="BackgroundEnabled" Value="False" />
+                            </Window>
+                            <Window Type="MyScened/Editbox" Name="Scened.Scene.AnimatedMesh.Imposter.ViewOffsetEditbox" >
+                                <Property Name="Font" Value="Tahoma-8" />
+                                <Property Name="MaxTextLength" Value="1073741823" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,103},{0,201},{0,198},{0,226}}" />
+                                <Property Name="TextParsingEnabled" Value="False" />
+                            </Window>
+                            <Window Type="MyScened/MultiLineEditbox" Name="Scened.Scene.AnimatedMesh.Imposter.FileNameEditbox" >
+                                <Property Name="Font" Value="Tahoma-8" />
+                                <Property Name="Text" >
+</Property>
+                                <Property Name="ReadOnly" Value="True" />
+                                <Property Name="MaxTextLength" Value="1073741823" />
+                                <Property Name="UnifiedAreaRect" Value="{{0.05,0},{0,50},{0.95,0},{0,95}}" />
+                                <Property Name="TextParsingEnabled" Value="False" />
+                            </Window>
+                            <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Imposter.ClearBtn" >
+                                <Property Name="Tooltip" Value="Reset imposter" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,162},{0,16},{0,193},{0,46}}" />
+                            </Window>
+                            <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Imposter.FileNameLabel" >
+                                <Property Name="Font" Value="Tahoma-8" />
+                                <Property Name="Text" Value="File Name:" />
+                                <Property Name="FrameEnabled" Value="False" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,10},{0,22},{0,114},{0,40}}" />
+                                <Property Name="BackgroundEnabled" Value="False" />
+                            </Window>
+                            <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Imposter.OpenBtn" >
+                                <Property Name="Tooltip" Value="Open imposter" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,98},{0,16},{0,129},{0,46}}" />
+                            </Window>
+                            <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Imposter.SaveBtn" >
+                                <Property Name="Tooltip" Value="Save imposter" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,130},{0,16},{0,161},{0,46}}" />
+                            </Window>
+                        </Window>
+                        <Window Type="DefaultWindow" Name="Scened.Scene.AnimatedMesh.Imposter.CreationParamsTab" >
+                            <Property Name="Text" Value="Creation" />
+                            <Property Name="Visible" Value="False" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                            <Window Type="TaharezLook/ScrollablePane" Name="Scened.Scene.AnimatedMesh.Imposter.CreationParamsArea" >
+                                <Property Name="ContentArea" Value="l:0 t:0 r:258 b:342" />
+                                <Property Name="HorzStepSize" Value="0.1" />
+                                <Property Name="VertStepSize" Value="0.1" />
+                                <Property Name="HorzOverlapSize" Value="0.01" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                                <Property Name="VertOverlapSize" Value="0.01" />
+                                <Property Name="HorzScrollPosition" Value="0" />
+                                <Property Name="VertScrollPosition" Value="0" />
+                                <AutoWindow NameSuffix="__auto_container__" >
+                                    <Property Name="ContentArea" Value="l:0 t:0 r:258 b:342" />
+                                    <Property Name="ChildExtentsArea" Value="l:0 t:0 r:258 b:342" />
+                                    <Window Type="TaharezLook/Spinner" Name="Scened.Scene.AnimatedMesh.Imposter.ViewsCountSpinner" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="StepSize" Value="1" />
+                                        <Property Name="CurrentValue" Value="12" />
+                                        <Property Name="MaximumValue" Value="32" />
+                                        <Property Name="MinimumValue" Value="1" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,134},{0,49},{0,223},{0,75}}" />
+                                    </Window>
+                                    <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Imposter.ViewCountLabel" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="Text" Value="View count:" />
+                                        <Property Name="FrameEnabled" Value="False" />
+                                        <Property Name="HorzFormatting" Value="RightAligned" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,3},{0,49},{0,130},{0,75}}" />
+                                        <Property Name="BackgroundEnabled" Value="False" />
+                                    </Window>
+                                    <Window Type="MyScened/Checkbox" Name="Scened.Scene.AnimatedMesh.Imposter.CompressedCheckbox" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="Text" Value="Compressed" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,135},{0.026829,0},{0,258},{0,34}}" />
+                                    </Window>
+                                    <Window Type="MyScened/Editbox" Name="Scened.Scene.AnimatedMesh.Imposter.SizeScaleWidthEditbox" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="MaxTextLength" Value="1073741823" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,134},{0,122},{0,180},{0,147}}" />
+                                        <Property Name="TextParsingEnabled" Value="False" />
+                                    </Window>
+                                    <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Imposter.ViewScaleWidthHeightLabel" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="Text" >View scale W/H:
+</Property>
+                                        <Property Name="FrameEnabled" Value="False" />
+                                        <Property Name="HorzFormatting" Value="RightAligned" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,3},{0,146},{0,130},{0,171}}" />
+                                        <Property Name="BackgroundEnabled" Value="False" />
+                                    </Window>
+                                    <Window Type="MyScened/Editbox" Name="Scened.Scene.AnimatedMesh.Imposter.SizeScaleHeightEditbox" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="MaxTextLength" Value="1073741823" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,179},{0,122},{0,225},{0,147}}" />
+                                        <Property Name="TextParsingEnabled" Value="False" />
+                                    </Window>
+                                    <Window Type="MyScened/Editbox" Name="Scened.Scene.AnimatedMesh.Imposter.ViewScaleWidthEditbox" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="MaxTextLength" Value="1073741823" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,134},{0,146},{0,180},{0,171}}" />
+                                        <Property Name="TextParsingEnabled" Value="False" />
+                                    </Window>
+                                    <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Imposter.SizeScaleWidthHeightLabel" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="Text" Value="Size scale W/H:" />
+                                        <Property Name="FrameEnabled" Value="False" />
+                                        <Property Name="HorzFormatting" Value="RightAligned" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,3},{0,122},{0,130},{0,147}}" />
+                                        <Property Name="BackgroundEnabled" Value="False" />
+                                    </Window>
+                                    <Window Type="MyScened/Editbox" Name="Scened.Scene.AnimatedMesh.Imposter.ViewScaleHeightEditbox" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="MaxTextLength" Value="1073741823" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,179},{0,146},{0,225},{0,171}}" />
+                                        <Property Name="TextParsingEnabled" Value="False" />
+                                    </Window>
+                                    <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Imposter.OptimalViewAngleLabel" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="Text" >Optimal
+view angle:</Property>
+                                        <Property Name="FrameEnabled" Value="False" />
+                                        <Property Name="HorzFormatting" Value="RightAligned" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,3},{0,78},{0,130},{0,118}}" />
+                                        <Property Name="BackgroundEnabled" Value="False" />
+                                    </Window>
+                                    <Window Type="MyScened/Editbox" Name="Scened.Scene.AnimatedMesh.Imposter.OptimalViewAngleEditbox" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="MaxTextLength" Value="1073741823" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,134},{0,86},{0,223},{0,111}}" />
+                                        <Property Name="TextParsingEnabled" Value="False" />
+                                    </Window>
+                                    <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Imposter.TextureResolutionLabel" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="Text" Value="Texture res.:" />
+                                        <Property Name="FrameEnabled" Value="False" />
+                                        <Property Name="HorzFormatting" Value="RightAligned" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,3},{0,182},{0,130},{0,207}}" />
+                                        <Property Name="BackgroundEnabled" Value="False" />
+                                    </Window>
+                                    <Window Type="MyScened/Editbox" Name="Scened.Scene.AnimatedMesh.Imposter.TextureResolutionEditbox" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="MaxTextLength" Value="1073741823" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,134},{0,182},{0,223},{0,207}}" />
+                                        <Property Name="TextParsingEnabled" Value="False" />
+                                    </Window>
+                                    <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Imposter.FrameStepLabel" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="Text" Value="Frame step:" />
+                                        <Property Name="FrameEnabled" Value="False" />
+                                        <Property Name="HorzFormatting" Value="RightAligned" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,3},{0,218},{0,130},{0,244}}" />
+                                        <Property Name="BackgroundEnabled" Value="False" />
+                                    </Window>
+                                    <Window Type="TaharezLook/Spinner" Name="Scened.Scene.AnimatedMesh.Imposter.FrameStepSpinner" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="StepSize" Value="1" />
+                                        <Property Name="CurrentValue" Value="1" />
+                                        <Property Name="MaximumValue" Value="32" />
+                                        <Property Name="MinimumValue" Value="1" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,134},{0,218},{0,223},{0,244}}" />
+                                    </Window>
+                                    <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Imposter.ApplyBtn" >
+                                        <Property Name="Tooltip" Value="Apply creation parameters changes" />
+                                        <Property Name="PushedImage" Value="Apply creation parameters changes" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,7},{0,8},{0,38},{0,38}}" />
+                                    </Window>
+                                    <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Imposter.CancelBtn" >
+                                        <Property Name="Tooltip" Value="Undo creation parameters changes" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,39},{0,8},{0,70},{0,38}}" />
+                                    </Window>
+                                    <Window Type="TaharezLook/StaticImage" Name="Scened.Scene.AnimatedMesh.Imposter.ImposterDiffuseImage" >
+                                        <Property Name="UnifiedAreaRect" Value="{{0,134},{0,256},{0,193},{0,284}}" />
+                                    </Window>
+                                    <Window Type="TaharezLook/StaticImage" Name="Scened.Scene.AnimatedMesh.Imposter.ImposterSpecularImage" >
+                                        <Property Name="UnifiedAreaRect" Value="{{0,134},{0,314},{0,193},{0,342}}" />
+                                    </Window>
+                                    <Window Type="TaharezLook/StaticImage" Name="Scened.Scene.AnimatedMesh.Imposter.ImposterAmbientImage" >
+                                        <Property Name="UnifiedAreaRect" Value="{{0,134},{0,285},{0,193},{0,313}}" />
+                                    </Window>
+                                    <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Imposter.ImposterDiffuseColorLabel" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="Text" Value="Diffuse color:" />
+                                        <Property Name="FrameEnabled" Value="False" />
+                                        <Property Name="HorzFormatting" Value="RightAligned" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,3},{0,256},{0,130},{0,284}}" />
+                                        <Property Name="BackgroundEnabled" Value="False" />
+                                    </Window>
+                                    <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Imposter.ImposterAmbientColorLabel" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="Text" Value="Ambient color:" />
+                                        <Property Name="FrameEnabled" Value="False" />
+                                        <Property Name="HorzFormatting" Value="RightAligned" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,3},{0,285},{0,130},{0,313}}" />
+                                        <Property Name="BackgroundEnabled" Value="False" />
+                                    </Window>
+                                    <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Imposter.ImposterSpecularColorLabel" >
+                                        <Property Name="Font" Value="Tahoma-8" />
+                                        <Property Name="Text" Value="Specular color:" />
+                                        <Property Name="FrameEnabled" Value="False" />
+                                        <Property Name="HorzFormatting" Value="RightAligned" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,3},{0,314},{0,130},{0,342}}" />
+                                        <Property Name="BackgroundEnabled" Value="False" />
+                                    </Window>
+                                    <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Imposter.DiffuseBtn" >
+                                        <Property Name="Font" Value="Tahoma-10" />
+                                        <Property Name="Text" Value="..." />
+                                        <Property Name="Tooltip" Value="Undo creation parameters changes" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,195},{0,256},{0,223},{0,284}}" />
+                                    </Window>
+                                    <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Imposter.AmbientBtn" >
+                                        <Property Name="Font" Value="Tahoma-10" />
+                                        <Property Name="Text" Value="..." />
+                                        <Property Name="Tooltip" Value="Undo creation parameters changes" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,195},{0,285},{0,223},{0,313}}" />
+                                    </Window>
+                                    <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Imposter.SpecularBtn" >
+                                        <Property Name="Font" Value="Tahoma-10" />
+                                        <Property Name="Text" Value="..." />
+                                        <Property Name="Tooltip" Value="Undo creation parameters changes" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,195},{0,314},{0,223},{0,342}}" />
+                                    </Window>
+                                    <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Imposter.RecreateBtn" >
+                                        <Property Name="Tooltip" Value="Recreate imposter" />
+                                        <Property Name="UnifiedAreaRect" Value="{{0,74},{0,8},{0,105},{0,38}}" />
+                                    </Window>
+                                </AutoWindow>
+                            </Window>
+                        </Window>
+                    </Window>
+                </Window>
+            </Window>
+        </Window>
+        <Window Type="MyScened/ScrollablePane" Name="Scened.Scene.AnimatedMesh.Shadow.Root" >
+            <Property Name="ContentArea" Value="l:0 t:0 r:231 b:332" />
+            <Property Name="HorzStepSize" Value="0.1" />
+            <Property Name="VertStepSize" Value="0.1" />
+            <Property Name="HorzOverlapSize" Value="0.01" />
+            <Property Name="UnifiedAreaRect" Value="{{0.67867,0},{0.0385061,0},{0.858885,0},{0.520229,0}}" />
+            <Property Name="VertOverlapSize" Value="0.01" />
+            <Property Name="HorzScrollPosition" Value="0" />
+            <Property Name="VertScrollPosition" Value="0" />
+            <AutoWindow NameSuffix="__auto_container__" >
+                <Property Name="ContentArea" Value="l:0 t:0 r:231 b:332" />
+                <Property Name="ChildExtentsArea" Value="l:0 t:0 r:231 b:332" />
+                <Window Type="DefaultWindow" Name="Scened.Scene.AnimatedMesh.Shadow.ClientArea" >
+                    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,5},{1,0},{0,332}}" />
+                    <Window Type="MyScened/Checkbox" Name="Scened.Scene.AnimatedMesh.Shadow.EnabledCheckbox" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Enabled" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,52},{0,10},{0,180},{0,28}}" />
+                    </Window>
+                </Window>
+            </AutoWindow>
+        </Window>
+        <Window Type="MyScened/ScrollablePane" Name="Scened.Scene.AnimatedMesh.Mesh.Root" >
+            <Property Name="ContentArea" Value="l:-4 t:0 r:201 b:332" />
+            <Property Name="HorzStepSize" Value="0.1" />
+            <Property Name="VertStepSize" Value="0.1" />
+            <Property Name="HorzOverlapSize" Value="0.01" />
+            <Property Name="UnifiedAreaRect" Value="{{0.0107015,0},{0.0259187,0},{0.170604,0},{0.507641,0}}" />
+            <Property Name="VertOverlapSize" Value="0.01" />
+            <Property Name="HorzScrollPosition" Value="0" />
+            <Property Name="VertScrollPosition" Value="0" />
+            <AutoWindow NameSuffix="__auto_container__" >
+                <Property Name="ContentArea" Value="l:-4 t:0 r:201 b:332" />
+                <Property Name="ChildExtentsArea" Value="l:-4 t:0 r:201 b:332" />
+                <Window Type="DefaultWindow" Name="Scened.Scene.AnimatedMesh.Mesh.ClientArea" >
+                    <Property Name="UnifiedAreaRect" Value="{{-0.018915,0},{0,5},{0.981085,0},{0,332}}" />
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Mesh.LOD0Label" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="LOD 0:" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,3},{0,8},{0,68},{0,26}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/MultiLineEditbox" Name="Scened.Scene.AnimatedMesh.Mesh.LOD0Editbox" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" >
+</Property>
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,11},{0,36},{0.975332,0},{0,90}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Mesh.LOD0OpenBtn" >
+                        <Property Name="Tooltip" Value="Open mesh" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,74},{0,3},{0,105},{0,33}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Mesh.LOD1Label" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="LOD 1:" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,3},{0,102},{0,68},{0,120}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Mesh.LOD1OpenBtn" >
+                        <Property Name="Tooltip" Value="Open mesh" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,74},{0,99},{0,105},{0,129}}" />
+                    </Window>
+                    <Window Type="MyScened/MultiLineEditbox" Name="Scened.Scene.AnimatedMesh.Mesh.LOD1Editbox" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" >
+</Property>
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,11},{0,132},{0.975332,0},{0,186}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Mesh.LOD2Label" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="LOD 2:" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,3},{0,201},{0,68},{0,219}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Mesh.LOD2OpenBtn" >
+                        <Property Name="Tooltip" Value="Open mesh" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,74},{0,196},{0,105},{0,226}}" />
+                    </Window>
+                    <Window Type="MyScened/MultiLineEditbox" Name="Scened.Scene.AnimatedMesh.Mesh.LOD2Editbox" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" >
+</Property>
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,11},{0,229},{0.975332,0},{0,283}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Mesh.LOD2ClearBtn" >
+                        <Property Name="Tooltip" Value="Clear mesh" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,107},{0,196},{0,138},{0,226}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Mesh.LOD1ClearBtn" >
+                        <Property Name="Tooltip" Value="Clear mesh" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,107},{0,99},{0,138},{0,129}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Mesh.LOD0ClearBtn" >
+                        <Property Name="Tooltip" Value="Clear mesh" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,107},{0,3},{0,138},{0,33}}" />
+                    </Window>
+                </Window>
+            </AutoWindow>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Scene.AnimatedMesh.Anim.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.179728,0},{0.0346275,0},{0.387232,0},{0.870198,0}}" />
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Anim.ParamsArea" >
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,10},{0.832101,0},{0.955362,0},{1,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+                <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Anim.PlayBtn" >
+                    <Property Name="Tooltip" Value="Play animation" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,138},{0,43},{0,174},{0,77}}" />
+                </Window>
+                <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Anim.PauseBtn" >
+                    <Property Name="Tooltip" Value="Pause animation" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,98},{0,43},{0,134},{0,77}}" />
+                </Window>
+                <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Mesh.SpeedLabel" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="Text" Value="Speed:" />
+                    <Property Name="FrameEnabled" Value="False" />
+                    <Property Name="HorzFormatting" Value="RightAligned" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,5},{0,3},{0,67},{0,31}}" />
+                    <Property Name="BackgroundEnabled" Value="False" />
+                </Window>
+                <Window Type="MyScened/Editbox" Name="Scened.Scene.AnimatedMesh.Anim.SpeedEditbox" >
+                    <Property Name="MaxTextLength" Value="1073741823" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,70},{0,4},{0,142},{0,32}}" />
+                    <Property Name="TextParsingEnabled" Value="False" />
+                </Window>
+                <Window Type="MyScened/Checkbox" Name="Scened.Scene.AnimatedMesh.Anim.LoopedCheck" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="Text" Value="Looped" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,155},{0,4},{0,262},{0,29}}" />
+                </Window>
+            </Window>
+            <Window Type="MyScened/ScrollablePane" Name="Scened.Scene.AnimatedMesh.Anim.ScrollArea" >
+                <Property Name="ContentArea" Value="l:0 t:0 r:262 b:486" />
+                <Property Name="HorzStepSize" Value="0.1" />
+                <Property Name="VertStepSize" Value="0.1" />
+                <Property Name="HorzOverlapSize" Value="0.01" />
+                <Property Name="UnifiedAreaRect" Value="{{0,0},{0,5},{1,0},{0.823027,0}}" />
+                <Property Name="VertOverlapSize" Value="0.01" />
+                <Property Name="HorzScrollPosition" Value="0" />
+                <Property Name="VertScrollPosition" Value="0" />
+                <AutoWindow NameSuffix="__auto_container__" >
+                    <Property Name="ContentArea" Value="l:0 t:0 r:262 b:486" />
+                    <Property Name="ChildExtentsArea" Value="l:0 t:0 r:262 b:486" />
+                    <Window Type="MyScened/MultiColumnList" Name="Scened.Scene.AnimatedMesh.Anim.AnimList" >
+                        <Property Name="Font" Value="Tahoma-6" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.025,0},{0,85},{0.975,0},{1,0}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Anim.AnimAddBtn" >
+                        <Property Name="Tooltip" Value="Add new animation" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,12},{0,50},{0,43},{0,80}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Anim.AnimRemBtn" >
+                        <Property Name="Tooltip" Value="Remove animation" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,45},{0,50},{0,76},{0,80}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Anim.AnimMoveUpBtn" >
+                        <Property Name="Tooltip" Value="Move up" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,78},{0,50},{0,109},{0,80}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.AnimatedMesh.Anim.AnimMoveDownBtn" >
+                        <Property Name="Tooltip" Value="Move down" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,111},{0,50},{0,142},{0,80}}" />
+                    </Window>
+                    <Window Type="MyScened/Editbox" Name="Scened.Scene.AnimatedMesh.Anim.OveralSpeedEditbox" >
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,76},{0,7},{0,151},{0,35}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Checkbox" Name="Scened.Scene.AnimatedMesh.Anim.SmoothCheck" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Smooth" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,167},{0,7},{0,262},{0,32}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.AnimatedMesh.Mesh.OveralSpeedLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" >Overal
+speed:</Property>
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,8},{0,4},{0,71},{0,41}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                </AutoWindow>
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

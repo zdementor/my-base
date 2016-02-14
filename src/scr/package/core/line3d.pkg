@@ -1,0 +1,76 @@
+//----------------------------------------------------------------------------
+namespace core {
+//----------------------------------------------------------------------------
+
+//! 3D line between two points with intersection methods.
+class line3df
+{
+    //-----------------------------------------------------------------------
+    // Constructors
+    //-----------------------------------------------------------------------
+
+    line3df();
+    line3df(float xa, float ya, float za, float xb, float yb, float zb);
+    line3df(const vector3df& start, const vector3df& end);
+    line3df(const line3df& other);
+	~line3df();
+
+    //-----------------------------------------------------------------------
+    // operators
+    //-----------------------------------------------------------------------
+
+    line3df operator+ (const vector3df& point) const;
+    line3df operator- (const vector3df& point) const;
+    bool    operator==(const line3df&   other) const;
+
+    //-----------------------------------------------------------------------
+    // functions
+    //-----------------------------------------------------------------------
+    
+    void set(const float& xa, const float& ya, const float& za, const float& xb, const float& yb, const float& zb);
+    void set(const vector3df& nstart, const vector3df& nend);
+    void set(const line3df& line);
+
+    //! Returns length of line
+    //! \return Returns length of line.
+    double getLength() const;
+
+    //! Returns sqared length of line
+    //! \return Returns sqared length of line.
+    double getLengthSQ() const;
+
+    //! Returns middle of line
+    vector3df getMiddle() const;
+
+    //! Returns vector of line
+    vector3df getVector() const;
+
+    //! Returns if the overgiven point is between start and end of the
+    //! line. Assumes that the point is already somewhere on the line.
+    bool isPointBetweenStartAndEnd(const vector3df& point) const;
+
+    //! Returns the closest point on this line to a point
+    vector3df getClosestPoint(const vector3df& point) const;
+
+    //! Returns if the line intersects with a shpere
+    //! \param sorigin: Origin of the shpere.
+    //! \param sradius: Radius if the sphere.
+    //! \return Returns true if there is an intersection.
+    //! If there is one, the distance to the first intersection point
+    //! is stored in outdistance.
+    bool getIntersectionWithSphere(vector3df sorigin, float sradius, double& outdistance);
+
+    //! Returns true if the line intersects with a shpere
+    bool intersectsWithSphere(vector3df sorigin, float sradius);
+
+    //-----------------------------------------------------------------------
+    // member variables
+    //-----------------------------------------------------------------------    
+
+    vector3df start;
+    vector3df end;
+};
+
+//----------------------------------------------------------------------------
+} // end namespace core 
+//----------------------------------------------------------------------------

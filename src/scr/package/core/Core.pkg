@@ -1,0 +1,48 @@
+//----------------------------------------------------------------------------
+namespace core {
+//----------------------------------------------------------------------------
+
+enum E_FUNC_TYPE
+{
+    EFT_SIN = 0,
+    EFT_SQUARE,
+    EFT_TRIANGLE,
+    EFT_SAWTOOTH, 
+    EFT_INVERSE_SAWTOOTH,
+    EFT_NOISE,
+
+    E_FUNC_TYPE_COUNT
+};
+
+const char* getFuncTypeName(E_FUNC_TYPE type);
+const char* getFuncTypeReadableName(E_FUNC_TYPE type);
+
+//----------------------------------------------------------------------------
+} // end namespace core    
+//----------------------------------------------------------------------------
+
+$pfile "core/aabbox3d.pkg"
+
+$pfile "core/dimension2d.pkg"
+
+$pfile "core/line3d.pkg"
+
+$pfile "core/matrix4.pkg"
+
+$pfile "core/plane3d.pkg"
+
+$pfile "core/position2d.pkg"
+
+$pfile "core/rect.pkg"
+
+$pfile "core/string.pkg"
+
+$pfile "core/vector3d.pkg"
+
+$pfile "core/vector2d.pkg"
+
+$pfile "core/wave.pkg"
+
+$pfile "core/CoreGame.pkg"
+
+$pfile "core/CoreInOut.pkg"

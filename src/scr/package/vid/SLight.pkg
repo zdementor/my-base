@@ -1,0 +1,53 @@
+//----------------------------------------------------------------------------
+namespace vid {
+//----------------------------------------------------------------------------
+
+//! structure for holding data describing a dynamic point light.
+//! ambient light and point lights are the only light supported 
+//! by the irrlicht engine.
+struct SLight
+{
+    SLight();
+    SLight(const SLight &other);
+	~SLight();
+
+	void set(const SLight &other);
+
+    //! Ambient color emitted by the light
+    img::SColorf AmbientColor; 
+
+    //! Diffuse color emitted by the light. This is the primary color you
+    //! might want to set.
+    img::SColorf DiffuseColor; 
+
+    //! Specular color emitted by the light. 
+    img::SColorf SpecularColor; 
+
+    //! Position of the light.
+    core::vector3df Position; 
+
+    //! Radius of light. Everything within this radius be be lighted.
+    float Radius; 
+
+    //! Does the light cast shadows?
+    bool CastShadows;
+
+    //! Type of the light. Default: ELT_POINT
+    E_LIGHT_TYPE Type;
+
+    //! Enabled/Disabled Flag
+    bool Enabled;
+
+	//! Dynamic light if true, or static if false
+	bool Dynamic;
+
+	//! Lighting intesity wave
+	core::wave IntensityWave;
+
+	//! Enable/Disable intensity changing
+	bool IntensityWaveEnabled;
+};
+
+//----------------------------------------------------------------------------
+} // end namespace vid 
+//----------------------------------------------------------------------------

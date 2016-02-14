@@ -1,0 +1,253 @@
+//----------------------------------------------------------------------------
+namespace vid {
+//----------------------------------------------------------------------------
+
+struct STexCoordModifier
+{
+	STexCoordModifier();
+	STexCoordModifier(const STexCoordModifier &other);
+	~STexCoordModifier();
+
+	void set(const STexCoordModifier &m);
+
+	E_TEXCOORD_MOD_TYPE getType() const;
+	void setType(E_TEXCOORD_MOD_TYPE type);
+
+	// used for ETCMT_TURBULENT
+	const core::wave& getTurbulent() const;
+	void setTurbulent(const core::wave &turb);
+
+	// used for ETCMT_TRANSFORM
+	//  s' = s * matrix[0][0] + t * matrix[1][0] + translate[0]
+	//  t' = s * matrix[0][1] + t * matrix[0][1] + translate[1]
+	float getMatrix00() const;
+	float getMatrix01() const;
+	float getMatrix10() const;
+	float getMatrix11() const;
+	void setMatrix(float m00, float m01, float m10, float m11);
+	float getTranslate0() const;
+	float getTranslate1() const;
+	void setTranslate(float t0, float t1);
+
+	// used for ETCMT_SCALE
+	//  s *= scale[0]
+	//  t *= scale[1]
+	float getScale0() const;
+	float getScale1() const;
+	void setScale(float scale0, float scale1);
+
+	// used for ETCMT_SCROLL
+	//  s' = s + scroll[0] * time
+	//  t' = t + scroll[1] * time
+	float getScroll0() const;
+	float getScroll1() const;
+	void setScroll(float scroll0, float scroll1);
+
+	// used for ETCMT_ROTATE
+	//  + = clockwise
+	//  - = counterclockwise
+	float getRotateSpeed() const;
+	void setRotateSpeed(float rot);
+};
+
+//---------------------------------------------------------------------------
+
+struct STextureLayer
+{
+    void set(const STextureLayer& ml);
+
+    ITexture* getTexture();
+
+    void setTexture(ITexture* t, E_TEXTURE_LAYER_TYPE type, int tc_channel=0);
+
+	void setTexture(ITexture *t);
+    
+    void setType(E_TEXTURE_LAYER_TYPE type);
+
+	E_TEXTURE_LAYER_TYPE getType() const;
+
+    void update(int curr_time_ms);
+
+    void setProjectionParams(float width_area, float height_area,
+        const core::vector3df &pos, const core::vector3df &dir, const core::vector3df &up);
+
+	float getProjectionWidth() const;
+	float getProjectionHeight() const;
+	const core::vector3df& getProjectionPos() const;
+	const core::vector3df& getProjectionDir() const;
+	const core::vector3df& getProjectionUp() const;
+
+	void setTexMatrix(const core::matrix4 &m);
+
+	const core::matrix4& getTexMatrix() const;
+
+	//! Get texture coords gen mode
+	E_TEXCOORD_GEN_TYPE getTexCoordGen() const;
+
+	//! Set texture coords gen mode
+	void setTexCoordGen(E_TEXCOORD_GEN_TYPE tgt);
+
+	unsigned getTexCoordModifiersCount() const;
+
+	STexCoordModifier& getTexCoordModifier(unsigned idx);
+
+	//! Add new texture coords modifier
+	void addTexCoordModifier(vid::E_TEXCOORD_MOD_TYPE type);
+
+	void removeTexCoordModifier(unsigned idx);
+
+	void setTexCoordModifier(unsigned idx, const STexCoordModifier &tcm);
+
+	bool swapTexCoordModifiers(unsigned idx1, unsigned idx2);
+
+	//! Return true if tex coords animated via Texture Matrix
+	bool isTexCoordAnimated() const;
+
+	//! Get texture RGB color scale
+	int getTexRGBScale() const;
+
+	//! Set texture RGB color scale
+	void setTexRGBScale(int scl);
+
+	//! Get texture coords addresing mode
+	E_TEXCOORD_ADDRESS_MODE getTexCoordAddr() const;
+
+	//! Set texture coords addresing mode
+	void setTexCoordAddr(E_TEXCOORD_ADDRESS_MODE am);
+
+	//! Get texture coords channel indes
+	int getTexCoordChannel() const;
+
+	//! Get texture coords channel indes
+	void setTexCoordChannel(int tch);
+
+	//! Enable/disable texture filter
+	void enableFilter(bool enable);
+
+	bool isFilterEnabled() const;
+};
+
+//---------------------------------------------------------------------------
+
+struct SRenderPass
+{
+    void set(const SRenderPass& p);
+
+    void update(int curr_time_ms);
+    
+    int getNumber() const;
+
+    //! material texture layers
+    STextureLayer Layers[MY_MATERIAL_MAX_LAYERS];
+  
+	//! Get / Set ambient color ( how much ambient light (a global light) is reflected by this material )
+    //! The default is full white, meaning objects are completely globally illuminated.
+    //! Reduce this if you want to see diffuse or specular light effects, or change
+    //! the blend of colours to make the object have a base colour other than white.
+    const img::SColor &	getAmbientColor() const;
+    void				setAmbientColor(const img::SColor & col);
+
+    //! Get / Set diffuse color ( how much diffuse light coming from a light source is reflected )
+    //! The default is full white.
+    const img::SColor &	getDiffuseColor() const;
+	void				setDiffuseColor(const img::SColor & col);
+
+    //! Get / Set emissive color ( light emitted by this material )
+	//! Default is to emitt no light.
+    const img::SColor &	getEmissiveColor() const;
+	void				setEmissiveColor(const img::SColor & col);
+
+    //! Get / Set specular color ( how much highlights from a light is reflected )
+    //! The default is to reflect no specular light. 
+    const img::SColor &	getSpecularColor() const;
+    void				setSpecularColor(const img::SColor & col);
+
+    //! Get / Set  shininess ( value affecting the size of specular highlights )
+	float	getShininess() const;
+	void	setShininess(float sh);
+  
+	//! Get / Set material flag
+	bool getFlag(E_MATERIAL_FLAG flag) const;
+	void setFlag(E_MATERIAL_FLAG flag, bool value);
+
+	//! Get Color / Alpha change functions
+	const core::wave& getColorFunc() const;
+	const core::wave& getAlphaFunc() const;
+
+	//! Set Color / Alpha generation functions
+	void setColorFunc(const core::wave &func);
+	void setAlphaFunc(const core::wave &func);
+
+	//! Get Color / Alpha generation type
+	E_COLOR_GEN_TYPE getColorGen() const;
+	E_ALPHA_GEN_TYPE getAlphaGen() const;
+
+	//! Set Color / Alpha generation type
+	void setColorGen(E_COLOR_GEN_TYPE gen);
+	void setAlphaGen(E_ALPHA_GEN_TYPE gen);
+    
+	//! Get / Set Depth / Alpha test functions
+	E_COMPARE_TEST	getDepthTest() const;
+	E_ALPHA_TEST	getAlphaTest() const;
+   	void	setDepthTest(E_COMPARE_TEST	dt);
+	void	setAlphaTest(E_ALPHA_TEST	at);
+
+	//! Get  Blending factor for source objects in the scene
+	E_SRC_BLEND_FUNCTION	getSrcBlendFunc() const;
+	E_DST_BLEND_FUNCTION	getDstBlendFunc() const;
+
+	//! Set Blending factor for source and dest objects in the scene
+	void setBlendFuncs(E_SRC_BLEND_FUNCTION srcblend, E_DST_BLEND_FUNCTION dstblend);
+
+	//! Get Blending equation
+	E_BLEND_EQUATION getBlendEquation() const;
+
+	//! Set Blending equation
+	void setBlendEquation(E_BLEND_EQUATION eq);
+
+	//! Determinates if the material is somehow transparent.
+    bool isTransparent() const;
+
+    //! Return true if this material allow some lighting mode
+    bool isLighting() const;
+
+	//! Get Lighting Mode
+	E_LIGHTING_MODE getLightingMode() const;
+
+	//! Set Lighting Mode
+	void setLightingMode(E_LIGHTING_MODE mode);
+
+	void setGPUProgram(IGPUProgram* gpu);
+	IGPUProgram* getGPUProgram() const;
+
+	//! swap two layers
+	bool swapLayers(unsigned l1, unsigned l2);
+};
+
+//---------------------------------------------------------------------------
+
+struct SMaterial
+{
+    SMaterial();
+    ~SMaterial();
+
+	void set(const SMaterial& other);
+
+    void update(unsigned curr_time_ms);
+
+    SRenderPass& getPass(unsigned p);
+
+    int getPassesCount() const;
+
+	unsigned addPass();
+	bool removePass(unsigned p);
+
+	u64 getHash() const;
+
+	bool loadFromFile(const char *filename);
+	bool saveToFile(const char *filename) const;;
+};
+
+//----------------------------------------------------------------------------
+} // end namespace vid 
+//----------------------------------------------------------------------------

@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Scened.Scene.Light.TopRoot" >
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="DefaultWindow" Name="Scened.Scene.Light.Root" >
+            <Property Name="Text" Value="Material" />
+            <Property Name="UnifiedAreaRect" Value="{{0.0120492,0},{0.0831472,0},{0.280544,0},{0.303995,0}}" />
+            <Window Type="MyScened/TabControl" Name="Scened.Scene.Light.TabControl" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="TabHeight" Value="{0,25}" />
+                <Property Name="TabTextPadding" Value="{0,5}" />
+                <Property Name="TabPanePosition" Value="Top" />
+                <Property Name="UnifiedAreaRect" Value="{{0.02,0},{0,6},{0.98,0},{0.98,0}}" />
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Scene.Light.Props.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.413277,0},{0.0069934,0},{0.670996,0},{0.875526,0}}" />
+            <Window Type="MyScened/Checkbox" Name="Scened.Scene.Light.Props.EnabledCheck" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Enabled" />
+                <Property Name="UnifiedAreaRect" Value="{{0,62},{0,6},{0,223},{0,30}}" />
+            </Window>
+            <Window Type="MyScened/ScrollablePane" Name="Scened.Scene.Light.Props.ScrollArea" >
+                <Property Name="ContentArea" Value="l:0 t:0 r:250 b:455" />
+                <Property Name="HorzStepSize" Value="0.1" />
+                <Property Name="VertStepSize" Value="0.1" />
+                <Property Name="HorzOverlapSize" Value="0.01" />
+                <Property Name="UnifiedAreaRect" Value="{{0,0},{0.0646812,0},{1,0},{0.965172,0}}" />
+                <Property Name="VertOverlapSize" Value="0.01" />
+                <Property Name="HorzScrollPosition" Value="0" />
+                <Property Name="VertScrollPosition" Value="0" />
+                <AutoWindow NameSuffix="__auto_container__" >
+                    <Property Name="ContentArea" Value="l:0 t:0 r:250 b:455" />
+                    <Property Name="ChildExtentsArea" Value="l:0 t:0 r:250 b:455" />
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.Light.Props.DiffuseLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Diffuse" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,88},{0,129},{0,119}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.Light.Props.DiffuseBtn" >
+                        <Property Name="Font" Value="Tahoma-12" />
+                        <Property Name="Text" Value="..." />
+                        <Property Name="Tooltip" Value="Select diffuse color" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,201},{0,88},{0,232},{0,119}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticImage" Name="Scened.Scene.Light.Props.AmbientImage" >
+                        <Property Name="UnifiedAreaRect" Value="{{0,137},{0,118},{0,200},{0,149}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.Light.Props.AmbientBtn" >
+                        <Property Name="Font" Value="Tahoma-12" />
+                        <Property Name="Text" Value="..." />
+                        <Property Name="Tooltip" Value="Select ambient color" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,201},{0,118},{0,232},{0,149}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.Light.Props.SpecularLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Specular" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,149},{0,129},{0,180}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.Light.Props.AmbientLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Ambient" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,118},{0,129},{0,149}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticImage" Name="Scened.Scene.Light.Props.DiffuseImage" >
+                        <Property Name="UnifiedAreaRect" Value="{{0,137},{0,88},{0,200},{0,119}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticImage" Name="Scened.Scene.Light.Props.SpecularImage" >
+                        <Property Name="UnifiedAreaRect" Value="{{0,137},{0,149},{0,200},{0,180}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.Light.Props.SpecularBtn" >
+                        <Property Name="Font" Value="Tahoma-12" />
+                        <Property Name="Text" Value="..." />
+                        <Property Name="Tooltip" Value="Select specular color" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,201},{0,149},{0,232},{0,180}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.Light.Props.TypeLabel" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Type" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0.0108459,0},{0,65},{0,33}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Combobox" Name="Scened.Scene.Light.Props.TypeCombo" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Tooltip" Value="Light type" />
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,77},{0.00903823,0},{0,234},{0,155}}" />
+                        <Property Name="MaxEditTextLength" Value="1073741823" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.Light.Props.ColouringLabel" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Colouring:" />
+                        <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,10},{0,70},{0,137},{0,93}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.Light.Props.IntensityWaveLabel" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Intensity wave:" />
+                        <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,10},{0,188},{0,147},{0,208}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.Light.Props.IntensityWaveBtn" >
+                        <Property Name="Font" Value="Tahoma-12" />
+                        <Property Name="Text" Value="..." />
+                        <Property Name="Tooltip" Value="Setup color gen. function" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,201},{0,212},{0,232},{0,243}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.Light.Props.IntensityWaveFuncLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Func: " />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,212},{0,195},{0,243}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.Light.Props.LightedVolumeXLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="X" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,322},{0,19},{0,342}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.Light.Props.LightedVolumeYLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Y" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,347},{0,19},{0,367}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.Light.Props.LightedVolumeZLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Z" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,374},{0,19},{0,394}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.Light.Props.LightedVolumeCenterOffsetXSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="10" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="10000" />
+                        <Property Name="MinimumValue" Value="-10000" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,18},{0,322},{0,127},{0,347}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.Light.Props.LightedVolumeCenterOffsetYSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="10" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="10000" />
+                        <Property Name="MinimumValue" Value="-10000" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,18},{0,346},{0,127},{0,371}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.Light.Props.LightedVolumeCenterOffsetZSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="10" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="10000" />
+                        <Property Name="MinimumValue" Value="-10000" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,18},{0,370},{0,127},{0,395}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.Light.Props.LightedVolumeSizeChangeZSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="10" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="10000" />
+                        <Property Name="MinimumValue" Value="-10000" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,135},{0,370},{0.952971,0},{0,395}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.Light.Props.LightedVolumeSizeChangeYSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="10" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="10000" />
+                        <Property Name="MinimumValue" Value="-10000" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,135},{0,346},{0.952971,0},{0,371}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.Light.Props.LightedVolumeSizeChangeXSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="10" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="10000" />
+                        <Property Name="MinimumValue" Value="-10000" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,135},{0,322},{0.952971,0},{0,347}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.Light.Props.LightedVolumeLabel" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Lighted volume:" />
+                        <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,10},{0,272},{0,222},{0,292}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.Light.Props.LightedVolumeCenterOffsetLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Center offset" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.0034843,0},{0,294},{0,110},{0,319}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.Light.Props.LightedVolumeSizeChangeLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Size change" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0.498565,0},{0,294},{0,240},{0,319}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.Light.Props.RadiusLabel" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Radius" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="HorzFormatting" Value="RightAligned" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,36},{0,65},{0,63}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.Light.Props.RadiusSpinner" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="StepSize" Value="10" />
+                        <Property Name="CurrentValue" Value="300" />
+                        <Property Name="MaximumValue" Value="10000" />
+                        <Property Name="MinimumValue" Value="0" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,77},{0,36},{0,234},{0,63}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Checkbox" Name="Scened.Scene.Light.Props.CastShadowsCheck" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Cast shadows" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,62},{0,406},{0,223},{0,432}}" />
+                    </Window>
+                    <Window Type="MyScened/Checkbox" Name="Scened.Scene.Light.Props.IntensityWaveEnabledCheck" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Enabled wave" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,75},{0,245},{0,156},{0,271}}" />
+                    </Window>
+                    <Window Type="MyScened/Checkbox" Name="Scened.Scene.Light.Props.DynamicCheck" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Dynamic light" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,62},{0,429},{0,223},{0,455}}" />
+                    </Window>
+                </AutoWindow>
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

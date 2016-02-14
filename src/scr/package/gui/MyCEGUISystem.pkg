@@ -1,0 +1,31 @@
+//------------------------------------------------------------------------------------
+namespace MyCEGUI {
+//------------------------------------------------------------------------------------
+
+//! create my CEGUI system components (renderer, scripting module)
+bool create(const char* cegui_ini_file_name);
+
+//! forward event to CEGUI system 
+bool onEvent(const io::SEvent& event);
+	
+//! register GUI for future rendering
+void registerForRendering();
+
+//! destroy my CEGUI system components
+void destroy();
+
+//! sets widget text using utf8 encoding
+void setWindowTextUtf8(CEGUI::Window *win, const char* utf8_text);
+void setListboxItemTextUtf8(CEGUI::ListboxItem *item, const char* utf8_text);
+
+//! return MyEngine texture from CEGUI texture
+vid::ITexture* getTexture(CEGUI::Texture &ceguitex);
+
+//! set CEGUI texture from MyEngine texture
+void setTexture(CEGUI::Texture &ceguitex, vid::ITexture *mytex);
+
+//------------------------------------------------------------------------------------
+} // end namespace MyCEGUI
+//------------------------------------------------------------------------------------
+
+

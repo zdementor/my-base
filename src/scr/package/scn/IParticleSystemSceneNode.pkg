@@ -1,0 +1,200 @@
+//----------------------------------------------------------------------------
+namespace scn {
+//----------------------------------------------------------------------------
+
+class IParticleAffector : public IUnknown
+{
+public:
+
+    //! return affector type
+    E_PARTICLE_AFFECTOR_TYPE getType();
+
+    //! set enabled
+    void setEnabled(bool e);
+
+    //! return true if enabled, otherwise false
+    bool isEnabled();
+
+	//!
+	bool set(IParticleAffector* pa);
+
+	//!
+	unsigned getAffectTimeMs();
+
+	//!
+	void setAffectTimeMs(unsigned time_ms);
+};
+
+//----------------------------------------------------------------------------
+
+class IParticleFadeOutAffector : public IParticleAffector
+{
+public:
+
+    //! return target color
+    img::SColor getTargetColor();
+
+    //! set target color
+    void setTargetColor(const img::SColor &col);
+};
+
+//----------------------------------------------------------------------------
+
+class IParticleGravityAffector : public IParticleAffector
+{
+public:
+    //! return Gravity
+    core::vector3df getGravity();
+
+    //! set Gravity
+    void setGravity(const core::vector3df &g);
+};
+
+//---------------------------------------------------------------------------- 
+
+class IParticleEmitter : public IUnknown
+{
+public:
+
+    ///////////////////////////////////////////////////////////////////////////
+    //               Get Functions
+    ///////////////////////////////////////////////////////////////////////////
+
+    //! return emitter type
+    E_PARTICLE_EMITTER_TYPE getType() =;
+
+	//! return if transformation of particles exists in global space, otherwise false
+	bool isGlobalParticlesTransformation()=;
+
+    //! Gets the size of all particles.
+    const core::dimension2df& getParticleSize();
+
+    //! return particles moving direction
+    const core::vector3df& getDirection();
+
+    //! return min umber of particles appearing per second
+    unsigned getMinParticlePerSecond();
+
+    //! return max number of particles appearing per second
+    unsigned getMaxParticlePerSecond();
+
+    //! return min color in the beginig of particle life
+    const img::SColor& getMinStartColor();
+
+    //! return max color in the beginig of particle life
+    const img::SColor& getMaxStartColor();
+
+    //! return min particle life time
+    unsigned getMinLifeTime();
+
+    //! return max particle life time
+    unsigned getMaxLifeTime();
+
+    //! return minimal angle of particle moving
+    int getMaxAngleDegrees();
+
+    //! return volume, particles appears within
+    const core::aabbox3df& getAppearVolume();
+
+	//! setting volume, particles appears within
+    vid::ITexture* getTexture();
+
+	//! return true if enabled, otherwise false
+    bool isEnabled();
+
+    ///////////////////////////////////////////////////////////////////////////
+    //               Set Functions
+    ///////////////////////////////////////////////////////////////////////////
+
+	//! set true if wants to transform particles in global space, otherwise false (default: false)
+	void setGlobalParticlesTransformation(bool value);
+
+	//! Sets the size of all particles.
+    void setParticleSize(const core::dimension2df &size);
+
+    //! return particles moving direction
+    void setDirection(const core::vector3df &dir);
+
+    //! return min umber of particles appearing per second
+    void setMinParticlePerSecond(unsigned pps);
+
+    //! return max number of particles appearing per second
+    void setMaxParticlePerSecond(unsigned pps);
+
+    //! return min color in the beginig of particle life
+    void setMinStartColor(const img::SColor &col);
+
+    //! return max color in the beginig of particle life
+    void setMaxStartColor(const img::SColor &col);
+
+    //! return min particle life time
+    void setMinLifeTime(unsigned lt);
+
+    //! return max particle life time
+    void setMaxLifeTime(unsigned lt);
+
+    //! return minimal angle of particle moving
+    void setMaxAngleDegrees(int ang);
+
+    //! setting volume, particles appears within
+    void setAppearVolume(const core::aabbox3df &volume);
+
+	//! setting volume, particles appears within
+    void setTexture(vid::ITexture* tex);
+
+	//! set enabled/disabled
+    void setEnabled(bool enabled);
+
+	//!
+	bool set(IParticleEmitter* pe);
+
+	//////////////////////////////////////////////////////
+
+	//! Adds new particle effector to the particle system. 
+	IParticleAffector* addAffector(E_PARTICLE_AFFECTOR_TYPE atype);
+
+	//! Removes particle affectors ny index. returns true on success
+	bool removeAffector(int idx);
+
+	//! Removes all particle affectors in the particle system.
+	void removeAllAffectors();
+
+	//! return particle affector
+	IParticleAffector* getAffector(int idx);
+
+	//! return particle affector count
+	int getAffectorsCount();
+	
+	//!
+	int getParticlesCount();
+
+	//! 
+	const core::aabbox3df& getBoundingBox();
+};
+
+//---------------------------------------------------------------------------- 
+
+class IParticleSystemSceneNode : public ISceneNode
+{
+     //! Sets the particle emitter type, which creates the particles.    
+    IParticleEmitter* addEmitter(E_PARTICLE_EMITTER_TYPE etype);
+
+	//! Removes particle affectors ny index. returns true on success
+    bool removeEmitter(int idx);
+
+	//! return particle emiter
+    IParticleEmitter* getEmitter(int idx);
+
+	//! return particle emitter count
+	int getEmittersCount();
+
+	//!
+	void setEnabled(bool enabled);
+
+	//!
+	int getParticlesCount();
+};
+
+//---------------------------------------------------------------------------- 
+} // end namespace scn
+//----------------------------------------------------------------------------

@@ -1,0 +1,101 @@
+//----------------------------------------------------------------------------
+namespace core {
+//----------------------------------------------------------------------------
+
+//! 3d vector template class with lots of operators and methods.
+class vector3df  
+{
+    //------------------------------------------------------------------------
+    // Constr/Destr
+    //------------------------------------------------------------------------
+
+    vector3df();
+    vector3df(float nx, float ny, float nz);
+    vector3df(const vector3df& other);
+	~vector3df();
+
+    //------------------------------------------------------------------------
+    // operators
+    //------------------------------------------------------------------------
+
+    vector3df operator+(const vector3df& other) const;
+    vector3df operator-(const vector3df& other) const;
+    vector3df operator*(const vector3df& other) const;
+    vector3df operator*(const float v) const;
+    vector3df operator/(const vector3df& other) const;
+    vector3df operator/(const float v) const;
+    bool operator==(const vector3df& other) const;
+
+    //------------------------------------------------------------------------
+    // functions
+    //------------------------------------------------------------------------
+
+    void set(float nx, float ny, float nz);
+    void set(const vector3df& p);
+
+    //! Returns length of the vector.
+    float getLength() const;
+
+    //! Returns squared length of the vector.
+    //! This is useful because it is much faster then
+    //! getLength().
+    float getLengthSQ() const;
+
+    //! Returns the dot product with another vector.
+    float getDotProduct(const vector3df& other) const;
+
+    //! Returns distance from an other point. Here, the vector is interpreted as
+    //! point in 3 dimensional space.
+    float getDistanceFrom(const vector3df& other) const;
+
+    //! Returns squared distance from an other point. 
+    //! Here, the vector is interpreted as point in 3 dimensional space.
+    float getDistanceFromSQ(const vector3df& other) const;
+
+    vector3df getCrossProduct(const vector3df& p) const;
+
+    bool isBetweenPoints(const vector3df& begin, const vector3df& end) const;
+
+    //! Normalizes the vector.
+    vector3df& normalize();
+
+    //! Sets the lenght of the vector to a new value
+    void setLength(float newlength);
+
+    //! Inverts the vector.
+    void invert();
+
+    void rotateXZByDegrees(float degrees, const vector3df& center);
+    void rotateXYByDegrees(float degrees, const vector3df& center);
+    void rotateYZByDegrees(float degrees, const vector3df& center);
+
+    void rotateXZByRadians(float radians, const vector3df& center);
+    void rotateXYByRadians(float radians, const vector3df& center);
+    void rotateYZByRadians(float radians, const vector3df& center);
+
+    //! returns interpolated vector
+    //! \param other: other vector to interpolate between
+    //! \param d: value between 0.0f and 1.0f.
+    vector3df getInterpolated(const vector3df& other, float d) const;
+
+    //! Gets the Y and Z rotations of a vector.
+    //! \return A vector representing the rotation in degrees of
+    //! this vector. The Z component of the vector will always be 0. 
+    vector3df getHorizontalAngle();
+
+    //! calc angle between two vectors (degrees)
+    float getAngleDeg(const vector3df& other);
+
+    //! calc angle between two vectors (radians)
+    float getAngleRad(const vector3df& other);
+    
+    //! Returns a vector at a point half way between this and the passed
+    //! in vector.
+    vector3df midPoint( const vector3df& vec ) const;
+
+    float X, Y, Z;
+};
+
+//----------------------------------------------------------------------------
+} // end namespace core 
+//----------------------------------------------------------------------------

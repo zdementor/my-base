@@ -1,0 +1,47 @@
+//---------------------------------------------------------------------------
+namespace game {
+//---------------------------------------------------------------------------
+
+class IGameNodeItem : public IGameNode
+{      
+
+    //! setting item name
+    void setItemName(const char* name);
+
+    //! setting item key name
+    void setItemKeyName(const char* name);
+
+    //! setting item short description
+    void setItemShortDescr(const char* descr);
+
+    //! setting item description
+    void setItemDescr(const char* short_descr);
+
+    //! setting item image name
+	void setItemImageName(const char* image_name);
+
+    //! return item name
+    const char* getItemName();
+
+    //! return item key name
+    const char* getItemKeyName();
+
+    //! return item short description
+    const char* getItemShortDescr();
+
+    //! return item description
+    const char* getItemDescr();
+
+	//! return item image name
+	const char* getItemImageName();	
+
+	//! take this item to inventory
+	void collectToInventory(IGameInventory& inventory);
+
+	//! throw this item from inventory
+	void throwFromInventory();
+};
+
+//----------------------------------------------------------------------------
+} // namespace game
+//----------------------------------------------------------------------------

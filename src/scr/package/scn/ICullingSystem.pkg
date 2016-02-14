@@ -1,0 +1,27 @@
+//----------------------------------------------------------------------------
+namespace scn {
+//----------------------------------------------------------------------------
+
+class ICullingSystem
+{
+    //! Return singleton object
+    static ICullingSystem& getSingleton();
+
+	//! return true if this Scene Node is culled
+	bool isCull(ISceneNode* node) const;
+
+	//! return true if this Bounding box is culled
+	bool isCull(const core::aabbox3df &bb, E_CULLING_TESTS tests) const;
+
+	//! return true if this 3D position is culled
+	bool isCull(const core::vector3df &pos, E_CULLING_TESTS tests) const;
+
+	//! return true if this 3D sphere is culled
+	bool isCull(const core::vector3df &center, float radius, E_CULLING_TESTS tests) const;
+
+	int getOccludersCount();
+};
+
+//---------------------------------------------------------------------------- 
+} // end namespace scn
+//----------------------------------------------------------------------------

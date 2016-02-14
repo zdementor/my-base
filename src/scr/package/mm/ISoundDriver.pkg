@@ -1,0 +1,42 @@
+//---------------------------------------------------------------------------
+namespace mm {
+//---------------------------------------------------------------------------
+
+class ISoundDriver
+{
+    //! Return singleton object
+    static ISoundDriver& getSingleton();
+    
+	virtual const core::vector3df getPos() const;
+	virtual const core::vector3df getVelocity() const;
+	virtual const core::vector3df getViewDir() const;
+	virtual const core::vector3df getUpDir() const;
+
+	virtual void moveTo( const core::vector3df& newPos );
+	virtual void moveBy( const core::vector3df& delta );
+	virtual void setVelocity( const core::vector3df& newVel );
+	virtual void setOrientation( const core::vector3df& view, const core::vector3df& up );
+	
+	virtual ISound* cloneSound( ISound* snd );
+
+	virtual ISound* getSound( const char * fileName, bool loop, bool auto_delete=false );
+
+	//! looks for the file name of sound if it's already loaded
+	virtual core::stringc findSoundFileName(ISound* snd_ptr);
+
+    //! looks for the full file name of sound if it's already loaded
+    virtual core::stringc findSoundFullFileName(ISound* snd_ptr);
+	
+	virtual void clearUnusedSoundCache();
+	
+	virtual void updateSounds();
+
+	virtual int getPlayingSoundsCount();
+	virtual int getSoundsCount();
+
+	virtual E_SOUND_DRIVER_TYPE getSoundDriverType();
+};
+
+//----------------------------------------------------------------------------
+} // namespace mm
+//----------------------------------------------------------------------------

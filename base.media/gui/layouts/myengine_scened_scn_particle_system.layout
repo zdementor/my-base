@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Scened.Scene.ParticleSystem.TopRoot" >
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="DefaultWindow" Name="Scened.Scene.ParticleSystem.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.0120492,0},{0.0258046,0},{0.22374,0},{0.797703,0}}" />
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.EmittersLabel" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Emitters list:" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,13},{0,3},{0,171},{0,31}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Scene.ParticleSystem.EmitterAddBtn" >
+                <Property Name="Tooltip" Value="Add emitter" />
+                <Property Name="UnifiedAreaRect" Value="{{0,7},{0,39},{0,38},{0,69}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Scene.ParticleSystem.EmitterRemBtn" >
+                <Property Name="Tooltip" Value="Remove emitter" />
+                <Property Name="UnifiedAreaRect" Value="{{0,7},{0,73},{0,38},{0,103}}" />
+            </Window>
+            <Window Type="MyScened/Listbox" Name="Scened.Scene.ParticleSystem.EmittersListbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="UnifiedAreaRect" Value="{{0,41},{0,41},{0.974885,0},{0,112}}" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Root" >
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,5},{0,122},{0.978405,0},{1,0}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+                <Window Type="MyScened/TabControl" Name="Scened.Scene.ParticleSystem.Emitter.TabControl" >
+                    <Property Name="Font" Value="Tahoma-8" />
+                    <Property Name="TabHeight" Value="{0,30}" />
+                    <Property Name="TabTextPadding" Value="{0,5}" />
+                    <Property Name="TabPanePosition" Value="Top" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.02,0},{0,0},{0.98,0},{0.911756,0}}" />
+                    <Window Type="DefaultWindow" Name="Scened.Scene.ParticleSystem.Emitter.Props.Tab" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Properties" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                    </Window>
+                    <Window Type="DefaultWindow" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Tab" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Affectors" />
+                        <Property Name="Visible" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+                    </Window>
+                </Window>
+                <Window Type="MyScened/Checkbox" Name="Scened.Scene.ParticleSystem.Emitter.EnabledCheck" >
+                    <Property Name="Font" Value="Tahoma-10" />
+                    <Property Name="Text" Value="Enabled" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,65},{0.930346,0},{0,190},{0.979538,0}}" />
+                </Window>
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Scene.ParticleSystem.Emitter.Props.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.229687,0},{0,0},{0.453126,0},{0.885315,0}}" />
+            <Window Type="MyScened/ScrollablePane" Name="Scened.Scene.ParticleSystem.Emitter.Props.ScrollArea" >
+                <Property Name="ContentArea" Value="l:0 t:0 r:273 b:578" />
+                <Property Name="HorzStepSize" Value="0.1" />
+                <Property Name="VertStepSize" Value="0.1" />
+                <Property Name="HorzOverlapSize" Value="0.01" />
+                <Property Name="UnifiedAreaRect" Value="{{0,0},{0.025,0},{1,0},{0.975,0}}" />
+                <Property Name="VertOverlapSize" Value="0.01" />
+                <Property Name="HorzScrollPosition" Value="0" />
+                <Property Name="VertScrollPosition" Value="0" />
+                <AutoWindow NameSuffix="__auto_container__" >
+                    <Property Name="ContentArea" Value="l:0 t:0 r:273 b:578" />
+                    <Property Name="ChildExtentsArea" Value="l:0 t:0 r:273 b:578" />
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Props.TextureLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Texture" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,14},{0,1},{0,92},{0,25}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticImage" Name="Scened.Scene.ParticleSystem.Emitter.Props.TextureImage" >
+                        <Property Name="UnifiedAreaRect" Value="{{0,16},{0,27},{0,83},{0,91}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.ParticleSystem.Emitter.Props.TexOpenBtn" >
+                        <Property Name="Tooltip" Value="Choose texture" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,88},{0,2},{0,119},{0,32}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.ParticleSystem.Emitter.Props.TexClearBtn" >
+                        <Property Name="Tooltip" Value="Clear texture" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,122},{0,2},{0,153},{0,32}}" />
+                    </Window>
+                    <Window Type="MyScened/MultiLineEditbox" Name="Scened.Scene.ParticleSystem.Emitter.Props.TextureNameEditbox" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" >
+</Property>
+                        <Property Name="ReadOnly" Value="True" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,87},{0,34},{0.953538,0},{0,91}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Props.ParticleSizeLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" >Particle size
+(width/height)</Property>
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,14},{0,176},{0,137},{0,220}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.ParticleSystem.Emitter.Props.ParticleHeightSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="2" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="1000" />
+                        <Property Name="MinimumValue" Value="0" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,137},{0,199},{0.952971,0},{0,224}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.ParticleSystem.Emitter.Props.ParticleWidthSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="2" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="1000" />
+                        <Property Name="MinimumValue" Value="0" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,137},{0,174},{0.952971,0},{0,199}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Props.AppearVolumeLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Appear volume (min/max)" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,14},{0,230},{0,232},{0,250}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.ParticleSystem.Emitter.Props.AppearVolumeMinYSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="1" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="250" />
+                        <Property Name="MinimumValue" Value="-250" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,18},{0,280},{0,127},{0,305}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.ParticleSystem.Emitter.Props.AppearVolumeMinXSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="1" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="250" />
+                        <Property Name="MinimumValue" Value="-250" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,18},{0,256},{0,127},{0,281}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.ParticleSystem.Emitter.Props.AppearVolumeMinZSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="1" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="250" />
+                        <Property Name="MinimumValue" Value="-250" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,18},{0,304},{0,127},{0,329}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Props.DirXLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="X" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,107},{0,343},{0,121},{0,363}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Props.AppearVolZLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Z" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,308},{0,19},{0,328}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Props.AppearVolYLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Y" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,281},{0,19},{0,301}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.ParticleSystem.Emitter.Props.AppearVolumeMaxZSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="1" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="250" />
+                        <Property Name="MinimumValue" Value="-250" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,135},{0,304},{0.952971,0},{0,329}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.ParticleSystem.Emitter.Props.AppearVolumeMaxXSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="1" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="250" />
+                        <Property Name="MinimumValue" Value="-250" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,135},{0,256},{0.952971,0},{0,281}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.ParticleSystem.Emitter.Props.AppearVolumeMaxYSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="1" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="250" />
+                        <Property Name="MinimumValue" Value="-250" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,135},{0,280},{0.952971,0},{0,305}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Props.AppearVolXLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="X" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,5},{0,256},{0,19},{0,276}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Props.DirYLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Y" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,107},{0,368},{0,121},{0,388}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Props.DirZLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Z" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,107},{0,394},{0,121},{0,414}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Editbox" Name="Scened.Scene.ParticleSystem.Emitter.Props.DirZEditbox" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,126},{0,390},{0.952971,0},{0,415}}" />
+                        <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Editbox" Name="Scened.Scene.ParticleSystem.Emitter.Props.DirYEditbox" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,126},{0,366},{0.952971,0},{0,391}}" />
+                        <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Editbox" Name="Scened.Scene.ParticleSystem.Emitter.Props.DirXEditbox" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="MaxTextLength" Value="1073741823" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,126},{0,342},{0.952971,0},{0,367}}" />
+                        <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Props.DirLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" >Direction
+(speed)</Property>
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,14},{0,341},{0,100},{0,382}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Props.ParticlesPerSecLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" >Particles per
+sec. (min/max)</Property>
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,14},{0,428},{0,137},{0,475}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.ParticleSystem.Emitter.Props.ParticlesPerSecMinSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="50" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="1000" />
+                        <Property Name="MinimumValue" Value="0" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,137},{0,428},{0.952971,0},{0,453}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.ParticleSystem.Emitter.Props.ParticlesPerSecMaxSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="50" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="1000" />
+                        <Property Name="MinimumValue" Value="0" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,137},{0,452},{0.952971,0},{0,477}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Props.LifeTimeLablel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" >Life time msec
+(min/max)</Property>
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,13},{0,494},{0,136},{0,536}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.ParticleSystem.Emitter.Props.LifeTimeMinSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="100" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="10000" />
+                        <Property Name="MinimumValue" Value="0" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,137},{0,490},{0.952971,0},{0,515}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.ParticleSystem.Emitter.Props.LifeTimeMaxSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="100" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="10000" />
+                        <Property Name="MinimumValue" Value="0" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,137},{0,514},{0.952971,0},{0,539}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Props.StartColorLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" >Start color
+(min/max)</Property>
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,14},{0,112},{0,110},{0,151}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Props.AngleDegLabel" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="Text" Value="Angle (deg.)" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,14},{0,553},{0,137},{0,578}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/Spinner" Name="Scened.Scene.ParticleSystem.Emitter.Props.AngleDegSpinner" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="StepSize" Value="10" />
+                        <Property Name="CurrentValue" Value="0" />
+                        <Property Name="MaximumValue" Value="180" />
+                        <Property Name="MinimumValue" Value="0" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,136},{0,553},{0.950496,0},{0,578}}" />
+                        <Property Name="TextParsingEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticImage" Name="Scened.Scene.ParticleSystem.Emitter.Props.StartColorMinImage" >
+                        <Property Name="UnifiedAreaRect" Value="{{0,138},{0,100},{0,201},{0,131}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.ParticleSystem.Emitter.Props.StartColorMinBtn" >
+                        <Property Name="Font" Value="Tahoma-12" />
+                        <Property Name="Text" Value="..." />
+                        <Property Name="Tooltip" Value="Select min start color" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,202},{0,100},{0,233},{0,131}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticImage" Name="Scened.Scene.ParticleSystem.Emitter.Props.StartColorMaxImage" >
+                        <Property Name="UnifiedAreaRect" Value="{{0,138},{0,130},{0,201},{0,161}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.ParticleSystem.Emitter.Props.StartColorMaxBtn" >
+                        <Property Name="Font" Value="Tahoma-12" />
+                        <Property Name="Text" Value="..." />
+                        <Property Name="Tooltip" Value="Select max start color" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,202},{0,131},{0,233},{0,162}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.ParticleSystem.Emitter.Props.IncSpeedBtn" >
+                        <Property Name="Tooltip" Value="Increase speed" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,10},{0,384},{0,40},{0,414}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.ParticleSystem.Emitter.Props.DecSpeedBtn" >
+                        <Property Name="Tooltip" Value="Decrease speed" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,43},{0,384},{0,73},{0,414}}" />
+                    </Window>
+                </AutoWindow>
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.461875,0},{0.0351049,0},{0.654844,0},{0.599727,0}}" />
+            <Window Type="MyScened/ScrollablePane" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.ScrollArea" >
+                <Property Name="ContentArea" Value="l:0 t:0 r:247 b:318" />
+                <Property Name="HorzStepSize" Value="0.1" />
+                <Property Name="VertStepSize" Value="0.1" />
+                <Property Name="HorzOverlapSize" Value="0.01" />
+                <Property Name="UnifiedAreaRect" Value="{{0,0},{0.025,0},{1,0},{0.975,0}}" />
+                <Property Name="VertOverlapSize" Value="0.01" />
+                <Property Name="HorzScrollPosition" Value="0" />
+                <Property Name="VertScrollPosition" Value="0" />
+                <AutoWindow NameSuffix="__auto_container__" >
+                    <Property Name="ContentArea" Value="l:0 t:0 r:247 b:318" />
+                    <Property Name="ChildExtentsArea" Value="l:0 t:0 r:247 b:318" />
+                    <Window Type="MyScened/Button" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.AddBtn" >
+                        <Property Name="Tooltip" Value="Add affector" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,9},{0,30},{0,40},{0,60}}" />
+                    </Window>
+                    <Window Type="MyScened/Button" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.RemBtn" >
+                        <Property Name="Tooltip" Value="Remove affector" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,9},{0,65},{0,40},{0,95}}" />
+                    </Window>
+                    <Window Type="MyScened/Listbox" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Listbox" >
+                        <Property Name="Font" Value="Tahoma-8" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,42},{0,31},{0.942496,0},{0,108}}" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.ListCaption" >
+                        <Property Name="Font" Value="Tahoma-10" />
+                        <Property Name="Text" Value="Affectors list:" />
+                        <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,16},{0.003695,0},{0,197},{0,24}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                    </Window>
+                    <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.ClientArea" >
+                        <Property Name="FrameEnabled" Value="False" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,115},{1,0},{0,318}}" />
+                        <Property Name="BackgroundEnabled" Value="False" />
+                        <Window Type="MyScened/Checkbox" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.EnabledCheck" >
+                            <Property Name="Font" Value="Tahoma-10" />
+                            <Property Name="Text" Value="Enabled" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,54},{0,36},{0.743178,0},{0,63}}" />
+                        </Window>
+                        <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.PropsLabel" >
+                            <Property Name="Font" Value="Tahoma-10" />
+                            <Property Name="Text" Value="Affector properties:" />
+                            <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                            <Property Name="FrameEnabled" Value="False" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,14},{0,6},{0,216},{0,26}}" />
+                            <Property Name="BackgroundEnabled" Value="False" />
+                        </Window>
+                        <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.Root" >
+                            <Property Name="FrameEnabled" Value="False" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,0},{0,71},{1,0},{1,0}}" />
+                            <Property Name="BackgroundEnabled" Value="False" />
+                            <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.AffectTimeMsLabel" >
+                                <Property Name="Font" Value="Tahoma-8" />
+                                <Property Name="Text" >Affect time
+(ms)</Property>
+                                <Property Name="FrameEnabled" Value="False" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,13},{0,4},{0,141},{0,40}}" />
+                                <Property Name="BackgroundEnabled" Value="False" />
+                            </Window>
+                            <Window Type="MyScened/Spinner" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.AffectTimeMsSpinner" >
+                                <Property Name="Font" Value="Tahoma-8" />
+                                <Property Name="StepSize" Value="100" />
+                                <Property Name="CurrentValue" Value="0" />
+                                <Property Name="MaximumValue" Value="10000" />
+                                <Property Name="MinimumValue" Value="0" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,117},{0,11},{0.876048,0},{0,36}}" />
+                                <Property Name="TextParsingEnabled" Value="False" />
+                            </Window>
+                            <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.ClientArea" >
+                                <Property Name="FrameEnabled" Value="False" />
+                                <Property Name="UnifiedAreaRect" Value="{{0,0},{0,44},{1,0},{1,0}}" />
+                                <Property Name="BackgroundEnabled" Value="False" />
+                            </Window>
+                        </Window>
+                    </Window>
+                </AutoWindow>
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.GravityRoot" >
+            <Property Name="UnifiedAreaRect" Value="{{0.729688,0},{0.175524,0},{0.9125,0},{0.373776,0}}" />
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.Gravity.Label" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Direction" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,14},{0,7},{0,100},{0,27}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.Gravity.XLabel" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="X" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,107},{0,9},{0,121},{0,29}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.Gravity.YLabel" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Y" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,107},{0,34},{0,121},{0,54}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.Gravity.ZLabel" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" Value="Z" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,107},{0,60},{0,121},{0,80}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.Gravity.ZEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,126},{0,56},{0.952971,0},{0,81}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.Gravity.YEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,126},{0,32},{0.952971,0},{0,57}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Editbox" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.Gravity.XEditbox" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="UnifiedAreaRect" Value="{{0,126},{0,8},{0.952971,0},{0,33}}" />
+                <Property Name="ValidationString" Value="-?\d*\.?\d*" />
+                <Property Name="TextParsingEnabled" Value="False" />
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.FadeOutRoot" >
+            <Property Name="UnifiedAreaRect" Value="{{0.748438,0},{0.482867,0},{0.920313,0},{0.572028,0}}" />
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.FadeOut.TargetColorLabel" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="Text" >Target
+color</Property>
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0.0772727,0},{0,13},{0,113},{0,52}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticImage" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.FadeOut.TargetColorImage" >
+                <Property Name="UnifiedAreaRect" Value="{{0,111},{0,17},{0,174},{0,48}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Scene.ParticleSystem.Emitter.Affectors.Affector.FadeOut.TargetColorBtn" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="..." />
+                <Property Name="Tooltip" Value="Select min start color" />
+                <Property Name="UnifiedAreaRect" Value="{{0,175},{0,17},{0,206},{0,48}}" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

@@ -1,0 +1,43 @@
+//---------------------------------------------------------------------------
+namespace game {
+//----------------------------------------------------------------------------
+
+class IGameUnitsFormation : public IGameNodeAI
+{
+    //! add unit to formation
+    bool addUnit(IGameNodeAI *gnode); 
+
+    //! remove unit from formation
+    bool removeUnit(IGameNodeAI *gnode); 
+
+    //! remove all units from formation
+    void removeAllUnits(); 
+
+    //! return unit from formation
+    IGameNodeAI* getUnit(int col_idx, int row_idx); 
+
+    //! return units count in formation
+    int getUnitsCount(); 
+
+    //! return units maximal count in formation
+    int getUnitsMaxCount(); 
+
+    //! return true if able to add one more unit in this formation
+    bool canAddOneMoreUnit(); 
+
+    int getFormationID();
+
+    bool setFormationID(int new_id);
+
+    IGameNode* getCommander();
+
+    E_FORMATION_STATES getFormationState();
+
+    core::dimension2di getDimension();
+
+    bool setDimension(core::dimension2di &newdim);
+};
+
+//----------------------------------------------------------------------------
+} // namespace game
+//----------------------------------------------------------------------------

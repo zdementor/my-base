@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Scened.NormalMapConverter.Root" >
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="MyScened/FrameWindow" Name="Scened.NormalMapConverter.Frame" >
+            <Property Name="Font" Value="Tahoma-12" />
+            <Property Name="Text" Value="Normal Map converter" />
+            <Property Name="TitlebarFont" Value="Tahoma-12" />
+            <Property Name="TitlebarEnabled" Value="True" />
+            <Property Name="UnifiedAreaRect" Value="{{0,78},{0,100},{0,538},{0,337}}" />
+            <Window Type="MyScened/Button" Name="Scened.NormalMapConverter.ConvertBtn" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Convert" />
+                <Property Name="Tooltip" Value="Convert to normal map" />
+                <Property Name="UnifiedAreaRect" Value="{{0,105},{0,150},{0,214},{0,182}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.NormalMapConverter.CancelBtn" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Cancel" />
+                <Property Name="Tooltip" Value="Cancel convert" />
+                <Property Name="UnifiedAreaRect" Value="{{0,229},{0,150},{0,338},{0,182}}" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.NormalMapConverter.FileNameText" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="FileName" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{0,13},{0,37},{0,391},{0,68}}" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.NormalMapConverter.FileNameLabel" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Height Map to convert:" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,11},{0,9},{0,255},{0,30}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.NormalMapConverter.OpenBtn" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Tooltip" Value="Choose height map" />
+                <Property Name="UnifiedAreaRect" Value="{{0,395},{0,37},{0,431},{0,68}}" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.NormalMapConverter.AmplitudeLabel" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Amplitude:" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,11},{0,94},{0,132},{0,115}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/HorizontalScrollbar" Name="Scened.NormalMapConverter.AmplitudeScroll" >
+                <Property Name="PageSize" Value="0" />
+                <Property Name="StepSize" Value="1" />
+                <Property Name="OverlapSize" Value="0" />
+                <Property Name="DocumentSize" Value="1" />
+                <Property Name="ScrollPosition" Value="0" />
+                <Property Name="UnifiedAreaRect" Value="{{0,126},{0,96},{0,428},{0,117}}" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

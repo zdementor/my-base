@@ -1,0 +1,32 @@
+//----------------------------------------------------------------------------
+namespace res {
+//----------------------------------------------------------------------------
+
+//! enumeration for media types
+enum E_MEDIA_TYPE
+{
+	EMT_ROOT = 0,
+
+	EMT_MESHES,
+
+	EMT_TEXTURES,
+	EMT_FONTS,
+	EMT_MATERIALS,
+	EMT_GPU_PROGRAMS,
+
+	EMT_GAME_SCRIPTS,
+
+	EMT_XML_SCRIPTS,
+
+	EMT_SOUND_TRACKS,
+	EMT_SOUND_EFFECTS,
+
+	EMT_TEMP_DATA,
+
+	//! for counting enumeration
+	E_MEDIA_TYPE_COUNT,
+};
+
+//----------------------------------------------------------------------------
+} // namespace res 
+//----------------------------------------------------------------------------

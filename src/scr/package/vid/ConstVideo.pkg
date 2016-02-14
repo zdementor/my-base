@@ -1,0 +1,691 @@
+//----------------------------------------------------------------------------
+namespace vid {
+//----------------------------------------------------------------------------
+
+enum
+{
+    MY_MATERIAL_MAX_LAYERS = 4
+};
+
+//----------------------------------------------------------------------------
+
+//! An enum for video driver family
+enum E_DRIVER_FAMILY
+{
+    //! Null device driver family
+    EDF_NULL =  0,     
+    //! DirectX video driver family
+    EDF_DIRECTX,
+    //! OpenGL video driver family
+    EDF_OPENGL
+};
+
+//----------------------------------------------------------------------------
+
+//! An enum for all types of drivers the Irrlicht Engine supports.
+enum E_DRIVER_TYPE
+{
+    //! Null device, useful for applications to run the engine without visualisation. 
+    //! The null device is able to load textures, but does not render and display
+    //! any graphics.
+    EDT_NULL = 0,
+    //! DirectX 9 device, only available on Windows platforms.
+    EDT_DIRECTX9,
+    //! OpenGL device, available on all Windows platforms and on Linux.
+	EDT_OPENGL11,
+	EDT_OPENGL12,
+	EDT_OPENGL21,
+	EDT_OPENGL32,
+
+	E_DRIVER_TYPE_COUNT
+};
+
+const char* getDriverTypeName(E_DRIVER_TYPE type);
+const char* getDriverTypeReadableName(E_DRIVER_TYPE type);
+
+//----------------------------------------------------------------------------
+
+//! Enumeration flags telling the video driver in which format textures
+//! should be created.
+enum E_TEXTURE_CREATION_FLAG
+{
+    //! Automaticaly creates mip map levels for the textures.
+    ETCF_AUTOGEN_MIP_MAPS,
+
+    //! Automaticaly creates color key for the textures.
+    ETCF_CREATE_COLOR_KEY,
+
+    //! Automaticaly creates a normal map textures.
+    ETCF_CREATE_NORMAL_MAP,
+};
+
+//---------------------------------------------------------------------------
+
+enum E_TEXTURE_TYPE
+{
+	ETT_COLOR_MAP = 0,
+	ETT_ANIMATED, // consint from sequence from other color maps
+
+	E_TEXTURE_TYPE_COUNT,
+};
+
+//---------------------------------------------------------------------------
+
+enum E_TEXTURE_LAYER_TYPE
+{
+	ETLT_DIFFUSE_MAP = 0,
+	ETLT_ATTENUATION_MAP,
+	ETLT_SPECULAR_MAP,
+	ETLT_LIGHT_MAP,
+	ETLT_NORMAL_MAP,
+	ETLT_SPLATTING_MAP,               
+
+	E_TEXTURE_LAYER_TYPE_COUNT,
+};
+
+const char* getTextureLayerTypeName(E_TEXTURE_LAYER_TYPE type);
+const char* getTextureLayerTypeReadableName(E_TEXTURE_LAYER_TYPE type);
+
+//----------------------------------------------------------------------------
+
+enum E_TEXTURE_FORMAT
+{
+	ETF_TEXTURE_1D = 0,
+	ETF_TEXTURE_2D,
+	ETF_TEXTURE_3D,
+	ETF_CUBE_MAP,
+
+	E_TEXTURE_FORMAT_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+//! Enumeration for all vertex types there are.
+enum E_VERTEX_TYPE
+{
+	//! Simple vertex type (only position data)
+    EVT_SIMPLE = 0, 
+
+	//! Simple vertex with color data
+    EVT_SIMPLE_COLOURED, 
+
+    //! Standard vertex type with normal and single texture layer
+    EVT_1TCOORDS, 
+
+    //! Standard vertex type with color data (for per vertex color effects)
+    EVT_1TCOORDS_COLOURED, 
+
+    //! Vertex with two texture coordinates. 
+	//! Usually used for geometry with lightmaps or other special materials.
+    EVT_2TCOORDS,
+
+    //! Vertex with two texture coordinates with color data (for per vertex color effects)
+	//! Usually used for geometry with lightmaps or other special materials.
+    EVT_2TCOORDS_COLOURED,
+
+	//! Vertex with a tangent and binormal vector. 
+	//! Usually used for tangent space normal mapping.
+	EVT_1TCOORDS_TBN,
+
+	//! Vertex with a tangent and binormal vector with color data. 
+	//! Usually used for tangent space normal mapping.
+	EVT_1TCOORDS_TBN_COLOURED,
+	
+	//! Vertex with two texture coordinates, with a tangent and binormal vector also. 
+	//! Usually used for tangent space normal mapping.
+	EVT_2TCOORDS_TBN,
+
+	//! Vertex with two texture coordinates, with color data, with a tangent and binormal vector also. 
+	//! Usually used for tangent space normal mapping.
+	EVT_2TCOORDS_TBN_COLOURED,
+
+	//! Vertex with a W-component, single tex coord and with color data. 
+	//! Usialy used for GUI 2d drawing.
+	EVT_1TCOORDS_RHW_COLOURED,
+
+    E_VERTEX_TYPE_COUNT
+};
+
+const char* getVertexTypeName(E_VERTEX_TYPE vtype);
+
+//----------------------------------------------------------------------------
+
+enum E_VERTEX_COMPONENTS
+{
+	EVC_POS = 1,
+	EVC_COL = 2,
+	EVC_TC0 = 4,
+	EVC_TC1 = 8,
+	EVC_NRM = 16,
+	EVC_TBN = 32,
+	EVC_RHW = 64
+};
+
+//----------------------------------------------------------------------------
+
+//! Enumeration for draw primitive types
+enum E_DRAW_PRIMITIVE_TYPE
+{
+	EDPT_TRIANGLE_LIST = 0,
+	EDPT_TRIANGLE_STRIP,
+	EDPT_TRIANGLE_FAN,
+	EDPT_POINT_LIST,
+    EDPT_LINE_LIST,
+    EDPT_LINE_STRIP,
+
+	E_DRAW_PRIMITIVE_TYPE_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+//! enumeration for texture filters
+enum E_TEXTURE_FILTER
+{
+    //! Without filter
+    ETF_NONE,
+
+    //! Bilinear filter
+    ETF_BILINEAR,
+
+    //! Trilinear filter
+    ETF_TRILINEAR,
+
+    //! Anisotropic filter
+    ETF_ANISOTROPIC,
+    
+    //! Not used
+    E_TEXTURE_FILTER_COUNT
+};
+
+//---------------------------------------------------------------------------
+
+enum E_MATERIAL_RENDERER_TYPE
+{   
+    EMRT_STANDARD_RENDERER=0,
+    
+    E_MATERIAL_RENDERER_TYPE_COUNT
+};
+
+//---------------------------------------------------------------------------
+
+//! Material flags
+enum E_MATERIAL_FLAG
+{
+    //! Flat or Gouraud shading? Default: true
+    EMF_GOURAUD_SHADING=0,
+
+    //! May be written to the zbuffer or is it readonly. Default: true
+    //! This flag is ignored, if the material type is a transparent type.
+    EMF_ZWRITE_ENABLE,
+
+    //! Is backfaceculling enabled? Default: true
+    EMF_BACK_FACE_CULLING,
+
+    //! Frontface is in counterclockwise order? Default: true
+    EMF_FRONT_FACE_CCW,
+
+    //! Is fog enabled? Default: false
+    EMF_FOG_ENABLE,
+
+    //! Is off/on mip maps? Default: false
+    EMF_MIP_MAP_OFF,
+
+    //! Is blending enabled? Default: false
+    EMF_BLENDING,
+                                                                            
+    //! This is not a flag, but a value indicating how much flags there are.
+    E_MATERIAL_FLAG_COUNT
+};
+
+const char* getMaterialFlagName(E_MATERIAL_FLAG flag);
+const char* getMaterialFlagReadableName(E_MATERIAL_FLAG flag);
+
+//---------------------------------------------------------------------------
+
+//! Blending factors for source objects with the scene.
+
+enum E_SRC_BLEND_FUNCTION
+{
+    ESBF_ONE = 0,
+    ESBF_ZERO,
+    ESBF_DST_COLOR,
+    ESBF_ONE_MINUS_DST_COLOR,
+    ESBF_SRC_ALPHA,
+    ESBF_ONE_MINUS_SRC_ALPHA,
+    ESBF_DST_ALPHA,
+    ESBF_ONE_MINUS_DST_ALPHA,
+    ESBF_SRC_ALPHA_SATURATE,
+
+    E_SRC_BLEND_FUNCTION_COUNT
+};
+
+const char* getSrcBlendFunctionName(E_SRC_BLEND_FUNCTION func);
+const char* getSrcBlendFunctionReadableName(E_SRC_BLEND_FUNCTION func);
+
+//---------------------------------------------------------------------------
+
+//! Blending factors for destination objects with the scene.
+
+enum E_DST_BLEND_FUNCTION
+{
+    EDBF_ONE = 0,
+    EDBF_ZERO,
+    EDBF_SRC_ALPHA,
+    EDBF_ONE_MINUS_SRC_ALPHA,
+    EDBF_DST_ALPHA,
+    EDBF_ONE_MINUS_DST_ALPHA,
+    EDBF_SRC_COLOR,
+    EDBF_ONE_MINUS_SRC_COLOR,
+
+    E_DST_BLEND_FUNCTION_COUNT
+};
+
+const char* getDstBlendFunctionName(E_DST_BLEND_FUNCTION func);
+const char* getDstBlendFunctionReadableName(E_DST_BLEND_FUNCTION func);
+
+//---------------------------------------------------------------------------
+
+//! Blending equations for source objects with the scene.
+
+enum E_BLEND_EQUATION
+{
+	EBE_ADD = 0,
+	EBE_REVERSE_SUBTRACT,
+	EBE_SUBTRACT,
+	EBE_MIN,
+	EBE_MAX,
+
+	E_BLEND_EQUATION_COUNT,
+};
+
+const char* getBlendEquationName(E_BLEND_EQUATION eq);
+const char* getBlendEquationReadableName(E_BLEND_EQUATION eq);
+
+//---------------------------------------------------------------------------
+
+enum E_TEXCOORD_GEN_TYPE
+{
+    ETCGT_MANUAL_MAPPING = 0,
+    ETCGT_ENVIRONMENT_MAPPING, 
+    ETCGT_PROJECTED_MAPPING, 
+
+    E_TEXCOORD_GEN_TYPE_COUNT
+};
+
+const char* getTexCoordGenTypeName(E_TEXCOORD_GEN_TYPE type);
+const char* getTexCoordGenTypeReadableName(E_TEXCOORD_GEN_TYPE type);
+
+//---------------------------------------------------------------------------
+
+enum E_TEXCOORD_MOD_TYPE
+{
+    ETCMT_TRANSFORM,
+    ETCMT_TURBULENT,
+    ETCMT_SCROLL,
+    ETCMT_SCALE,
+    ETCMT_ROTATE,
+
+    E_TEXCOORD_MOD_TYPE_COUNT
+};
+
+const char* getTexCoordModTypeName(E_TEXCOORD_MOD_TYPE type);
+const char* getTexCoordModTypeReadableName(E_TEXCOORD_MOD_TYPE type);
+
+//---------------------------------------------------------------------------
+
+enum E_COLOR_GEN_TYPE
+{
+	ECGT_VERTEX=0,	// taken from vertex color
+	ECGT_FUNCTION,	// functionaly generated
+	ECGT_CUSTOM,	// custom color value
+
+    E_COLOR_GEN_TYPE_COUNT
+};
+
+const char* getColorGenTypeName(E_COLOR_GEN_TYPE type);
+const char* getColorGenTypeReadableName(E_COLOR_GEN_TYPE type);
+
+//---------------------------------------------------------------------------
+
+enum E_ALPHA_GEN_TYPE
+{
+	EAGT_VERTEX = 0,	// taken from vertex alpha
+	EAGT_FUNCTION,		// functionaly generated
+	EAGT_CUSTOM,		// custom alpha value
+
+    E_ALPHA_GEN_TYPE_COUNT
+};
+
+const char* getAlphaGenTypeName(E_ALPHA_GEN_TYPE type);
+const char* getAlphaGenTypeReadableName(E_ALPHA_GEN_TYPE type);
+
+//---------------------------------------------------------------------------
+
+//! Texture addressing modes - default is TAM_REPEAT.
+enum E_TEXCOORD_ADDRESS_MODE
+{
+    // Texture wraps at values over 1.0
+    ETCAM_WRAP = 0,    
+    // Texture mirrors (flips) at joins over 1.0
+    ETCAM_MIRROR,
+    // Texture clamps at 1.0
+    ETCAM_CLAMP,
+    // Texture coordinates outside the range [0.0, 1.0] are set to the border colour
+    ETCAM_BORDER,
+
+    E_TEXCOORD_ADDRESS_MODE_COUNT
+};
+
+const char* getTexCoordAddrModeName(E_TEXCOORD_ADDRESS_MODE mode);
+const char* getTexCoordAddrModeReadableName(E_TEXCOORD_ADDRESS_MODE mode);
+
+//----------------------------------------------------------------------------
+
+//! Enumeration for different types of lights
+enum E_LIGHT_TYPE
+{
+    //! point light, it has a position in space and radiates light in all directions
+    ELT_POINT,
+
+    //! directional light, coming from a direction from an infinite distance
+    ELT_DIRECTIONAL,
+
+    E_LIGHT_TYPE_COUNT
+};
+
+const char* getLightTypeName(E_LIGHT_TYPE type);
+const char* getLightTypeReadableName(E_LIGHT_TYPE type);
+
+//----------------------------------------------------------------------------
+
+//! enumeration for querying features of the video driver.
+enum E_VIDEO_DRIVER_FEATURE
+{
+    //! Is driver able to render to textures (ore more) at one render pass ?
+    EVDF_MULITEXTURE = 0,
+
+    //! Is driver able to render to a surface?
+    EVDF_RENDER_TO_TARGET,  
+
+    //! Is driver able to render with a bilinear filter applied?
+    EVDF_BILINEAR_FILTER, 
+
+    //! Is driver able to render with a trilinear filter applied?
+    EVDF_TRILINEAR_FILTER,
+
+    //! Is driver able to render with a anisotropic filter applied?
+    EVDF_ANISOTROPIC_FILTER,
+
+    //! Can the driver handle mip maps?
+    EVDF_MIP_MAP,       
+
+    //! Are stencil buffers switched on and does the device support stencil buffers?
+    EVDF_STENCIL_BUFFER,
+
+    //! Is GLSL/HLSL supported?
+    EVDF_SHADER_LANGUAGE,
+
+    //! Is Occlusion Querry  supported?
+    EVDF_OCCLUSION_QUERY,
+
+    E_VIDEO_DRIVER_FEATURE_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+//! enumeration for geometry transformation states
+enum E_TRANSFORMATION_STATE
+{
+    //! View transformation
+    ETS_VIEW = 0,
+    //! World transformation
+    ETS_MODEL,
+    //! Projection transformation
+    ETS_PROJ,
+
+    //! Not used
+    E_TRANSFORMATION_STATE_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+enum E_FOG_TYPE
+{
+    EFT_LINEAR,
+    EFT_EXP,
+    EFT_EXP2,
+
+    //! For counting enum
+    E_FOG_TYPE_COUNT
+};
+
+const char* getFogTypeName(E_FOG_TYPE type);
+const char* getFogTypeReadableName(E_FOG_TYPE type);
+
+//----------------------------------------------------------------------------
+
+enum E_UNIFORM_TYPE
+{
+	EUT_NONE = 0,
+	EUT_MODEL_VIEW_PROJ_MATRIX,
+	EUT_MODEL_VIEW_MATRIX,
+	EUT_MODEL_MATRIX,
+	EUT_NORMAL_MATRIX,
+	EUT_GLOBAL_AMBIENT_COLOR,
+	EUT_MATERIAL_COLORS,
+	EUT_MATERIAL_SHININESS,
+	EUT_LIGHTING,
+	EUT_EYE_POS,
+	EUT_TEXTURE0,
+	EUT_TEXTURE1,
+	EUT_TEXTURE2,
+	EUT_TEXTURE3,
+	EUT_TEXTURE_MATRIX0,
+	EUT_TEXTURE_MATRIX1,
+	EUT_TEXTURE_MATRIX2,
+	EUT_TEXTURE_MATRIX3,
+	EUT_FOG_PARAMS,
+	EUT_FOG_COLOR,
+
+	E_UNIFORM_TYPE_COUNT
+};
+
+//----------------------------------------------------------------------------
+
+enum E_UNIFORM_FLAG
+{
+	EUF_NONE						= 0,
+	EUF_MODEL_VIEW_PROJ_MATRIX		= 1 << 0,
+	EUF_MODEL_VIEW_MATRIX			= 1 << 1,
+	EUF_MODEL_MATRIX				= 1 << 2,
+	EUF_NORMAL_MATRIX				= 1 << 3,
+	EUF_GLOBAL_AMBIENT_COLOR		= 1 << 4,
+	EUF_MATERIAL_COLORS				= 1 << 5,
+	EUF_MATERIAL_SHININESS			= 1 << 6,
+	EUF_LIGHTING					= 1 << 7,
+	EUF_EYE_POS						= 1 << 8,
+	EUF_TEXTURE0					= 1 << 9,
+	EUF_TEXTURE1					= 1 << 10,
+	EUF_TEXTURE2					= 1 << 11,
+	EUF_TEXTURE3					= 1 << 12,
+	EUF_TEXTURE_MATRIX0				= 1 << 13,
+	EUF_TEXTURE_MATRIX1				= 1 << 14,
+	EUF_TEXTURE_MATRIX2				= 1 << 15,
+	EUF_TEXTURE_MATRIX3				= 1 << 16,
+	EUF_FOG_PARAMS                  = 1 << 17,
+	EUF_FOG_COLOR                   = 1 << 18,
+
+	E_UNIFORM_FLAG_FORCE_32_BIT = 0xffffffff
+};
+
+//----------------------------------------------------------------------------
+
+E_UNIFORM_FLAG getUniformFlag(E_UNIFORM_TYPE type);
+
+const char *getUniformName(E_UNIFORM_TYPE type);
+const char *getUniformReadableName(E_UNIFORM_TYPE type);
+
+//----------------------------------------------------------------------------
+
+enum E_POLYGON_FILL_MODE
+{
+	EPFM_SOLID = 0,
+	EPFM_WIREFRAME,
+	EPFM_POINT, 
+
+    E_POLYGON_FILL_MODE_COUNT
+};
+
+const char* getPolygonFillModeName(E_POLYGON_FILL_MODE type);
+const char* getPolygonFillModeReadableName(E_POLYGON_FILL_MODE type);
+
+//----------------------------------------------------------------------------
+
+//! Comparison functions used for the depth/stencil buffer operations and 
+//! others. 
+enum E_COMPARE_TEST
+{
+    ECT_NEVER = 0,
+    ECT_ALWAYS,
+    ECT_LESS,
+    ECT_LEQUAL,
+    ECT_EQUAL,
+    ECT_NOTEQUAL,
+    ECT_GEQUAL,
+    ECT_GREATER,
+
+    //! For counting enum
+    E_COMPARE_TEST_COUNT
+};
+
+const char* getCompareTestName(E_COMPARE_TEST test);
+const char* getCompareTestReadableName(E_COMPARE_TEST test);
+
+//----------------------------------------------------------------------------
+
+//! render passes enumeration
+enum E_RENDER_PASS
+{
+	ERP_3D_SOLID_PASS = 0,
+	ERP_3D_LIGHTING_PASS,
+	ERP_3D_TRANSP_1ST_PASS,
+	ERP_3D_TRANSP_2ND_PASS,
+	ERP_3D_TRANSP_3RD_PASS,
+	ERP_2D_PASS,
+	ERP_GUI_3D_SOLID_PASS,
+	ERP_GUI_3D_TRANSP_PASS,
+	ERP_GUI_2D_PASS,
+
+	E_RENDER_PASS_COUNT
+};
+
+const char* getRenderPassName(E_RENDER_PASS pass);
+const char* getRenderPassReadableName(E_RENDER_PASS pass);
+
+//----------------------------------------------------------------------------
+
+enum E_LIGHTING_MODE
+{
+	ELM_NONE = 0,
+	ELM_8_LIGHTS,
+
+	E_LIGHTING_MODE_COUNT
+};
+
+//---------------------------------------------------------------------------
+
+//! Vertex shader version enums
+enum E_VERTEX_SHADER_VERSION
+{
+	EVSV_HLSL_1_1 = 0,
+	EVSV_HLSL_2_0,
+	EVSV_HLSL_2_a,
+	EVSV_HLSL_3_0,
+	EVSV_HLSL_4_0,
+	EVSV_HLSL_4_1,
+	EVSV_HLSL_5_0,
+	EVSV_GLSL_1_0,
+	EVSV_GLSL_1_1,
+	EVSV_GLSL_1_2,
+	EVSV_GLSL_1_3,
+	EVSV_GLSL_1_4,
+	EVSV_GLSL_1_5,
+	EVSV_GLSL_3_3,
+	EVSV_GLSL_4_0,
+	EVSV_GLSL_4_1,
+
+	E_VERTEX_SHADER_VERSION_COUNT,
+};
+
+const char* getVertexShaderVersionName(E_VERTEX_SHADER_VERSION ver);
+const char* getVertexShaderVersionReadableName(E_VERTEX_SHADER_VERSION ver);
+
+//---------------------------------------------------------------------------
+
+//! Alpha test mode
+enum E_ALPHA_TEST
+{   
+    EAT_ALWAYS = 0, 
+    
+    EAT_GT_0,
+    EAT_LT_80,
+    EAT_GE_80,       
+
+    E_ALPHA_TEST_COUNT
+};
+
+const char* getAlphaTestName(E_ALPHA_TEST test);
+const char* getAlphaTestReadableName(E_ALPHA_TEST test);
+
+//---------------------------------------------------------------------------
+
+//! Pixel shader version enums
+enum E_PIXEL_SHADER_VERSION
+{
+	EPSV_HLSL_1_1 = 0,
+	EPSV_HLSL_1_2,
+	EPSV_HLSL_1_3,
+	EPSV_HLSL_1_4,
+	EPSV_HLSL_2_0,
+	EPSV_HLSL_2_a,
+	EPSV_HLSL_2_b,
+	EPSV_HLSL_3_0,
+	EPSV_HLSL_4_0,
+	EPSV_HLSL_4_1,
+	EPSV_HLSL_5_0,
+	EPSV_GLSL_1_0,
+	EPSV_GLSL_1_1,
+	EPSV_GLSL_1_2,
+	EPSV_GLSL_1_3,
+	EPSV_GLSL_1_4,
+	EPSV_GLSL_1_5,
+	EPSV_GLSL_3_3,
+	EPSV_GLSL_4_0,
+	EPSV_GLSL_4_1,
+
+	E_PIXEL_SHADER_VERSION_COUNT,
+};
+
+const char* getPixelShaderVersionName(E_PIXEL_SHADER_VERSION ver);
+const char* getPixelShaderVersionReadableName(E_PIXEL_SHADER_VERSION ver);
+
+//----------------------------------------------------------------------------
+
+unsigned getVertexSize(E_VERTEX_TYPE type);
+unsigned getVertexComponents(E_VERTEX_TYPE type);
+E_VERTEX_TYPE getVertexTypeFromComponents(unsigned components);
+unsigned getIndexSize(E_INDEX_TYPE type);
+
+//----------------------------------------------------------------------------
+
+enum E_RENDER_BUFFER_TYPE
+{
+	ERBT_DYNAMIC = 0,
+    ERBT_STATIC,
+
+	E_RENDER_BUFFER_TYPE_COUNT
+};
+
+//----------------------------------------------------------------------------
+} // end namespace vid 
+//----------------------------------------------------------------------------

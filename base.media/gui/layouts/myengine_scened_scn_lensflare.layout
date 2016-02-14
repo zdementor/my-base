@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Scened.Scene.LensFlare.TopRoot" >
+        <Property Name="UnifiedAreaRect" Value="{{-0.00197044,0},{0,0},{0.99803,0},{1,0}}" />
+        <Window Type="DefaultWindow" Name="Scened.Scene.LensFlare.Root" >
+            <Property Name="Text" Value="Material" />
+            <Property Name="UnifiedAreaRect" Value="{{0.0120492,0},{0.0831472,0},{0.280544,0},{0.303995,0}}" />
+            <Window Type="MyScened/TabControl" Name="Scened.Scene.LensFlare.TabControl" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="TabHeight" Value="{0,25}" />
+                <Property Name="TabTextPadding" Value="{0,5}" />
+                <Property Name="TabPanePosition" Value="Top" />
+                <Property Name="UnifiedAreaRect" Value="{{0.02,0},{0,6},{0.98,0},{0.98,0}}" />
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Scene.LensFlare.Props.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.428056,0},{0.0336601,0},{0.739963,0},{0.84127,0}}" />
+            <Window Type="MyScened/Button" Name="Scened.Scene.LensFlare.Props.DiffuseBtn" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Text" Value="..." />
+                <Property Name="Tooltip" Value="Select diffuse color" />
+                <Property Name="UnifiedAreaRect" Value="{{0,233},{0,33},{0,264},{0,64}}" />
+            </Window>
+            <Window Type="MyScened/StaticImage" Name="Scened.Scene.LensFlare.Props.DiffuseImage" >
+                <Property Name="UnifiedAreaRect" Value="{{0,162},{0,34},{0,231},{0,65}}" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.LensFlare.Props.ColouringLabel" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Colouring:" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{0,154},{0,6},{0,262},{0,29}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Scene.LensFlare.Props.CoronaTexOpenBtn" >
+                <Property Name="Tooltip" Value="open corona image" />
+                <Property Name="UnifiedAreaRect" Value="{{0,88},{0,4},{0,119},{0,34}}" />
+            </Window>
+            <Window Type="TaharezLook/StaticImage" Name="Scened.Scene.LensFlare.Props.CoronaTexImage" >
+                <Property Name="UnifiedAreaRect" Value="{{0,10},{0,36},{0,95},{0,115}}" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.LensFlare.Props.CoronaLabel" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Corona:" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{0,6},{0,6},{0,85},{0,29}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.LensFlare.Props.Lens.Root" >
+                <Property Name="UnifiedAreaRect" Value="{{0,5},{0,166},{0.97,0},{0.99,0}}" />
+                <Window Type="TaharezLook/ScrollablePane" Name="Scened.Scene.LensFlare.Props.Lens.ScrollArea" >
+                    <Property Name="ContentArea" Value="l:0 t:0 r:0 b:0" />
+                    <Property Name="HorzStepSize" Value="0.1" />
+                    <Property Name="VertStepSize" Value="0.1" />
+                    <Property Name="HorzOverlapSize" Value="0.01" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,0},{0,5},{1,0},{0.98,0}}" />
+                    <Property Name="VertOverlapSize" Value="0.01" />
+                    <Property Name="HorzScrollPosition" Value="0" />
+                    <Property Name="VertScrollPosition" Value="0" />
+                    <AutoWindow NameSuffix="__auto_container__" >
+                        <Property Name="ContentArea" Value="l:0 t:0 r:0 b:0" />
+                        <Property Name="ChildExtentsArea" Value="l:0 t:0 r:0 b:0" />
+                    </AutoWindow>
+                </Window>
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.LensFlare.Props.LensesLabel" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Lenses:" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{0,6},{0,136},{0,85},{0,159}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Scene.LensFlare.Props.LensAddBtn" >
+                <Property Name="Font" Value="Tahoma-12" />
+                <Property Name="Tooltip" Value="Add lens" />
+                <Property Name="UnifiedAreaRect" Value="{{0,88},{0,133},{0,119},{0,164}}" />
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.LensFlare.Props.EtalonScreenSizeLabel" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Etalon screen size:" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{0,83},{0,70},{0,263},{0,93}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+            <Window Type="TaharezLook/Spinner" Name="Scened.Scene.LensFlare.Props.EtalonScreenWidthSpinner" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="StepSize" Value="1" />
+                <Property Name="CurrentValue" Value="0" />
+                <Property Name="MaximumValue" Value="4096" />
+                <Property Name="MinimumValue" Value="0" />
+                <Property Name="UnifiedAreaRect" Value="{{0,98},{0,93},{0,178},{0,124}}" />
+            </Window>
+            <Window Type="TaharezLook/Spinner" Name="Scened.Scene.LensFlare.Props.EtalonScreenHeightSpinner" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="StepSize" Value="1" />
+                <Property Name="CurrentValue" Value="0" />
+                <Property Name="MaximumValue" Value="4096" />
+                <Property Name="MinimumValue" Value="0" />
+                <Property Name="UnifiedAreaRect" Value="{{0,185},{0,93},{0,265},{0,124}}" />
+            </Window>
+            <Window Type="MyScened/Button" Name="Scened.Scene.LensFlare.Props.CoronaTexViewBtn" >
+                <Property Name="Tooltip" Value="View corona image" />
+                <Property Name="UnifiedAreaRect" Value="{{0,120},{0,4},{0,151},{0,34}}" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

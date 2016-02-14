@@ -1,0 +1,38 @@
+//-----------------------------------------------------------------
+namespace dev {
+//-----------------------------------------------------------------
+
+struct SProfileParameter
+{
+	unsigned		Id;
+	core::stringc	Name;
+	double			CurrentTimeSec;
+	double			FilteredTimeSec;
+	unsigned		ParentDepth;
+	core::stringc	Info;
+	float			Pers;
+};
+
+//-----------------------------------------------------------------
+
+class IProfiler
+{
+    static IProfiler& getSingleton();
+
+	bool isProfiling();
+
+	void suspendProfiling();
+	void resumeProfiling();
+
+	bool startProfiling(unsigned profileId);
+	unsigned allocProfileId(const char *profileName);
+	bool stopProfiling(unsigned profileId, const char *info);
+
+	const SProfileParameter* getFirstProfileParameter();
+	const SProfileParameter* getNextProfileParameter(unsigned profileId);
+	const SProfileParameter* getProfileParameter(unsigned profileId);
+};
+
+//-----------------------------------------------------------------
+} // end namespace dev
+//-----------------------------------------------------------------

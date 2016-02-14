@@ -1,0 +1,20 @@
+//----------------------------------------------------------------------------
+namespace scn {
+//----------------------------------------------------------------------------
+
+//! Class for accessing a mesh with multiple mesh buffers.
+//! A IMesh is nothing more than a collection of some mesh buffers (IMeshBuffer).
+class IMesh : public IUnknown
+{
+    //! Returns an axis aligned bounding box of the mesh.
+    //! \return A bounding box of this mesh is returned.
+    const core::aabbox3df& getBoundingBox() const;
+
+	//! Returns the type of the mesh.
+    //! \returns Type of the mesh.
+    E_MESH_TYPE getMeshType() const;
+};
+
+//---------------------------------------------------------------------------- 
+} // end namespace scn
+//----------------------------------------------------------------------------

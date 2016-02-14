@@ -1,0 +1,97 @@
+//----------------------------------------------------------------------------
+namespace core {
+//----------------------------------------------------------------------------
+
+class recti
+{
+    recti();
+    recti(int x, int y, int x2, int y2);
+    recti(const position2di& upperLeft, const position2di& lowerRight);
+    recti(const recti& other);
+    recti(const position2di& pos, const dimension2di& size);
+    ~recti();
+
+    bool isPointInside(const position2di& pos) const;
+
+    //! Returns if the rectangle collides with an other rectangle.
+    bool isRectCollided(const recti& other) const;
+
+    //! Clips this rectangle with another one.
+    void clipAgainst(const recti& other);
+
+    //! Returns width of rectangle.
+    int getWidth() const;
+
+    //! Returns height of rectangle.
+    int getHeight() const;
+    
+    //! If the lower right corner of the rect is smaller then the upper left,
+    //! the points are swapped.
+    void repair();
+
+    //! Returns if the rect is valid to draw. It could be invalid, if
+    //! The UpperLeftCorner is lower or more right than the LowerRightCorner,
+    //! or if the area described by the rect is 0.
+    bool isValid();
+
+    //! Returns the center of the rectangle
+    position2di getCenter() const;
+
+    void set(const int& _left, const int& _top, const int& _right, const int& _bottom);
+    void set(const position2di &_UpperLeftCorner, const position2di &_LowerRightCorner);
+
+    position2di UpperLeftCorner;
+    position2di LowerRightCorner;   
+
+    int Left, Top, Right, Bottom;
+};
+
+//---------------------------------------------------------------------------
+
+class rectf
+{
+    rectf();
+    rectf(float x, float y, float x2, float y2);
+    rectf(const position2df& upperLeft, const position2df& lowerRight);
+    rectf(const rectf& other);
+    rectf(const position2df& pos, const dimension2df& size);
+	~rectf();
+
+    bool isPointInside(const position2df& pos) const;
+
+    //! Returns if the rectangle collides with an other rectangle.
+    bool isRectCollided(const rectf& other) const;
+
+    //! Clips this rectangle with another one.
+    void clipAgainst(const rectf& other);
+
+    //! Returns width of rectangle.
+    float getWidth() const;
+
+    //! Returns height of rectangle.
+    float getHeight() const;
+    
+    //! If the lower right corner of the rect is smaller then the upper left,
+    //! the points are swapped.
+    void repair();
+
+    //! Returns if the rect is valid to draw. It could be invalid, if
+    //! The UpperLeftCorner is lower or more right than the LowerRightCorner,
+    //! or if the area described by the rect is 0.
+    bool isValid();
+
+    //! Returns the center of the rectangle
+    position2df getCenter() const;
+
+    void set(const float& _left, const float& _top, const float& _right, const float& _bottom);
+    void set(const position2df &_UpperLeftCorner, const position2df &_LowerRightCorner);
+
+    position2df UpperLeftCorner;
+    position2df LowerRightCorner;   
+
+    float Left, Top, Right, Bottom;
+};
+
+//----------------------------------------------------------------------------
+} // end namespace core 
+//----------------------------------------------------------------------------
