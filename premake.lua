@@ -291,27 +291,4 @@ InitPackage("Test03", MY_PRJ_DIR, "c++", "exe", "",
 	},
 		{},
 	BASE_INC_PATH, BASE_LIB_PATH)
-
-os.execute("svn up")
-os.execute("svn info > svninfo.txt")
-local file = io.open ("svninfo.txt", "r")
-if file~=nil then    
-	for line in file:lines() do
-		local subStr = "Revision:"
-		local idx = string.find(line, subStr)
-		if idx ~= nil then
-			local revStr = string.sub(line, idx + string.len(subStr), string.len(line))
-			local rev = nil
-			 for w in string.gfind(line, "%d+") do
-				rev= w
-			end
-			local fileOut = io.open (SRC_DIR.."/MyVersion.h", "w")
-			if fileOut ~= nil then
-				fileOut:write(string.format("#define MY_ENGINE_VERSION_STRING \"0.2.%s\"", rev))
-				fileOut:close()
-			end			
-		end
-	end
-	file:close()
-end
 	
