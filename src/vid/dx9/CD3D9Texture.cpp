@@ -101,8 +101,9 @@ CD3D9Texture::CD3D9Texture(core::dimension2d<s32> size)
 	if (Device)
         Device->AddRef();
 
- 	m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(size.Width);
-    m_TextureSize.Height = core::math::GetNearestPowerOfTwo(size.Height);
+	m_ImageSize = size;
+	m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(size.Width);
+	m_TextureSize.Height = core::math::GetNearestPowerOfTwo(size.Height);
 
     // get backbuffer format to create the render target in the 
     // same format

@@ -98,14 +98,16 @@ COpenGLTexture::COpenGLTexture(core::dimension2d<s32> size)
 	m_MaxMipMapLevels = 1;
 	m_AutogenMipMaps = false;
 
+	m_ImageSize = size;
 	m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(size.Width);
-    m_TextureSize.Height = core::math::GetNearestPowerOfTwo(size.Height);	
+	m_TextureSize.Height = core::math::GetNearestPowerOfTwo(size.Height);
+   
 	m_Pitch = m_TextureSize.Width*4;
 	m_ColorFormat = img::ECF_A8B8G8R8;
 
-	createHardwareTexture();
-
 	m_ImageDataSizeBytes[0] = m_Pitch * m_TextureSize.Width;
+
+	createHardwareTexture();
 
 	ITexture *curtex0 = m_Driver->_getCurrentTexture(0);
 	if (this != curtex0)
