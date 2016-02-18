@@ -137,7 +137,7 @@ InitPackage("MyVideoDX9", MY_PRJ_DIR, "c++", "dll", "",
 package = newpackage()
 InitPackage("MyEngine", MY_PRJ_DIR, "c++", "dll", "",
 	{ "MyCore", "MyVideoDX9", "MyVideoGL11", "MyVideoGL12", "MyVideoGL21", },
-		{ VORB_DEP, OGG_DEP, CAL3D_DEP, MINI_DEP, ODE_DEP, LUA_DEP, TOLUA_DLL_DEP, },
+		{VORB_DEP, OGG_DEP, CAL3D_DEP, MINI_DEP, ODE_DEP, LUA_DLL_DEP, TOLUA_DLL_DEP},
 			{"openal32", "alut"},
 	{
 		"__MY_BUILD_VID_LIB__",
@@ -223,7 +223,7 @@ InitPackage("MyCEGUI", MY_PRJ_DIR, "c++", "dll", "",
 package = newpackage()
 InitPackage("MyCoreScript", MY_PRJ_DIR, "c++", "dll", "",
 	{ "MyCore", "MyEngine", "MyCEGUI", },
-		{ LUA_DEP, TOLUA_DLL_DEP, },
+		{LUA_DLL_DEP, TOLUA_DLL_DEP, },
 			{},
 	{"__MY_BUILD_SCR_LIB__", "TOLUA_STATIC"}, {"TOLUA_RELEASE"}, {},
 	{
