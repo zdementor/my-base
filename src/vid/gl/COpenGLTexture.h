@@ -48,7 +48,7 @@ private:
 
 	virtual bool createTextureLevel(u32 level, void *data, u32 dataSize, img::E_COLOR_FORMAT format);
 
-	void _regenerateMipMapLevels();
+	void _regenerateMipMapLevels(const u8 *imageData);
 
     u8 *m_ImageData[MY_TEXTURE_MAX_MIP_LEVELS];
 

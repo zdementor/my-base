@@ -240,14 +240,6 @@ bool COpenGLTexture::createHardwareTexture()
 
 	glGenTextures(1, &m_TextureName.u);
 
-	if (m_TextureName.v != NULL)
-	{
-		for (u32 level = 0; level < getMaxMipMapLevels(); level++)
-		{
-			m_ImageData[level] = new u8[m_ImageDataSizeBytes[level]];
-		}
-	}
-
 	return m_TextureName.v != NULL;
 }
 
@@ -298,7 +290,7 @@ bool COpenGLTexture::createTextureLevel(u32 level, void *data, u32 dataSize, img
 		LOGGER.logErr("Could not create OGL Texture");
 	else
 	if (level == 0)
-		_regenerateMipMapLevels();
+		_regenerateMipMapLevels((const u8*)data);
 
 	if (this != curtex0)
 		m_Driver->_setTexture(0, curtex0);
@@ -321,23 +313,23 @@ img::IImage* COpenGLTexture::lock(u32 level)
 	if (!m_ImageData[level])
 	{
 		m_ImageData[level] = new u8[m_ImageDataSizeBytes[level]];
+	}
 
-		if (m_Created)
-		{
-			ITexture *curtex0 = m_Driver->_getCurrentTexture(0);
-			if (this != curtex0)
-				m_Driver->_setTexture(0, this);
+	if (m_Created)
+	{
+		ITexture *curtex0 = m_Driver->_getCurrentTexture(0);
+		if (this != curtex0)
+			m_Driver->_setTexture(0, this);
 #ifdef GL_VERSION_1_3
-			if (isCompressed())
-				glGetCompressedTexImage(GL_TEXTURE_2D, level,
-					m_ImageData[level]);
-			else
+		if (isCompressed())
+			glGetCompressedTexImage(GL_TEXTURE_2D, level,
+				m_ImageData[level]);
+		else
 #endif
-				glGetTexImage(GL_TEXTURE_2D, level,
-					m_PixelFormat, m_PixelType, m_ImageData[level]);			
-			if (this != curtex0)
-				m_Driver->_setTexture(0, curtex0);
-		}
+			glGetTexImage(GL_TEXTURE_2D, level,
+				m_PixelFormat, m_PixelType, m_ImageData[level]);			
+		if (this != curtex0)
+			m_Driver->_setTexture(0, curtex0);
 	}
 
 	m_LockImage[level] = IMAGE_LIBRARY.createImageFromData(
@@ -375,14 +367,14 @@ void COpenGLTexture::regenerateMipMapLevels()
 	ITexture *curtex0 = m_Driver->_getCurrentTexture(0);
 	if (this != curtex0)
 		m_Driver->_setTexture(0, this);
-	_regenerateMipMapLevels();
+	_regenerateMipMapLevels(m_ImageData[0]);
 	if (this != curtex0)
 		m_Driver->_setTexture(0, curtex0);
 }
 
 //----------------------------------------------------------------------------
 
-void COpenGLTexture::_regenerateMipMapLevels()
+void COpenGLTexture::_regenerateMipMapLevels(const u8 *imageData)
 {
 	if (m_AutogenMipMaps
 #ifdef GL_SGIS_generate_mipmap
@@ -401,7 +393,7 @@ void COpenGLTexture::_regenerateMipMapLevels()
 			s32 ret = gluBuild2DMipmaps(
 				GL_TEXTURE_2D, m_InternalFormat, 
 				m_ImageSize.Width, m_ImageSize.Height, m_PixelFormat, m_PixelType,
-				m_ImageData[0]);
+				imageData);
 			if (ret)
 			{
 				LOGGER.logErr("Could not create OGL Texture mip maps: %s",
