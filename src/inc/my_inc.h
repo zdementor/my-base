@@ -35,6 +35,7 @@
 #define CURSOR_CONTROL				my::io::ICursorControl::getSingleton()
 #define TIMER						my::os::ITimerMain::getSingleton()
 #define TIMER_SECOND				my::os::ITimerSecond::getSingleton()
+#define MEM_STATUS					my::os::IMemStatus::getSingleton()
 #define SOUND_DRIVER				my::mm::ISoundDriver::getSingleton()
 #define CORE_SCRIPT_MANAGER			my::scr::ICoreScriptManager::getSingleton()
 #define SCRIPT_MANAGER				my::scr::IScriptManager::getSingleton()
@@ -61,6 +62,7 @@
 #define CURSOR_CONTROL_PTR			my::io::ICursorControl::getSingletonPtr()
 #define TIMER_PTR					my::os::ITimerMain::getSingletonPtr()
 #define TIMER_SECOND_PTR			my::os::ITimerSecond::getSingletonPtr()
+#define MEM_STATUS_PTR				my::os::IMemStatus::getSingletonPtr()
 #define SOUND_DRIVER_PTR			my::mm::ISoundDriver::getSingletonPtr()
 #define CORE_SCRIPT_MANAGER_PTR		my::scr::ICoreScriptManager::getSingletonPtr()
 #define SCRIPT_MANAGER_PTR			my::scr::IScriptManager::getSingletonPtr()
@@ -561,6 +563,7 @@ struct SSingletonsTable
 		io::ICursorControl			*CursorControl;    
 		os::ITimerMain				*TimerMain;
 		os::ITimerSecond			*TimerSecond;
+		os::IMemStatus				*MemStatus;
 		mm::ISoundDriver			*SoundDriver;        
 		scr::ICoreScriptManager		*CoreScriptManager;
 		scr::IScriptManager			*ScriptManager;
@@ -604,6 +607,7 @@ __MY_CORE_LIB_API__ void initSingletonsTable(
 	io::ICursorControl			***CursorControl_ms_Singleton,
 	os::ITimerMain				***TimerMain_ms_Singleton,
 	os::ITimerSecond			***TimerSecond_ms_Singleton,
+	os::IMemStatus				***MemStatus_ms_Singleton,
 	mm::ISoundDriver			***SoundDriver_ms_Singleton,
 	scr::ICoreScriptManager		***CoreScriptManager_ms_Singleton,
 	scr::IScriptManager			***ScriptManager_ms_Singleton,

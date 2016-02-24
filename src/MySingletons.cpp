@@ -32,6 +32,7 @@
 #include <scn/ICullingSystem.h>
 #include <io/ICursorControl.h>
 #include <dev/IProfiler.h>
+#include <os/IMemStat.h>
 
 //----------------------------------------------------------------------------
 namespace my {
@@ -62,6 +63,7 @@ MY_DEFINE_SINGLETON(io, ICursorControl,		ICursorControl);
 // OS - Singletons
 MY_DEFINE_SINGLETON(os, ITimerMain,		ITimer);
 MY_DEFINE_SINGLETON(os, ITimerSecond,	ITimer);
+MY_DEFINE_SINGLETON(os, IMemStatus,		IMemStatus);
 
 // SND - Singletons
 MY_DEFINE_SINGLETON(mm, ISoundDriver, ISoundDriver);

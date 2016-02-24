@@ -58,6 +58,7 @@ class IEvent;
 class IThread;
 class ILibraryModule;
 struct SExposedOSData;
+class IMemStatus;
 
 } // end namespace os
 

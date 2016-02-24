@@ -20,6 +20,7 @@
 #include <io/IWriteFile.h>
 #include <io/ICursorControl.h>
 #include <os/ITimer.h>
+#include <os/IMemStat.h>
 #include <io/ILogger.h>
 #include <os/IEvent.h>
 #include <dev/IPluginManager.h>
@@ -184,6 +185,8 @@ m_ConsoleReseiver(this)
     TimerMain   = os::createMainTimer();
 	TimerSecond = os::createSecondTimer();
 
+	os::createMemStatus();
+
 	// creating plugin manager
 	PluginManager = createPluginManager();	
 
@@ -236,7 +239,8 @@ CDeviceStub::~CDeviceStub()
     SAFE_DROP(FileSystem);		
 	SAFE_DROP(InputDispatcher);
     SAFE_DROP(TimerMain);
-	SAFE_DROP(TimerSecond);    
+	SAFE_DROP(TimerSecond);
+	MEM_STATUS.drop();
 	SAFE_DROP(FPSSynchroEvent);
 	SAFE_DROP(ImageLibrary);		
 	SAFE_DROP(ResourceManager);	

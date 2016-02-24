@@ -39,6 +39,7 @@ __MY_CORE_LIB_API__ const c8* getSingletonsTableAsPrintableString()
 		"&CursorControl         = %p, CursorControl         = %p\n"
 		"&TimerMain             = %p, TimerMain             = %p\n"
 		"&TimerSecond           = %p, TimerSecond           = %p\n"
+		"&MemStatus             = %p, MemStatus             = %p\n"
 		"&SoundDriver           = %p, SoundDriver           = %p\n"
 		"&CoreScriptManager     = %p, CoreScriptManager     = %p\n"
 		"&ScriptManager         = %p, ScriptManager         = %p\n"
@@ -64,6 +65,7 @@ __MY_CORE_LIB_API__ const c8* getSingletonsTableAsPrintableString()
 		&g_SingletonsTable.Ptrs.CursorControl,			g_SingletonsTable.Ptrs.CursorControl,
 		&g_SingletonsTable.Ptrs.TimerMain,				g_SingletonsTable.Ptrs.TimerMain,
 		&g_SingletonsTable.Ptrs.TimerSecond,			g_SingletonsTable.Ptrs.TimerSecond,
+		&g_SingletonsTable.Ptrs.MemStatus,				g_SingletonsTable.Ptrs.MemStatus,
 		&g_SingletonsTable.Ptrs.SoundDriver,			g_SingletonsTable.Ptrs.SoundDriver,
 		&g_SingletonsTable.Ptrs.CoreScriptManager,		g_SingletonsTable.Ptrs.CoreScriptManager,
 		&g_SingletonsTable.Ptrs.ScriptManager,			g_SingletonsTable.Ptrs.ScriptManager,
@@ -95,6 +97,7 @@ __MY_CORE_LIB_API__ void initSingletonsTable(
 	io::ICursorControl			***CursorControl_ms_Singleton,
 	os::ITimerMain				***TimerMain_ms_Singleton,
 	os::ITimerSecond			***TimerSecond_ms_Singleton,
+	os::IMemStatus				***MemStatus_ms_Singleton,
 	mm::ISoundDriver			***SoundDriver_ms_Singleton,
 	scr::ICoreScriptManager		***CoreScriptManager_ms_Singleton,
 	scr::IScriptManager			***ScriptManager_ms_Singleton,
@@ -121,6 +124,7 @@ __MY_CORE_LIB_API__ void initSingletonsTable(
 	*CursorControl_ms_Singleton			= &g_SingletonsTable.Ptrs.CursorControl;
 	*TimerMain_ms_Singleton				= &g_SingletonsTable.Ptrs.TimerMain;
 	*TimerSecond_ms_Singleton			= &g_SingletonsTable.Ptrs.TimerSecond;
+	*MemStatus_ms_Singleton				= &g_SingletonsTable.Ptrs.MemStatus;
 	*SoundDriver_ms_Singleton			= &g_SingletonsTable.Ptrs.SoundDriver;
 	*CoreScriptManager_ms_Singleton		= &g_SingletonsTable.Ptrs.CoreScriptManager;
 	*ScriptManager_ms_Singleton			= &g_SingletonsTable.Ptrs.ScriptManager;

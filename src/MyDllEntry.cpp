@@ -53,6 +53,7 @@ public:
 			&ISingleton <io::ICursorControl>		::ms_Singleton,
             &ISingleton <os::ITimerMain>			::ms_Singleton,
             &ISingleton <os::ITimerSecond>			::ms_Singleton,
+            &ISingleton <os::IMemStatus>			::ms_Singleton,
             &ISingleton <mm::ISoundDriver>			::ms_Singleton,
 			&ISingleton <scr::ICoreScriptManager>	::ms_Singleton,
             &ISingleton <scr::IScriptManager>		::ms_Singleton,			
