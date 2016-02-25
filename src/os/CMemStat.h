@@ -13,7 +13,6 @@
 //---------------------------------------------------------------------------
 
 #include <os/IMemStat.h>
-#include <core/hash.h>
 
 //---------------------------------------------------------------------------
 namespace my {
@@ -25,6 +24,12 @@ class CMemStatus : public IMemStatus
 public:
 	CMemStatus();
 	virtual ~CMemStatus();
+	
+	virtual u32 getAllocatedBytes();
+	virtual u32 getAllocsPerSec();
+	virtual u32 getDeallocsPerSec();
+	virtual u32 getAllocBytesPerSec();
+	virtual u32 getDeallocBytesPerSec();
 private:
 };
 

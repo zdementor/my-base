@@ -507,12 +507,11 @@ local function _ConsoleRegisterForRendering()
 		local game_per_sec  = MyGameMgr:getGamePS()
 		local input_per_sec = MyInpDisp:getInputPS()	
 		local script_per_sec= MyGameMgr:getScriptPS()
-		local script_memory = MyScript:getScriptMemoryKBytes() / 1024.0
 
 		posy = posy + height1
 
-		_Text = string.format("%#3d dyn/s, %#3d game/s, %#3d inp/s, %#3d scr/s, %.3f Mb scr.mem.",
-			dyn_per_sec, game_per_sec, input_per_sec, script_per_sec, script_memory)
+		_Text = string.format("%#3d dyn/s, %#3d game/s, %#3d inp/s, %#3d scr/s",
+			dyn_per_sec, game_per_sec, input_per_sec, script_per_sec)
 		_ConsoleFontRegisterForRendering(_Text, posx, posy, scrWidth, posy + height1)
 
 		local events        = MyGameEventDisp:getGameEventsCount()
@@ -542,8 +541,27 @@ local function _ConsoleRegisterForRendering()
 			visnodes, nodes, enabled_dobj, dobj, act_game_nodes, game_nodes)
 		_ConsoleFontRegisterForRendering(_Text, posx, posy, scrWidth, posy + height1)
 
+		local script_memory      = MyScript:getScriptMemoryKBytes() / 1024.0
+		local alloc_mbytes       = (MyMemStat:getAllocatedBytes() / 1024.0) / 1024.0
+		local alloc_sec          = MyMemStat:getAllocsPerSec()
+		local dealloc_sec        = MyMemStat:getDeallocsPerSec()
+		local alloc_kbytes_sec   = MyMemStat:getAllocBytesPerSec() / 1024.0
+		local dealloc_kbytes_sec = MyMemStat:getDeallocBytesPerSec() / 1024.0
+
+		posy = posy + height1
+
+		_Text = string.format("Memory status: %.3fMb script, %.3fMb dynamic",
+			script_memory, alloc_mbytes)
+		_ConsoleFontRegisterForRendering(_Text, posx, posy, scrWidth, posy + height1)
+
+		posy = posy + height1
+
+		_Text = string.format("dynamic alloc./dealloc. %.3fKb(%d)/%.3fKb(%d) per sec.",
+			alloc_kbytes_sec, alloc_sec, dealloc_kbytes_sec, dealloc_sec)
+		_ConsoleFontRegisterForRendering(_Text, posx, posy, scrWidth, posy + height1)
+
 		local player_gnode = MyGameMgr:getMainPlayerGameNode()
-        local player = nil
+		local player = nil
 		if player_gnode ~= nil then
 			player = player_gnode:getSceneNode()
 		end

@@ -52,8 +52,6 @@ CreationParams(params),
 m_SigletonsCreated(false), m_MonitorBrightness(0.0f), m_Visible(false),
 m_ConsoleReseiver(this)
 {
-	os::createMemStatus();
-
 #if MY_DEBUG_MODE 
 	IDevice::setClassName("CDeviceStub IDevice");
 	IRunnable::setClassName("CDeviceStub IRunnable");
@@ -186,6 +184,7 @@ m_ConsoleReseiver(this)
     // create timer
     TimerMain   = os::createMainTimer();
 	TimerSecond = os::createSecondTimer();
+	os::createMemStatus();
 
 	// creating plugin manager
 	PluginManager = createPluginManager();	
@@ -238,6 +237,8 @@ CDeviceStub::~CDeviceStub()
 	SAFE_DROP(VideoDriver);	
     SAFE_DROP(FileSystem);		
 	SAFE_DROP(InputDispatcher);
+
+	MEM_STATUS.drop();
     SAFE_DROP(TimerMain);
 	SAFE_DROP(TimerSecond);
 
@@ -255,8 +256,6 @@ CDeviceStub::~CDeviceStub()
 	SAFE_DROP(Logger);
 
 	m_Profiler->drop();
-
-	MEM_STATUS.drop();
 }
 
 //---------------------------------------------------------------------------

@@ -24,6 +24,7 @@ MyGameTasksMgr	= nil
 MyGameEventDisp	= nil
 MyGameAI	= nil
 MyTimer		= nil
+MyMemStat	= nil
 
 CEGUISystem		= nil
 CEGUIRenderer	= nil
@@ -55,8 +56,9 @@ function RereadSingletons()
 	MySoundDrv	= mm.ISoundDriver:getSingleton()
 	MyGameTasksMgr	= game.IGameTasksManager:getSingleton()
 	MyGameEventDisp = game.IGameEventsDispatcher:getSingleton()
-	MyGameAI		= game.IGameAIModule:getSingleton()
-	MyTimer			= os.ITimerMain:getSingleton()
+	MyGameAI	= game.IGameAIModule:getSingleton()
+	MyTimer		= os.ITimerMain:getSingleton()
+	MyMemStat	= os.IMemStatus:getSingleton()
 
 	CEGUISystem		= CEGUI.System:getSingleton()
 	CEGUIRenderer	= CEGUISystem:getRenderer()

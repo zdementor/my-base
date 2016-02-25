@@ -6,6 +6,7 @@ $#include <dev/IPluginManager.h>
 $#include <res/IResourceManager.h>
 $#include <img/SColor.h>
 $#include <os/os.h>
+$#include <os/IMemStat.h>
 $#include <vid/IVideoDriver.h>
 $#include <io/ILogger.h>
 $#include <io/IFileSystem.h>
@@ -230,6 +231,8 @@ $pfile "vid/IRenderBuffer.pkg"
 $pfile "os/os.pkg"
 
 $pfile "os/ITimer.pkg"
+
+$pfile "os/IMemStat.pkg"
 
 //////////////////////////////////////////////////////
 

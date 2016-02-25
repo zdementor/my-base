@@ -368,7 +368,8 @@ MY_FORCEINLINE void math::draw_line(
 //-----------------------------------------------------------------------
 
 math::event_counter::event_counter() 
-	: fps(0), startTime(0), framesCounted(100)
+	: fps(0), startTime(0), framesCounted(100),
+valuePS(0), startValueTime(0), valueCounted(100)
 {
 }
 
@@ -378,6 +379,13 @@ math::event_counter::event_counter()
 s32 math::event_counter::getEventPerSecond()
 {
     return fps;
+}
+
+//-----------------------------------------------------------------------
+
+s32 math::event_counter::getValuePerSecond()
+{
+    return valuePS;
 }
 
 //-----------------------------------------------------------------------
@@ -395,6 +403,23 @@ void math::event_counter::registerEvent(u32 now)
 
         startTime = now;
         framesCounted = 0;
+    }
+}
+
+//-----------------------------------------------------------------------
+
+void math::event_counter::registerValue(u32 now, u32 value)
+{
+    valueCounted += value;
+
+    u32 milliseconds = now - startValueTime;
+
+    if (milliseconds > 2000)
+    {
+        valuePS = (s32)((f32)valueCounted / ((f32)milliseconds / 1000.0f));
+
+        startValueTime = now;
+        valueCounted = 0;
     }
 }
 

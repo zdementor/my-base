@@ -1,0 +1,19 @@
+//----------------------------------------------------------------------------
+namespace os {
+//---------------------------------------------------------------------------
+
+class IMemStatus
+{
+
+	static IMemStatus& getSingleton();
+
+	unsigned getAllocatedBytes();
+	unsigned getAllocsPerSec();
+	unsigned getDeallocsPerSec();
+	unsigned getAllocBytesPerSec();
+	unsigned getDeallocBytesPerSec();
+};
+
+//----------------------------------------------------------------------------
+} // end namespace io
+//----------------------------------------------------------------------------

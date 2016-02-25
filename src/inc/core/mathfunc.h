@@ -245,15 +245,21 @@ public:
 
 	//! returns current events per second count
 	s32 getEventPerSecond();
+	s32 getValuePerSecond();
 
 	//! to be called every frame
 	void registerEvent(u32 now);
+	void registerValue(u32 now, u32 value);
 
 private:
 
 	s32 fps;
 	u32 startTime;
 	u32 framesCounted;
+
+	s32 valuePS;
+	u32 startValueTime;
+	u32 valueCounted;
 };
 
 //          *   *   *           //

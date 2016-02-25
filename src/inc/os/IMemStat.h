@@ -25,6 +25,12 @@ class IMemStatus : public IUnknown, public ISingleton <IMemStatus>
 public:
 	static IMemStatus& getSingleton();
 	static IMemStatus* getSingletonPtr();
+
+	virtual u32 getAllocatedBytes() = 0;
+	virtual u32 getAllocsPerSec() = 0;
+	virtual u32 getDeallocsPerSec() = 0;
+	virtual u32 getAllocBytesPerSec() = 0;
+	virtual u32 getDeallocBytesPerSec() = 0;
 };
 
 //---------------------------------------------------------------------------
