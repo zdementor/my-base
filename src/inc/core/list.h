@@ -16,21 +16,25 @@ namespace my {
 namespace core {
 //----------------------------------------------------------------------------
 
+//! List element node with pointer to previous and next element in the list.
+template <class T>
+class list_node
+{
+public:
+    list_node() : next(0), prev(0) {}
+	list_node(T elmt) : next(0), prev(0), element(elmt) {}
+
+    list_node* next;
+    list_node* prev;
+    T element;
+};
+
+//----------------------------------------------------------------------------
+
 //! Double linked list template.
 template <class T>
 class list
 {
-private:
-    //! List element node with pointer to previous and next element in the list.
-    struct SKListNode
-    {
-        SKListNode() : next(0), prev(0) {};
-
-        SKListNode* next;
-        SKListNode* prev;
-        T element;
-    };
-
 public:
 
     //-----------------------------------------------------------------------
@@ -40,7 +44,7 @@ public:
     public:
 
         iterator() : current(0) {};
-        iterator(SKListNode* begin) : current(begin) {};
+        iterator(list_node<T>* begin) : current(begin) {};
 
         inline iterator& operator ++() 
 		{ 
@@ -113,7 +117,7 @@ public:
 
         friend class list<T>;
 
-        SKListNode* current;
+        list_node<T>* current;
     };
 
     //-----------------------------------------------------------------------
@@ -125,7 +129,7 @@ public:
     //-----------------------------------------------------------------------
 
     //! destructor
-    ~list()
+	virtual ~list()
     {
         clear();
     }
@@ -145,10 +149,10 @@ public:
     //! iterators of this list will be invalid.
     inline void clear()
     {
-        SKListNode* node = root;
+        list_node<T>* node = root;
         while(node)
         {
-            SKListNode* next = node->next;
+            list_node<T>* next = node->next;
             delete node;
             node = next;
         }
@@ -173,8 +177,7 @@ public:
     //! \param element: Element to add to the list.
     inline void push_back(const T& element)
     {
-        SKListNode* node = new SKListNode;
-        node->element = element;
+        list_node<T>* node = new list_node<T>(element);
 
         ++list_size;
 
@@ -195,8 +198,7 @@ public:
     //! \param element: Element to add to the list.
     inline void push_front(const T& element)
     {
-        SKListNode* node = new SKListNode;
-        node->element = element;
+        list_node<T>* node = new list_node<T>(element);
 
         ++list_size;
 
@@ -248,8 +250,7 @@ public:
     //! \param element: The new element to be insterted into the list.
     inline void insert_after(iterator& it, const T& element)
     {
-        SKListNode* node = new SKListNode;
-        node->element = element;
+        list_node<T>* node = new list_node<T>(element);
 
         node->next = it.current->next;
 
@@ -269,8 +270,7 @@ public:
     //! \param element: The new element to be insterted into the list.
     inline void insert_before(iterator& it, const T& element)
     {
-        SKListNode* node = new SKListNode;
-        node->element = element;
+        list_node<T>* node = new list_node<T>(element);
 
         node->prev = it.current->prev;
 
@@ -313,8 +313,206 @@ public:
 
 private:
 
-    SKListNode* root;
-    SKListNode* last;
+    list_node<T>* root;
+    list_node<T>* last;
+    u32 list_size;
+};
+
+//----------------------------------------------------------------------------
+
+//! Double linked fast list template.
+template <class T>
+class list_fast
+{
+public:
+
+    //-----------------------------------------------------------------------
+
+    class iterator
+    {
+    public:
+
+        iterator() : current(0) {};
+        iterator(list_node<T>* begin) : current(begin) {};
+
+        inline iterator& operator ++() 
+		{ 
+			current = current->next; return *this; 
+		}
+
+        inline iterator& operator --() 
+		{ 
+			current = current->prev; return *this; 
+		}
+
+        inline iterator operator ++(s32) 
+		{ 
+			iterator tmp = *this; current = current->next; return tmp; 
+		}
+
+        inline iterator operator --(s32) 
+		{ 
+			iterator tmp = *this; current = current->prev; return tmp; 
+		}
+
+        inline iterator operator+(s32 num) const 
+        { 
+            iterator tmp = *this; 
+
+            if (num >= 0) 
+                while (num-- && tmp.current != 0) ++tmp; 
+            else 
+                while (num++ && tmp.current != 0) --tmp; 
+
+            return tmp; 
+        } 
+
+        inline iterator& operator+=(s32 num) 
+        { 
+            if (num >= 0) 
+                while (num-- && this->current != 0) ++(*this); 
+            else 
+                while (num++ && this->current != 0) --(*this); 
+
+            return *this; 
+        } 
+
+        inline iterator operator-(s32 num) const  
+		{ 
+			return (*this)+(-num);          
+		} 
+
+        inline iterator operator-=(s32 num) const 
+		{ 
+			(*this)+=(-num);  return *this; 
+		}
+
+        inline bool operator ==(const iterator& other) const 
+		{ 
+			return current == other.current; 
+		}
+
+        inline bool operator !=(const iterator& other) const 
+		{ 
+			return current != other.current; 
+		}
+
+        inline T& operator *() 
+		{ 
+			return current->element; 
+		}
+
+    private:
+
+        friend class list_fast<T>;
+
+        list_node<T>* current;
+    };
+
+    //-----------------------------------------------------------------------
+
+    list_fast()
+        : root(0), last(0), list_size(0) {}
+
+    //-----------------------------------------------------------------------
+
+	virtual ~list_fast()
+    {
+        clear();
+    }
+
+    //-----------------------------------------------------------------------
+
+    inline u32 size() const
+    {
+        return list_size;
+    }
+
+    //-----------------------------------------------------------------------
+
+    inline void clear()
+    {
+        list_node<T>* node = root;
+        while(node)
+        {
+            list_node<T>* next = node->next;
+            delete node;
+            node = next;
+        }
+
+        root = 0;
+        last = 0;
+        list_size = 0;
+    }
+
+    //-----------------------------------------------------------------------
+
+    inline void push_back(list_node<T> *node)
+    {
+        ++list_size;
+
+        if (root == 0)
+            root = node;
+
+        node->prev = last;
+
+        if (last != 0)
+            last->next = node;
+
+        last = node;
+    }
+
+    //-----------------------------------------------------------------------
+
+    inline iterator begin() const
+    {
+        return iterator(root);
+    }
+
+    //-----------------------------------------------------------------------
+
+    inline iterator end() const
+    {
+        return iterator(0);
+    }
+
+    //-----------------------------------------------------------------------
+
+    inline iterator get_last() const
+    {
+        return iterator(last);
+    }
+
+    //-----------------------------------------------------------------------
+
+    inline iterator erase(list_node<T> *node)
+    {
+		iterator it(node);
+        iterator returniterator(it);
+        ++returniterator;
+
+        if (it.current == root)
+            root = it.current->next;
+
+        if (it.current == last)
+            last = it.current->prev;
+
+        if (it.current->next)
+            it.current->next->prev = it.current->prev;
+
+        if (it.current->prev)
+            it.current->prev->next = it.current->next;
+
+        it.current = 0;
+        --list_size;
+
+        return returniterator;
+    }
+
+private:
+
+    list_node<T>* root;
+    list_node<T>* last;
     u32 list_size;
 };
 
