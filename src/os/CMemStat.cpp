@@ -13,7 +13,7 @@
 
 #if MY_DEBUG_MODE
 #if MY_PLATFORM == MY_PLATFORM_WIN32
-
+/*
 #	define _CRTDBG_MAP_ALLOC
 #	ifdef _malloca
 #		undef _malloca
@@ -21,11 +21,11 @@
 #	include <stdlib.h>
 #	include <crtdbg.h>
 #	include <time.h>
-
+*/
 #include <os/ITimer.h>
 
 static my::core::hash_table <void*, size_t> _Allocs;
-static my::s32 _AllocBytes = 0;
+static size_t _AllocBytes = 0;
 my::core::math::event_counter _AllocsCounter, _DeallocsCounter;
 my::core::math::event_counter _AllocBytesCounter, _DeallocBytesCounter;
 static bool _AllocSkip = true;
@@ -42,7 +42,7 @@ void operator delete(void* ptr)
 	{
 		_AllocBytes -= size;
 		_DeallocsCounter.registerEvent(time);
-		_DeallocBytesCounter.registerValue(time, size);
+		_DeallocBytesCounter.registerValue(time, (my::u32)size);
 	}
 
 	free(ptr);
@@ -76,7 +76,7 @@ void *__cdecl operator new(size_t size) throw (...)
 		_AllocBytes += size;
 
 		_AllocsCounter.registerEvent(time);
-		_AllocBytesCounter.registerValue(time, size);
+		_AllocBytesCounter.registerValue(time, (my::u32)size);
 	}
 
 	return (ptr);
@@ -131,7 +131,7 @@ u32 CMemStatus::getAllocatedBytes()
 {
 #if MY_DEBUG_MODE
 #if MY_PLATFORM == MY_PLATFORM_WIN32
-	return (_AllocBytes > 0 ? _AllocBytes : 0);
+	return (u32)(_AllocBytes > 0 ? _AllocBytes : 0);
 #endif
 #endif
 	return 0;

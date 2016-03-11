@@ -387,23 +387,23 @@ struct STextureLayer
 	friend struct SRenderPass;
 
 	STextureLayer()
-		: Pass(NULL)
+		: Pass(NULL), m_LayerListNode(this)
 	{
 		defaultInit();		
-		m_LayersListIterator = vid::onCreateTextureLayer(this);
+		vid::onCreateTextureLayer(&m_LayerListNode);
 	}
 
 	STextureLayer(const STextureLayer& ml)
-		: Pass(NULL), Texture(NULL)
+		: Pass(NULL), Texture(NULL), m_LayerListNode(this)
     {
 		set(ml, false);
-		m_LayersListIterator = vid::onCreateTextureLayer(this);
+		vid::onCreateTextureLayer(&m_LayerListNode);
 	}	
 
 	virtual ~STextureLayer()
 	{
 		SAFE_DROP(Texture);
-		vid::onDestroyTextureLayer(m_LayersListIterator);
+		vid::onDestroyTextureLayer(&m_LayerListNode);
 	}
 
 	void defaultInit()
@@ -821,7 +821,7 @@ private:
 
 	SRenderPass *Pass;
 
-	core::list<STextureLayer*>::iterator m_LayersListIterator;
+	core::list_node<STextureLayer*> m_LayerListNode;
 };
 
 //---------------------------------------------------------------------------
@@ -835,27 +835,27 @@ struct SRenderPass
 	STextureLayer Layers [MY_MATERIAL_MAX_LAYERS];
   
 	SRenderPass()
-		: Material(NULL), GPUProgram(NULL)
+		: Material(NULL), GPUProgram(NULL), m_RenderPassListNode(this)
     {
 		defaultInit();
 		for(u32 tl = 0; tl < MY_MATERIAL_MAX_LAYERS; tl++)
 			Layers[tl].Pass = this;
-		m_RenderPassIterator = vid::onCreateRenderPass(this);
+		vid::onCreateRenderPass(&m_RenderPassListNode);
 	}
 
 	SRenderPass(const SRenderPass& m)
-		: Material(NULL), GPUProgram(NULL)
+		: Material(NULL), GPUProgram(NULL), m_RenderPassListNode(this)
     {
 		set(m, false);
 		for(u32 tl = 0; tl < MY_MATERIAL_MAX_LAYERS; tl++)
 			Layers[tl].Pass = this;
-		m_RenderPassIterator = vid::onCreateRenderPass(this);
+		vid::onCreateRenderPass(&m_RenderPassListNode);
 	}
 
 	virtual ~SRenderPass()
 	{
 		SAFE_DROP(GPUProgram);
-		vid::onDestroyRenderPass(m_RenderPassIterator);
+		vid::onDestroyRenderPass(&m_RenderPassListNode);
 	}
 
 	void defaultInit()
@@ -1384,7 +1384,7 @@ private:
 
 	IGPUProgram	*GPUProgram;
 
-	core::list<SRenderPass*>::iterator m_RenderPassIterator;
+	core::list_node<SRenderPass*> m_RenderPassListNode;
 };
 
 //---------------------------------------------------------------------------
