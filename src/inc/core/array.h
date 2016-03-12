@@ -44,7 +44,8 @@ public:
 
     //! Copy constructor
     array(const array<T>& other)
-        : data(0)
+        : data(0), used(0), allocated(0),
+		free_when_destroyed(true),  is_sorted(true)
     { *this = other; }
 
     //! Destructor. Frees allocated memory, if set_free_when_destroyed
@@ -71,9 +72,11 @@ public:
         if (allocated < used)
             used = allocated;
         
-        delete [] old_data;
+		if (free_when_destroyed)
+			delete [] old_data;
 
 		is_sorted=false;
+		free_when_destroyed = true;
     }
 
     //! Adds an element at back of array. If the array is to small to 
@@ -82,7 +85,7 @@ public:
     u32 push_back(const T& element)
     {
         if (used + 1 > allocated)
-            reallocate(used * 2 +1);
+            reallocate((used + 1) * 2);
 
         data[used++] = element;
         is_sorted = false;
@@ -96,7 +99,7 @@ public:
     void push_front(const T& element)
     {
         if (used + 1 > allocated)
-            reallocate(used * 2 +1);        
+            reallocate((used + 1) * 2);
 		used++;
         for (u32 i=(used-1); i>0; i--)
             data[i] = data[i-1];
@@ -155,18 +158,18 @@ public:
 	//! Assignement operator
     void operator = (const array<T>& other)
     {
-        if (free_when_destroyed)
-            delete [] data;
-        if (other.allocated_size() == 0)
-            data = 0;
-        else
-            data = new T[other.allocated_size()];
-        used = other.size();
-        free_when_destroyed = other.is_own_data();
-        is_sorted = other.sorted();
-        allocated = other.allocated_size();
-        for (u32 i=0; i<used; ++i)
-            data[i] = other[i];
+		if (other.size() > allocated)
+		{
+			if (free_when_destroyed)
+				delete [] data;
+			data = new T[other.size()];
+			free_when_destroyed = true;
+			allocated = other.size();
+		}
+		used = other.size();
+		is_sorted = other.sorted();
+		for (u32 i=0; i < used; ++i)
+			data[i] = other[i];
     }
 
     //! Direct access operator
