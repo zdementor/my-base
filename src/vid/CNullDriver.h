@@ -31,6 +31,7 @@
 #include "CVideoModeList.h"
 #include "CNullHardwareOcclusionQuery.h"
 #include "CNullGPUProgram.h"
+#include "SRenderPool.h"
 
 //---------------------------------------------------------------------------
 namespace my {

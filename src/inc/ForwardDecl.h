@@ -106,7 +106,7 @@ struct SFog;
 class IRenderBuffer;
 class IRenderTarget;
 struct SLight;
-struct SRenderPool;
+
 class IFont;
 class IGPUProgram;
 
