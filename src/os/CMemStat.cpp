@@ -12,6 +12,14 @@
 #include "CMemStat.h"
 
 #if MY_DEBUG_MODE
+
+static my::core::hash_table <void*, size_t> _Allocs;
+static size_t _AllocBytes = 0;
+my::core::math::event_counter _AllocsCounter, _DeallocsCounter;
+my::core::math::event_counter _AllocBytesCounter, _DeallocBytesCounter;
+static bool _AllocSkip = true;
+
+#if 0
 #if MY_PLATFORM == MY_PLATFORM_WIN32
 /*
 #	define _CRTDBG_MAP_ALLOC
@@ -23,12 +31,6 @@
 #	include <time.h>
 */
 #include <os/ITimer.h>
-
-static my::core::hash_table <void*, size_t> _Allocs;
-static size_t _AllocBytes = 0;
-my::core::math::event_counter _AllocsCounter, _DeallocsCounter;
-my::core::math::event_counter _AllocBytesCounter, _DeallocBytesCounter;
-static bool _AllocSkip = true;
 
 void operator delete(void* ptr)
 {
@@ -87,6 +89,7 @@ void *__cdecl operator new[](size_t count) throw (...)
 	return (operator new(count));
 }
 
+#endif
 #endif
 #endif
 
