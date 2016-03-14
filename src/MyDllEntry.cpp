@@ -78,6 +78,32 @@ SingletonsTableInitializator;
 } // end namespace my
 //----------------------------------------------------------------------------
 
+#if MY_DEBUG_MODE
+#if MY_PLATFORM == MY_PLATFORM_WIN32
+
+void operator delete(void* ptr)
+{
+	my::core::dealloc(ptr);
+}
+
+void operator delete[](void* ptr)
+{
+	(operator delete(ptr));
+}
+ 
+void *__cdecl operator new(size_t size) throw (...)
+{
+	return my::core::alloc(size);
+}
+
+void *__cdecl operator new[](size_t count) throw (...)
+{
+	return (operator new(count));
+}
+
+#endif
+#endif
+
 //----------------------------------------------------------------------------
 
 // Dll Entry Point
