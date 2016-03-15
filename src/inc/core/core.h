@@ -75,6 +75,9 @@ MY_INLINE const c8* getFuncTypeName(E_FUNC_TYPE type)
 MY_INLINE const c8* getFuncTypeReadableName(E_FUNC_TYPE type)
 { return FuncTypeReadableName[type]; }
 
+__MY_CORE_LIB_API__ void dealloc(void* ptr);
+__MY_CORE_LIB_API__ void* alloc(size_t size) throw (...);
+
 //----------------------------------------------------------------------------
 } // end namespace core    
 } // end namespace my
