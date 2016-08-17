@@ -204,7 +204,7 @@ function SaveStartupOptions()
 	local file = io.open (OPTIONS.StartupOptionsFileName, "w")
 	if file ~= nil then
 		file:write(string.format("%d\n", StartupDriverIndex))
-		for k, v in SETUP_SETTINGS do
+		for k, v in pairs(SETUP_SETTINGS) do
 			file:write(string.format("%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n",
 				v.DriverIndex,
 				v.ResolutionX,
@@ -235,15 +235,15 @@ end
 
 function InitControls()
 	ComboDriverType:resetList()
-	for k, v in SETUP_DRIVER_TYPE do
+	for k, v in pairs(SETUP_DRIVER_TYPE) do
 		AddListboxItem(ComboDriverType, v.name, v.id)
 	end
 	ComboGeomDetail:resetList()
-	for k, v in SETUP_GEOM_DETAIL do
+	for k, v in pairs(SETUP_GEOM_DETAIL) do
 		AddListboxItem(ComboGeomDetail, v.name, v.id)
 	end
 	ComboAnimation:resetList()
-	for k, v in SETUP_ANIM_QUALITY do
+	for k, v in pairs(SETUP_ANIM_QUALITY) do
 		AddListboxItem(ComboAnimation, v.name, v.id)
 	end
 	ComboGraphicDetail:resetList()
@@ -329,7 +329,7 @@ end
 
 function UpdateLightingModes()
 	ComboLighting:resetList()
-	for k, v in SETUP_LIGHTING_QUALITY do
+	for k, v in pairs(SETUP_LIGHTING_QUALITY) do
 		AddListboxItem(ComboLighting, v.name, v.id)
 	end
 end
@@ -338,7 +338,7 @@ function UpdateShadersQuality()
 	ComboShaders:hide()
 	LabelShadersQuality:hide()
 	ComboShaders:resetList()
-	for k, v in SETUP_SHADERS_QUALITY do
+	for k, v in pairs(SETUP_SHADERS_QUALITY) do
 		AddListboxItem(ComboShaders, v.name, v.id)
 	end
 	if SETUP_SETTINGS[StartupDriverIndex].Shaders ~= 0 then
@@ -350,7 +350,7 @@ end
 function UpdateTexFilter()
 	local idx = StartupDriverIndex
 	ComboTexFilter:resetList()
-	for k, v in SETUP_TEX_FILTER do
+	for k, v in pairs(SETUP_TEX_FILTER) do
 		if idx ~= SETUP_DRIVER_OPENGL12 or v.id ~= vid.ETF_ANISOTROPIC then
 			AddListboxItem(ComboTexFilter, v.name, v.id)
 		end
@@ -360,7 +360,7 @@ end
 function UpdateRenderPath()
 	local idx = StartupDriverIndex
 	ComboRenderPath:resetList()
-	for k, v in SETUP_RENDER_PATH do
+	for k, v in pairs(SETUP_RENDER_PATH) do
 		if idx ~= SETUP_DRIVER_OPENGL12 or v.id == true then
 			AddListboxItem(ComboRenderPath, v.name, v.id)
 		end

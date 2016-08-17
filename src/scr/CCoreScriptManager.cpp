@@ -55,13 +55,14 @@ CCoreScriptManager::CCoreScriptManager()
 	luaopen_bit(m_LuaState);
 #else
 	luaL_openlibs(m_LuaState);
+	luaopen_bit(m_LuaState);
 #endif
 
 	_initScript();
 
 	setScriptMaxMemoryKBytes(m_MaxKBytesGC);
 
-	LOGGER.logInfo("Core scripter created");
+	LOGGER.logInfo("Core scripter (%s) created", LUA_VERSION);
 }
 
 //----------------------------------------------------------------------------

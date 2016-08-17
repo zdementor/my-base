@@ -33,7 +33,7 @@ CMyScriptManager::CMyScriptManager()
 
 	core::stringc scr_dir = DEVICE.getStartupDir();
 	scr_dir.append("/");
-	
+
 	if (m_CoreScripter)
 		m_CoreScripter->setScriptsFullDir(scr_dir.c_str());
 
