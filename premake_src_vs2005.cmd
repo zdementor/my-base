@@ -1,2 +1,2 @@
 cd .
-premake.cmd vs2005
+premake4.cmd vs2005
