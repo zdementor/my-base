@@ -436,7 +436,7 @@ function _ScenedInitLensFlareControls()
     _Ctrls.TabControl.Ctrl:setProperty("TabTextPadding", "{0,5}")
     _Ctrls.TabControl.Ctrl:setProperty("TabPanePosition", "Top")
 	_Ctrls.TabControl.Ctrl:setProperty("Font", "Tahoma-8")
-	for key, value in _Ctrls.Tabs do
+	for key, value in pairs(_Ctrls.Tabs) do
 		value.Root.Ctrl = CEGUIWinMgr:getWindow("Scened.Scene.LensFlare."..key..".Root")
 		value.Root.Ctrl:setText(value.Caption)
 		value.Root.Ctrl:setProperty("UnifiedAreaRect", "{{0,0},{0.025,0},{1,0},{0.975,0}}")

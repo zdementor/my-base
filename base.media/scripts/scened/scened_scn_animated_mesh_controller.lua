@@ -288,7 +288,7 @@ function _ScenedAnimationDialogUpdatePlayingMode()
 	if amesh_scene_node == nil then
 		return
 	end
-	for k, v in _Ctrls.Tabs.Anim.Buttons do
+	for k, v in pairs(_Ctrls.Tabs.Anim.Buttons) do
 		v.Ctrl:setEnabled(false)
 	end
 	_Ctrls.Tabs.Anim.Buttons.AnimAddBtn.Ctrl:setEnabled(true)
@@ -985,7 +985,7 @@ function _ScenedInitAnimatedMeshControls()
     _Ctrls.TabControl.Ctrl:setProperty("TabTextPadding", "{0,5}")
     _Ctrls.TabControl.Ctrl:setProperty("TabPanePosition", "Top")
 	_Ctrls.TabControl.Ctrl:setProperty("Font", "Tahoma-8")
-	for key, value in _Ctrls.Tabs do
+	for key, value in pairs(_Ctrls.Tabs) do
 		value.Root.Ctrl = CEGUIWinMgr:getWindow("Scened.Scene.AnimatedMesh."..key..".Root")
 		value.Root.Ctrl:setText(value.Caption)
 		value.Root.Ctrl:setProperty("UnifiedAreaRect", "{{0,0},{0.025,0},{1,0},{0.975,0}}")

@@ -265,7 +265,7 @@ function _ScenedInitLightControls()
     _Ctrls.TabControl.Ctrl:setProperty("TabTextPadding", "{0,5}")
     _Ctrls.TabControl.Ctrl:setProperty("TabPanePosition", "Top")
 	_Ctrls.TabControl.Ctrl:setProperty("Font", "Tahoma-8")
-	for key, value in _Ctrls.Tabs do
+	for key, value in pairs(_Ctrls.Tabs) do
 		value.Root.Ctrl = CEGUIWinMgr:getWindow("Scened.Scene.Light."..key..".Root")
 		value.Root.Ctrl:setText(value.Caption)
 		value.Root.Ctrl:setProperty("UnifiedAreaRect", "{{0,0},{0.025,0},{1,0},{0.975,0}}")
@@ -273,7 +273,7 @@ function _ScenedInitLightControls()
 	end
 	_Ctrls.TabControl.Ctrl:addTab(_Ctrls.Tabs.Props.Root.Ctrl)
 
-	for key, value in _Ctrls.Tabs.Props.Checks do
+	for key, value in pairs(_Ctrls.Tabs.Props.Checks) do
 		value.Ctrl = tolua.cast(CEGUIWinMgr:getWindow("Scened.Scene.Light.Props."..key), "CEGUI::Checkbox")
 		value.Ctrl:subscribeEvent("CheckStateChanged", _ScenedLightCheckStateChanged)
 	end
@@ -293,7 +293,7 @@ function _ScenedInitLightControls()
 	Helper.GUI.initButtons("Scened.Scene.Light.Props.",
 		_Ctrls.Tabs.Props.Buttons, _ScenedLightWidgetClicked)
 	
-	for key, value in _Ctrls.Tabs.Props.Spinners do
+	for key, value in pairs(_Ctrls.Tabs.Props.Spinners) do
 		value.Ctrl = tolua.cast(CEGUIWinMgr:getWindow("Scened.Scene.Light.Props."..key), "CEGUI::Spinner")
 		value.Ctrl:subscribeEvent("ValueChanged", _ScenedLightValueChanged)
 	end

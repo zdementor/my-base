@@ -139,7 +139,7 @@ local function _ScenedBillboardDialogUpdateCurrentImageFrame(bill_scene_node, an
 			string.format("{{%f,0},{%f,0.0},{%f,0},{%f,0.0}}",
 			left, top, left + width, top + height))
 	else
-		for k, v in _Ctrls.Tabs.Anim.Editboxes do
+		for k, v in pairs(_Ctrls.Tabs.Anim.Editboxes) do
 			v.Ctrl:setText("0")
 		end
 		_Ctrls.Tabs.Anim.FrameImage.Ctrl:setProperty("UnifiedAreaRect",
@@ -199,7 +199,7 @@ function _ScenedBillboardUpdate(timeMs)
 end
 
 function _ScenedBillboardDialogUpdateCurrentAnimation(bill_scene_node)
-	for k, v in _Ctrls.Tabs.Anim.Buttons do
+	for k, v in pairs(_Ctrls.Tabs.Anim.Buttons) do
 		v.Ctrl:setEnabled(false)
 	end
 	_Ctrls.Tabs.Anim.Buttons.AddBtn.Ctrl:setEnabled(true)
@@ -534,7 +534,7 @@ function _ScenedInitBillboardControls()
     _Ctrls.TabControl.Ctrl:setProperty("TabTextPadding", "{0,5}")
     _Ctrls.TabControl.Ctrl:setProperty("TabPanePosition", "Top")
 	_Ctrls.TabControl.Ctrl:setProperty("Font", "Tahoma-8")
-	for key, value in _Ctrls.Tabs do
+	for key, value in pairs(_Ctrls.Tabs) do
 		value.Root.Ctrl = CEGUIWinMgr:getWindow("Scened.Scene.Billboard."..key..".Root")
 		value.Root.Ctrl:setText(value.Caption)
 		value.Root.Ctrl:setProperty("UnifiedAreaRect", "{{0,0},{0.025,0},{1,0},{0.975,0}}")
@@ -607,7 +607,7 @@ function _ScenedInitBillboardControls()
 		"Scened.Scene.Billboard.Anim.FrameParamsArea")
 	_Ctrls.Tabs.Anim.FrameParamsArea.Ctrl:hide()
 	
-	for k, v in _Ctrls.Tabs.Anim.Editboxes do
+	for k, v in pairs(_Ctrls.Tabs.Anim.Editboxes) do
 		v.Ctrl = tolua.cast(CEGUIWinMgr:getWindow(
 			"Scened.Scene.Billboard.Anim."..k), "CEGUI::Editbox")
 		v.Ctrl:subscribeEvent("TextAccepted", _ScenedBillboardTextAccepted)

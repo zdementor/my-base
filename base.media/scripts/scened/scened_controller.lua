@@ -387,7 +387,7 @@ function _ScenedUpdateImpl(timeMs)
 		Scened.stop()
 	end
 	
-	for k, v in _Ctrls.Layouts do
+	for k, v in pairs(_Ctrls.Layouts) do
 		v.update(timeMs)
 	end
 end
@@ -630,7 +630,7 @@ function _ScenedUpdateControlsImpl()
 	
 	_ScenedUpdatePolygonModeMenuItems()
 	
-	for k, v in _Ctrls.Layouts do
+	for k, v in pairs(_Ctrls.Layouts) do
 		v.updateControls()
 	end
 end
@@ -639,7 +639,7 @@ function _ScenedOnSelectSceneNodeImpl(scene_node)
 	scene_node:setDebugDataVisible(true)
 	--MyLogger:logInfo(string.format("Selected scene node (%s)",
 	--	tostring(scene_node)))
-	for k, v in _Ctrls.Layouts do
+	for k, v in pairs(_Ctrls.Layouts) do
 		if v.onSelectSceneNode ~= nil then
 			v.onSelectSceneNode(scene_node)
 		end
@@ -654,7 +654,7 @@ function _ScenedOnDeselectSceneNodeImpl(scene_node)
 	if scene_node:getGameNode() == nil then
 		MyScnMgr:addToDeletionQueue(scene_node)
 	end
-	for k, v in _Ctrls.Layouts do
+	for k, v in pairs(_Ctrls.Layouts) do
 		if v.onDeselectSceneNode ~= nil then
 			v.onDeselectSceneNode(scene_node)
 		end
@@ -1020,7 +1020,7 @@ function _ScenedOnGameStopped()
 end
 
 function _ScenedOnAnimationBegin(game_node, animation_idx)
-	for k, v in _Ctrls.Layouts do
+	for k, v in pairs(_Ctrls.Layouts) do
 		if v.onAnimationStart ~= nil then
 			v.onAnimationStart(game_node, animation_idx)
 		end
@@ -1028,7 +1028,7 @@ function _ScenedOnAnimationBegin(game_node, animation_idx)
 end
 
 function _ScenedOnAnimationEnd(game_node, animation_idx)
-	for k, v in _Ctrls.Layouts do
+	for k, v in pairs(_Ctrls.Layouts) do
 		if v.onAnimationEnd ~= nil then
 			v.onAnimationEnd(game_node, animation_idx)
 		end

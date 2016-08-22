@@ -105,7 +105,7 @@ local function _ScenedTerrainUpdateCurrentTileSetControls(terrain_scene_node)
 
 	_Ctrls.Tabs.TileSets.ScrollRoot.Ctrl:setVisible(tile ~= nil)
 	if tile == nil then
-		for keyi, valuei in _Ctrls.Tabs.TileSets.Images do
+		for keyi, valuei in pairs(_Ctrls.Tabs.TileSets.Images) do
 			Helper.GUI.setImageTexture(valuei, nil)
 		end
 		return
@@ -130,8 +130,8 @@ local function _ScenedTerrainUpdateControls()
 	local terrain_scene_node = _ScenedTerrainGetSelectedSceneNode()
 	_Ctrls.Root.Ctrl:setVisible(terrain_scene_node ~= nil)
 	if terrain_scene_node == nil then
-		for key, value in _Ctrls.Tabs do
-			for keyi, valuei in value.Images do
+		for key, value in pairs(_Ctrls.Tabs) do
+			for keyi, valuei in pairs(value.Images) do
 				Helper.GUI.setImageTexture(valuei, nil)
 			end
 		end
@@ -425,18 +425,18 @@ function _ScenedInitTerrainControls()
     _Ctrls.TabControl.Ctrl:setProperty("TabTextPadding", "{0,5}")
     _Ctrls.TabControl.Ctrl:setProperty("TabPanePosition", "Top")
 	_Ctrls.TabControl.Ctrl:setProperty("Font", "Tahoma-8")
-	for key, value in _Ctrls.Tabs do
+	for key, value in pairs(_Ctrls.Tabs) do
 		local name_pfx = "Scened.Scene.Terrain."..key.."."
 		value.Root.Ctrl = CEGUIWinMgr:getWindow(name_pfx.."Root")
 		value.Root.Ctrl:setText(value.Caption)
 		value.Root.Ctrl:setProperty("UnifiedAreaRect", "{{0,0},{0.025,0},{1,0},{0.975,0}}")
 		Helper.GUI.initButtons(name_pfx, value.Buttons, _ScenedTerrainWidgetClicked)
 		Helper.GUI.initImages(name_pfx, value.Images, img.SColor(255, 0, 0, 0))
-		for skey, svalue in value.Spinners do
+		for skey, svalue in pairs(value.Spinners) do
 			svalue.Ctrl = tolua.cast(CEGUIWinMgr:getWindow("Scened.Scene.Terrain."..key.."."..skey), "CEGUI::Spinner")
 			svalue.Ctrl:subscribeEvent("ValueChanged", _ScenedTerrainSpinnerValueChanged)
 		end
-		for ekey, evalue in value.Editboxes do
+		for ekey, evalue in pairs(value.Editboxes) do
 			evalue.Ctrl = tolua.cast(CEGUIWinMgr:getWindow("Scened.Scene.Terrain."..key.."."..ekey), "CEGUI::Editbox")
 			evalue.Ctrl:subscribeEvent("TextAccepted", _ScenedTerrainTextAccepted)
 		end
