@@ -3,14 +3,13 @@ rootdir = ".."
 
 dofile(rootdir.."/deps/premake_common.lua")
 
-local MY_PRJ_DIR = rootdir.."/build/"
+local MY_PRJ_DIR = rootdir.."/build"
+local MY_PRJ_NAME = "MyEngine_Sources"
 
 local APPS_DIR = rootdir.."/base/apps"
 
-solution("MyEngine_Sources")
-basedir(MY_PRJ_DIR)
-
-InitPackage4("MyCore", MY_PRJ_DIR, "c++", "dll", "",
+InitPackage4(MY_PRJ_NAME, MY_PRJ_DIR,
+	"MyCore", "c++", "dll", "",
 	{},
 		{ ZLIB_DEP, PNG_DEP, JPEG_DEP, DEVIL_DEP},
 			{},
@@ -46,7 +45,8 @@ InitPackage4("MyCore", MY_PRJ_DIR, "c++", "dll", "",
 	{BASE_INC_PATH, ZLIB_INC_DIR, PNG_INC_DIR, JPEG_INC_DIR, DEVIL_INC_DIR},
 		BASE_LIB_PATH)
 
-InitPackage4("MyVideoGL21", MY_PRJ_DIR, "c++", "dll", "",
+InitPackage4(MY_PRJ_NAME, MY_PRJ_DIR,
+	"MyVideoGL21", "c++", "dll", "",
 	{ "MyCore", },
 		{ FTYPE_DEP, },
 			{},
@@ -67,7 +67,8 @@ InitPackage4("MyVideoGL21", MY_PRJ_DIR, "c++", "dll", "",
 	{BASE_INC_PATH, FTYPE_INC_DIR},
 		BASE_LIB_PATH)
 
-InitPackage4("MyVideoGL12", MY_PRJ_DIR, "c++", "dll", "",
+InitPackage4(MY_PRJ_NAME, MY_PRJ_DIR,
+	"MyVideoGL12", "c++", "dll", "",
 	{"MyCore", },
 		{ FTYPE_DEP, },
 			{},
@@ -88,7 +89,8 @@ InitPackage4("MyVideoGL12", MY_PRJ_DIR, "c++", "dll", "",
 	{BASE_INC_PATH, FTYPE_INC_DIR},
 		BASE_LIB_PATH)
 
-InitPackage4("MyVideoGL11", MY_PRJ_DIR, "c++", "dll", "",
+InitPackage4(MY_PRJ_NAME, MY_PRJ_DIR,
+	"MyVideoGL11", "c++", "dll", "",
 	{"MyCore", },
 		{ FTYPE_DEP,},
 			{},
@@ -109,7 +111,8 @@ InitPackage4("MyVideoGL11", MY_PRJ_DIR, "c++", "dll", "",
 	{BASE_INC_PATH, FTYPE_INC_DIR},
 		BASE_LIB_PATH)
 		
-InitPackage4("MyVideoDX9", MY_PRJ_DIR, "c++", "dll", "",
+InitPackage4(MY_PRJ_NAME, MY_PRJ_DIR,
+	"MyVideoDX9", "c++", "dll", "",
 	{"MyCore", },
 		{ FTYPE_DEP, },
 			{},
@@ -129,7 +132,8 @@ InitPackage4("MyVideoDX9", MY_PRJ_DIR, "c++", "dll", "",
 	{BASE_INC_PATH, FTYPE_INC_DIR},
 		BASE_LIB_PATH)
 
-InitPackage4("MyEngine", MY_PRJ_DIR, "c++", "dll", "",
+InitPackage4(MY_PRJ_NAME, MY_PRJ_DIR,
+	"MyEngine", "c++", "dll", "",
 	{ "MyCore", "MyVideoDX9", "MyVideoGL11", "MyVideoGL12", "MyVideoGL21", },
 		{VORB_DEP, OGG_DEP, CAL3D_DEP, MINI_DEP, ODE_DEP, LUA_DLL_DEP, TOLUA_DLL_DEP},
 			{"openal32", "alut"},
@@ -193,7 +197,8 @@ InitPackage4("MyEngine", MY_PRJ_DIR, "c++", "dll", "",
 	},
 		BASE_LIB_PATH)
 
-InitPackage4("MyCEGUI", MY_PRJ_DIR, "c++", "dll", "",
+InitPackage4(MY_PRJ_NAME, MY_PRJ_DIR,
+	"MyCEGUI", "c++", "dll", "",
 	{ "MyCore", },
 		{ CEGUIBASE_DEP, CEGUILUA_DEP, CEGUIXML_DEP, CEGUIFAL_DEP, CEGUIIMG_DEP, },
 			{},
@@ -213,7 +218,8 @@ InitPackage4("MyCEGUI", MY_PRJ_DIR, "c++", "dll", "",
 	{BASE_INC_PATH, CEGUI_INC_DIR, CEGUI_LUA_INC_DIR},
 		BASE_LIB_PATH)
 
-InitPackage4("MyCoreScript", MY_PRJ_DIR, "c++", "dll", "",
+InitPackage4(MY_PRJ_NAME, MY_PRJ_DIR,
+	"MyCoreScript", "c++", "dll", "",
 	{ "MyCore", "MyEngine", "MyCEGUI", },
 		{LUA_DLL_DEP, TOLUA_DLL_DEP, },
 			{},
@@ -233,7 +239,8 @@ InitPackage4("MyCoreScript", MY_PRJ_DIR, "c++", "dll", "",
 		{},
 	{BASE_INC_PATH, TOLUA_INC_DIR, LUA_INC_DIR, CEGUI_INC_DIR}, BASE_LIB_PATH)
 	
-InitPackage4("Test01", MY_PRJ_DIR, "c++", "exe", "",
+InitPackage4(MY_PRJ_NAME, MY_PRJ_DIR,
+	"Test01", "c++", "exe", "",
 	{ "MyCore", "MyEngine", },
 		{},
 			{},
@@ -249,7 +256,8 @@ InitPackage4("Test01", MY_PRJ_DIR, "c++", "exe", "",
 		{},
 	BASE_INC_PATH, BASE_LIB_PATH)
 	
-InitPackage4("Test02", MY_PRJ_DIR, "c++", "exe", "",
+InitPackage4(MY_PRJ_NAME, MY_PRJ_DIR,
+	"Test02", "c++", "exe", "",
 	{ "MyCore", "MyEngine", },
 		{},
 			{},
@@ -265,7 +273,8 @@ InitPackage4("Test02", MY_PRJ_DIR, "c++", "exe", "",
 		{},
 	BASE_INC_PATH, BASE_LIB_PATH)
 
-InitPackage4("Test03", MY_PRJ_DIR, "c++", "exe", "",
+InitPackage4(MY_PRJ_NAME, MY_PRJ_DIR,
+	"Test03", "c++", "exe", "",
 	{ "MyCore", "MyEngine", },
 		{},
 			{},
