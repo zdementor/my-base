@@ -986,9 +986,13 @@ void CSceneManager::render()
 
 const core::aabbox3d<f32>& CSceneManager::getBoundingBox() const
 {
-#ifdef _DEBUG
-    LOGGER.log("Bounding Box of Scene Manager wanted.", io::ELL_WARNING);
+#if MY_DEBUG_MODE
+    LOGGER.logWarn("Bounding Box of Scene Manager wanted.");
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
     _asm int 3;
+#else
+	assert(!"Bounding Box of Scene Manager wanted.");
+#endif
 #endif
 
     // should never be used.

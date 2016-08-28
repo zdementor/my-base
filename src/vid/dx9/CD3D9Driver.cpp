@@ -24,10 +24,6 @@
 #include <dev/IDevice.h>
 #include <img/IImageLibrary.h>
 
-// to make sure that we dont using DirectX from other SDK version
-#pragma comment(linker, "/NODEFAULTLIB:d3dx8.lib")
-#pragma comment(lib, "d3dx9.lib") 
-
 #include <d3d/d3dx9math.h>
 
 //----------------------------------------------------------------------------

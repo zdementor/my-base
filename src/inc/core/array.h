@@ -14,6 +14,10 @@
 
 #include "sort.h"
 
+#if MY_DEBUG_MODE && MY_COMPILER == MY_COMPILER_MSVC
+#include <assert.h>
+#endif
+
 //----------------------------------------------------------------------------
 namespace my {
 namespace core {
@@ -175,19 +179,29 @@ public:
     //! Direct access operator
     T& operator [](u32 index)
     {
-#if MY_DEBUG_MODE && MY_COMPILER != MY_COMPILER_BORL
+#if MY_DEBUG_MODE
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
         if (index>=used)
 			_asm int 3 // access violation
-#endif   
+#else
+        if (index>=used)
+			assert(!"index>=used");
+#endif
+#endif
         return data[index];
     }
 
     //! Direct access operator
     const T& operator [](u32 index) const
     {
-#if MY_DEBUG_MODE && MY_COMPILER != MY_COMPILER_BORL
+#if MY_DEBUG_MODE
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
         if (index>=used)
             _asm int 3 // access violation
+#else
+        if (index>=used)
+            assert(!"index>=used");
+#endif
 #endif
         return data[index];
     }
@@ -217,9 +231,14 @@ public:
     //! Gets last frame
     const T& get_last() const
     {
-#if MY_DEBUG_MODE && MY_COMPILER != MY_COMPILER_BORL
+#if MY_DEBUG_MODE
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
         if (!used)
             _asm int 3 // access violation
+#else
+        if (!used)
+            assert(!"!used");
+#endif
 #endif
         return data[used-1];
     }
@@ -227,9 +246,13 @@ public:
     //! Gets last frame
     T& get_last()
     {
-#if MY_DEBUG_MODE && MY_COMPILER != MY_COMPILER_BORL
+#if MY_DEBUG_MODE
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
         if (!used)
             _asm int 3 // access violation
+#endif
+        if (!used)
+            assert(!"!used");
 #endif
         return data[used-1];
     }
@@ -366,9 +389,14 @@ public:
     //! \param index: Index of element to be erased.
     void erase(u32 index)
     {
-#if MY_DEBUG_MODE && MY_COMPILER != MY_COMPILER_BORL
+#if MY_DEBUG_MODE
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 		if (index>=used || index<0)
 			_asm int 3 // access violation
+#else
+		if (index>=used || index<0)
+			assert(!"index>=used || index<0");
+#endif
 #endif
         for (u32 i=index+1; i<used; ++i)
             data[i-1] = data[i];
@@ -381,9 +409,14 @@ public:
     //! \param count: Amount of elements to be erased.
     void erase(u32 index, s32 count)
     {
-#if MY_DEBUG_MODE && MY_COMPILER != MY_COMPILER_BORL
+#if MY_DEBUG_MODE
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 		if (index>=used || index<0 || count<1 || index+count>used)
 			_asm int 3 // access violation
+#else
+		if (index>=used || index<0 || count<1 || index+count>used)
+			assert(!"index>=used || index<0 || count<1 || index+count>used");
+#endif
 #endif
         for (u32 i=index+count; i<used; ++i)
             data[i-count] = data[i];

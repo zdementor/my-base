@@ -33,7 +33,7 @@ MY_FORCEINLINE f32 asm_arccos( f32 r )
 // return half_pi + arctan( r / -sqr( 1.f - r * r ) );
 {    
 	
-#if MY_COMPILER == MY_COMPILER_MSVC
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 
     float asm_one = 1.f;
     float asm_half_pi = half_pi;
@@ -50,7 +50,7 @@ MY_FORCEINLINE f32 asm_arccos( f32 r )
         fadd asm_half_pi // r0 = r0 + pi / 2
     } // returns r0
 
-#elif MY_COMPILER == MY_COMPILER_GNUC
+#else
 
 	return float( acos( r ) );
 
@@ -62,7 +62,7 @@ MY_FORCEINLINE f32 asm_arcsin( f32 r )
 // return arctan( r / sqr( 1.f - r * r ) );
 {    
 
-#if MY_COMPILER == MY_COMPILER_MSVC
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 
     const float asm_one = 1.f;
     __asm {
@@ -76,7 +76,7 @@ MY_FORCEINLINE f32 asm_arcsin( f32 r )
         fpatan // }}
     } // returns r0
 
-#elif MY_COMPILER == MY_COMPILER_GNUC
+#else
 
 	return float( asin( r ) );
 
@@ -88,7 +88,7 @@ MY_FORCEINLINE f32 asm_arcsin( f32 r )
 MY_FORCEINLINE f32 asm_arctan( f32 r ) 
 {
 
-#if MY_COMPILER == MY_COMPILER_MSVC
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 
     __asm {
         fld r // r0 = r
@@ -96,7 +96,7 @@ MY_FORCEINLINE f32 asm_arctan( f32 r )
         fpatan // }}
     } // returns r0
 
-#elif MY_COMPILER == MY_COMPILER_GNUC
+#else
 
 	return float( atan( r ) );
 
@@ -108,14 +108,14 @@ MY_FORCEINLINE f32 asm_arctan( f32 r )
 MY_FORCEINLINE f32 asm_sin( f32 r ) 
 {
 
-#if MY_COMPILER == MY_COMPILER_MSVC
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 
     __asm {
         fld r // r0 = r
         fsin // r0 = sinf( r0 )
     } // returns r0
 
-#elif MY_COMPILER == MY_COMPILER_GNUC
+#else
 
 	return sin( r );
 
@@ -127,14 +127,14 @@ MY_FORCEINLINE f32 asm_sin( f32 r )
 MY_FORCEINLINE f32 asm_cos( f32 r ) 
 {
 
-#if MY_COMPILER == MY_COMPILER_MSVC
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 
     __asm {
         fld r // r0 = r
         fcos // r0 = cosf( r0 )
     } // returns r0
 
-#elif MY_COMPILER == MY_COMPILER_GNUC
+#else
 	
 	return cos( r );
 
@@ -146,7 +146,7 @@ MY_FORCEINLINE f32 asm_cos( f32 r )
 MY_FORCEINLINE f32 asm_tan( f32 r ) 
 {
 
-#if MY_COMPILER == MY_COMPILER_MSVC
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 
     // return sin( r ) / cos( r );
     __asm {
@@ -157,7 +157,7 @@ MY_FORCEINLINE f32 asm_tan( f32 r )
         fdiv // r0 = r1 / r0
     } // returns r0
 
-#elif MY_COMPILER == MY_COMPILER_GNUC
+#else
 	
 	return tan( r );
 
@@ -169,14 +169,14 @@ MY_FORCEINLINE f32 asm_tan( f32 r )
 // returns a for a * a = r
 MY_FORCEINLINE f32 asm_sqrt( f32 r )
 {
-#if MY_COMPILER == MY_COMPILER_MSVC
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 
     __asm {
         fld r // r0 = r
         fsqrt // r0 = sqrtf( r0 )
     } // returns r0
 
-#elif MY_COMPILER == MY_COMPILER_GNUC
+#else
 
 	return sqrt( r );
 
@@ -189,7 +189,7 @@ MY_FORCEINLINE f32 asm_sqrt( f32 r )
 MY_FORCEINLINE f32 asm_rsq( f32 r )
 {
 
-#if MY_COMPILER == MY_COMPILER_MSVC
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 
     __asm {
         fld1 // r0 = 1.f
@@ -198,7 +198,7 @@ MY_FORCEINLINE f32 asm_rsq( f32 r )
         fdiv // r0 = r1 / r0
     } // returns r0
 
-#elif MY_COMPILER == MY_COMPILER_GNUC
+#else
 
 	return 1. / sqrt( r );
 
@@ -212,7 +212,7 @@ MY_FORCEINLINE f32 asm_rsq( f32 r )
 MY_FORCEINLINE f32 apx_rsq( f32 r ) 
 {
 
-#if MY_COMPILER == MY_COMPILER_MSVC
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 
     const float asm_dot5 = 0.5f;
     const float asm_1dot5 = 1.5f;
@@ -231,7 +231,7 @@ MY_FORCEINLINE f32 apx_rsq( f32 r )
         fmul r // r0 = r0 * r
     } // returns r0
 
-#elif MY_COMPILER == MY_COMPILER_GNUC
+#else
 
 	return 1. / sqrt( r );
 
@@ -242,7 +242,7 @@ MY_FORCEINLINE f32 apx_rsq( f32 r )
 // very MS-specific, commented out for now
 // Finally the best InvSqrt implementation?
 // Use for vector normalisation instead of 1/length() * x,y,z
-#if MY_COMPILER == MY_COMPILER_MSVC
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 
 MY_FORCEINLINE __declspec(naked) float __fastcall InvSqrt(float fValue)
 {
@@ -327,7 +327,7 @@ MY_FORCEINLINE f32 asm_rand()
 MY_FORCEINLINE f32 asm_rand_max()
 {
 
-#if MY_COMPILER == MY_COMPILER_MSVC
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
   #if 0
     #if MY_COMP_VER >= 1300
 
@@ -350,7 +350,7 @@ MY_FORCEINLINE f32 asm_rand_max()
 // returns log2( r ) / log2( e )
 MY_FORCEINLINE f32 asm_ln( float r ) {    
 
-#if MY_COMPILER == MY_COMPILER_MSVC
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 
     const float asm_e = 2.71828182846f;
     const float asm_1_div_log2_e = .693147180559f;
@@ -385,7 +385,7 @@ MY_FORCEINLINE f32 asm_ln( float r ) {
         fmul asm_1_div_log2_e
     }
 
-#elif MY_COMPILER == MY_COMPILER_GNUC
+#else
 
 	return log( r );
 

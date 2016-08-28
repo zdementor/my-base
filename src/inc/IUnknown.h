@@ -107,11 +107,15 @@ public:
     //! is stored somewhere by the driver.
     bool drop()
     {   
-		#if MY_DEBUG_MODE && MY_COMPILER != MY_COMPILER_BORL
+#if MY_DEBUG_MODE
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 		if (ReferenceCounter<0)
 			_asm int 3 // access violation		
-		#endif 
-
+#else
+		if (ReferenceCounter<0)
+			assert(!"ReferenceCounter<0");
+#endif 
+#endif 
 		if (locked) return false;
 
         --ReferenceCounter;

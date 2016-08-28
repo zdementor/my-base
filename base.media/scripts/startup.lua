@@ -87,6 +87,16 @@ function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 		os.exit(1)
 	end	
 	RereadSingletons()
+
+	MyLogger:logInfo(string.format("---------------------Lua script info:----------------------------"))
+	local ver = os.getversion()
+	MyLogger:logInfo(string.format("OS version {%d.%d.%d (%s)}", 
+	   ver.majorversion, ver.minorversion, ver.revision,
+	   ver.description))
+	MyLogger:logInfo(string.format("Current directory {%s}",
+	   os.getcwd()))
+	MyLogger:logInfo(string.format("-----------------------------------------------------------------"))
+
 	SetupResources()
 	MyLogger:setLogLevel(OPTIONS.LogLevel) 
 	MyDevice:setWindowIcon(
@@ -95,6 +105,7 @@ function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 		OPTIONS.Window.Icon.Height)
 	MyDevice:setWindowCaption(OPTIONS.Window.Caption)
 	MyDriver:useMultiThreadRendering(OPTIONS.UseMultiThreadRendering)
+
 end
 
 function DestroyDevice()

@@ -895,7 +895,11 @@ bool CBullet::fly(f64 delta_time_sec, f64 curr_time_sec)
 
 		if (Trace && Trace->getReferenceCounter() <= 1)
 		{
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 			_asm { int 3 }
+#else
+			assert(!"Trace && Trace->getReferenceCounter() <= 1");
+#endif
 		}
 
 		return true;
@@ -1012,10 +1016,14 @@ void CBullet::bindTrace(scn::IBillboardSceneNode* trace)
 
 	SAFE_GRAB(Trace);
 
-		if (Trace && Trace->getReferenceCounter() <= 1)
-		{
-			_asm { int 3 }
-		}
+	if (Trace && Trace->getReferenceCounter() <= 1)
+	{
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
+		_asm { int 3 }
+#else
+		assert(!"Trace && Trace->getReferenceCounter() <= 1");
+#endif
+	}
 }
 
 //----------------------------------------------------------------------------

@@ -19,6 +19,7 @@
 #	define TOLUA_STATIC
 #endif
 #include <tolua++.h>
+#include <laddons.h>
 
 #include <exception>
 
@@ -52,11 +53,11 @@ CCoreScriptManager::CCoreScriptManager()
 	luaopen_string(m_LuaState);
 	luaopen_table(m_LuaState);
 	luaopen_math(m_LuaState);
-	luaopen_bit(m_LuaState);
 #else
 	luaL_openlibs(m_LuaState);
-	luaopen_bit(m_LuaState);
 #endif
+	luaopen_bit(m_LuaState);
+	luainit_os_addon(m_LuaState);
 
 	_initScript();
 

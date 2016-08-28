@@ -1,12 +1,16 @@
 
-rootdir = ".."
+ROOT_DIR = ".."
 
-dofile(rootdir.."/deps/premake_common.lua")
+dofile(ROOT_DIR.."/deps/premake_common.lua")
 
-local MY_PRJ_DIR = rootdir.."/build"
+local MY_PRJ_DIR = ROOT_DIR.."/build"
 local MY_PRJ_NAME = "MyEngine_Sources"
 
-local APPS_DIR = rootdir.."/base/apps"
+local APPS_DIR = ROOT_DIR.."/base/apps"
+local SRC_DIR  = ROOT_DIR.."/base/src"
+
+local BASE_INC_DIR = { SRC_DIR.."/inc", DEPS_DIR, SRC_DIR.."/vid/gl", }
+local BASE_LIB_DIR = { DEPS_DIR.."/lib/static/"..ARCH, DEPS_DIR.."/lib/dynamic/"..ARCH, LIBS_DIR }
 
 InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 	"MyCore", "c++", "dll", "",
@@ -42,14 +46,21 @@ InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 		SRC_DIR.."/img/*.h"
 	},
 		{},
-	{BASE_INC_PATH, ZLIB_INC_DIR, PNG_INC_DIR, JPEG_INC_DIR, DEVIL_INC_DIR},
-		BASE_LIB_PATH)
+	{ BASE_INC_DIR, ZLIB_INC_DIR, PNG_INC_DIR, JPEG_INC_DIR, DEVIL_INC_DIR },
+		{ BASE_LIB_DIR}
+)
+
+local GL_DEPS = {}
+
+if os.is("windows") then
+	GL_DEPS = { "opengl32", "glu32" }
+end
 
 InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 	"MyVideoGL21", "c++", "dll", "",
 	{ "MyCore", },
 		{ FTYPE_DEP, },
-			{},
+			{ GL_DEPS },
 	{"__MY_BUILD_VID_LIB__", "__MY_BUILD_VID_GL21_LIB__", "GLEW_STATIC"}, {}, {},
 	{
 		SRC_DIR.."/inc/*.h",
@@ -64,14 +75,15 @@ InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 		SRC_DIR.."/vid/gl/glew.c",
 	},
 		{},
-	{BASE_INC_PATH, FTYPE_INC_DIR},
-		BASE_LIB_PATH)
+	{ BASE_INC_DIR, FTYPE_INC_DIR },
+		{ BASE_LIB_DIR }
+)
 
 InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 	"MyVideoGL12", "c++", "dll", "",
 	{"MyCore", },
 		{ FTYPE_DEP, },
-			{},
+			{ GL_DEPS },
 	{"__MY_BUILD_VID_LIB__", "__MY_BUILD_VID_GL12_LIB__", "GLEW_STATIC"}, {}, {},
 	{
 		SRC_DIR.."/inc/*.h",
@@ -86,14 +98,15 @@ InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 		SRC_DIR.."/vid/gl/glew.c",
 	},
 		{},
-	{BASE_INC_PATH, FTYPE_INC_DIR},
-		BASE_LIB_PATH)
+	{ BASE_INC_DIR, FTYPE_INC_DIR },
+		{ BASE_LIB_DIR }
+)
 
 InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 	"MyVideoGL11", "c++", "dll", "",
 	{"MyCore", },
 		{ FTYPE_DEP,},
-			{},
+			{ GL_DEPS },
 	{"__MY_BUILD_VID_LIB__", "__MY_BUILD_VID_GL11_LIB__", "GLEW_STATIC"}, {}, {},
 	{
 		SRC_DIR.."/inc/*.h",
@@ -108,29 +121,36 @@ InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 		SRC_DIR.."/vid/gl/glew.c",
 	},
 		{},
-	{BASE_INC_PATH, FTYPE_INC_DIR},
-		BASE_LIB_PATH)
-		
-InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
-	"MyVideoDX9", "c++", "dll", "",
-	{"MyCore", },
-		{ FTYPE_DEP, },
+	{ BASE_INC_DIR, FTYPE_INC_DIR },
+		{ BASE_LIB_DIR }
+)
+
+if os.is("windows") then
+	local DX9_DEPS = { "d3dx9" }
+	InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
+		"MyVideoDX9", "c++", "dll", "",
+		{"MyCore", },
+			{ FTYPE_DEP, },
+				{ DX9_DEPS },
+		{"__MY_BUILD_VID_LIB__", "__MY_BUILD_VID_DX9_LIB__"}, {}, {},
+		{	
+			SRC_DIR.."/inc/*.h",
+			SRC_DIR.."/inc/vid/*.h",
+			SRC_DIR.."/CompileConf.h",
+			SRC_DIR.."/MyDllEntry.cpp",
+			SRC_DIR.."/MySingletons.cpp",
+			SRC_DIR.."/vid/*.cpp",
+			SRC_DIR.."/vid/*.h",
+			SRC_DIR.."/vid/dx9/**.cpp",
+			SRC_DIR.."/vid/dx9/**.h",
+		},
 			{},
-	{"__MY_BUILD_VID_LIB__", "__MY_BUILD_VID_DX9_LIB__"}, {}, {},
-	{	
-		SRC_DIR.."/inc/*.h",
-		SRC_DIR.."/inc/vid/*.h",
-		SRC_DIR.."/CompileConf.h",
-		SRC_DIR.."/MyDllEntry.cpp",
-		SRC_DIR.."/MySingletons.cpp",
-		SRC_DIR.."/vid/*.cpp",
-		SRC_DIR.."/vid/*.h",
-		SRC_DIR.."/vid/dx9/**.cpp",
-		SRC_DIR.."/vid/dx9/**.h",
-	},
-		{},
-	{BASE_INC_PATH, FTYPE_INC_DIR},
-		BASE_LIB_PATH)
+		{ BASE_INC_DIR, FTYPE_INC_DIR },
+			{ BASE_LIB_DIR },
+		{}, {"/NODEFAULTLIB:d3dx8.lib"}, nil, nil,
+		nil, nil
+	)
+end
 
 InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 	"MyEngine", "c++", "dll", "",
@@ -144,10 +164,11 @@ InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 		"__MY_BUILD_SCN_LIB__",
 		"__MY_BUILD_DYN_LIB__",
 		"__MY_BUILD_GAME_LIB__",
-		"__MY_BUILD_SCR_LIB__", "TOLUA_STATIC",
+		"__MY_BUILD_SCR_LIB__",
+		"TOLUA_STATIC",
 		"__MY_BUILD_RES_LIB__",
-		"__MY_BUILD_DEV_LIB__"
-	},  {"TOLUA_RELEASE"}, {},
+		"__MY_BUILD_DEV_LIB__",
+	},  { "TOLUA_RELEASE" }, {},
 	{	SRC_DIR.."/inc/*.h",
 		SRC_DIR.."/MyVersion.h",
 		SRC_DIR.."/CompileConf.h",
@@ -185,7 +206,7 @@ InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 	},
 		{SRC_DIR.."/vid/CFontTTF.*"},
 	{
-		BASE_INC_PATH,
+		BASE_INC_DIR,
 		VORB_INC_DIR,
 		OGG_INC_DIR,
 		OAL_INC_DIR,
@@ -195,7 +216,8 @@ InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 		LUA_INC_DIR,
 		TOLUA_INC_DIR,
 	},
-		BASE_LIB_PATH)
+		{ BASE_LIB_DIR }
+)
 
 InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 	"MyCEGUI", "c++", "dll", "",
@@ -215,15 +237,16 @@ InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 		SRC_DIR.."/gui/iniFile/*.h",
 	},
 		{},
-	{BASE_INC_PATH, CEGUI_INC_DIR, CEGUI_LUA_INC_DIR},
-		BASE_LIB_PATH)
+	{ BASE_INC_DIR, CEGUI_INC_DIR, CEGUI_LUA_INC_DIR },
+		{ BASE_LIB_DIR }
+)
 
 InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 	"MyCoreScript", "c++", "dll", "",
 	{ "MyCore", "MyEngine", "MyCEGUI", },
 		{LUA_DLL_DEP, TOLUA_DLL_DEP, },
 			{},
-	{"__MY_BUILD_SCR_LIB__", "TOLUA_STATIC"}, {"TOLUA_RELEASE"}, {},
+	{"__MY_BUILD_SCR_LIB__", "TOLUA_STATIC", "LUA_BUILD_AS_DLL"}, {"TOLUA_RELEASE"}, {},
 	{
 		SRC_DIR.."/inc/*.h",
 		SRC_DIR.."/inc/scr/*.h",
@@ -237,7 +260,9 @@ InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 		SRC_DIR.."/scr/package/**.pkg",
 	},
 		{},
-	{BASE_INC_PATH, TOLUA_INC_DIR, LUA_INC_DIR, CEGUI_INC_DIR}, BASE_LIB_PATH)
+	{ BASE_INC_DIR, TOLUA_INC_DIR, LUA_INC_DIR, LUA_ADD_INC_DIR, CEGUI_INC_DIR },
+		{ BASE_LIB_DIR }
+)
 	
 InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 	"Test01", "c++", "exe", "",
@@ -254,7 +279,9 @@ InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 		APPS_DIR.."/Tests/Test01.cpp",
 	},
 		{},
-	BASE_INC_PATH, BASE_LIB_PATH)
+	{ BASE_INC_DIR },
+		{ BASE_LIB_DIR }
+)
 	
 InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 	"Test02", "c++", "exe", "",
@@ -271,7 +298,9 @@ InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 		APPS_DIR.."/Tests/Test02.cpp",
 	},
 		{},
-	BASE_INC_PATH, BASE_LIB_PATH)
+	{ BASE_INC_DIR },
+		{ BASE_LIB_DIR }
+)
 
 InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 	"Test03", "c++", "exe", "",
@@ -288,5 +317,17 @@ InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 		APPS_DIR.."/Tests/Test03.cpp",
 	},
 		{},
-	BASE_INC_PATH, BASE_LIB_PATH)
-	
+	{ BASE_INC_DIR },
+		{ BASE_LIB_DIR }
+)
+
+if os.is("windows") then
+	for key, value in pairs({ "openal32.dll", "wrap_oal.dll", }) do
+		local dst = ROOT_DIR.."/bin/"..ARCH.."/"..value
+		local src = DEPS_DIR.."/lib/dynamic/"..ARCH.."/"..value
+		if not os.isfile(dst) then
+			io.write(string.format("Copy %s to %s.\n", src, dst))
+			os.copyfile(src, dst)
+		end
+	end
+end

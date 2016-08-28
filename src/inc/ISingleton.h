@@ -32,32 +32,52 @@ public:
 	ISingleton()
     {
 #if MY_DEBUG_MODE
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 		if (!ms_Singleton || (*ms_Singleton))
 			_asm int 3
+#else
+		if (!ms_Singleton || (*ms_Singleton))
+			assert(!"!ms_Singleton || (*ms_Singleton)");
+#endif
 #endif
 		*(ms_Singleton) = static_cast <T*>(this);
     }
 	virtual ~ISingleton()
     {  	
 #if MY_DEBUG_MODE
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 		if (!ms_Singleton || !(*ms_Singleton))
 			_asm int 3
+#else
+		if (!ms_Singleton || !(*ms_Singleton))
+			assert(!"!ms_Singleton || !(*ms_Singleton)");
+#endif
 #endif
 		*(ms_Singleton) = 0; 
 	}
     static T& getSingleton()
     {  
 #if MY_DEBUG_MODE
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 		if (!ms_Singleton || !(*ms_Singleton))
 			_asm int 3
+#else
+		if (!ms_Singleton || !(*ms_Singleton))
+			assert(!"!ms_Singleton || !(*ms_Singleton)");
+#endif
 #endif
 		return (**ms_Singleton);
 	}
     static T* getSingletonPtr()
     {  
 #if MY_DEBUG_MODE
+#if MY_COMPILER == MY_COMPILER_MSVC && !MY_COMP_ARCH_64
 		if (!ms_Singleton)
 			_asm int 3
+#else
+		if (!ms_Singleton)
+			assert(!"!ms_Singleton");
+#endif
 #endif
 		return (*ms_Singleton);
 	}

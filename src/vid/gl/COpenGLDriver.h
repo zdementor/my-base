@@ -41,13 +41,6 @@ typedef char GLchar;
 #include <GL/glew.h>
 #include <GL/wglew.h>
 
-#if MY_PLATFORM == MY_PLATFORM_WIN32    
-#	pragma comment( lib, "glu32.lib" )
-#	ifndef __MY_BUILD_VID_MESA_LIB__
-#		pragma comment( lib, "opengl32.lib" )
-#	endif
-#endif
-
 //---------------------------------------------------------------------------
 namespace my {
 namespace vid {

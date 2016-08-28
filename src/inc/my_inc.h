@@ -124,18 +124,21 @@
 #if defined( _MSC_VER )
 #   define MY_COMPILER MY_COMPILER_MSVC
 #   define MY_COMP_VER _MSC_VER
-
+#	if _M_X64
+#		define MY_COMP_ARCH_64 1
+#	endif
 #elif defined( __GNUC__ )
 #   define MY_COMPILER MY_COMPILER_GNUC
 #   define MY_COMP_VER (((__GNUC__)*100)+__GNUC_MINOR__)
-
 #elif defined( __BORLANDC__ )
 #   define MY_COMPILER MY_COMPILER_BORL
 #   define MY_COMP_VER __BCPLUSPLUS__
-
 #else
 #   error "No known compiler. Abort! Abort!"
+#endif
 
+#ifndef MY_COMP_ARCH_64
+#define MY_COMP_ARCH_64 0
 #endif
 
 //----------------------------------------------------------------------------
