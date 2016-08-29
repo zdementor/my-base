@@ -160,8 +160,12 @@ if os.is("windows") then
 	table.insert(MY_ENGINE_PRJDEPS, "MyVideoDX9")
 	table.insert(MY_ENGINE_SYSDEPS, "openal32")
 	for key, value in pairs({ "openal32.dll", }) do
-		local dst = ROOT_DIR.."/bin/"..ARCH.."/"..value
+		local dstpath = ROOT_DIR.."/bin/"..ARCH
+		local dst = dstpath.."/"..value
 		local src = DEPS_DIR.."/lib/dynamic/"..ARCH.."/"..value
+		if not os.isdir(dstpath) then
+			os.mkdir(dstpath)
+		end
 		if not os.isfile(dst) then
 			io.write(string.format("Copy %s to %s.\n", src, dst))
 			os.copyfile(src, dst)
