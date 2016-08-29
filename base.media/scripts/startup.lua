@@ -79,6 +79,21 @@ function SetupResources()
 end
 
 function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
+
+	local ver = os.getversion()
+	local arch = "32 bit"
+	if os._is64bit() then
+		arch = "64 bit"
+	end
+	io.ILogger:getSingleton():logInfo(string.format("------------------ Lua script info: -------------------"))
+	io.ILogger:getSingleton():logInfo(string.format("| OS version           : %d.%d.%d (%s)",
+		ver.majorversion, ver.minorversion, ver.revision, ver.description))
+	io.ILogger:getSingleton():logInfo(string.format("| Current directory    : %s",
+		os.getcwd()))
+	io.ILogger:getSingleton():logInfo(string.format("| MyEngine binary arch : %s",
+		arch))
+	io.ILogger:getSingleton():logInfo(string.format("-------------------------------------------------------"))
+
 	dev.createDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 	if MyCEGUI.create(OPTIONS.CEGUIOptionsFileName) == false then
 		io.ILogger:getSingleton():logErr(
@@ -87,16 +102,6 @@ function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 		os.exit(1)
 	end	
 	RereadSingletons()
-
-	MyLogger:logInfo(string.format("---------------------Lua script info:----------------------------"))
-	local ver = os.getversion()
-	MyLogger:logInfo(string.format("OS version {%d.%d.%d (%s)}", 
-	   ver.majorversion, ver.minorversion, ver.revision,
-	   ver.description))
-	MyLogger:logInfo(string.format("Current directory {%s}",
-	   os.getcwd()))
-	MyLogger:logInfo(string.format("-----------------------------------------------------------------"))
-
 	SetupResources()
 	MyLogger:setLogLevel(OPTIONS.LogLevel) 
 	MyDevice:setWindowIcon(

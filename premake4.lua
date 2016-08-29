@@ -152,11 +152,28 @@ if os.is("windows") then
 	)
 end
 
+local MY_ENGINE_PRJDEPS = { "MyCore", "MyVideoGL11", "MyVideoGL12", "MyVideoGL21", }
+local MY_ENGINE_DEPS    = { VORB_DEP, OGG_DEP, CAL3D_DEP, MINI_DEP, ODE_DEP, LUA_DLL_DEP, TOLUA_DLL_DEP, }
+local MY_ENGINE_SYSDEPS = {}
+
+if os.is("windows") then
+	table.insert(MY_ENGINE_PRJDEPS, "MyVideoDX9")
+	table.insert(MY_ENGINE_SYSDEPS, "openal32")
+	for key, value in pairs({ "openal32.dll", }) do
+		local dst = ROOT_DIR.."/bin/"..ARCH.."/"..value
+		local src = DEPS_DIR.."/lib/dynamic/"..ARCH.."/"..value
+		if not os.isfile(dst) then
+			io.write(string.format("Copy %s to %s.\n", src, dst))
+			os.copyfile(src, dst)
+		end
+	end
+end
+
 InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 	"MyEngine", "c++", "dll", "",
-	{ "MyCore", "MyVideoDX9", "MyVideoGL11", "MyVideoGL12", "MyVideoGL21", },
-		{VORB_DEP, OGG_DEP, CAL3D_DEP, MINI_DEP, ODE_DEP, LUA_DLL_DEP, TOLUA_DLL_DEP},
-			{"openal32", },
+	{ MY_ENGINE_PRJDEPS, },
+		{ MY_ENGINE_DEPS, },
+			{ MY_ENGINE_SYSDEPS, },
 	{
 		"__MY_BUILD_VID_LIB__",
 		"__MY_BUILD_VID_NULL_LIB__",
@@ -320,14 +337,3 @@ InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 	{ BASE_INC_DIR },
 		{ BASE_LIB_DIR }
 )
-
-if os.is("windows") then
-	for key, value in pairs({ "openal32.dll", }) do
-		local dst = ROOT_DIR.."/bin/"..ARCH.."/"..value
-		local src = DEPS_DIR.."/lib/dynamic/"..ARCH.."/"..value
-		if not os.isfile(dst) then
-			io.write(string.format("Copy %s to %s.\n", src, dst))
-			os.copyfile(src, dst)
-		end
-	end
-end

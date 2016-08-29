@@ -149,12 +149,10 @@
 
 #define __i386__
 
-#if defined __i386__
-#	define MY_CPU_ARCH MY_X32
-#elif defined __amd64__
+#if MY_COMP_ARCH_64
 #	define MY_CPU_ARCH MY_X64
-#else
-#	error "Unsuppurted target CPU. Abort! Abort!"
+#elif defined
+#	define MY_CPU_ARCH MY_X32
 #endif
 
 //----------------------------------------------------------------------------
