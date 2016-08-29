@@ -156,7 +156,7 @@ InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 	"MyEngine", "c++", "dll", "",
 	{ "MyCore", "MyVideoDX9", "MyVideoGL11", "MyVideoGL12", "MyVideoGL21", },
 		{VORB_DEP, OGG_DEP, CAL3D_DEP, MINI_DEP, ODE_DEP, LUA_DLL_DEP, TOLUA_DLL_DEP},
-			{"openal32", "alut"},
+			{"openal32", },
 	{
 		"__MY_BUILD_VID_LIB__",
 		"__MY_BUILD_VID_NULL_LIB__",
@@ -322,7 +322,7 @@ InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 )
 
 if os.is("windows") then
-	for key, value in pairs({ "openal32.dll", "wrap_oal.dll", }) do
+	for key, value in pairs({ "openal32.dll", }) do
 		local dst = ROOT_DIR.."/bin/"..ARCH.."/"..value
 		local src = DEPS_DIR.."/lib/dynamic/"..ARCH.."/"..value
 		if not os.isfile(dst) then
