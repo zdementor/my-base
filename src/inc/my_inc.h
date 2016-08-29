@@ -147,11 +147,9 @@
 #define MY_X32 1
 #define MY_X64 2
 
-#define __i386__
-
 #if MY_COMP_ARCH_64
 #	define MY_CPU_ARCH MY_X64
-#elif defined
+#else
 #	define MY_CPU_ARCH MY_X32
 #endif
 
