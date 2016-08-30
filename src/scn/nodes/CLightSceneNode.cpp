@@ -159,26 +159,29 @@ void CLightSceneNode::OnPreRender(u32 timeMs)
 				}
 
 				scale.setScale(core::vector3df(25.f, 25.f, 25.f));
-				m.getPass(0).setColorGen(vid::ECGT_CUSTOM);
-				m.getPass(0).setEmissiveColor(img::SColor(0xffffff99));
-				m.getPass(0).setDiffuseColor(img::SColor(0xff000000));
-				m.getPass(0).setFlag(vid::EMF_BLENDING, true);
-				m.getPass(0).setBlendFuncs(vid::ESBF_SRC_ALPHA, vid::EDBF_ONE_MINUS_SRC_ALPHA);
-				m.getPass(0).setFlag(vid::EMF_FRONT_FACE_CCW, false);
-				driver.registerGeometryForRendering(
-					vid::ERP_3D_SOLID_PASS,
-					getAbsoluteTransformation() * scale, NULL, 0,
-					m,
-					mb->getVertices(), mb->getVertexCount(),  mb->getVertexType(),
-					mb->getIndices(), mb->getIndexCount(),  mb->getIndexType(),
-					mb->getDrawPrimitiveType());
 
-				scale.setScale(core::vector3df(20.f, 20.f, 20.f));
+				if (drawDebug)
+				{
+					m.getPass(0).setColorGen(vid::ECGT_CUSTOM);
+					m.getPass(0).setEmissiveColor(img::SColor(0xffffff99));
+					m.getPass(0).setDiffuseColor(img::SColor(0xff000000));
+					m.getPass(0).setFlag(vid::EMF_BLENDING, false);
+					m.getPass(0).setFlag(vid::EMF_FRONT_FACE_CCW, false);
+					driver.registerGeometryForRendering(
+						vid::ERP_3D_SOLID_PASS,
+						getAbsoluteTransformation() * scale, NULL, 0,
+						m,
+						mb->getVertices(), mb->getVertexCount(),  mb->getVertexType(),
+						mb->getIndices(), mb->getIndexCount(),  mb->getIndexType(),
+						mb->getDrawPrimitiveType());
+
+					scale.setScale(core::vector3df(20.f, 20.f, 20.f));
+				}
+
 				m.getPass(0).setColorGen(vid::ECGT_CUSTOM);
 				m.getPass(0).setEmissiveColor(LightData.DiffuseColor.toSColor());
 				m.getPass(0).setDiffuseColor(img::SColor(0xff000000));
-				m.getPass(0).setFlag(vid::EMF_BLENDING, true);
-				m.getPass(0).setBlendFuncs(vid::ESBF_SRC_ALPHA, vid::EDBF_ONE_MINUS_SRC_ALPHA);
+				m.getPass(0).setFlag(vid::EMF_BLENDING, false);
 				m.getPass(0).setFlag(vid::EMF_FRONT_FACE_CCW, true);
 				driver.registerGeometryForRendering(
 					vid::ERP_3D_SOLID_PASS,

@@ -566,7 +566,8 @@ const char* getCompareTestReadableName(E_COMPARE_TEST test);
 //! render passes enumeration
 enum E_RENDER_PASS
 {
-	ERP_3D_SOLID_PASS = 0,
+	ERP_3D_SKY_PASS = 0,
+	ERP_3D_SOLID_PASS,
 	ERP_3D_LIGHTING_PASS,
 	ERP_3D_TRANSP_1ST_PASS,
 	ERP_3D_TRANSP_2ND_PASS,

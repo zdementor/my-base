@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 02/25/16 17:27:03.
+** Generated automatically by tolua++-1.0.92 on 08/30/16 22:25:35.
 */
 
 #ifndef __cplusplus
@@ -57792,6 +57792,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"E_COMPARE_TEST_COUNT",vid::E_COMPARE_TEST_COUNT);
   tolua_function(tolua_S,"getCompareTestName",tolua_MyLuaBind_vid_getCompareTestName00);
   tolua_function(tolua_S,"getCompareTestReadableName",tolua_MyLuaBind_vid_getCompareTestReadableName00);
+  tolua_constant(tolua_S,"ERP_3D_SKY_PASS",vid::ERP_3D_SKY_PASS);
   tolua_constant(tolua_S,"ERP_3D_SOLID_PASS",vid::ERP_3D_SOLID_PASS);
   tolua_constant(tolua_S,"ERP_3D_LIGHTING_PASS",vid::ERP_3D_LIGHTING_PASS);
   tolua_constant(tolua_S,"ERP_3D_TRANSP_1ST_PASS",vid::ERP_3D_TRANSP_1ST_PASS);

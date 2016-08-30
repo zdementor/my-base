@@ -1149,7 +1149,8 @@ enum E_STENCIL_OPERATION
 
 enum E_RENDER_PASS
 {
-	ERP_3D_SOLID_PASS = 0,
+	ERP_3D_SKY_PASS = 0,
+	ERP_3D_SOLID_PASS,
 	ERP_3D_LIGHTING_PASS,
 	ERP_3D_DIRT_PASS,
 	ERP_3D_TRANSP_1ST_PASS,
@@ -1167,6 +1168,7 @@ enum E_RENDER_PASS
 
 static const c8* RenderPassName[E_RENDER_PASS_COUNT] =
 {
+	"ERP_3D_SKY_PASS",
 	"ERP_3D_SOLID_PASS",
 	"ERP_3D_LIGHTING_PASS",
 	"ERP_3D_DIRT_PASS",
@@ -1181,6 +1183,7 @@ static const c8* RenderPassName[E_RENDER_PASS_COUNT] =
 
 static const c8* RenderPassReadableName[E_RENDER_PASS_COUNT] =
 {
+	"3D Sky pass",
 	"3D Solid pass",
 	"3D Lighting pass",
 	"3D Dirt pass",

@@ -2670,6 +2670,7 @@ void CNullDriver::_render()
 		{
 			switch (i)
 			{
+			case ERP_3D_SKY_PASS:
 			case ERP_3D_SOLID_PASS:
 			case ERP_3D_DIRT_PASS:
 			case ERP_3D_TRANSP_1ST_PASS:

@@ -87,10 +87,10 @@ void CSkyBoxSceneNode::OnPreRender(u32 timeMs)
 		pass.Layers[0].enableFilter(false);
 
 		VIDEO_DRIVER.registerGeometryForRendering(
-			vid::ERP_3D_SOLID_PASS,
+			vid::ERP_3D_SKY_PASS,
 			view, NULL, 0,
 			Material[i],
-			&Vertices[i * 4], 4, vid::S3DVertex1TCoords::Type,
+			&Vertices[i * 4], 4, Vertices->Type,
 			&Indices[0], 6, EIT_16_BIT,
 			vid::EDPT_TRIANGLE_LIST);
 	}
