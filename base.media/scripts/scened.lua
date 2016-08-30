@@ -82,12 +82,12 @@ function _ScenedInit()
 		return _ScenedOK
 	end
 	_ScenedInitialized = true
-	MyLogger:logInfo("Initializing Scened . . .")
+	LOG_INFO("Initializing Scened . . .")
 	MyLogger:increaseFormatLevel()	
 	
 	_ScenedInitImpl()
 
-	MyLogger:logInfo("Scened initialized")
+	LOG_INFO("Scened initialized")
 	MyLogger:decreaseFormatLevel()
 	_ScenedOK = true
 	return _ScenedOK
@@ -101,7 +101,7 @@ function _ScenedStart()
 		return
 	end
 	if MyScnMgr:isSceneEditorStarted() then
-		MyLogger:logWarn("Scene Editor already started")
+		LOG_WARN("Scene Editor already started")
 		return
 	end
 	
@@ -153,7 +153,7 @@ function _ScenedStop()
 		return
 	end
 	if not MyScnMgr:isSceneEditorStarted() then
-		MyLogger:logWarn("There is no Scene Editor to stop")
+		LOG_WARN("There is no Scene Editor to stop")
 		return
 	end
 
@@ -373,7 +373,7 @@ Scened.setStartStopCallback = _ScenedSetStartStopCallback
 function _ScenedOnCreateSceneNode(arg)
 	local scene_node = tolua.cast(arg, "scn::ISceneNode")
 	local game_node = scene_node:getGameNode()
-	--MyLogger:logInfo("SCENE NODE "..tostring(scene_node).." "..
+	--LOG_INFO("SCENE NODE "..tostring(scene_node).." "..
 	--	scn.getSceneNodeTypeReadableName(scene_node:getSceneNodeType()))
 end
 
@@ -382,7 +382,7 @@ function _ScenedOnDeleteSceneNode(arg)
 	if core.isPtrsEq(scene_node, _ScenedCameraInitial) then
 		_ScenedCameraInitial = nil
 	end
-	--MyLogger:logInfo("~SCENE NODE "..tostring(scene_node).." "..
+	--LOG_INFO("~SCENE NODE "..tostring(scene_node).." "..
 	--	scn.getSceneNodeTypeReadableName(scene_node:getSceneNodeType()))
 end
 

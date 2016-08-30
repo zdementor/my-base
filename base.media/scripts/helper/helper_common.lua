@@ -121,7 +121,7 @@ end
 Helper.getSelectedMaterial = _HelperGetSelectedMaterial
 
 local function _HelperConvertToNormalMap(amplitude, hmap_full_file_name, nmap_full_file_name)
-	MyLogger:logInfo(string.format("Converting %s to Normal Map (amplitude %.4f) . . .",
+	LOG_INFO(string.format("Converting %s to Normal Map (amplitude %.4f) . . .",
 		hmap_full_file_name, amplitude))
 	MyLogger:increaseFormatLevel()
 	local image = MyImgLib:getImage(hmap_full_file_name)
@@ -130,16 +130,16 @@ local function _HelperConvertToNormalMap(amplitude, hmap_full_file_name, nmap_fu
 		image:convertTo(img.ECF_A8R8G8B8)
 		if image:makeNormalMap(amplitude) then
 			if MyImgLib:saveImageToFile(image, nmap_full_file_name) then
-				MyLogger:logInfo("Saved to "..nmap_full_file_name)
+				LOG_INFO("Saved to "..nmap_full_file_name)
 				r = true
 			end
 		end
 		MyImgLib:removeImage(image)		
 	end
 	if r then
-		MyLogger:logInfo("Done. Norml Map created")
+		LOG_INFO("Done. Norml Map created")
 	else
-		MyLogger:logErr("FAILED Norml Map creation")
+		LOG_ERR("FAILED Norml Map creation")
 	end
 	MyLogger:decreaseFormatLevel()
 end

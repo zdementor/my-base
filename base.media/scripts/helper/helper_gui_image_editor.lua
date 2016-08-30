@@ -199,7 +199,7 @@ local function _ImageEditorSaveImageAccepted(full_file_name, rel_full_file_name,
 			_Callbacks.Save(full_file_name, rel_full_file_name, user_data)
 		end
 	else
-		MyLogger:logInfo("Can't save image to "..full_file_name)
+		LOG_INFO("Can't save image to "..full_file_name)
 	end
 end
 

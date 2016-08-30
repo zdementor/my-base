@@ -140,7 +140,7 @@ local function _ScenedAnimatedMeshColorUpdate()
 		if _ColorTbl[key] ~= nil then
 			Helper.GUI.fillCEGUITextureWithColor(_Resources.Textures.ColorImages[key], _ColorTbl[key])
 		else
-			MyLogger:logInfo(string.format("Incorrect ColorImage in Scene Animated Mesh (key='%s')", key))
+			LOG_INFO(string.format("Incorrect ColorImage in Scene Animated Mesh (key='%s')", key))
 		end
 	end
 end
@@ -152,7 +152,7 @@ function _ScenedAnimationCal3dReset(full_file_name)
 		return
 	end
 	local index = item:getID()
-	MyLogger:logInfo(string.format("Reset Cal3d animation %s", full_file_name))
+	LOG_INFO(string.format("Reset Cal3d animation %s", full_file_name))
 	_ScenedAnimatedMeshUpdateControls()
 end
 
@@ -423,7 +423,7 @@ function _ScenedAnimatedMeshUpdateControls()
 			_Ctrls.Tabs.Imposter.Buttons.ClearBtn.Ctrl:setEnabled(false)
 		else
 			local tex_fname_rel = MyResMgr:getMediaFileNameRel(res.EMT_XML_SCRIPTS, file_name)
-			MyLogger:logInfo(string.format("'%s' '%s' '%s' '%s'",
+			LOG_INFO(string.format("'%s' '%s' '%s' '%s'",
 				file_name, tex_fname_rel, MyResMgr:getMediaDirRel(res.EMT_XML_SCRIPTS), MyResMgr:getMediaDirFull(res.EMT_XML_SCRIPTS)))
 			_Ctrls.Tabs.Imposter.FileNameEditbox.Ctrl:setText(tex_fname_rel)
 			_Ctrls.Tabs.Imposter.Buttons.OpenBtn.Ctrl:setEnabled(true)
@@ -628,7 +628,7 @@ end
 
 local function _ScenedAnimatedMeshOpenImposter(full_file_name)
 	if not MyFileSys:existFile(full_file_name) then
-		MyLogger:logInfo("Can't open imposter from "..full_file_name)
+		LOG_INFO("Can't open imposter from "..full_file_name)
 		return
 	end
 	local amesh_scene_node = _ScenedAnimatedMeshGetSelectedSceneNode()	

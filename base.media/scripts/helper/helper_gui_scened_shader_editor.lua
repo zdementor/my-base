@@ -314,18 +314,18 @@ local function _ScenedShaderEditorClick(args)
 	elseif name == "Helper.ShaderEditor.RightAlignButton" then
 		_ScenedShaderEditorState = SHADER_EDITOR_STATE_RIGHT_ALIGNED
 	elseif name == "Helper.ShaderEditor.CompileButton" then
-		MyLogger:logInfo("Compiling GPU program...")
+		LOG_INFO("Compiling GPU program...")
 		local v_src = _Ctrls.VertexShaderEditbox.Ctrl:getText()
 		local p_src = _Ctrls.PixelShaderEditbox.Ctrl:getText()
 		if not MyDriver:compileGPUSources(
 				_ScenedShaderSources.Uniforms, _ScenedShaderSources.LightsCount,
 				_ScenedShaderSources.Vertex.Ver, v_src,
 				_ScenedShaderSources.Pixel.Ver, p_src) then
-			MyLogger:logInfo(" GPU program compiled with errors")
+			LOG_INFO(" GPU program compiled with errors")
 		else
 			_ScenedShaderSources.Vertex.Source = v_src
 			_ScenedShaderSources.Pixel.Source = p_src
-			MyLogger:logInfo(" GPU program compiled")
+			LOG_INFO(" GPU program compiled")
 		end
 	end
 	_ScenedShaderEditorUpdateControls()

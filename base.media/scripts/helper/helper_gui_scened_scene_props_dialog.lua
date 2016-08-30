@@ -100,7 +100,7 @@ local function _ScenedScenePropsColorUpdate()
 		if _ColorTbl[key] ~= nil then
 			Helper.GUI.fillCEGUITextureWithColor(_Resources.Textures.ColorImages[key], _ColorTbl[key])
 		else
-			MyLogger:logInfo(string.format("Incorrect ColorImage in Scene Props (key='%s')", key))
+			LOG_INFO(string.format("Incorrect ColorImage in Scene Props (key='%s')", key))
 		end
 	end
 end

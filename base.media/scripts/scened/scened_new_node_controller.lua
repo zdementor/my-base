@@ -93,7 +93,7 @@ function _ScenedNewNode(scn_type, game_type, dyn_type)
 		return scene_node
 	end
 
-	MyLogger:logInfo("Creating scene node "..
+	LOG_INFO("Creating scene node "..
 		scn.getSceneNodeTypeReadableName(scn_type).." . . .")
 
 	node_params.Scene.Parameters.ID = -1
@@ -121,7 +121,7 @@ function _ScenedNewNode(scn_type, game_type, dyn_type)
 		MyScnMgr:clearSelectionList()
 		MyScnMgr:addSceneNodeToSelectionList(scene_node)
 	else
-		MyLogger:logErr("Can't create scene node "..
+		LOG_ERR("Can't create scene node "..
 			scn.getSceneNodeTypeReadableName(scn_type))
 	end
 	_Ctrls.Root.Ctrl:setVisible(false)

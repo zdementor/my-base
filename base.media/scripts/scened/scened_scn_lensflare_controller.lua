@@ -286,7 +286,7 @@ local function _ScenedLensFlareCoronaOpenAccepted(full_file_name)
 		lensflare_scene_node:setCorona(tex)
 		_ScenedUpdateLensFlareControls()
 	else
-		MyLogger:logWarn("Can not open Corona texture from "..full_file_name)
+		LOG_WARN("Can not open Corona texture from "..full_file_name)
 	end
 end
 
@@ -302,7 +302,7 @@ local function _ScenedLensFlareLensOpenAccepted(full_file_name, rel_full_file_na
 		lensflare_scene_node:setLens(lensIdx, tex, lens.spaceConst)
 		_ScenedLensFlareUpdateLensControls(lensIdx, lens)
 	else
-		MyLogger:logWarn("Can not open Lens"..tostring(lensIdx).." texture from "..full_file_name)
+		LOG_WARN("Can not open Lens"..tostring(lensIdx).." texture from "..full_file_name)
 	end
 end
 
@@ -316,7 +316,7 @@ local function _ScenedLensFlareLensAddAccepted(full_file_name)
 		lensflare_scene_node:addLens(tex, 0.0)
 		_ScenedUpdateLensFlareControls()
 	else
-		MyLogger:logWarn("Can not open Lens texture from "..full_file_name)
+		LOG_WARN("Can not open Lens texture from "..full_file_name)
 	end
 end
 

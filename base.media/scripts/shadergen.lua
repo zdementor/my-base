@@ -158,7 +158,7 @@ function _ShaderGenGenGPUProgram(vtype, arg1, lightcnt)
 			sources.Pixel.Ver, sources.Pixel.Source,
 			sources.Tag)
 	else
-		MyLogger:logErr(string.format(
+		LOG_ERR(string.format(
 			"ShaderGen: Can't add GPU program sources for vtype=%s lights=%d",
 			vid.getVertexTypeName(vtype), lightcnt
 			))

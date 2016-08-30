@@ -258,7 +258,7 @@ function _HelperInit()
 		return _HelperOK
 	end
 	_HelperInitialized = true
-	MyLogger:logInfo("Initializing Helper . . .")
+	LOG_INFO("Initializing Helper . . .")
 	MyLogger:increaseFormatLevel()
 
 	CEGUISchemeMgr:create(OPTIONS.HelperGUI.Scheme, OPTIONS.HelperGUI.ResourceGroup)
@@ -278,7 +278,7 @@ function _HelperInit()
 	_ScenedScenePropsInit()
 	_ScenedNMapConvInit()
 	
-	MyLogger:logInfo("Helper initialized")
+	LOG_INFO("Helper initialized")
 	MyLogger:decreaseFormatLevel()
 	_HelperOK = true
 	return _HelperOK

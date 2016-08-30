@@ -637,7 +637,7 @@ end
 
 function _ScenedOnSelectSceneNodeImpl(scene_node)
 	scene_node:setDebugDataVisible(true)
-	--MyLogger:logInfo(string.format("Selected scene node (%s)",
+	--LOG_INFO(string.format("Selected scene node (%s)",
 	--	tostring(scene_node)))
 	for k, v in pairs(_Ctrls.Layouts) do
 		if v.onSelectSceneNode ~= nil then
@@ -649,7 +649,7 @@ end
 
 function _ScenedOnDeselectSceneNodeImpl(scene_node)
 	scene_node:setDebugDataVisible(false)
-	--MyLogger:logInfo(string.format("Deselected scene node (%s)",
+	--LOG_INFO(string.format("Deselected scene node (%s)",
 	--	tostring(scene_node)))
 	if scene_node:getGameNode() == nil then
 		MyScnMgr:addToDeletionQueue(scene_node)
@@ -664,12 +664,12 @@ end
 
 function _ScenedUpdateSameSceneNodes(scene_node)
 	local file_name = scene_node:getFileName()
-	MyLogger:logInfo("Update "..file_name)
+	LOG_INFO("Update "..file_name)
 	local other_scene_node = MyScnMgr:getFirstSceneNodeInTypeList(scene_node:getSceneNodeType())
 	while other_scene_node ~= nil do
 		if not core.isPtrsEq(other_scene_node, scene_node) then
 			if file_name == other_scene_node:getFileName() then
-				MyLogger:logInfo("UPDATE "..tostring(other_scene_node).." "..
+				LOG_INFO("UPDATE "..tostring(other_scene_node).." "..
 					scn.getSceneNodeTypeReadableName(other_scene_node:getSceneNodeType()))
 			end			
 		end
@@ -881,7 +881,7 @@ function _ScenedWidgetClicked(args)
 end
 
 function _ScenedNewSceneAccepted(full_file_name, rel_file_name)
-	MyLogger:logInfo("New scene "..full_file_name)
+	LOG_INFO("New scene "..full_file_name)
 end
 
 function _ScenedSaveSceneAccepted(full_file_name, rel_file_name)
@@ -911,7 +911,7 @@ function _ScenedOpenNodeAccepted(full_file_name, rel_file_name)
 end
 
 function _ScenedSaveAsNodeAccepted(full_file_name, rel_file_name)
-	MyLogger:logInfo("Save scene node as "..full_file_name)
+	LOG_INFO("Save scene node as "..full_file_name)
 	local sel_nodes = MyScnMgr:getSelectedSceneNodesCount()
 	if sel_nodes == 1 then
 		local scene_node = MyScnMgr:getSelectedSceneNode(0)

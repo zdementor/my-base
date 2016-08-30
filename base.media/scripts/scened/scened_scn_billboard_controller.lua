@@ -493,7 +493,7 @@ local function _ScenedBillboardSelectionChanged(args)
 			_Ctrls.Tabs.Tex.TexImage.Ctrl:setProperty(
 				"Image", "set:Scened.Scene.Billboard.Tex.EmptyTexImage image:TexImage")
 			_Ctrls.Tabs.Tex.InfoLabel.Ctrl:setText("")
-			MyLogger:logErr("Can't open image from file '"..tostring(full_file_name).."'")
+			LOG_ERR("Can't open image from file '"..tostring(full_file_name).."'")
 		end
 	elseif name == "Scened.Scene.Billboard.Anim.List" then
 		local bill_scene_node = _ScenedBillboardGetSelectedSceneNode()

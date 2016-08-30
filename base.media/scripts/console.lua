@@ -52,7 +52,7 @@ function _ConsoleInit()
 	if _ConsoleInitialized == true then
 		return _ConsoleOK
 	end
-	MyLogger:logInfo("Initializing Console...")
+	LOG_INFO("Initializing Console...")
 	MyLogger:increaseFormatLevel()
 	_ConsoleInitialized = true
 	
@@ -85,7 +85,7 @@ function _ConsoleInit()
 	_ConsoleInfoFont:setSize(14)
 	_ConsoleInfoFont:setMonospaceMode(true)
 
-	MyLogger:logInfo("Console initialized")
+	LOG_INFO("Console initialized")
 	MyLogger:decreaseFormatLevel()
 	_ConsoleOK = true
 	return _ConsoleOK
@@ -154,9 +154,9 @@ function _CmdList()
 	local ll = MyLogger:getLogLevel()
 	_LastUpdateTimeMs = 0 -- to immediate update
 	MyLogger:setLogLevel(io.ELL_INFORMATION)
-	MyLogger:logInfo("Commands list:")
+	LOG_INFO("Commands list:")
 	for key, value in CONSOLE_COMMANDS do
-		MyLogger:logInfo(string.format("    %s - %s", key, value.Info))
+		LOG_INFO(string.format("    %s - %s", key, value.Info))
 	end
 	MyLogger:setLogLevel(ll)
 end
@@ -181,9 +181,9 @@ function _CmdOctTree()
 	MyScnMgr:setOctTreeCullingEnabled(				
 		not MyScnMgr:isOctTreeCullingEnabled())
 	if MyScnMgr:isOctTreeCullingEnabled() then
-		MyLogger:logInfo("OctTree culling enabled")
+		LOG_INFO("OctTree culling enabled")
 	else
-		MyLogger:logInfo("OctTree culling disabled")
+		LOG_INFO("OctTree culling disabled")
 	end
 end
 
@@ -191,9 +191,9 @@ function _CmdOcclude()
 	MyScnMgr:setOccludersCullingEnabled(				
 		not MyScnMgr:isOccludersCullingEnabled())
 	if MyScnMgr:isOccludersCullingEnabled() then
-		MyLogger:logInfo("Occluders culling enabled")
+		LOG_INFO("Occluders culling enabled")
 	else
-		MyLogger:logInfo("Occluders culling disabled")
+		LOG_INFO("Occluders culling disabled")
 	end
 end
 
@@ -283,7 +283,7 @@ function _ConsoleCmdTextAccepted(args)
 		local ll = MyLogger:getLogLevel()
 		_LastUpdateTimeMs = 0 -- to immediate update
 		MyLogger:setLogLevel(io.ELL_INFORMATION)
-		MyLogger:logWarn(string.format("Unknown command '%s'", cmdname))
+		LOG_WARN(string.format("Unknown command '%s'", cmdname))
 		MyLogger:setLogLevel(ll)
 		_ConsoleCmdLine:setText("")
 		return
@@ -296,7 +296,7 @@ function _ConsoleCmdTextAccepted(args)
 	local ll = MyLogger:getLogLevel()
 	_LastUpdateTimeMs = 0 -- to immediate update
 	MyLogger:setLogLevel(io.ELL_INFORMATION)
-	MyLogger:logInfo(string.format(">> %s", cmdname))
+	LOG_INFO(string.format(">> %s", cmdname))
 	MyLogger:setLogLevel(ll)
 	_ConsoleCmdLine:setText("")
 	cmd.Handler(params)

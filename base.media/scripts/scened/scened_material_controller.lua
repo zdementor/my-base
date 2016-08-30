@@ -709,7 +709,7 @@ function _ScenedMaterialUpdatePassControls()
 		if color_tbl[key] ~= nil then
 			Helper.GUI.fillCEGUITextureWithColor(_Resources.Textures.ColorImages[key], color_tbl[key])
 		else
-			MyLogger:logInfo(string.format("Incorrect ColorImage in Material Editor (key='%s')", key))
+			LOG_INFO(string.format("Incorrect ColorImage in Material Editor (key='%s')", key))
 		end
 	end
 	_Ctrls.Props.ShininessSpinner.Ctrl:setCurrentValue(pass:getShininess())
@@ -1064,7 +1064,7 @@ function _ScenedMaterialWidgetClicked(args)
 		local pass = _ScenedMaterialGetSelectedPass()
 		local pass_index = Helper.getMaterialPassIndex(material, pass)		
 		if not material:removePass(pass_index) then
-			MyLogger:logWarn(string.format("Can't remove pass, material must have at least one pass"))
+			LOG_WARN(string.format("Can't remove pass, material must have at least one pass"))
 		end
 		_ScenedUpdateMaterialControls()
 	elseif name == "Scened.Material.OpenBtn" then
@@ -1127,7 +1127,7 @@ function _ScenedMaterialWidgetClicked(args)
 				pass.Layers[idx_new]:getType() == vid.ETLT_NORMAL_MAP  then
 			local msg_text = "Can't move Normal Map Layer (it must have index 3)"
 			Helper.GUI.MessageBox.show(0, 0, "Warning!", msg_text)
-			MyLogger:logWarn(msg_text)
+			LOG_WARN(msg_text)
 			idx_new = idx
 		end			
 		if idx_new ~= idx then
@@ -1326,7 +1326,7 @@ function _ScenedMaterialListSelectionAccepted(args)
 				"Can't setup Layer %d for Normal Map (it must have index 3)",
 				layerIdx)
 			Helper.GUI.MessageBox.show(0, 0, "Warning!", msg_text)
-			MyLogger:logWarn(msg_text)
+			LOG_WARN(msg_text)
 			_ScenedMaterialUpdateLayerControls()
 		end
 	elseif name == "Scened.Material.Pass.Layers.TCMod.TypeCombo" then

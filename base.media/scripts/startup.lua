@@ -34,6 +34,18 @@ CEGUIWinMgr		= nil
 CEGUICursor		= nil
 CEGUIFontMgr	= nil
 
+function LOG_INFO(msg)
+	io.ILogger:getSingleton():logInfo("<Lua> "..msg)
+end
+
+function LOG_WARN(msg)
+	io.ILogger:getSingleton():logWarn("<Lua> "..msg)
+end
+
+function LOG_ERR(msg)
+	io.ILogger:getSingleton():logErr("<Lua> "..msg)
+end
+
 function RereadSingletons()
 	MyDevice	= dev.IDevice:getSingleton()
 	MyProfiler	= dev.IProfiler:getSingleton()
@@ -85,19 +97,19 @@ function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 	if os._is64bit() then
 		arch = "64 bit"
 	end
-	io.ILogger:getSingleton():logInfo(string.format("------------------ Lua script info: -------------------"))
-	io.ILogger:getSingleton():logInfo(string.format("| OS version           : %d.%d.%d (%s)",
+
+	LOG_INFO("-------------------------------------------------------")
+	LOG_INFO(string.format(" OS version           : %d.%d.%d (%s)",
 		ver.majorversion, ver.minorversion, ver.revision, ver.description))
-	io.ILogger:getSingleton():logInfo(string.format("| Current directory    : %s",
+	LOG_INFO(string.format(" Current directory    : %s",
 		os.getcwd()))
-	io.ILogger:getSingleton():logInfo(string.format("| MyEngine binary arch : %s",
+	LOG_INFO(string.format(" MyEngine binary arch : %s",
 		arch))
-	io.ILogger:getSingleton():logInfo(string.format("-------------------------------------------------------"))
+	LOG_INFO("-------------------------------------------------------")
 
 	dev.createDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 	if MyCEGUI.create(OPTIONS.CEGUIOptionsFileName) == false then
-		io.ILogger:getSingleton():logErr(
-			"Can't initialize CEGUI System, MyEngine will exit now...")
+		LOG_ERR("Can't initialize CEGUI System, MyEngine will exit now...")
 		dev.destroyDevice()
 		os.exit(1)
 	end	
