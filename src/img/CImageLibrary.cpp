@@ -321,8 +321,6 @@ core::stringc CImageLibrary::findImageFullFileName(IImage* img_ptr)
 
 bool CImageLibrary::removeImage(IImage* image)
 {
-	c8 ch[255];
-
 	for (u32 i=0; i<Images.size(); ++i)
 	{
         if (Images[i].ImageSurface == image)
@@ -331,22 +329,22 @@ bool CImageLibrary::removeImage(IImage* image)
 			{
 				SAFE_DROP(image);
 
-				sprintf(ch, "Image '%s' was removed.", Images[i].Filename);
-				LOGGER.log(ch, io::ELL_INFORMATION);
+				LOGGER.logInfo("Image '%s' was removed.",
+					Images[i].Filename.c_str());
 
 				Images.erase(i);
 
 				return true;
 			}
 
-			sprintf(ch, "Can't remove '%s' image, it used.", Images[i].Filename);
-			LOGGER.log(ch, io::ELL_INFORMATION);
+			LOGGER.logInfo("Can't remove '%s' image, it used.",
+				Images[i].Filename.c_str());
 
 			return false;
         }
 	}
 
-	LOGGER.log("Can't remove image.", io::ELL_INFORMATION);
+	LOGGER.logInfo("Can't remove image.");
 
 	return false;
 }
@@ -363,10 +361,7 @@ void CImageLibrary::clearImageCache()
 
 	if (cleared_images>0)
 	{
-		core::stringc msg;
-
-		msg.sprintf("Image cache (%d images) has been cleared.", cleared_images);
-		LOGGER.log(msg.c_str());
+		LOGGER.logInfo("Image cache (%d images) has been cleared.", cleared_images);
 	}
 }
 

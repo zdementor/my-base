@@ -20,6 +20,8 @@
 
 #include <dev/IProfiler.h>
 
+#include "MyCEGUILogger.h"
+
 //---------------------------------------------------------------------------
 
 #define MY_CEGUI_PATH_BASE               "DefaultMediaRoot"
@@ -45,6 +47,7 @@ namespace MyCEGUI {
 using namespace CEGUI;
 
 MyCEGUIRenderer		*myrenderer = NULL;
+MyCEGUILogger		*mylogger = NULL;
 EventPusher			*myeventpusher = NULL;
 bool				OwnCEGUI = false;
 my::dev::IProfiler	*Profiler = NULL;
@@ -58,40 +61,7 @@ bool create(const c8* cegui_ini_file_name, void* lua_scripter_ptr)
 	{
 		LOGGER.logInfo("Initialize CEGUI from file '%s'...", cegui_ini_file_name);
 
-		// create a renderer which uses the MyEngine filesystem and renderer
-		// to load and render CEGUI system
-		myrenderer = new CEGUI::MyCEGUIRenderer;
-
-		//  create the CEGUI System
-		try
-		{
-			CEGUI::System::create(*myrenderer);
-		}
-		catch (Exception &e)
-		{
-			LOGGER.logErr("%s:%d %s",
-				e.getFileName().c_str(), e.getLine(), e.getMessage().c_str());
-			destroy();
-			return false;
-		}
-
-		myrenderer->initializeLuaScripter(lua_scripter_ptr);       
-          
-		// getting resource provider pointer
-
-		CEGUI::DefaultResourceProvider* rp = 
-			static_cast<CEGUI::DefaultResourceProvider*>(
-				CEGUI::System::getSingleton().getResourceProvider());
-
-		// setup CEGUI data directories
-
-		rp->setDefaultResourceGroup("");
-
-		CEGUI::Font::setDefaultResourceGroup(MY_CEGUI_PATH_FONTS);
-		CEGUI::Imageset::setDefaultResourceGroup(MY_CEGUI_PATH_IMAGESETS);
-		CEGUI::WindowManager::setDefaultResourceGroup(MY_CEGUI_PATH_LAYOUTS);
-		CEGUI::WidgetLookManager::setDefaultResourceGroup(MY_CEGUI_PATH_LOOKNFEELS);
-		CEGUI::Scheme::setDefaultResourceGroup(MY_CEGUI_PATH_SCHEMES);
+		LOGGER.increaseFormatLevel();
 
 		// paths to the CEGUI files 
 		core::stringc m_pathBase     = "../media/gui/";
@@ -117,6 +87,8 @@ bool create(const c8* cegui_ini_file_name, void* lua_scripter_ptr)
 		core::stringc m_dirCommonLayouts   = "layouts/";
 		core::stringc m_dirCommonLookNFeels= "looknfeel/";
 		core::stringc m_dirCommonSchemes   = "schemes/";
+
+		core::stringc _logFileName = "CEGUI.log";
 
 		// The handy ini file helper class.
 		CIniFile  m_iniFile;
@@ -206,7 +178,64 @@ bool create(const c8* cegui_ini_file_name, void* lua_scripter_ptr)
 				m_dirCommonSchemes = value.c_str();
 				m_pathCommonSchemes.sprintf("%s%s", m_pathCommonBase.c_str(), value.c_str());
 			} 
-		}	
+			value = m_iniFile.GetValue(MY_CEGUI_INI_SECTION, "LogFileName");
+			if (value != "")
+			{
+				_logFileName = value.c_str();
+				_logFileName.sprintf("%s", value.c_str());
+			}
+		}
+
+		_logFileName = core::stringc().sprintf("%s%s.%s",
+			core::extractFileName(_logFileName, true),
+#if MY_DEBUG_MODE
+			"_d",
+#else
+			"",
+#endif
+			core::extractFileExt(_logFileName)
+			);
+
+		mylogger = new CEGUI::MyCEGUILogger();
+		mylogger->setLogFilename(_logFileName.c_str());
+
+		// create a renderer which uses the MyEngine filesystem and renderer
+		// to load and render CEGUI system
+		myrenderer = new CEGUI::MyCEGUIRenderer;
+
+		//  create the CEGUI System
+		try
+		{
+			CEGUI::System::create(*myrenderer);
+		}
+		catch (Exception &e)
+		{
+			LOGGER.logErr("%s:%d %s",
+				e.getFileName().c_str(), e.getLine(), e.getMessage().c_str());
+			destroy();
+
+			LOGGER.decreaseFormatLevel();
+
+			return false;
+		}
+
+		myrenderer->initializeLuaScripter(lua_scripter_ptr);       
+          
+		// getting resource provider pointer
+
+		CEGUI::DefaultResourceProvider* rp = 
+			static_cast<CEGUI::DefaultResourceProvider*>(
+				CEGUI::System::getSingleton().getResourceProvider());
+
+		// setup CEGUI data directories
+
+		rp->setDefaultResourceGroup("");
+
+		CEGUI::Font::setDefaultResourceGroup(MY_CEGUI_PATH_FONTS);
+		CEGUI::Imageset::setDefaultResourceGroup(MY_CEGUI_PATH_IMAGESETS);
+		CEGUI::WindowManager::setDefaultResourceGroup(MY_CEGUI_PATH_LAYOUTS);
+		CEGUI::WidgetLookManager::setDefaultResourceGroup(MY_CEGUI_PATH_LOOKNFEELS);
+		CEGUI::Scheme::setDefaultResourceGroup(MY_CEGUI_PATH_SCHEMES);
 
 		// Calling these methods means that you can load resources without specifying the full path to them. CEGUI
 		// will look for the resources in the given paths.   	
@@ -240,6 +269,10 @@ bool create(const c8* cegui_ini_file_name, void* lua_scripter_ptr)
 			
 		// Save into the same path as the Load
 		m_iniFile.WriteFile();
+
+		LOGGER.logInfo("CEGUI initialised OK.");
+
+		LOGGER.decreaseFormatLevel();
 
 		OwnCEGUI = true;
 	}
@@ -314,6 +347,12 @@ void destroy()
 	{
 		delete myrenderer;   
 		myrenderer = NULL;  
+	}
+
+	if (mylogger)
+	{
+		delete mylogger;
+		mylogger= NULL;
 	}
 
 	SAFE_DROP(Profiler);
