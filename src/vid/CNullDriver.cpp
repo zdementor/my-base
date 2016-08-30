@@ -477,12 +477,13 @@ bool CNullDriver::removeTexture(ITexture* texture)
 			if (texture->getReferenceCounter()==1)
 			{
 				SAFE_DROP(texture);				
-				LOGGER.logInfo("Texture '%s' removed.", m_Textures[i].Filename);
+				LOGGER.logInfo("Texture '%s' removed.",
+					m_Textures[i].Filename.c_str());
 				m_Textures.erase(i);
 				return true;				
 			}
 			LOGGER.logWarn("Can't remove '%s' referenced texture.",
-				m_Textures[i].Filename);
+				m_Textures[i].Filename.c_str());
 			return false;
         }
 	}
