@@ -89,6 +89,7 @@ bool create(const c8* cegui_ini_file_name, void* lua_scripter_ptr)
 		core::stringc m_dirCommonSchemes   = "schemes/";
 
 		core::stringc _logFileName = "CEGUI.log";
+		bool _mirrorLogToMyLog = false;
 
 		// The handy ini file helper class.
 		CIniFile  m_iniFile;
@@ -184,6 +185,12 @@ bool create(const c8* cegui_ini_file_name, void* lua_scripter_ptr)
 				_logFileName = value.c_str();
 				_logFileName.sprintf("%s", value.c_str());
 			}
+			value = m_iniFile.GetValue(MY_CEGUI_INI_SECTION, "MirrorLogToMyLog");
+			if (value != "")
+			{
+				if (value == "1")
+					_mirrorLogToMyLog = true;
+			}
 		}
 
 		_logFileName = core::stringc().sprintf("%s%s.%s",
@@ -196,7 +203,7 @@ bool create(const c8* cegui_ini_file_name, void* lua_scripter_ptr)
 			core::extractFileExt(_logFileName)
 			);
 
-		mylogger = new CEGUI::MyCEGUILogger();
+		mylogger = new CEGUI::MyCEGUILogger(_mirrorLogToMyLog);
 		mylogger->setLogFilename(_logFileName.c_str());
 
 		// create a renderer which uses the MyEngine filesystem and renderer

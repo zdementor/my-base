@@ -7,7 +7,8 @@
 namespace CEGUI {
 //------------------------------------------------------------------------------------
 
-MyCEGUILogger::MyCEGUILogger(void)
+MyCEGUILogger::MyCEGUILogger(bool mirrorLogToMyLog)
+	: m_MirrorLogToMyLog(mirrorLogToMyLog)
 {
 	LOGGER.logInfo("My CEGUI Logger created.");
 }
@@ -23,7 +24,8 @@ MyCEGUILogger::~MyCEGUILogger(void)
 
 void MyCEGUILogger::logEvent(const String& message, LoggingLevel level)
 {
-	_logEvent(message, level);
+	if (m_MirrorLogToMyLog)
+		_logEvent(message, level);
 	DefaultLogger::logEvent(message, level);
 }
 

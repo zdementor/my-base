@@ -11,7 +11,7 @@ namespace CEGUI {
 class MyCEGUILogger : public DefaultLogger
 {
 public:
-	MyCEGUILogger(void);
+	MyCEGUILogger(bool mirrorLogToMyLog);
 	virtual ~MyCEGUILogger(void);
 
 	virtual void logEvent(const String& message, LoggingLevel level = Standard);
@@ -21,6 +21,8 @@ private:
 	std::ostringstream d_logstream;
 
 	void _logEvent(const String& message, LoggingLevel level = Standard);
+
+	bool m_MirrorLogToMyLog;
 };
 
 //------------------------------------------------------------------------------------
