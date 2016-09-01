@@ -37,6 +37,8 @@ public:
 
 	void setTexture(vid::ITexture *mytex);
 
+	bool isUseAlphaBlending() { return m_UseAlphaBlending; }
+
 	// Implementation of the CEGUI::Texture interface
     const Size& getSize() const;
     const Size& getOriginalDataSize() const;
@@ -63,6 +65,7 @@ private:
 
 	CEGUI::Size m_Size, m_DataSize;
 	CEGUI::Vector2 m_TexelScaling;
+	bool m_UseAlphaBlending;
 };
 
 //------------------------------------------------------------------------------------

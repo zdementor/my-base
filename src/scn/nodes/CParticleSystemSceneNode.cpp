@@ -42,8 +42,11 @@ CParticleSystemSceneNode::CParticleSystemSceneNode(ISceneNode* parent, s32 id)
 	m_Material.getPass(0).setFlag(vid::EMF_BLENDING, true);
 	m_Material.getPass(0).setBlendFuncs(
 		vid::ESBF_ONE, vid::EDBF_ONE_MINUS_SRC_COLOR);
+
+	const c8 *tname = getDefaultTextureReadableName(vid::EDT_LIGHT_SPHERE_WHITE);
+
 	m_Material.getPass(0).Layers[0].setTexture(
-		VIDEO_DRIVER.getTexture("#DefaultLightSphereWhite"));
+		VIDEO_DRIVER.getTexture(tname));
 }
 
 //---------------------------------------------------------------------------

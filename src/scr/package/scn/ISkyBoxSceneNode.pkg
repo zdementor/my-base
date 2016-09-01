@@ -5,6 +5,19 @@ namespace scn {
 //! interfase for using Sky Box scene node
 class ISkyBoxSceneNode : public ISceneNode
 {
+	//! setting box sides
+	void setSides (
+		vid::ITexture* top, vid::ITexture* bottom, vid::ITexture* left,
+        vid::ITexture* right, vid::ITexture* front, vid::ITexture* back
+        );
+
+	//! getting box sides textures
+	vid::ITexture* getTopSideTexture();
+	vid::ITexture* getBottomSideTexture();
+	vid::ITexture* getLeftSideTexture();
+    vid::ITexture* getRightSideTexture();
+	vid::ITexture* getFrontSideTexture();
+	vid::ITexture* getBackSideTexture();
 };
 
 //---------------------------------------------------------------------------- 

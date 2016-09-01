@@ -33,13 +33,20 @@ CSkyBoxSceneNode::CSkyBoxSceneNode(ISceneNode* parent, s32 id)
     Indices[2] = 2; 
     Indices[3] = 0; 
     Indices[4] = 2; 
-    Indices[5] = 3; 
+    Indices[5] = 3;
+
+	m_DefaultTexture =
+		VIDEO_DRIVER.getTexture(vid::getDefaultTextureReadableName(vid::EDT_DEFAULT_TEXTURE));
+	SAFE_GRAB(m_DefaultTexture);
+
+	setSides(NULL, NULL, NULL, NULL, NULL, NULL);
 }
 
 //---------------------------------------------------------------------------
 
 CSkyBoxSceneNode::~CSkyBoxSceneNode()
 {
+	SAFE_DROP(m_DefaultTexture);
 }
 
 //---------------------------------------------------------------------------
@@ -121,7 +128,7 @@ s32 CSkyBoxSceneNode::getMaterialsCount()
 //---------------------------------------------------------------------------
 
 void CSkyBoxSceneNode::setSides (	
-	vid::ITexture* top,   vid::ITexture* bottom,	
+	vid::ITexture* top,   vid::ITexture* bottom,
 	vid::ITexture* right, vid::ITexture* left,  
 	vid::ITexture* front, vid::ITexture* back)
 {	
@@ -159,7 +166,7 @@ void CSkyBoxSceneNode::setSides (
 
 	// create right side
 	Material[0].getPass(0) = pass;
-    Material[0].getPass(0).Layers[0].setTexture( left );
+	Material[0].getPass(0).Layers[0].setTexture( left ? left : m_DefaultTexture );
     Vertices[0] = vid::S3DVertex1TCoords(-l,-l,-l, 0,0,1, t, t);
     Vertices[1] = vid::S3DVertex1TCoords( l,-l,-l, 0,0,1, o, t);
     Vertices[2] = vid::S3DVertex1TCoords( l, l,-l, 0,0,1, o, o);
@@ -167,7 +174,7 @@ void CSkyBoxSceneNode::setSides (
 
 	// create front side
     Material[1].getPass(0) = pass;
-    Material[1].getPass(0).Layers[0].setTexture( front );
+    Material[1].getPass(0).Layers[0].setTexture( front  ? front : m_DefaultTexture);
     Vertices[4] = vid::S3DVertex1TCoords( l,-l,-l, -1,0,0, t, t);
     Vertices[5] = vid::S3DVertex1TCoords( l,-l, l, -1,0,0, o, t);
     Vertices[6] = vid::S3DVertex1TCoords( l, l, l, -1,0,0, o, o);
@@ -175,7 +182,7 @@ void CSkyBoxSceneNode::setSides (
 
 	// create left side
 	Material[2].getPass(0) = pass;
-    Material[2].getPass(0).Layers[0].setTexture( right );
+    Material[2].getPass(0).Layers[0].setTexture( right  ? right : m_DefaultTexture);
     Vertices[8]  = vid::S3DVertex1TCoords( l,-l, l, 0,0,-1, t, t);
     Vertices[9]  = vid::S3DVertex1TCoords(-l,-l, l, 0,0,-1, o, t);
     Vertices[10] = vid::S3DVertex1TCoords(-l, l, l, 0,0,-1, o, o);
@@ -183,7 +190,7 @@ void CSkyBoxSceneNode::setSides (
 
 	// create back side
     Material[3].getPass(0) = pass;
-    Material[3].getPass(0).Layers[0].setTexture( back );
+    Material[3].getPass(0).Layers[0].setTexture( back  ? back : m_DefaultTexture);
     Vertices[12] = vid::S3DVertex1TCoords(-l,-l, l, 1,0,0, t, t);
     Vertices[13] = vid::S3DVertex1TCoords(-l,-l,-l, 1,0,0, o, t);
     Vertices[14] = vid::S3DVertex1TCoords(-l, l,-l, 1,0,0, o, o);
@@ -191,7 +198,7 @@ void CSkyBoxSceneNode::setSides (
 
 	// create top side
     Material[4].getPass(0) = pass;
-    Material[4].getPass(0).Layers[0].setTexture( top );
+    Material[4].getPass(0).Layers[0].setTexture( top  ? top : m_DefaultTexture);
     Vertices[16] = vid::S3DVertex1TCoords( l, l, l, 0,-1,0, o, t);
     Vertices[17] = vid::S3DVertex1TCoords(-l, l, l, 0,-1,0, o, o);
     Vertices[18] = vid::S3DVertex1TCoords(-l, l,-l, 0,-1,0, t, o);
@@ -199,7 +206,7 @@ void CSkyBoxSceneNode::setSides (
 
     // create bottom side
     Material[5].getPass(0) = pass;
-    Material[5].getPass(0).Layers[0].setTexture( bottom );
+    Material[5].getPass(0).Layers[0].setTexture( bottom  ? bottom : m_DefaultTexture);
     Vertices[20] = vid::S3DVertex1TCoords(-l,-l, l, 0,1,0, o, t);
     Vertices[21] = vid::S3DVertex1TCoords( l,-l, l, 0,1,0, o, o);
     Vertices[22] = vid::S3DVertex1TCoords( l,-l,-l, 0,1,0, t, o);

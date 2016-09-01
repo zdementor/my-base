@@ -79,7 +79,8 @@ void MyCEGUIGeometryBuffer::draw() const
 
 		m_Driver.registerGUIImageForRendering(
 			quad.texture, s_NextZ, clipped_rect_draw, clipped_rect_tc,
-			quad.colors[0], quad.colors[1], quad.colors[2], quad.colors[3], true);
+			quad.colors[0], quad.colors[1], quad.colors[2], quad.colors[3],
+			quad.useAlphaBlending);
 	}
 
 	s_NextZ -= 0.000001f;
@@ -163,6 +164,7 @@ void MyCEGUIGeometryBuffer::appendGeometry(
 	for (u32 i = 0; i < sizeof(m_DummyQuad.colors)/sizeof(*m_DummyQuad.colors); i++)
 		quad.colors[i].color = vbuff[quad_indices[i]].colour_val.getARGB();
 	quad.texture = tex;
+	quad.useAlphaBlending = ((MyCEGUITexture*)m_ActiveTexture)->isUseAlphaBlending();
 
 	m_Quads.push_back(quad);
 }

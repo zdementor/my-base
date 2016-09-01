@@ -41,7 +41,9 @@ CLensFlareSceneNode::CLensFlareSceneNode(ISceneNode* parent, s32 id)
 	IUnknown::setClassName("CLensFlareSceneNode");
 #endif
 
-	m_Corona = VIDEO_DRIVER.getTexture("#DefaultLightSphereWhite");
+	const c8 *tname = getDefaultTextureReadableName(vid::EDT_LIGHT_SPHERE_WHITE);
+
+	m_Corona = VIDEO_DRIVER.getTexture(tname);
 
 	m_ScreenHeight = (f32) VIDEO_DRIVER.getScreenSize().Height;
 	m_ScreenWidth  = (f32) VIDEO_DRIVER.getScreenSize().Width; 

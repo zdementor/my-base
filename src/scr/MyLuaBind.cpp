@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 08/30/16 22:25:35.
+** Generated automatically by tolua++-1.0.92 on 09/01/16 19:14:45.
 */
 
 #ifndef __cplusplus
@@ -1951,6 +1951,64 @@ static int tolua_MyLuaBind_vid_getRenderPassReadableName00(lua_State* tolua_S)
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'getRenderPassReadableName'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* function: vid::getDefaultTextureName */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_getDefaultTextureName00
+static int tolua_MyLuaBind_vid_getDefaultTextureName00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isnumber(tolua_S,1,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::E_DEFAULT_TEXTURE tex = ((vid::E_DEFAULT_TEXTURE) (int)  tolua_tonumber(tolua_S,1,0));
+ {
+  const char* tolua_ret = (const char*)  vid::getDefaultTextureName(tex);
+ tolua_pushstring(tolua_S,(const char*)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getDefaultTextureName'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* function: vid::getDefaultTextureReadableName */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_getDefaultTextureReadableName00
+static int tolua_MyLuaBind_vid_getDefaultTextureReadableName00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isnumber(tolua_S,1,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::E_DEFAULT_TEXTURE tex = ((vid::E_DEFAULT_TEXTURE) (int)  tolua_tonumber(tolua_S,1,0));
+ {
+  const char* tolua_ret = (const char*)  vid::getDefaultTextureReadableName(tex);
+ tolua_pushstring(tolua_S,(const char*)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getDefaultTextureReadableName'.",&tolua_err);
  return 0;
 #endif
 }
@@ -32399,6 +32457,241 @@ static int tolua_MyLuaBind_scn_ILightSceneNode_setLightedVolumeSizeChange00(lua_
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: setSides of class  scn::ISkyBoxSceneNode */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_scn_ISkyBoxSceneNode_setSides00
+static int tolua_MyLuaBind_scn_ISkyBoxSceneNode_setSides00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"scn::ISkyBoxSceneNode",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,2,"vid::ITexture",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,3,"vid::ITexture",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,4,"vid::ITexture",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,5,"vid::ITexture",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,6,"vid::ITexture",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,7,"vid::ITexture",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,8,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  scn::ISkyBoxSceneNode* self = (scn::ISkyBoxSceneNode*)  tolua_tousertype(tolua_S,1,0);
+  vid::ITexture* top = ((vid::ITexture*)  tolua_tousertype(tolua_S,2,0));
+  vid::ITexture* bottom = ((vid::ITexture*)  tolua_tousertype(tolua_S,3,0));
+  vid::ITexture* left = ((vid::ITexture*)  tolua_tousertype(tolua_S,4,0));
+  vid::ITexture* right = ((vid::ITexture*)  tolua_tousertype(tolua_S,5,0));
+  vid::ITexture* front = ((vid::ITexture*)  tolua_tousertype(tolua_S,6,0));
+  vid::ITexture* back = ((vid::ITexture*)  tolua_tousertype(tolua_S,7,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'setSides'",NULL);
+#endif
+ {
+  self->setSides(top,bottom,left,right,front,back);
+ }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'setSides'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getTopSideTexture of class  scn::ISkyBoxSceneNode */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_scn_ISkyBoxSceneNode_getTopSideTexture00
+static int tolua_MyLuaBind_scn_ISkyBoxSceneNode_getTopSideTexture00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"scn::ISkyBoxSceneNode",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  scn::ISkyBoxSceneNode* self = (scn::ISkyBoxSceneNode*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getTopSideTexture'",NULL);
+#endif
+ {
+  vid::ITexture* tolua_ret = (vid::ITexture*)  self->getTopSideTexture();
+ tolua_pushusertype(tolua_S,(void*)tolua_ret,"vid::ITexture");
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getTopSideTexture'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getBottomSideTexture of class  scn::ISkyBoxSceneNode */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_scn_ISkyBoxSceneNode_getBottomSideTexture00
+static int tolua_MyLuaBind_scn_ISkyBoxSceneNode_getBottomSideTexture00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"scn::ISkyBoxSceneNode",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  scn::ISkyBoxSceneNode* self = (scn::ISkyBoxSceneNode*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getBottomSideTexture'",NULL);
+#endif
+ {
+  vid::ITexture* tolua_ret = (vid::ITexture*)  self->getBottomSideTexture();
+ tolua_pushusertype(tolua_S,(void*)tolua_ret,"vid::ITexture");
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getBottomSideTexture'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getLeftSideTexture of class  scn::ISkyBoxSceneNode */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_scn_ISkyBoxSceneNode_getLeftSideTexture00
+static int tolua_MyLuaBind_scn_ISkyBoxSceneNode_getLeftSideTexture00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"scn::ISkyBoxSceneNode",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  scn::ISkyBoxSceneNode* self = (scn::ISkyBoxSceneNode*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getLeftSideTexture'",NULL);
+#endif
+ {
+  vid::ITexture* tolua_ret = (vid::ITexture*)  self->getLeftSideTexture();
+ tolua_pushusertype(tolua_S,(void*)tolua_ret,"vid::ITexture");
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getLeftSideTexture'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getRightSideTexture of class  scn::ISkyBoxSceneNode */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_scn_ISkyBoxSceneNode_getRightSideTexture00
+static int tolua_MyLuaBind_scn_ISkyBoxSceneNode_getRightSideTexture00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"scn::ISkyBoxSceneNode",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  scn::ISkyBoxSceneNode* self = (scn::ISkyBoxSceneNode*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getRightSideTexture'",NULL);
+#endif
+ {
+  vid::ITexture* tolua_ret = (vid::ITexture*)  self->getRightSideTexture();
+ tolua_pushusertype(tolua_S,(void*)tolua_ret,"vid::ITexture");
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getRightSideTexture'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getFrontSideTexture of class  scn::ISkyBoxSceneNode */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_scn_ISkyBoxSceneNode_getFrontSideTexture00
+static int tolua_MyLuaBind_scn_ISkyBoxSceneNode_getFrontSideTexture00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"scn::ISkyBoxSceneNode",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  scn::ISkyBoxSceneNode* self = (scn::ISkyBoxSceneNode*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getFrontSideTexture'",NULL);
+#endif
+ {
+  vid::ITexture* tolua_ret = (vid::ITexture*)  self->getFrontSideTexture();
+ tolua_pushusertype(tolua_S,(void*)tolua_ret,"vid::ITexture");
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getFrontSideTexture'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getBackSideTexture of class  scn::ISkyBoxSceneNode */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_scn_ISkyBoxSceneNode_getBackSideTexture00
+static int tolua_MyLuaBind_scn_ISkyBoxSceneNode_getBackSideTexture00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"scn::ISkyBoxSceneNode",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  scn::ISkyBoxSceneNode* self = (scn::ISkyBoxSceneNode*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getBackSideTexture'",NULL);
+#endif
+ {
+  vid::ITexture* tolua_ret = (vid::ITexture*)  self->getBackSideTexture();
+ tolua_pushusertype(tolua_S,(void*)tolua_ret,"vid::ITexture");
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getBackSideTexture'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: getSplatMapFileName of class  scn::STileSet */
 #ifndef TOLUA_DISABLE_tolua_MyLuaBind_scn_STileSet_getSplatMapFileName00
 static int tolua_MyLuaBind_scn_STileSet_getSplatMapFileName00(lua_State* tolua_S)
@@ -57808,6 +58101,16 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"ELM_NONE",vid::ELM_NONE);
   tolua_constant(tolua_S,"ELM_8_LIGHTS",vid::ELM_8_LIGHTS);
   tolua_constant(tolua_S,"E_LIGHTING_MODE_COUNT",vid::E_LIGHTING_MODE_COUNT);
+  tolua_constant(tolua_S,"EDT_LIGHT_SPHERE",vid::EDT_LIGHT_SPHERE);
+  tolua_constant(tolua_S,"EDT_LIGHT_GRADIENT",vid::EDT_LIGHT_GRADIENT);
+  tolua_constant(tolua_S,"EDT_LIGHT_SPHERE_WHITE",vid::EDT_LIGHT_SPHERE_WHITE);
+  tolua_constant(tolua_S,"EDT_LIGHT_WHITE_GRADIENT",vid::EDT_LIGHT_WHITE_GRADIENT);
+  tolua_constant(tolua_S,"EDT_WHITE_WITH_BORDER",vid::EDT_WHITE_WITH_BORDER);
+  tolua_constant(tolua_S,"EDT_ENVIRONMENT_MAP",vid::EDT_ENVIRONMENT_MAP);
+  tolua_constant(tolua_S,"EDT_DEFAULT_TEXTURE",vid::EDT_DEFAULT_TEXTURE);
+  tolua_constant(tolua_S,"E_DEFAULT_TEXTURE_COUNT",vid::E_DEFAULT_TEXTURE_COUNT);
+  tolua_function(tolua_S,"getDefaultTextureName",tolua_MyLuaBind_vid_getDefaultTextureName00);
+  tolua_function(tolua_S,"getDefaultTextureReadableName",tolua_MyLuaBind_vid_getDefaultTextureReadableName00);
   tolua_constant(tolua_S,"EVSV_HLSL_1_1",vid::EVSV_HLSL_1_1);
   tolua_constant(tolua_S,"EVSV_HLSL_2_0",vid::EVSV_HLSL_2_0);
   tolua_constant(tolua_S,"EVSV_HLSL_2_a",vid::EVSV_HLSL_2_a);
@@ -59398,6 +59701,13 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
  tolua_beginmodule(tolua_S,"scn");
   tolua_cclass(tolua_S,"ISkyBoxSceneNode","scn::ISkyBoxSceneNode","scn::ISceneNode",NULL);
   tolua_beginmodule(tolua_S,"ISkyBoxSceneNode");
+   tolua_function(tolua_S,"setSides",tolua_MyLuaBind_scn_ISkyBoxSceneNode_setSides00);
+   tolua_function(tolua_S,"getTopSideTexture",tolua_MyLuaBind_scn_ISkyBoxSceneNode_getTopSideTexture00);
+   tolua_function(tolua_S,"getBottomSideTexture",tolua_MyLuaBind_scn_ISkyBoxSceneNode_getBottomSideTexture00);
+   tolua_function(tolua_S,"getLeftSideTexture",tolua_MyLuaBind_scn_ISkyBoxSceneNode_getLeftSideTexture00);
+   tolua_function(tolua_S,"getRightSideTexture",tolua_MyLuaBind_scn_ISkyBoxSceneNode_getRightSideTexture00);
+   tolua_function(tolua_S,"getFrontSideTexture",tolua_MyLuaBind_scn_ISkyBoxSceneNode_getFrontSideTexture00);
+   tolua_function(tolua_S,"getBackSideTexture",tolua_MyLuaBind_scn_ISkyBoxSceneNode_getBackSideTexture00);
   tolua_endmodule(tolua_S);
  tolua_endmodule(tolua_S);
  tolua_module(tolua_S,"scn",0);

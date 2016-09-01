@@ -309,14 +309,16 @@ bool CNullDriver::_initDriver(SExposedVideoData &out_video_data)
 void CNullDriver::_createEmbeddedTextures()
 {
 	{
+		const c8 *tname = getDefaultTextureReadableName(vid::EDT_LIGHT_SPHERE);
+
 		io::IReadFile* file = FILE_SYSTEM.createMemoryReadFile(
-			light_sphere_data, LIGHT_SPHERE_DATA_LENGTH, "#DefaultLightSphere", false);
+			light_sphere_data, LIGHT_SPHERE_DATA_LENGTH, tname, false);
 		img::IImage *img = IMAGE_LIBRARY.getImage(file);		
 		if (img)
 		{
 			img->convertTo(img::ECF_A8R8G8B8);
 			vid::ITexture* tex = m_LightSphereTexture =
-				VIDEO_DRIVER.addTexture("#DefaultLightSphere", img);
+				VIDEO_DRIVER.addTexture(tname, img);
 			tex->lockObject();
 			IMAGE_LIBRARY.removeImage(img);
 		}
@@ -324,14 +326,16 @@ void CNullDriver::_createEmbeddedTextures()
 	}
 
 	{
+		const c8 *tname = getDefaultTextureReadableName(vid::EDT_LIGHT_GRADIENT);
+
 		io::IReadFile* file = FILE_SYSTEM.createMemoryReadFile(
-			light_gradient_data, LIGHT_GRADIENT_DATA_LENGTH, "#DefaultLightGradient", false);
+			light_gradient_data, LIGHT_GRADIENT_DATA_LENGTH, tname, false);
 		img::IImage *img = IMAGE_LIBRARY.getImage(file);		
 		if (img)
 		{
 			img->convertTo(img::ECF_A8R8G8B8);
 			vid::ITexture* tex = m_LightGradientTexture =
-				VIDEO_DRIVER.addTexture("#DefaultLightGradient", img);
+				VIDEO_DRIVER.addTexture(tname, img);
 			tex->lockObject();
 			IMAGE_LIBRARY.removeImage(img);
 		}
@@ -339,14 +343,16 @@ void CNullDriver::_createEmbeddedTextures()
 	}
 
 	{
+		const c8 *tname = getDefaultTextureReadableName(vid::EDT_LIGHT_SPHERE_WHITE);
+
 		io::IReadFile* file = FILE_SYSTEM.createMemoryReadFile(
-			light_sphere_white_data, LIGHT_SPHERE_WHITE_DATA_LENGTH, "#DefaultLightSphereWhite", false);
+			light_sphere_white_data, LIGHT_SPHERE_WHITE_DATA_LENGTH, tname, false);
 		img::IImage *img = IMAGE_LIBRARY.getImage(file);		
 		if (img)
 		{
 			img->convertTo(img::ECF_A8R8G8B8);
 			vid::ITexture* tex = m_LightSphereWhiteTexture =
-				VIDEO_DRIVER.addTexture("#DefaultLightSphereWhite", img);
+				VIDEO_DRIVER.addTexture(tname, img);
 			tex->lockObject();
 			IMAGE_LIBRARY.removeImage(img);
 		}
@@ -354,14 +360,16 @@ void CNullDriver::_createEmbeddedTextures()
 	}
 
 	{
+		const c8 *tname = getDefaultTextureReadableName(vid::EDT_LIGHT_WHITE_GRADIENT);
+
 		io::IReadFile* file = FILE_SYSTEM.createMemoryReadFile(
-			light_gradient_white_data, LIGHT_GRADIENT_WHITE_DATA_LENGTH, "#DefaultLightWhiteGradient", false);
+			light_gradient_white_data, LIGHT_GRADIENT_WHITE_DATA_LENGTH, tname, false);
 		img::IImage *img = IMAGE_LIBRARY.getImage(file);		
 		if (img)
 		{
 			img->convertTo(img::ECF_A8R8G8B8);
 			vid::ITexture* tex = m_LightGradientWhiteTexture =
-				VIDEO_DRIVER.addTexture("#DefaultLightWhiteGradient", img);
+				VIDEO_DRIVER.addTexture(tname, img);
 			tex->lockObject();
 			IMAGE_LIBRARY.removeImage(img);
 		}
@@ -369,25 +377,29 @@ void CNullDriver::_createEmbeddedTextures()
 	}
 
 	{
+		const c8 *tname = getDefaultTextureReadableName(vid::EDT_WHITE_WITH_BORDER);
+
 		img::IImage *img = IMAGE_LIBRARY.createEmptyImage(
 			core::dimension2di(64,64), img::ECF_A8R8G8B8);
 		img->fill(img::SColor(255,255,255,255));
 		img->drawBorder(0,0,63,63, img::SColor(0,0,0,0));
 		vid::ITexture* tex = m_WhiteTexture =
-			VIDEO_DRIVER.addTexture("#DefaultWhiteWithBorder" , img);
+			VIDEO_DRIVER.addTexture(tname , img);
 		tex->lockObject();
 		SAFE_DROP(img);		
 	}
 
 	{
+		const c8 *tname = getDefaultTextureReadableName(vid::EDT_ENVIRONMENT_MAP);
+
 		io::IReadFile* file = FILE_SYSTEM.createMemoryReadFile(
-			envmap_data, ENVMAP_DATA_LENGTH, "#DefaultEnvironmentMap", false);
+			envmap_data, ENVMAP_DATA_LENGTH, tname, false);
 		img::IImage *img = IMAGE_LIBRARY.getImage(file);		
 		if (img)
 		{
 			img->convertTo(img::ECF_A8R8G8B8);
 			vid::ITexture* tex = m_EnvTexture =
-				VIDEO_DRIVER.addTexture("#DefaultEnvironmentMap", img);
+				VIDEO_DRIVER.addTexture(tname, img);
 			tex->lockObject();
 			IMAGE_LIBRARY.removeImage(img);
 		}
@@ -395,14 +407,16 @@ void CNullDriver::_createEmbeddedTextures()
 	}
 
 	{
+		const c8 *tname = getDefaultTextureReadableName(vid::EDT_DEFAULT_TEXTURE);
+
 		io::IReadFile* file = FILE_SYSTEM.createMemoryReadFile(
-			default_texture_data, DEFAULT_TEXTURE_DATA_LENGTH, "#DefaultTexture", false);
+			default_texture_data, DEFAULT_TEXTURE_DATA_LENGTH, tname, false);
 		img::IImage *img = IMAGE_LIBRARY.getImage(file);		
 		if (img)
 		{
 			img->convertTo(img::ECF_A8R8G8B8);
 			vid::ITexture* tex = m_DefaultTexture =
-				VIDEO_DRIVER.addTexture("#DefaultTexture", img);
+				VIDEO_DRIVER.addTexture(tname, img);
 			tex->lockObject();
 			IMAGE_LIBRARY.removeImage(img);
 		}

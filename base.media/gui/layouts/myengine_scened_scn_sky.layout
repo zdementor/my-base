@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Scened.Scene.Sky.TopRoot" >
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="DefaultWindow" Name="Scened.Scene.Sky.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.0120492,0},{0.0831472,0},{0.280544,0},{0.303995,0}}" />
+            <Window Type="MyScened/TabControl" Name="Scened.Scene.Sky.TabControl" >
+                <Property Name="Font" Value="Tahoma-8" />
+                <Property Name="TabHeight" Value="{0,25}" />
+                <Property Name="TabTextPadding" Value="{0,5}" />
+                <Property Name="TabPanePosition" Value="Top" />
+                <Property Name="UnifiedAreaRect" Value="{{0.02,0},{0,6},{0.98,0},{0.98,0}}" />
+            </Window>
+        </Window>
+        <Window Type="DefaultWindow" Name="Scened.Scene.Sky.Sides.Root" >
+            <Property Name="UnifiedAreaRect" Value="{{0.322637,0},{0.0363268,0},{0.634544,0},{0.929271,0}}" />
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.Sky.Sides.ScrollRoot" >
+                <Property Name="UnifiedAreaRect" Value="{{0,5},{0,43},{0.97,0},{0.99,0}}" />
+                <Window Type="TaharezLook/ScrollablePane" Name="Scened.Scene.Sky.Sides.ScrollArea" >
+                    <Property Name="ContentArea" Value="l:0 t:0 r:252 b:363" />
+                    <Property Name="HorzStepSize" Value="0.1" />
+                    <Property Name="VertStepSize" Value="0.1" />
+                    <Property Name="HorzOverlapSize" Value="0.01" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.00325639,0},{0,5},{1.00326,0},{0.98,0}}" />
+                    <Property Name="VertOverlapSize" Value="0.01" />
+                    <Property Name="HorzScrollPosition" Value="0" />
+                    <Property Name="VertScrollPosition" Value="0" />
+                    <AutoWindow NameSuffix="__auto_container__" >
+                        <Property Name="ContentArea" Value="l:0 t:0 r:252 b:363" />
+                        <Property Name="ChildExtentsArea" Value="l:0 t:0 r:252 b:363" />
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.TopTexOpenBtn" >
+                            <Property Name="Tooltip" Value="Open texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,95},{0,26},{0,126},{0,56}}" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.TopTexViewBtn" >
+                            <Property Name="Tooltip" Value="View texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,95},{0,57},{0,126},{0,87}}" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.TopTexClearBtn" >
+                            <Property Name="Tooltip" Value="Clear texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,95},{0,88},{0,126},{0,118}}" />
+                        </Window>
+                        <Window Type="TaharezLook/StaticImage" Name="Scened.Scene.Sky.Sides.TopTexImage" >
+                            <Property Name="UnifiedAreaRect" Value="{{0,7},{0,32},{0,92},{0,111}}" />
+                        </Window>
+                        <Window Type="MyScened/StaticText" Name="Scened.Scene.Sky.Sides.TopTexLabel" >
+                            <Property Name="Font" Value="Tahoma-10" />
+                            <Property Name="Text" Value="Top:" />
+                            <Property Name="HorzExtent" Value="35" />
+                            <Property Name="VertExtent" Value="21.0665" />
+                            <Property Name="FrameEnabled" Value="False" />
+                            <Property Name="HorzFormatting" Value="RightAligned" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,7},{0,2},{0,126},{0,25}}" />
+                            <Property Name="BackgroundEnabled" Value="False" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.BottomTexOpenBtn" >
+                            <Property Name="Tooltip" Value="Open texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,221},{0,26},{0,252},{0,56}}" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.BottomTexViewBtn" >
+                            <Property Name="Tooltip" Value="View texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,221},{0,57},{0,252},{0,87}}" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.BottomTexClearBtn" >
+                            <Property Name="Tooltip" Value="Clear texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,221},{0,88},{0,252},{0,118}}" />
+                        </Window>
+                        <Window Type="TaharezLook/StaticImage" Name="Scened.Scene.Sky.Sides.BottomTexImage" >
+                            <Property Name="UnifiedAreaRect" Value="{{0,133},{0,32},{0,218},{0,111}}" />
+                        </Window>
+                        <Window Type="MyScened/StaticText" Name="Scened.Scene.Sky.Sides.BottomTexLabel" >
+                            <Property Name="Font" Value="Tahoma-10" />
+                            <Property Name="Text" Value="Bottom:" />
+                            <Property Name="HorzExtent" Value="66" />
+                            <Property Name="VertExtent" Value="21.0665" />
+                            <Property Name="FrameEnabled" Value="False" />
+                            <Property Name="HorzFormatting" Value="RightAligned" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,133},{0,2},{0,252},{-0.00587424,29}}" />
+                            <Property Name="BackgroundEnabled" Value="False" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.LeftTexOpenBtn" >
+                            <Property Name="Tooltip" Value="Open texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,95},{0,148},{0,126},{0,178}}" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.LeftTexViewBtn" >
+                            <Property Name="Tooltip" Value="View texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,95},{0,179},{0,126},{0,209}}" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.LeftTexClearBtn" >
+                            <Property Name="Tooltip" Value="Clear texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,95},{0,210},{0,126},{0,240}}" />
+                        </Window>
+                        <Window Type="TaharezLook/StaticImage" Name="Scened.Scene.Sky.Sides.LeftTexImage" >
+                            <Property Name="UnifiedAreaRect" Value="{{0,7},{0,154},{0,92},{0,233}}" />
+                        </Window>
+                        <Window Type="MyScened/StaticText" Name="Scened.Scene.Sky.Sides.LeftTexLabel" >
+                            <Property Name="Font" Value="Tahoma-10" />
+                            <Property Name="Text" Value="Left:" />
+                            <Property Name="HorzExtent" Value="40" />
+                            <Property Name="VertExtent" Value="21.0665" />
+                            <Property Name="FrameEnabled" Value="False" />
+                            <Property Name="HorzFormatting" Value="RightAligned" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,7},{0,124},{0,126},{0,147}}" />
+                            <Property Name="BackgroundEnabled" Value="False" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.RightTexOpenBtn" >
+                            <Property Name="Tooltip" Value="Open texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,221},{0,148},{0,252},{0,178}}" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.RightTexViewBtn" >
+                            <Property Name="Tooltip" Value="View texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,221},{0,179},{0,252},{0,209}}" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.RightTexClearBtn" >
+                            <Property Name="Tooltip" Value="Clear texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,221},{0,210},{0,252},{0,240}}" />
+                        </Window>
+                        <Window Type="TaharezLook/StaticImage" Name="Scened.Scene.Sky.Sides.RightTexImage" >
+                            <Property Name="UnifiedAreaRect" Value="{{0,133},{0,154},{0,218},{0,233}}" />
+                        </Window>
+                        <Window Type="MyScened/StaticText" Name="Scened.Scene.Sky.Sides.RightTexLabel" >
+                            <Property Name="Font" Value="Tahoma-10" />
+                            <Property Name="Text" Value="Right:" />
+                            <Property Name="HorzExtent" Value="48" />
+                            <Property Name="VertExtent" Value="21.0665" />
+                            <Property Name="FrameEnabled" Value="False" />
+                            <Property Name="HorzFormatting" Value="RightAligned" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,133},{0,124},{0,252},{-0.00587424,151}}" />
+                            <Property Name="BackgroundEnabled" Value="False" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.FrontTexOpenBtn" >
+                            <Property Name="Tooltip" Value="Open texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,95},{0,271},{0,126},{0,301}}" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.FrontTexViewBtn" >
+                            <Property Name="Tooltip" Value="View texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,95},{0,302},{0,126},{0,332}}" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.FrontTexClearBtn" >
+                            <Property Name="Tooltip" Value="Clear texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,95},{0,333},{0,126},{0,363}}" />
+                        </Window>
+                        <Window Type="TaharezLook/StaticImage" Name="Scened.Scene.Sky.Sides.FrontTexImage" >
+                            <Property Name="UnifiedAreaRect" Value="{{0,7},{0,277},{0,92},{0,356}}" />
+                        </Window>
+                        <Window Type="MyScened/StaticText" Name="Scened.Scene.Sky.Sides.FrontTexLabel" >
+                            <Property Name="Font" Value="Tahoma-10" />
+                            <Property Name="Text" Value="Front:" />
+                            <Property Name="HorzExtent" Value="50" />
+                            <Property Name="VertExtent" Value="21.0665" />
+                            <Property Name="FrameEnabled" Value="False" />
+                            <Property Name="HorzFormatting" Value="RightAligned" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,7},{0,247},{0,126},{0,270}}" />
+                            <Property Name="BackgroundEnabled" Value="False" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.BackTexOpenBtn" >
+                            <Property Name="Tooltip" Value="Open texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,221},{0,271},{0,252},{0,301}}" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.BackTexViewBtn" >
+                            <Property Name="Tooltip" Value="View texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,221},{0,302},{0,252},{0,332}}" />
+                        </Window>
+                        <Window Type="MyScened/Button" Name="Scened.Scene.Sky.Sides.BackTexClearBtn" >
+                            <Property Name="Tooltip" Value="Clear texture" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,221},{0,333},{0,252},{0,363}}" />
+                        </Window>
+                        <Window Type="TaharezLook/StaticImage" Name="Scened.Scene.Sky.Sides.BackTexImage" >
+                            <Property Name="UnifiedAreaRect" Value="{{0,133},{0,277},{0,218},{0,356}}" />
+                        </Window>
+                        <Window Type="MyScened/StaticText" Name="Scened.Scene.Sky.Sides.BackTexLabel" >
+                            <Property Name="Font" Value="Tahoma-10" />
+                            <Property Name="Text" Value="Back:" />
+                            <Property Name="HorzExtent" Value="43" />
+                            <Property Name="VertExtent" Value="21.0665" />
+                            <Property Name="FrameEnabled" Value="False" />
+                            <Property Name="HorzFormatting" Value="RightAligned" />
+                            <Property Name="UnifiedAreaRect" Value="{{0,133},{0,247},{0,252},{-0.00587424,274}}" />
+                            <Property Name="BackgroundEnabled" Value="False" />
+                        </Window>
+                    </AutoWindow>
+                </Window>
+            </Window>
+            <Window Type="MyScened/StaticText" Name="Scened.Scene.Sky.Sides.Label" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Sky box sides:" />
+                <Property Name="HorzExtent" Value="110" />
+                <Property Name="VertExtent" Value="21.0665" />
+                <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="HorzFormatting" Value="RightAligned" />
+                <Property Name="UnifiedAreaRect" Value="{{0,6},{0,7},{0,136},{0,30}}" />
+                <Property Name="BackgroundEnabled" Value="False" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

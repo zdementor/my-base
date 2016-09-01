@@ -82,11 +82,12 @@ protected:
 	//! quad structure used for rendering the gui
 	struct RenderQuad
 	{
-		RenderQuad() : texture(NULL) {}
+		RenderQuad() : texture(NULL), useAlphaBlending(true) {}
 		core::rectf rect_draw;
 		core::rectf rect_tc;
 		img::SColor colors[4];
 		vid::ITexture *texture;
+		bool useAlphaBlending;
 	};
 
 	RenderQuad m_DummyQuad;

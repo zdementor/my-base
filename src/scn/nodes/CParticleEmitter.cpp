@@ -39,7 +39,9 @@ m_Texture(0), m_Time(0), m_Emitted(0), m_Enabled(true),
 m_GlobalParticlesTransformation(true),
 m_GL(VIDEO_DRIVER.getDriverFamily() == vid::EDF_OPENGL)
 {
-	setTexture(VIDEO_DRIVER.getTexture("#DefaultLightSphereWhite"));
+	const c8 *tname = getDefaultTextureReadableName(vid::EDT_LIGHT_SPHERE_WHITE);
+
+	setTexture(VIDEO_DRIVER.getTexture(tname));
 }
 
 //----------------------------------------------------------------------------
@@ -356,7 +358,10 @@ void CParticleEmitter::setAppearVolume(const core::aabbox3d<f32> &volume)
 void CParticleEmitter::setTexture(vid::ITexture *tex)
 {
 	if (!tex)
-		tex = VIDEO_DRIVER.getTexture("#DefaultLightSphereWhite");
+	{
+		const c8 *tname = getDefaultTextureReadableName(vid::EDT_LIGHT_SPHERE_WHITE);
+		tex = VIDEO_DRIVER.getTexture(tname);
+	}
 	SAFE_DROP(m_Texture);
 	m_Texture = tex;
 	SAFE_GRAB(m_Texture);

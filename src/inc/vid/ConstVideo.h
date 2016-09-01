@@ -89,15 +89,15 @@ static const c8* DriverTypeReadableName[E_DRIVER_TYPE_COUNT] =
 
 //----------------------------------------------------------------------------
 
-MY_INLINE const c8* getDriverTypeName(E_DRIVER_TYPE type)
+MY_FORCEINLINE const c8* getDriverTypeName(E_DRIVER_TYPE type)
 { return DriverTypeName[type]; }
 
-MY_INLINE const c8* getDriverTypeReadableName(E_DRIVER_TYPE type)
+MY_FORCEINLINE const c8* getDriverTypeReadableName(E_DRIVER_TYPE type)
 { return DriverTypeReadableName[type]; }
 
 //----------------------------------------------------------------------------
 
-static MY_INLINE E_DRIVER_FAMILY getDriverFamily(E_DRIVER_TYPE type)
+static MY_FORCEINLINE E_DRIVER_FAMILY getDriverFamily(E_DRIVER_TYPE type)
 {
 	if (type == EDT_NULL)
 		return EDF_NULL;
@@ -174,10 +174,10 @@ static const c8 *TextureLayerTypeReadableName[E_TEXTURE_LAYER_TYPE_COUNT] =
 	"Splatting map",
 };
 
-MY_INLINE const c8* getTextureLayerTypeName(E_TEXTURE_LAYER_TYPE type)
+MY_FORCEINLINE const c8* getTextureLayerTypeName(E_TEXTURE_LAYER_TYPE type)
 { return TextureLayerTypeName[type]; }
 
-MY_INLINE const c8* getTextureLayerTypeReadableName(E_TEXTURE_LAYER_TYPE type)
+MY_FORCEINLINE const c8* getTextureLayerTypeReadableName(E_TEXTURE_LAYER_TYPE type)
 { return TextureLayerTypeReadableName[type]; }
 
 //---------------------------------------------------------------------------
@@ -264,7 +264,7 @@ static const c8* VertexTypeName[E_VERTEX_TYPE_COUNT] =
 
 //----------------------------------------------------------------------------
 
-MY_INLINE const c8* getVertexTypeName(E_VERTEX_TYPE vtype)
+MY_FORCEINLINE const c8* getVertexTypeName(E_VERTEX_TYPE vtype)
 { return VertexTypeName[vtype]; }
 
 //----------------------------------------------------------------------------
@@ -409,10 +409,10 @@ static const c8* MaterialFlagReadableName[E_MATERIAL_FLAG_COUNT] =
 	"blending",
 };
 
-MY_INLINE const c8* getMaterialFlagName(E_MATERIAL_FLAG flag)
+MY_FORCEINLINE const c8* getMaterialFlagName(E_MATERIAL_FLAG flag)
 { return MaterialFlagName[flag]; }
 
-MY_INLINE const c8* getMaterialFlagReadableName(E_MATERIAL_FLAG flag)
+MY_FORCEINLINE const c8* getMaterialFlagReadableName(E_MATERIAL_FLAG flag)
 { return MaterialFlagReadableName[flag]; }
 
 //---------------------------------------------------------------------------
@@ -476,10 +476,10 @@ static const c8* SrcBlendFunctionReadableName[E_SRC_BLEND_FUNCTION_COUNT] =
 	"Src.Alpha sat."	
 };
 
-MY_INLINE const c8* getSrcBlendFunctionName(E_SRC_BLEND_FUNCTION func)
+MY_FORCEINLINE const c8* getSrcBlendFunctionName(E_SRC_BLEND_FUNCTION func)
 { return SrcBlendFunctionName[func]; }
 
-MY_INLINE const c8* getSrcBlendFunctionReadableName(E_SRC_BLEND_FUNCTION func)
+MY_FORCEINLINE const c8* getSrcBlendFunctionReadableName(E_SRC_BLEND_FUNCTION func)
 { return SrcBlendFunctionReadableName[func]; }
 
 //---------------------------------------------------------------------------
@@ -526,10 +526,10 @@ static const c8* DstBlendFunctionReadableName[E_DST_BLEND_FUNCTION_COUNT] =
 	"1 - Src.Color"	
 };
 
-MY_INLINE const c8* getDstBlendFunctionName(E_DST_BLEND_FUNCTION func)
+MY_FORCEINLINE const c8* getDstBlendFunctionName(E_DST_BLEND_FUNCTION func)
 { return DstBlendFunctionName[func]; }
 
-MY_INLINE const c8* getDstBlendFunctionReadableName(E_DST_BLEND_FUNCTION func)
+MY_FORCEINLINE const c8* getDstBlendFunctionReadableName(E_DST_BLEND_FUNCTION func)
 { return DstBlendFunctionReadableName[func]; }
 
 //---------------------------------------------------------------------------
@@ -566,10 +566,10 @@ static const c8* BlendEquationReadableName[E_BLEND_EQUATION_COUNT] =
 	"Max"
 };
 
-MY_INLINE const c8* getBlendEquationName(E_BLEND_EQUATION eq)
+MY_FORCEINLINE const c8* getBlendEquationName(E_BLEND_EQUATION eq)
 { return BlendEquationName[eq]; }
 
-MY_INLINE const c8* getBlendEquationReadableName(E_BLEND_EQUATION eq)
+MY_FORCEINLINE const c8* getBlendEquationReadableName(E_BLEND_EQUATION eq)
 { return BlendEquationReadableName[eq]; }
 
 //---------------------------------------------------------------------------
@@ -598,10 +598,10 @@ static const c8* TexCoordGenTypeReadableName[E_TEXCOORD_GEN_TYPE_COUNT] =
 	"Projected"
 };
 
-MY_INLINE const c8* getTexCoordGenTypeName(E_TEXCOORD_GEN_TYPE type)
+MY_FORCEINLINE const c8* getTexCoordGenTypeName(E_TEXCOORD_GEN_TYPE type)
 { return TexCoordGenTypeName[type]; }
 
-MY_INLINE const c8* getTexCoordGenTypeReadableName(E_TEXCOORD_GEN_TYPE type)
+MY_FORCEINLINE const c8* getTexCoordGenTypeReadableName(E_TEXCOORD_GEN_TYPE type)
 { return TexCoordGenTypeReadableName[type]; }
 
 //---------------------------------------------------------------------------
@@ -637,10 +637,10 @@ static const c8* TexCoordModTypeReadableName[E_TEXCOORD_MOD_TYPE_COUNT] =
 	"Rotate"
 };
 
-MY_INLINE const c8* getTexCoordModTypeName(E_TEXCOORD_MOD_TYPE type)
+MY_FORCEINLINE const c8* getTexCoordModTypeName(E_TEXCOORD_MOD_TYPE type)
 { return TexCoordModTypeName[type]; }
 
-MY_INLINE const c8* getTexCoordModTypeReadableName(E_TEXCOORD_MOD_TYPE type)
+MY_FORCEINLINE const c8* getTexCoordModTypeReadableName(E_TEXCOORD_MOD_TYPE type)
 { return TexCoordModTypeReadableName[type]; }
 
 //---------------------------------------------------------------------------
@@ -670,10 +670,10 @@ static const c8* ColorGenTypeReadableName[E_COLOR_GEN_TYPE_COUNT] =
 	"Custom"
 };
 
-MY_INLINE const c8* getColorGenTypeName(E_COLOR_GEN_TYPE type)
+MY_FORCEINLINE const c8* getColorGenTypeName(E_COLOR_GEN_TYPE type)
 { return ColorGenTypeName[type]; }
 
-MY_INLINE const c8* getColorGenTypeReadableName(E_COLOR_GEN_TYPE type)
+MY_FORCEINLINE const c8* getColorGenTypeReadableName(E_COLOR_GEN_TYPE type)
 { return ColorGenTypeReadableName[type]; }
 
 //---------------------------------------------------------------------------
@@ -703,10 +703,10 @@ static const c8* AlphaGenTypeReadableName[E_ALPHA_GEN_TYPE_COUNT] =
 	"Custom"
 };
 
-MY_INLINE const c8* getAlphaGenTypeName(E_ALPHA_GEN_TYPE type)
+MY_FORCEINLINE const c8* getAlphaGenTypeName(E_ALPHA_GEN_TYPE type)
 { return AlphaGenTypeName[type]; }
 
-MY_INLINE const c8* getAlphaGenTypeReadableName(E_ALPHA_GEN_TYPE type)
+MY_FORCEINLINE const c8* getAlphaGenTypeReadableName(E_ALPHA_GEN_TYPE type)
 { return AlphaGenTypeReadableName[type]; }
 
 //---------------------------------------------------------------------------
@@ -744,10 +744,10 @@ static const c8* TexCoordAddrModeReadableName[E_TEXCOORD_ADDRESS_MODE_COUNT] =
     "Border"
 };
 
-MY_INLINE const c8* getTexCoordAddrModeName(E_TEXCOORD_ADDRESS_MODE mode)
+MY_FORCEINLINE const c8* getTexCoordAddrModeName(E_TEXCOORD_ADDRESS_MODE mode)
 { return TexCoordAddrModeName[mode]; }
 
-MY_INLINE const c8* getTexCoordAddrModeReadableName(E_TEXCOORD_ADDRESS_MODE mode)
+MY_FORCEINLINE const c8* getTexCoordAddrModeReadableName(E_TEXCOORD_ADDRESS_MODE mode)
 { return TexCoordAddrModeReadableName[mode]; }
 
 //----------------------------------------------------------------------------
@@ -778,10 +778,10 @@ static const c8* LightTypeReadableName[E_LIGHT_TYPE_COUNT] =
 	"Directional"
 };
 
-MY_INLINE const c8* getLightTypeName(E_LIGHT_TYPE type)
+MY_FORCEINLINE const c8* getLightTypeName(E_LIGHT_TYPE type)
 { return LightTypeName[type]; }
 
-MY_INLINE const c8* getLightTypeReadableName(E_LIGHT_TYPE type)
+MY_FORCEINLINE const c8* getLightTypeReadableName(E_LIGHT_TYPE type)
 { return LightTypeReadableName[type]; }
 
 //----------------------------------------------------------------------------
@@ -870,10 +870,10 @@ static const c8* FogTypeReadableName[E_FOG_TYPE_COUNT] =
 	"Exp^2"
 };
 
-MY_INLINE const c8* getFogTypeName(E_FOG_TYPE type)
+MY_FORCEINLINE const c8* getFogTypeName(E_FOG_TYPE type)
 { return FogTypeName[type]; }
 
-MY_INLINE const c8* getFogTypeReadableName(E_FOG_TYPE type)
+MY_FORCEINLINE const c8* getFogTypeReadableName(E_FOG_TYPE type)
 { return FogTypeReadableName[type]; }
 
 //----------------------------------------------------------------------------
@@ -1009,13 +1009,13 @@ static const c8* UniformTypeReadableNames[E_UNIFORM_TYPE_COUNT] =
 	"FogColor",
 };
 
-MY_INLINE E_UNIFORM_FLAG getUniformFlag(E_UNIFORM_TYPE type)
+MY_FORCEINLINE E_UNIFORM_FLAG getUniformFlag(E_UNIFORM_TYPE type)
 { return (E_UNIFORM_FLAG)UniformTypeBits[type]; }
 
-MY_INLINE const c8 *getUniformName(E_UNIFORM_TYPE type)
+MY_FORCEINLINE const c8 *getUniformName(E_UNIFORM_TYPE type)
 { return UniformTypeNames[type]; }
 
-MY_INLINE const c8 *getUniformReadableName(E_UNIFORM_TYPE type)
+MY_FORCEINLINE const c8 *getUniformReadableName(E_UNIFORM_TYPE type)
 { return UniformTypeReadableNames[type]; }
 
 //----------------------------------------------------------------------------
@@ -1045,10 +1045,10 @@ static const c8* PolygonFillModeReadableNames[E_POLYGON_FILL_MODE_COUNT] =
     "Point",
 };
 
-MY_INLINE const c8 *getPolygonFillModeName(E_POLYGON_FILL_MODE type)
+MY_FORCEINLINE const c8 *getPolygonFillModeName(E_POLYGON_FILL_MODE type)
 { return PolygonFillModeNames[type]; }
 
-MY_INLINE const c8 *getPolygonFillModeReadableName(E_POLYGON_FILL_MODE type)
+MY_FORCEINLINE const c8 *getPolygonFillModeReadableName(E_POLYGON_FILL_MODE type)
 { return PolygonFillModeReadableNames[type]; }
 
 //----------------------------------------------------------------------------
@@ -1121,10 +1121,10 @@ static const c8* CompareTestReadableName[E_COMPARE_TEST_COUNT] =
 	"GEqual"
 };
 
-MY_INLINE const c8* getCompareTestName(E_COMPARE_TEST test)
+MY_FORCEINLINE const c8* getCompareTestName(E_COMPARE_TEST test)
 { return CompareTestName[test]; }
 
-MY_INLINE const c8* getCompareTestReadableName(E_COMPARE_TEST test)
+MY_FORCEINLINE const c8* getCompareTestReadableName(E_COMPARE_TEST test)
 { return CompareTestReadableName[test]; }
 
 //----------------------------------------------------------------------------
@@ -1196,10 +1196,10 @@ static const c8* RenderPassReadableName[E_RENDER_PASS_COUNT] =
 	"GUI 2D pass",
 };
 
-MY_INLINE const c8* getRenderPassName(E_RENDER_PASS pass)
+MY_FORCEINLINE const c8* getRenderPassName(E_RENDER_PASS pass)
 { return RenderPassName[pass]; }
 
-MY_INLINE const c8* getRenderPassReadableName(E_RENDER_PASS pass)
+MY_FORCEINLINE const c8* getRenderPassReadableName(E_RENDER_PASS pass)
 { return RenderPassReadableName[pass]; }
 
 //--------------------------------------------------------------------------
@@ -1241,10 +1241,10 @@ static const c8* RenderModeReadableName[E_RENDER_MODE_COUNT] =
 	"With stencil test LIGHTING",
 };
 
-MY_INLINE const c8* getRenderModeName(E_RENDER_MODE mode)
+MY_FORCEINLINE const c8* getRenderModeName(E_RENDER_MODE mode)
 { return RenderModeName[mode]; }
 
-MY_INLINE const c8* getRenderPassReadableName(E_RENDER_MODE mode)
+MY_FORCEINLINE const c8* getRenderPassReadableName(E_RENDER_MODE mode)
 { return RenderModeReadableName[mode]; }
 
 //----------------------------------------------------------------------------
@@ -1290,10 +1290,10 @@ static const c8* AlphaTestReadableName[E_ALPHA_TEST_COUNT] =
 	">= 128"
 };
 
-MY_INLINE const c8* getAlphaTestName(E_ALPHA_TEST test)
+MY_FORCEINLINE const c8* getAlphaTestName(E_ALPHA_TEST test)
 { return AlphaTestName[test]; }
 
-MY_INLINE const c8* getAlphaTestReadableName(E_ALPHA_TEST test)
+MY_FORCEINLINE const c8* getAlphaTestReadableName(E_ALPHA_TEST test)
 { return AlphaTestReadableName[test]; }
 
 //---------------------------------------------------------------------------
@@ -1311,6 +1311,51 @@ static SAlphaTestSetup AlphaTestSetups[E_ALPHA_TEST_COUNT] =
 	{ECT_LESS,		0.5f},
 	{ECT_GEQUAL,	0.5f},
 };
+
+//---------------------------------------------------------------------------
+
+enum E_DEFAULT_TEXTURE
+{
+	EDT_LIGHT_SPHERE,
+	EDT_LIGHT_GRADIENT,
+	EDT_LIGHT_SPHERE_WHITE,
+	EDT_LIGHT_WHITE_GRADIENT,
+	EDT_WHITE_WITH_BORDER,
+	EDT_ENVIRONMENT_MAP,
+	EDT_DEFAULT_TEXTURE,
+
+	E_DEFAULT_TEXTURE_COUNT,
+
+	E_DEFAULT_TEXTURE_FORCE_32_BIT = 0xffffffff
+};
+
+static const c8* DefaultTextureName[E_DEFAULT_TEXTURE_COUNT] =
+{
+	"EDT_LIGHT_SPHERE",
+	"EDT_LIGHT_GRADIENT",
+	"EDT_LIGHT_SPHERE_WHITE",
+	"EDT_LIGHT_WHITE_GRADIENT",
+	"EDT_WHITE_WITH_BORDER",
+	"EDT_ENVIRONMENT_MAP",
+	"EDT_DEFAULT_TEXTURE",
+};
+
+static const c8* DefaultTextureReadableName[E_DEFAULT_TEXTURE_COUNT] =
+{
+	"#DefaultLightSphere",
+	"#DefaultLightGradient",
+	"#DefaultLightSphereWhite",
+	"#DefaultLightWhiteGradient",
+	"#DefaultWhiteWithBorder",
+	"#DefaultEnvironmentMap",
+	"#DefaultTexture",
+};
+
+MY_FORCEINLINE const c8* getDefaultTextureName(E_DEFAULT_TEXTURE tex)
+{ return DefaultTextureName[tex]; }
+
+MY_FORCEINLINE const c8* getDefaultTextureReadableName(E_DEFAULT_TEXTURE tex)
+{ return DefaultTextureReadableName[tex]; }
 
 //---------------------------------------------------------------------------
 
@@ -1398,10 +1443,10 @@ static const c8* VertexShaderVersionTargetName[E_VERTEX_SHADER_VERSION_COUNT] =
 	"410",
 };
 
-MY_INLINE const c8* getVertexShaderVersionName(E_VERTEX_SHADER_VERSION ver)
+MY_FORCEINLINE const c8* getVertexShaderVersionName(E_VERTEX_SHADER_VERSION ver)
 { return VertexShaderVersionName[ver]; }
 
-MY_INLINE const c8* getVertexShaderVersionReadableName(E_VERTEX_SHADER_VERSION ver)
+MY_FORCEINLINE const c8* getVertexShaderVersionReadableName(E_VERTEX_SHADER_VERSION ver)
 { return VertexShaderVersionReadableName[ver]; }
 
 //---------------------------------------------------------------------------
@@ -1506,10 +1551,10 @@ static const c8* PixelShaderVersionTargetName[E_PIXEL_SHADER_VERSION_COUNT] =
 	"410",
 };
 
-MY_INLINE const c8* getPixelShaderVersionName(E_PIXEL_SHADER_VERSION ver)
+MY_FORCEINLINE const c8* getPixelShaderVersionName(E_PIXEL_SHADER_VERSION ver)
 { return PixelShaderVersionName[ver]; }
 
-MY_INLINE const c8* getPixelShaderVersionReadableName(E_PIXEL_SHADER_VERSION ver)
+MY_FORCEINLINE const c8* getPixelShaderVersionReadableName(E_PIXEL_SHADER_VERSION ver)
 { return PixelShaderVersionReadableName[ver]; }
 
 //----------------------------------------------------------------------------

@@ -40,7 +40,7 @@ static const c8* _GetUniqueName(void)
 MyCEGUITexture::MyCEGUITexture(MyCEGUIRenderer &r)
 	: m_Texture(0), m_Renderer(r),
 	m_Size(0, 0), m_DataSize(0, 0), m_TexelScaling(0, 0),
-	m_Driver(VIDEO_DRIVER)
+	m_Driver(VIDEO_DRIVER), m_UseAlphaBlending(true)
 {
 }
 
@@ -106,6 +106,8 @@ void MyCEGUITexture::setTexture(vid::ITexture *mytex)
 			static_cast<float>(m_Texture->getOriginalSize().Width),
 			static_cast<float>(m_Texture->getOriginalSize().Height));
 		_updateCachedScaleValues();
+
+		m_UseAlphaBlending = false;
 	}
 }
 

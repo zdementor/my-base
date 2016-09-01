@@ -74,6 +74,7 @@ private:
     u16 Indices[6];
     vid::S3DVertex1TCoords Vertices[4*6];
     vid::SMaterial Material[6];
+	vid::ITexture *m_DefaultTexture;
 };
 //---------------------------------------------------------------------------
 } // end namespace scn

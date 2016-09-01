@@ -10,6 +10,7 @@ require "scened/scened_scn_billboard_controller"
 require "scened/scened_scn_light_controller"
 require "scened/scened_scn_lensflare_controller"
 require "scened/scened_scn_terrain_controller"
+require "scened/scened_scn_sky_controller"
 
 local _Ctrls =
 {
@@ -115,6 +116,7 @@ function _ScenedInitImpl()
 	table.insert(_Ctrls.Layouts, _ScenedInitLightControls())
 	table.insert(_Ctrls.Layouts, _ScenedInitLensFlareControls())
 	table.insert(_Ctrls.Layouts, _ScenedInitTerrainControls())
+	table.insert(_Ctrls.Layouts, _ScenedInitSkyControls())
 	
 	local new_node_layout = _ScenedInitNewNodeControls()
 	table.insert(_Ctrls.Layouts, new_node_layout)

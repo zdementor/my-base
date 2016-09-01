@@ -1,3 +1,4 @@
+
 //----------------------------------------------------------------------------
 namespace vid {
 //----------------------------------------------------------------------------
@@ -592,6 +593,24 @@ enum E_LIGHTING_MODE
 
 	E_LIGHTING_MODE_COUNT
 };
+
+//---------------------------------------------------------------------------
+
+enum E_DEFAULT_TEXTURE
+{
+	EDT_LIGHT_SPHERE,
+	EDT_LIGHT_GRADIENT,
+	EDT_LIGHT_SPHERE_WHITE,
+	EDT_LIGHT_WHITE_GRADIENT,
+	EDT_WHITE_WITH_BORDER,
+	EDT_ENVIRONMENT_MAP,
+	EDT_DEFAULT_TEXTURE,
+
+	E_DEFAULT_TEXTURE_COUNT,
+};
+
+const char* getDefaultTextureName(E_DEFAULT_TEXTURE tex);
+const char* getDefaultTextureReadableName(E_DEFAULT_TEXTURE tex);
 
 //---------------------------------------------------------------------------
 
