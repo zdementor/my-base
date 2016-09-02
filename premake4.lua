@@ -145,7 +145,7 @@ if os.is("windows") then
 			SRC_DIR.."/vid/dx9/**.h",
 		},
 			{},
-		{ BASE_INC_DIR, FTYPE_INC_DIR },
+		{ BASE_INC_DIR, DEPS_DIR.."/d3d/"..ARCH, FTYPE_INC_DIR },
 			{ BASE_LIB_DIR },
 		{}, {"/NODEFAULTLIB:d3dx8.lib"}, nil, nil,
 		nil, nil
@@ -159,7 +159,7 @@ local MY_ENGINE_SYSDEPS = {}
 if os.is("windows") then
 	table.insert(MY_ENGINE_PRJDEPS, "MyVideoDX9")
 	table.insert(MY_ENGINE_SYSDEPS, "openal32")
-	for key, value in pairs({ "openal32.dll", }) do
+	for key, value in pairs({ "openal32.dll", "d3dx9_36.dll"}) do
 		local dstpath = ROOT_DIR.."/bin/"..ARCH
 		local dst = dstpath.."/"..value
 		local src = DEPS_DIR.."/lib/dynamic/"..ARCH.."/"..value

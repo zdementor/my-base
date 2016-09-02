@@ -231,7 +231,7 @@ static HRESULT MyD3DXCompileShader(
 	{
 		// try to load dll
 		core::stringc strDllName = "d3dx9_";
-		strDllName.sprintf("d3dx9_%s.dll", (int)D3DX_SDK_VERSION);
+		strDllName.sprintf("d3dx9_%d.dll", (int)D3DX_SDK_VERSION);
 
 		HMODULE hMod = LoadLibrary(strDllName.c_str());
 		if (hMod)
@@ -239,8 +239,8 @@ static HRESULT MyD3DXCompileShader(
 		if (!pFn)
 		{
 			LoadFailed = true;
-			LOGGER.logErr("Could not load shader function D3DXCompileShader from dll, shaders disabled",
-				strDllName.c_str(), ELL_ERROR);
+			LOGGER.logErr("%s: Could not load shader function D3DXCompileShader from dll, shaders disabled",
+				strDllName.c_str());
 		}
 	}
 
@@ -251,6 +251,7 @@ static HRESULT MyD3DXCompileShader(
 			pSrcData, SrcDataLen, pDefines, pInclude, pFunctionName,
 			pProfile, Flags, ppShader, ppErrorMsgs, ppConstantTable);
 	}
+	return false;
 #endif // D3DX_SDK_VERSION < 24
 }
 
