@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 
 // compile config
-#include "../CompileConf.h" 
+#include "CompileConf.h" 
 
 //-----------------------------------------------------------------------------
 
@@ -108,81 +108,6 @@
 #define AVG_TIME_VALUES_COUNT 25
 
 //----------------------------------------------------------------------------
-// Initial platform/compiler-related stuff to set.
-
-#define MY_PLATFORM_WIN32 1
-#define MY_PLATFORM_LINUX 2
-#define MY_PLATFORM_APPLE 3
-
-#define MY_COMPILER_MSVC 1
-#define MY_COMPILER_GNUC 2
-#define MY_COMPILER_BORL 3
-
-//----------------------------------------------------------------------------
-// Finds the compiler type and version.
-
-#if defined( _MSC_VER )
-#   define MY_COMPILER MY_COMPILER_MSVC
-#   define MY_COMP_VER _MSC_VER
-#	if _M_X64
-#		define MY_COMP_ARCH_64 1
-#	endif
-#elif defined( __GNUC__ )
-#   define MY_COMPILER MY_COMPILER_GNUC
-#   define MY_COMP_VER (((__GNUC__)*100)+__GNUC_MINOR__)
-#elif defined( __BORLANDC__ )
-#   define MY_COMPILER MY_COMPILER_BORL
-#   define MY_COMP_VER __BCPLUSPLUS__
-#else
-#   error "No known compiler. Abort! Abort!"
-#endif
-
-#ifndef MY_COMP_ARCH_64
-#define MY_COMP_ARCH_64 0
-#endif
-
-//----------------------------------------------------------------------------
-// Finds the current CPU architecture
-
-#define MY_X32 1
-#define MY_X64 2
-
-#if MY_COMP_ARCH_64
-#	define MY_CPU_ARCH MY_X64
-#else
-#	define MY_CPU_ARCH MY_X32
-#endif
-
-//----------------------------------------------------------------------------
-// Finds the current platform 
-
-#if defined( __WIN32__ ) || defined( _WIN32 )
-#   define MY_PLATFORM MY_PLATFORM_WIN32
-
-#elif defined( __APPLE_CC__)
-#   define MY_PLATFORM MY_PLATFORM_APPLE
-
-#else
-#   define MY_PLATFORM MY_PLATFORM_LINUX
-#endif
-
-//----------------------------------------------------------------------------
-// include needed libraries
-
-#if MY_PLATFORM == MY_PLATFORM_WIN32    
-#	include <wchar.h>
-#	include <windows.h>
-#endif // #if MY_PLATFORM == MY_PLATFORM_WIN32  
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <float.h>
-#include <typeinfo.h>
-#include <io.h>
-#include <memory.h>
-
-//----------------------------------------------------------------------------
 // For generating compiler warnings - should work on any compiler
 // As a side note, if you start your message with 'Warning: ', the MSVC
 // IDE actually does catch a warning :)
@@ -191,288 +116,123 @@
 #define MY_WARN( x )  message( __FILE__ "(" QUOTE( __LINE__ ) ") : " x "\n" )
 
 //----------------------------------------------------------------------------
-// Windows Settings
-#if MY_PLATFORM == MY_PLATFORM_WIN32
-
-//----------------------------------------------------------------------------
-
-// Export/Import API
-
-#	define __MY_IMPORT__ __declspec(dllimport)
-#	define __MY_EXPORT__ __declspec(dllexport)
 
 // for my dev module
-#   ifdef __MY_USE_DEV_LIB__           // use library from client
-#       define __MY_DEV_LIB_API__   __MY_IMPORT__
-#   elif defined __MY_BUILD_DEV_LIB__  // building library
-#       define __MY_DEV_LIB_API__   __MY_EXPORT__
-#   else                              // some other case (buid static library for example)
-#       define __MY_DEV_LIB_API__ 
-#   endif
-
-// for my base module
-#   ifdef __MY_USE_SCN_LIB__           // use library from client
-#       define __MY_SCN_LIB_API__   __MY_IMPORT__
-#   elif defined __MY_BUILD_SCN_LIB__  // building library
-#       define __MY_SCN_LIB_API__   __MY_EXPORT__
-#   else                                // some other case (buid static library for example)
-#       define __MY_SCN_LIB_API__ 
-#   endif
-
-// for my core module
-#   ifdef __MY_USE_CORE_LIB__           // use library from client
-#       define __MY_CORE_LIB_API__   __MY_IMPORT__
-#   elif defined __MY_BUILD_CORE_LIB__  // building library
-#       define __MY_CORE_LIB_API__   __MY_EXPORT__
-#   else                                // some other case (buid static library for example)
-#       define __MY_CORE_LIB_API__ 
-#   endif
-
-// for my os module
-#   ifdef __MY_USE_OS_LIB__           // use library from client
-#       define __MY_OS_LIB_API__   __MY_IMPORT__
-#   elif defined __MY_BUILD_OS_LIB__  // building library
-#       define __MY_OS_LIB_API__   __MY_EXPORT__
-#   else                              // some other case (buid static library for example)
-#       define __MY_OS_LIB_API__ 
-#   endif
-
-// for my io module
-#   ifdef __MY_USE_IO_LIB__           // use library from client
-#       define __MY_IO_LIB_API__   __MY_IMPORT__
-#   elif defined __MY_BUILD_IO_LIB__  // building library
-#       define __MY_IO_LIB_API__   __MY_EXPORT__
-#   else                              // some other case (buid static library for example)
-#       define __MY_IO_LIB_API__ 
-#   endif
-
-// for my img module
-#   ifdef __MY_USE_IMG_LIB__           // use library from client
-#       define __MY_IMG_LIB_API__   __MY_IMPORT__
-#   elif defined __MY_BUILD_IMG_LIB__ // building library
-#       define __MY_IMG_LIB_API__   __MY_EXPORT__
-#   else                              // some other case (buid static library for example)
-#       define __MY_IMG_LIB_API__ 
-#   endif
-
-// for my vid modules (ogl, d3d8, d3d9)
-#   ifdef __MY_USE_VID_LIB__           // use library from client
-#       define __MY_VID_LIB_API__   __MY_IMPORT__
-#   elif defined __MY_BUILD_VID_LIB__  // building library
-#       define __MY_VID_LIB_API__   __MY_EXPORT__
-#   else                              // some other case (buid static library for example)
-#       define __MY_VID_LIB_API__ 
-#   endif
-
-// for my scr module
-#   ifdef __MY_USE_SCR_LIB__           // use library from client
-#       define __MY_SCR_LIB_API__   __MY_IMPORT__
-#   elif defined __MY_BUILD_SCR_LIB__  // building library
-#       define __MY_SCR_LIB_API__   __MY_EXPORT__
-#   else                              // some other case (buid static library for example)
-#       define __MY_SCR_LIB_API__ 
-#   endif
-
-// for my mm module
-#   ifdef __MY_USE_MM_LIB__           // use library from client
-#       define __MY_MM_LIB_API__   __MY_IMPORT__
-#   elif defined __MY_BUILD_MM_LIB__  // building library
-#       define __MY_MM_LIB_API__   __MY_EXPORT__
-#   else                              // some other case (buid static library for example)
-#       define __MY_MM_LIB_API__ 
-#   endif
-
-// for my dyn module
-#   ifdef __MY_USE_DYN_LIB__           // use library from client
-#       define __MY_DYN_LIB_API__   __MY_IMPORT__
-#   elif defined __MY_BUILD_DYN_LIB__  // building library
-#       define __MY_DYN_LIB_API__   __MY_EXPORT__
-#   else                              // some other case (buid static library for example)
-#       define __MY_DYN_LIB_API__ 
-#   endif
-
-// for my game module
-#   ifdef __MY_USE_GAME_LIB__           // use library from client
-#       define __MY_GAME_LIB_API__   __MY_IMPORT__
-#   elif defined __MY_BUILD_GAME_LIB__  // building library
-#       define __MY_GAME_LIB_API__   __MY_EXPORT__
-#   else                               // some other case (buid static library for example)
-#       define __MY_GAME_LIB_API__ 
-#   endif
-
-// for my scn module
-#   ifdef __MY_USE_SCN_LIB__           // use library from client
-#       define __MY_SCN_LIB_API__   __MY_IMPORT__
-#   elif defined __MY_BUILD_SCN_LIB__  // building library
-#       define __MY_SCN_LIB_API__   __MY_EXPORT__
-#   else                               // some other case (buid static library for example)
-#       define __MY_SCN_LIB_API__ 
-#   endif
-
-// for my res module
-#   ifdef __MY_USE_RES_LIB__           // use library from client
-#       define __MY_RES_LIB_API__   __MY_IMPORT__
-#   elif defined __MY_BUILD_RES_LIB__  // building library
-#       define __MY_RES_LIB_API__   __MY_EXPORT__
-#   else                               // some other case (buid static library for example)
-#       define __MY_RES_LIB_API__ 
-#   endif
-
-// for my wrap module
-#   ifdef __MY_USE_WRAP_LIB__           // use library from client
-#       define __MY_WRAP_LIB_API__   extern "C" __MY_IMPORT__
-#   elif defined __MY_BUILD_WRAP_LIB__  // building library
-#       define __MY_WRAP_LIB_API__   extern "C" __MY_EXPORT__
-#   else                               // some other case (buid static library for example)
-#       define __MY_WRAP_LIB_API__ 
-#   endif
-
-// for robogame module
-#   ifdef __MY_USE_ROBOGAME_LIB__           // use library from client
-#       define __MY_ROBOGAME_LIB_API__   extern "C" __MY_IMPORT__
-#   elif defined __MY_BUILD_ROBOGAME_LIB__  // building library
-#       define __MY_ROBOGAME_LIB_API__   extern "C" __MY_EXPORT__
-#   else                               // some other case (buid static library for example)
-#       define __MY_ROBOGAME_LIB_API__ 
-#   endif
-
-// Win32 compilers use _DEBUG for specifying debug builds.
-#   ifdef _DEBUG
-#       define MY_DEBUG_MODE 1
-#   else
-#       define MY_DEBUG_MODE 0
-#   endif
-
-#endif // #if MY_PLATFORM == MY_PLATFORM_WIN32
-
-//----------------------------------------------------------------------------
-// Linux/Apple Settings
-#if MY_PLATFORM == MY_PLATFORM_LINUX || MY_PLATFORM == MY_PLATFORM_APPLE
-
-// Linux compilers don't have symbol import/export directives.
-#   define __MY_SCN_LIB_API__
-
-// A quick define to overcome different names for the same function
-#   define stricmp strcasecmp
-
-// Unlike the Win32 compilers, Linux compilers seem to use DEBUG for when
-// specifying a debug build.
-#   ifdef DEBUG
-#       define MY_DEBUG_MODE 1
-#   else
-#       define MY_DEBUG_MODE 0
-#   endif
-
-#endif // #if MY_PLATFORM == MY_PLATFORM_LINUX || MY_PLATFORM == MY_PLATFORM_APPLE
-
-//----------------------------------------------------------------------------
-// Compiler settings
-
-#if MY_COMPILER == MY_COMPILER_MSVC
-
-#   if MY_DEBUG_MODE       
-#       pragma comment(linker, "/NODEFAULTLIB:libc.lib")
-#       pragma comment(linker, "/NODEFAULTLIB:libcmt.lib")
-#       pragma comment(linker, "/NODEFAULTLIB:msvcrt.lib")
-#       pragma comment(linker, "/NODEFAULTLIB:libcd.lib ")
-#       pragma comment(linker, "/NODEFAULTLIB:libcmtd.lib")       
-#   else
-#       pragma comment(linker, "/NODEFAULTLIB:libc.lib")
-#       pragma comment(linker, "/NODEFAULTLIB:libcmt.lib")
-#       pragma comment(linker, "/NODEFAULTLIB:libcd.lib")
-#       pragma comment(linker, "/NODEFAULTLIB:libcmtd.lib ")
-#       pragma comment(linker, "/NODEFAULTLIB:msvcrtd.lib")
-#   endif    
-
-// Turn off warnings generated by long std templates
-// This warns about truncation to 255 characters in debug/browse info
-#   pragma warning (disable : 4786)
-
-// Turn off warnings generated by long std templates
-// This warns about truncation to 255 characters in debug/browse info
-#   pragma warning (disable : 4503)
-
-// disable: "conversion from 'double' to 'float', possible loss of data
-#   pragma warning (disable : 4244)
-
-// disable: "truncation from 'double' to 'float'
-#   pragma warning (disable : 4305)
-
-// disable: "<type> needs to have dll-interface to be used by clients'
-// Happens on STL member variables which are not public therefore is ok
-#   pragma warning (disable : 4251)
-
-// disable: "non dll-interface class used as base for dll-interface class"
-// Happens when deriving from Singleton because bug in compiler ignores
-// template export
-#   pragma warning (disable : 4275)
-
-// disable: "C++ Exception Specification ignored"
-// This is because MSVC 6 did not implement all the C++ exception 
-// specifications in the ANSI C++ draft.
-#   pragma warning( disable : 4290 )
-
-// disable: "no suitable definition provided for explicit template 
-// instantiation request" Occurs in VC7 for no justifiable reason on all 
-// #includes of Singleton
-#   pragma warning( disable: 4661)
-
-// disable: deprecation warnings when using CRT calls in VC8 
-// These show up on all C runtime lib code in VC8, disable since they clutter
-// the warnings with things we may not be able to do anything about (e.g. 
-// generated code from nvparse etc). I doubt very much that these calls
-// will ever be actually removed from VC anyway, it would break too much code.
-#   pragma warning( disable: 4996)
-
-// disable: "no definition for inline function"
-#   pragma warning( disable: 4506)
-
-// disable: warning 'this' : used in base member initializer list
-#   pragma warning( disable: 4355)
-
-#   undef _DEFINE_DEPRECATED_HASH_CLASSES
-#   if MY_COMP_VER > 1300
-#       define _DEFINE_DEPRECATED_HASH_CLASSES 0
-#   else
-#      define _DEFINE_DEPRECATED_HASH_CLASSES 1
-#   endif
-
-// See if we can use __forceinline or if we need to use __inline instead 
-#   if MY_COMP_VER >= 1200
-#       define MY_FORCEINLINE	__forceinline
-#       define MY_INLINE		__inline
-#	else
-#		define MY_FORCEINLINE	__inline
-#       define MY_INLINE		__inline
-#   endif
-
-#   define   swprintf   _snwprintf
-
-#else 
-
-#   if MY_COMPILER == MY_COMPILER_BORL
-
-		inline float sqrtf( float x )
-		{return (float)sqrt((double)x);}
-
-		inline int floorf( float x )
-		{return (int)floor((double)x);}
-
-		inline int ceilf( float x )
-		{return (int)ceil((double)x);}
-
-#   endif
-
-#	define MY_FORCEINLINE	__inline
-#	define MY_INLINE		__inline
-
+#ifdef __MY_USE_DEV_LIB__           // use library from client
+#    define __MY_DEV_LIB_API__   __MY_IMPORT__
+#elif defined __MY_BUILD_DEV_LIB__  // building library
+#    define __MY_DEV_LIB_API__   __MY_EXPORT__
+#else                              // some other case (buid static library for example)
+#    define __MY_DEV_LIB_API__ 
 #endif
 
-#if MY_DEBUG_MODE       
-#	define MY_ASSERT(exp) assert(exp)
-#else
-#	define MY_ASSERT(exp) (void)0;
-#endif    
+// for my base module
+#ifdef __MY_USE_SCN_LIB__           // use library from client
+#    define __MY_SCN_LIB_API__   __MY_IMPORT__
+#elif defined __MY_BUILD_SCN_LIB__  // building library
+#    define __MY_SCN_LIB_API__   __MY_EXPORT__
+#else                                // some other case (buid static library for example)
+#    define __MY_SCN_LIB_API__ 
+#endif
+
+// for my core module
+#ifdef __MY_USE_CORE_LIB__           // use library from client
+#    define __MY_CORE_LIB_API__   __MY_IMPORT__
+#elif defined __MY_BUILD_CORE_LIB__  // building library
+#    define __MY_CORE_LIB_API__   __MY_EXPORT__
+#else                                // some other case (buid static library for example)
+#    define __MY_CORE_LIB_API__ 
+#endif
+
+// for my os module
+#ifdef __MY_USE_OS_LIB__           // use library from client
+#    define __MY_OS_LIB_API__   __MY_IMPORT__
+#elif defined __MY_BUILD_OS_LIB__  // building library
+#    define __MY_OS_LIB_API__   __MY_EXPORT__
+#else                              // some other case (buid static library for example)
+#    define __MY_OS_LIB_API__ 
+#endif
+
+// for my io module
+#ifdef __MY_USE_IO_LIB__           // use library from client
+#    define __MY_IO_LIB_API__   __MY_IMPORT__
+#elif defined __MY_BUILD_IO_LIB__  // building library
+#    define __MY_IO_LIB_API__   __MY_EXPORT__
+#else                              // some other case (buid static library for example)
+#    define __MY_IO_LIB_API__ 
+#endif
+
+// for my img module
+#ifdef __MY_USE_IMG_LIB__           // use library from client
+#    define __MY_IMG_LIB_API__   __MY_IMPORT__
+#elif defined __MY_BUILD_IMG_LIB__ // building library
+#    define __MY_IMG_LIB_API__   __MY_EXPORT__
+#else                              // some other case (buid static library for example)
+#    define __MY_IMG_LIB_API__ 
+#endif
+
+// for my vid modules (ogl, d3d8, d3d9)
+#ifdef __MY_USE_VID_LIB__           // use library from client
+#    define __MY_VID_LIB_API__   __MY_IMPORT__
+#elif defined __MY_BUILD_VID_LIB__  // building library
+#    define __MY_VID_LIB_API__   __MY_EXPORT__
+#else                              // some other case (buid static library for example)
+#    define __MY_VID_LIB_API__ 
+#endif
+
+// for my scr module
+#ifdef __MY_USE_SCR_LIB__           // use library from client
+#    define __MY_SCR_LIB_API__   __MY_IMPORT__
+#elif defined __MY_BUILD_SCR_LIB__  // building library
+#    define __MY_SCR_LIB_API__   __MY_EXPORT__
+#else                              // some other case (buid static library for example)
+#    define __MY_SCR_LIB_API__ 
+#endif
+
+// for my mm module
+#ifdef __MY_USE_MM_LIB__           // use library from client
+#    define __MY_MM_LIB_API__   __MY_IMPORT__
+#elif defined __MY_BUILD_MM_LIB__  // building library
+#    define __MY_MM_LIB_API__   __MY_EXPORT__
+#else                              // some other case (buid static library for example)
+#    define __MY_MM_LIB_API__ 
+#endif
+
+// for my dyn module
+#ifdef __MY_USE_DYN_LIB__           // use library from client
+#    define __MY_DYN_LIB_API__   __MY_IMPORT__
+#elif defined __MY_BUILD_DYN_LIB__  // building library
+#    define __MY_DYN_LIB_API__   __MY_EXPORT__
+#else                              // some other case (buid static library for example)
+#    define __MY_DYN_LIB_API__ 
+#endif
+
+// for my game module
+#ifdef __MY_USE_GAME_LIB__           // use library from client
+#    define __MY_GAME_LIB_API__   __MY_IMPORT__
+#elif defined __MY_BUILD_GAME_LIB__  // building library
+#    define __MY_GAME_LIB_API__   __MY_EXPORT__
+#else                               // some other case (buid static library for example)
+#    define __MY_GAME_LIB_API__ 
+#endif
+
+// for my scn module
+#ifdef __MY_USE_SCN_LIB__           // use library from client
+#    define __MY_SCN_LIB_API__   __MY_IMPORT__
+#elif defined __MY_BUILD_SCN_LIB__  // building library
+#    define __MY_SCN_LIB_API__   __MY_EXPORT__
+#else                               // some other case (buid static library for example)
+#    define __MY_SCN_LIB_API__ 
+#endif
+
+// for my res module
+#ifdef __MY_USE_RES_LIB__           // use library from client
+#    define __MY_RES_LIB_API__   __MY_IMPORT__
+#elif defined __MY_BUILD_RES_LIB__  // building library
+#    define __MY_RES_LIB_API__   __MY_EXPORT__
+#else                               // some other case (buid static library for example)
+#    define __MY_RES_LIB_API__ 
+#endif
 
 //----------------------------------------------------------------------------
 // core types, templates library

@@ -14,10 +14,6 @@
 
 #include <my_inc.h>
 
-//---------------------------------------------------------------------------
-#ifdef _MY_USE_ODE_DYNAMIC_
-//---------------------------------------------------------------------------
-
 #include <dyn/IDynamicManager.h>  
 #include <dev/IDevice.h>  
 #include "CDynamicObject.h"
@@ -178,5 +174,4 @@ public:
 } // end namespace my
 //---------------------------------------------------------------------------
 
-#endif //_MY_USE_ODE_DYNAMIC_
 #endif

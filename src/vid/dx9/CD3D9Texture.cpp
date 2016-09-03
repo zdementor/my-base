@@ -12,20 +12,12 @@
 #include "CD3D9Texture.h"
 #include "CD3D9Driver.h"
 
-//----------------------------------------------------------------------------
-#ifdef _IRR_COMPILE_WITH_DIRECTX_9_
-//----------------------------------------------------------------------------
-
 #include <io/ILogger.h>
 #include <vid/IVideoDriver.h>
 #include <img/IImageLibrary.h>
 #include <io/IFileSystem.h>
 
 #include <d3d/d3dx9tex.h>
-
-// to make sure that we dont using DirectX from other SDK version
-#pragma comment(linker, "/NODEFAULTLIB:d3dx8.lib")
-#pragma comment(lib, "d3dx9.lib")    
 
 //----------------------------------------------------------------------------
 namespace my { 
@@ -405,8 +397,6 @@ void CD3D9Texture::unlock(u32 level)
 
 //----------------------------------------------------------------------------
 
-//! Regenerates the mip map levels of the texture. Useful after locking and 
-//! modifying the texture
 void CD3D9Texture::regenerateMipMapLevels()
 {
     if (m_AutogenMipMaps)
@@ -423,7 +413,6 @@ void CD3D9Texture::regenerateMipMapLevels()
 
 //----------------------------------------------------------------------------
 
-//! returns if it is a render target
 bool CD3D9Texture::isRenderTarget()
 {
     return IsRenderTarget;
@@ -431,7 +420,6 @@ bool CD3D9Texture::isRenderTarget()
 
 //----------------------------------------------------------------------------
 
-//! Returns pointer to the render target surface
 IDirect3DSurface9* CD3D9Texture::getRenderTargetSurface()
 {
     if (!IsRenderTarget)
@@ -451,7 +439,4 @@ IDirect3DSurface9* CD3D9Texture::getRenderTargetSurface()
 } // end namespace vid
 } // end namespace my
 //----------------------------------------------------------------------------
-
-#endif // _IRR_COMPILE_WITH_DIRECTX_9_
-
 

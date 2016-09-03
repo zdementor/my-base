@@ -11,13 +11,14 @@
 #ifndef CImageLoaderJPGHPP
 #define CImageLoaderJPGHPP
 //---------------------------------------------------------------------------
+
 #include <stdio.h>
 #include <string.h>
-//---------------------------------------------------------------------------
+
 #include <my_inc.h>
-#include "../CompileConf.h"
+
 //---------------------------------------------------------------------------
-#ifdef _IRR_COMPILE_WITH_LIBJPEG_
+
 #ifdef FAR
     #undef FAR  //в файле jmoreconfig.h будет определена
 #endif
@@ -25,7 +26,7 @@
 extern "C" { 
 #include <jpeglib.h>
 }
-#endif
+
 //---------------------------------------------------------------------------
 #include "CImageLoader.h"
 //---------------------------------------------------------------------------
@@ -56,8 +57,6 @@ public:
     //! загружает изображение из файла
     virtual IImage* loadImage(const c8* fileName);
 private:
-
-    #ifdef _IRR_COMPILE_WITH_LIBJPEG_
 
     /*  Initialize source.  This is called by jpeg_read_header() before any
     data is actually read.  Unlike init_destination(), it may leave
@@ -113,12 +112,12 @@ private:
 
     /* Format a message string for the most recent JPEG error or message */
     static void my_format_message (j_common_ptr cinfo, char * buffer);
-
-    #endif
 };
+
 //---------------------------------------------------------------------------
 } // end namespace video
 } // end namespace irr
 //---------------------------------------------------------------------------
+
 #endif
 

@@ -12,8 +12,6 @@
 #define COpenGLDriverHPP
 //---------------------------------------------------------------------------
 
-#include "../../CompileConf.h"
-
 #include "../CNullDriver.h"
 
 typedef ptrdiff_t GLsizeiptr;

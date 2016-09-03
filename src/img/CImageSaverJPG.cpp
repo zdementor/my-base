@@ -45,8 +45,6 @@ bool CImageSaverJPG::isASaveableFileExtension(const c8* fileName)
 
 //---------------------------------------------------------------------------
 
-#ifdef _IRR_COMPILE_WITH_LIBJPEG_
-
 void CImageSaverJPG::my_error_exit(j_common_ptr cinfo)
 {   
 	// Always display the message 
@@ -144,17 +142,11 @@ void CImageSaverJPG::my_format_message (j_common_ptr cinfo, char * buffer)
         err->msg_parm.i[6], err->msg_parm.i[7]);
 }
 
-#endif
-
 //-----------------------------------------------------------------------------
 
 //! записывает картинку в файл
 bool CImageSaverJPG::saveImage(IImage* image, io::IWriteFile* file)
 {
-#ifndef _IRR_COMPILE_WITH_LIBJPEG_
-    return 0;
-#else
-
     //проверяем есть ли куда записывать
     if (!file)
     {   LOGGER.log("CImageSaverJPG::saveImage - Wrong parameter file = NULL.", io::ELL_ERROR);
@@ -260,8 +252,6 @@ bool CImageSaverJPG::saveImage(IImage* image, io::IWriteFile* file)
 
     // everithing is ok
     return 1;
-
-#endif
 }
 
 //---------------------------------------------------------------------------
@@ -276,5 +266,3 @@ IImageSaver* createImageSaverJPG()
 } // end namespace img
 } // end namespace my
 //-----------------------------------------------------------------------------
-
-

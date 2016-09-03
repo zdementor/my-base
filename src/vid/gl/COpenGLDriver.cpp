@@ -29,8 +29,6 @@ namespace vid {
 
 const f32 inv_color = 1.0f / 255.0f;
 
-#ifdef _IRR_COMPILE_WITH_OPENGL_
-
 #if MY_PLATFORM == MY_PLATFORM_WIN32    
 
 //---------------------------------------------------------------------------
@@ -2038,7 +2036,6 @@ IHardwareOcclusionQuery& COpenGLDriver::getHardwareOcclusionQuery()
 
 //---------------------------------------------------------------------------
 
-#endif // _IRR_COMPILE_WITH_OPENGL_
 #if MY_PLATFORM == MY_PLATFORM_WIN32    
 
 //---------------------------------------------------------------------------
@@ -2058,7 +2055,6 @@ __MY_EXPORT__ IVideoDriver* createOpenGL32Driver(
 	SExposedVideoData &out_video_data,
 	E_TEXTURE_FILTER textureFilter)
 {
-#ifdef _IRR_COMPILE_WITH_OPENGL_
     COpenGLDriver* ogl =  new COpenGLDriver(out_video_data.WindowSize);
 	if (!ogl->_initDriver(out_video_data))
     {
@@ -2068,9 +2064,6 @@ __MY_EXPORT__ IVideoDriver* createOpenGL32Driver(
 	else
 		ogl->setTextureFilter(textureFilter);
     return ogl; 
-#else
-    return 0;
-#endif // _IRR_COMPILE_WITH_OPENGL_
 }
 
 //---------------------------------------------------------------------------

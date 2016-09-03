@@ -14,10 +14,6 @@
 
 #include <my_inc.h>
 
-//---------------------------------------------------------------------------
-#ifdef _MY_USE_ODE_DYNAMIC_
-//---------------------------------------------------------------------------
-
 #include <ode/ode.h>
 
 //---------------------------------------------------------------------------
@@ -50,5 +46,4 @@ void ODEQuaternionSlerp(const dQuaternion &quat1, const dQuaternion &quat2, dQua
 } // end namespace my
 //---------------------------------------------------------------------------
 
-#endif //_MY_USE_ODE_DYNAMIC_
 #endif // #ifndef ODEHelperHPP

@@ -45,8 +45,6 @@ bool CImageLoaderJPG::isALoadableFileExtension(const c8* fileName)
 
 //---------------------------------------------------------------------------
 
-#ifdef _IRR_COMPILE_WITH_LIBJPEG_
-
 void CImageLoaderJPG::init_source (j_decompress_ptr cinfo)
 {
     // DO NOTHING
@@ -195,26 +193,17 @@ void CImageLoaderJPG::my_format_message (j_common_ptr cinfo, char * buffer)
 
 }
 
-#endif // _IRR_COMPILE_WITH_LIBJPEG_
-
-
 //---------------------------------------------------------------------------
 //! returns true if the file maybe is able to be loaded by this class
 bool CImageLoaderJPG::isALoadableFileFormat(io::IReadFile* file)
 {
-#ifndef _IRR_COMPILE_WITH_LIBJPEG_    
-    return false;    
-#else
-    
-    if (!file)
+	if (!file)
         return false;
 
     s32 jfif = 0;
     file->seek(6);
     file->read(&jfif, sizeof(s32));
     return (jfif == 0x4a464946 || jfif == 0x4649464a);
-
-#endif
 }
 
 //---------------------------------------------------------------------------
@@ -222,10 +211,6 @@ bool CImageLoaderJPG::isALoadableFileFormat(io::IReadFile* file)
 //! creates a surface from the file
 IImage* CImageLoaderJPG::loadImage(io::IReadFile* file)
 {
-#ifndef _IRR_COMPILE_WITH_LIBJPEG_
-    return 0;
-#else
-
     //! return if the header is false
     if (!isALoadableFileFormat(file))
     {   LOGGER.log("Неправильный заголовок JPG файла.", io::ELL_ERROR);
@@ -343,8 +328,6 @@ IImage* CImageLoaderJPG::loadImage(io::IReadFile* file)
     delete [] input;
 
     return image;
-
-#endif
 }
 
 //---------------------------------------------------------------------------

@@ -8,13 +8,11 @@
 //|     Copyright (c) 2004-2009 by Zhuk Dmitry, Krasnoyarsk - Moscow
 //|                      All Rights Reserved.
 //|-------------------------------------------------------------------------
+
 #include "CZipReader.h"
 #include <io/ILogger.h>
 
-//-----------------------------------------------------------------------------
-#ifdef _IRR_COMPILE_WITH_ZLIB_
 #include <zlib/zlib.h>
-#endif // compile with zlib
 
 //-----------------------------------------------------------------------------
 namespace my {
@@ -195,8 +193,6 @@ IReadFile* CZipReader::openFile(s32 index)
         }
     case 8:
         {
-            #ifdef _IRR_COMPILE_WITH_ZLIB_
-            
             u32 uncompressedSize = FileList[index].header.DataDescriptor.UncompressedSize;          
             u32 compressedSize = FileList[index].header.DataDescriptor.CompressedSize;
 
@@ -253,10 +249,6 @@ IReadFile* CZipReader::openFile(s32 index)
             }
             else
                 return io::createMemReadFile ( pBuf, uncompressedSize, FileList[index].simpleFileName.c_str(), true);
-            
-            #else
-            return 0; // zlib not compiled, we cannot decompress the data.
-            #endif
         }
         break;
     default:

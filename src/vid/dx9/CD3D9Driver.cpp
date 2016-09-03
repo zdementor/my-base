@@ -12,7 +12,6 @@
 
 //----------------------------------------------------------------------------
 #if MY_PLATFORM == MY_PLATFORM_WIN32
-#ifdef _IRR_COMPILE_WITH_DIRECTX_9_
 //----------------------------------------------------------------------------
 
 #include "CD3D9Texture.h" 
@@ -2022,16 +2021,11 @@ CNullGPUProgram* CD3D9Driver::_createGPUProgram(u32 uniforms, u32 lightcnt,
 	return gpu_prog;
 }
 
-//----------------------------------------------------------------------------
-#endif // _IRR_COMPILE_WITH_DIRECTX_9_
-//----------------------------------------------------------------------------
-
 //! creates a video driver
 __MY_EXPORT__ IVideoDriver* createDirectX9Driver(
 	SExposedVideoData &out_video_data,
 	E_TEXTURE_FILTER textureFilter)
 {
-#ifdef _IRR_COMPILE_WITH_DIRECTX_9_
 	CD3D9Driver* dx9 =  new CD3D9Driver(out_video_data.WindowSize);
     if (!dx9->_initDriver(out_video_data))
     {
@@ -2041,9 +2035,6 @@ __MY_EXPORT__ IVideoDriver* createDirectX9Driver(
 	else
 		dx9->setTextureFilter(textureFilter);
     return dx9;
-#else
-    return 0;
-#endif // _IRR_COMPILE_WITH_DIRECTX_9_
 }
 
 //----------------------------------------------------------------------------

@@ -23,7 +23,6 @@ namespace img {
 class CImageSaverJPG : public CImageSaver
 {
 private:
-    #ifdef _IRR_COMPILE_WITH_LIBJPEG_
     /* */
     static void my_error_exit(j_common_ptr cinfo);
 
@@ -35,8 +34,6 @@ private:
 
     /* Format a message string for the most recent JPEG error or message */
     static void my_format_message (j_common_ptr cinfo, char * buffer);
-
-    #endif
 
 public:
 

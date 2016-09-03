@@ -12,7 +12,6 @@
 #define COpenGLTextureHPP
 //---------------------------------------------------------------------------
 
-#include "../CompileConf.h"
 #include "../CNullHardwareTexture.h"
 
 #include "COpenGLDriver.h"

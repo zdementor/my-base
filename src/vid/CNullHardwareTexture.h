@@ -12,10 +12,6 @@
 #define CNullHardwareTextureHPP
 //----------------------------------------------------------------------------
 
-#include "../CompileConf.h"
-
-//----------------------------------------------------------------------------
-
 #include <vid/ITexture.h> 
 #include <img/IImage.h>
 #include "CNullDriver.h"

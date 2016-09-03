@@ -8,11 +8,8 @@
 //|     Copyright (c) 2004-2009 by Zhuk Dmitry, Krasnoyarsk - Moscow
 //|                      All Rights Reserved.
 //|-------------------------------------------------------------------------
-#include "../CompileConf.h"
 
-#ifdef _IRR_COMPILE_WITH_LIBPNG_
 #include <png.h>
-#endif
 
 #include "CImageLoaderPNG.h"
 #include <string.h>
@@ -25,9 +22,7 @@
 namespace my { 
 namespace img { 
 //--------------------------------------------------------------------    
-#ifdef _IRR_COMPILE_WITH_LIBPNG_
 
-//--------------------------------------------------------------------
 // PNG function for error handling 
 static void png_cpexcept_error(png_structp png_ptr, png_const_charp msg) 
 { 
@@ -53,7 +48,6 @@ void user_read_data_fcn(png_structp png_ptr,png_bytep data, png_size_t length)
    if (check != length) 
 	   png_error(png_ptr, "Read Error"); 
 } 
-#endif // _IRR_COMPILE_WITH_LIBPNG_
 
 //--------------------------------------------------------------------
 CImageLoaderPng::CImageLoaderPng()
@@ -71,28 +65,18 @@ CImageLoaderPng::~CImageLoaderPng()
 //! based on the file extension (e.g. ".tga") 
 bool CImageLoaderPng::isALoadableFileExtension(const c8* fileName) 
 { 
-#ifdef _IRR_COMPILE_WITH_LIBPNG_
-
 	// jox: added fix for file extension check by jox
 	const c8* ext = strrchr(fileName, '.');
 
 	if (ext == 0) return false;
 	
 	return (strstr(ext, ".PNG") != 0) || (strstr(ext, ".png") != 0); 
-
-#else
-
-	return false;
-
-#endif // #ifdef _IRR_COMPILE_WITH_LIBPNG_
 } 
 
 //--------------------------------------------------------------------
 //! returns true if the file maybe is able to be loaded by this class 
 bool CImageLoaderPng::isALoadableFileFormat(io::IReadFile* file) 
 { 
-#ifdef _IRR_COMPILE_WITH_LIBPNG_
-
 	if (!file)
 		return false; 
 
@@ -105,20 +89,12 @@ bool CImageLoaderPng::isALoadableFileFormat(io::IReadFile* file)
 		return false; 
 
 	return true; //if we are here then it must be a png 
-
-#else 
-
-	return false;
-
-#endif // #ifdef _IRR_COMPILE_WITH_LIBPNG_
 } 
 
 //--------------------------------------------------------------------
 // load in the image data 
 IImage* CImageLoaderPng::loadImage(io::IReadFile* file) 
 { 
-#ifdef _IRR_COMPILE_WITH_LIBPNG_
-
 	if (!file) 
 		return 0; 
 
@@ -288,27 +264,13 @@ IImage* CImageLoaderPng::loadImage(io::IReadFile* file)
 		png_destroy_read_struct(&png_ptr,&info_ptr, 0);   // Clean up memory 
 
 	return image; 
-
-#else
-
-	return 0;
-
-#endif #ifdef _IRR_COMPILE_WITH_LIBPNG_
 } 
 
 //--------------------------------------------------------------------
 const unsigned char* CImageLoaderPng::ReadRow(void *row_ptr) 
 { 
-#ifdef _IRR_COMPILE_WITH_LIBPNG_
-
    png_read_row((png_structp)row_ptr, (png_bytep)g_png_load_buffer, 0); 
    return (const unsigned char*)g_png_load_buffer; 
-
-#else
-
-	return 0;
-
-#endif // #ifdef _IRR_COMPILE_WITH_LIBPNG_
 } 
 
 //--------------------------------------------------------------------
@@ -321,4 +283,3 @@ IImageLoader* createImageLoaderPNG()
 }// end namespace img
 }//end namespace my
 //--------------------------------------------------------------------
-
