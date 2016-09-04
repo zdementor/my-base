@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/01/16 19:14:45.
+** Generated automatically by tolua++-1.0.92 on 09/03/16 17:28:33.
 */
 
 #ifndef __cplusplus
@@ -46326,6 +46326,198 @@ static int tolua_MyLuaBind_vid_ITexture_getColorFormat00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: getType of class  vid::ITexture */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_ITexture_getType00
+static int tolua_MyLuaBind_vid_ITexture_getType00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::ITexture",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::ITexture* self = (vid::ITexture*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getType'",NULL);
+#endif
+ {
+  vid::E_TEXTURE_TYPE tolua_ret = (vid::E_TEXTURE_TYPE)  self->getType();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getType'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getFormat of class  vid::ITexture */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_ITexture_getFormat00
+static int tolua_MyLuaBind_vid_ITexture_getFormat00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::ITexture",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::ITexture* self = (vid::ITexture*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getFormat'",NULL);
+#endif
+ {
+  vid::E_TEXTURE_FORMAT tolua_ret = (vid::E_TEXTURE_FORMAT)  self->getFormat();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getFormat'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: hasMipMaps of class  vid::ITexture */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_ITexture_hasMipMaps00
+static int tolua_MyLuaBind_vid_ITexture_hasMipMaps00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::ITexture",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::ITexture* self = (vid::ITexture*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'hasMipMaps'",NULL);
+#endif
+ {
+  bool tolua_ret = (bool)  self->hasMipMaps();
+ tolua_pushboolean(tolua_S,(bool)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'hasMipMaps'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getMaxMipMapLevels of class  vid::ITexture */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_ITexture_getMaxMipMapLevels00
+static int tolua_MyLuaBind_vid_ITexture_getMaxMipMapLevels00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::ITexture",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::ITexture* self = (vid::ITexture*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getMaxMipMapLevels'",NULL);
+#endif
+ {
+  unsigned tolua_ret = (unsigned)  self->getMaxMipMapLevels();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getMaxMipMapLevels'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: isCompressed of class  vid::ITexture */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_ITexture_isCompressed00
+static int tolua_MyLuaBind_vid_ITexture_isCompressed00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::ITexture",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::ITexture* self = (vid::ITexture*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'isCompressed'",NULL);
+#endif
+ {
+  bool tolua_ret = (bool)  self->isCompressed();
+ tolua_pushboolean(tolua_S,(bool)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'isCompressed'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: isRenderTarget of class  vid::ITexture */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_ITexture_isRenderTarget00
+static int tolua_MyLuaBind_vid_ITexture_isRenderTarget00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::ITexture",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::ITexture* self = (vid::ITexture*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'isRenderTarget'",NULL);
+#endif
+ {
+  bool tolua_ret = (bool)  self->isRenderTarget();
+ tolua_pushboolean(tolua_S,(bool)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'isRenderTarget'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: getSingleton of class  vid::IVideoDriver */
 #ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_getSingleton00
 static int tolua_MyLuaBind_vid_IVideoDriver_getSingleton00(lua_State* tolua_S)
@@ -57858,6 +58050,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
  tolua_module(tolua_S,"vid",0);
  tolua_beginmodule(tolua_S,"vid");
   tolua_constant(tolua_S,"MY_MATERIAL_MAX_LAYERS",vid::MY_MATERIAL_MAX_LAYERS);
+  tolua_constant(tolua_S,"MY_MAX_COLOR_ATTACHEMENTS",vid::MY_MAX_COLOR_ATTACHEMENTS);
   tolua_constant(tolua_S,"EDF_NULL",vid::EDF_NULL);
   tolua_constant(tolua_S,"EDF_DIRECTX",vid::EDF_DIRECTX);
   tolua_constant(tolua_S,"EDF_OPENGL",vid::EDF_OPENGL);
@@ -60349,6 +60542,12 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
    tolua_function(tolua_S,"getOriginalSize",tolua_MyLuaBind_vid_ITexture_getOriginalSize00);
    tolua_function(tolua_S,"getSize",tolua_MyLuaBind_vid_ITexture_getSize00);
    tolua_function(tolua_S,"getColorFormat",tolua_MyLuaBind_vid_ITexture_getColorFormat00);
+   tolua_function(tolua_S,"getType",tolua_MyLuaBind_vid_ITexture_getType00);
+   tolua_function(tolua_S,"getFormat",tolua_MyLuaBind_vid_ITexture_getFormat00);
+   tolua_function(tolua_S,"hasMipMaps",tolua_MyLuaBind_vid_ITexture_hasMipMaps00);
+   tolua_function(tolua_S,"getMaxMipMapLevels",tolua_MyLuaBind_vid_ITexture_getMaxMipMapLevels00);
+   tolua_function(tolua_S,"isCompressed",tolua_MyLuaBind_vid_ITexture_isCompressed00);
+   tolua_function(tolua_S,"isRenderTarget",tolua_MyLuaBind_vid_ITexture_isRenderTarget00);
   tolua_endmodule(tolua_S);
  tolua_endmodule(tolua_S);
  tolua_module(tolua_S,"vid",0);

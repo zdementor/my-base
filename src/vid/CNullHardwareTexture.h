@@ -52,6 +52,8 @@ public:
 	virtual bool isCompressed()
 	{ return m_IsCompressed; }
 
+	virtual bool isRenderTarget() { return false; }
+
 protected:
 
 	virtual bool createHardwareTexture() { return false; }

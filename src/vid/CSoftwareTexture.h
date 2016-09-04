@@ -64,6 +64,8 @@ public:
 
 	virtual bool isCompressed() { return false; }
 
+	virtual bool isRenderTarget() { return false; }
+
 private:
 
     //! returns the size of a texture which would be the optimize size for rendering it

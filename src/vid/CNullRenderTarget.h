@@ -19,22 +19,56 @@ namespace my {
 namespace vid {
 //---------------------------------------------------------------------------
 
-#define MY_VID_MAX_COLOR_ATTACHEMENTS 4
-
 class __MY_VID_LIB_API__ CNullRenderTarget : public IRenderTarget
 {
 public:
+
 	CNullRenderTarget();
 	virtual ~CNullRenderTarget();
 
-	virtual ITexture* getColorAttachement(u32 attachIndex);
+	virtual bool attachColorTexture(
+		u32 attachIndex, ITexture *colorTex)
+	{
+		return false;
+	}
 
-	virtual u32 getColorAttachementsCount();
+	virtual bool attachColorTexture(
+		u32 attachIndex, core::dimension2di &size, img::E_COLOR_FORMAT format)
+	{
+		return false;
+	}
 
-	virtual ITexture* getDepthAttachement();
-	virtual ITexture* getStencilAttachement();
+	virtual ITexture* getColorAttachement(u32 attachIndex)
+	{
+		if (attachIndex >= m_ColorAttachementsCount)
+			return NULL;
+		return m_ColorAttachements[attachIndex];
+	}
+
+	virtual u32 getColorAttachementsCount()
+	{ return m_ColorAttachementsCount; }
+
+	virtual bool attachDepthTexture(
+		ITexture *dephTex)
+	{
+		return false;
+	}
+
+	virtual bool attachDepthTexture(
+		core::dimension2di &size, img::E_COLOR_FORMAT format)
+	{
+		return false;
+	}
+
+	virtual ITexture* getDepthAttachement()
+	{ return m_DepthAttachement; }
+
 private:
-	ITexture *m_ColorAttachements[MY_VID_MAX_COLOR_ATTACHEMENTS];
+
+	ITexture *m_ColorAttachements[MY_MAX_COLOR_ATTACHEMENTS];
+	ITexture *m_DepthAttachement;
+
+	u32 m_ColorAttachementsCount;
 };
 
 //---------------------------------------------------------------------------

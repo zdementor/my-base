@@ -25,12 +25,19 @@ namespace vid {
 class __MY_VID_LIB_API__ IRenderTarget : public IUnknown
 {
 public:
-	virtual ITexture* getColorAttachement(u32 attachIndex = 0) = 0;
 
+	virtual bool attachColorTexture(
+		u32 attachIndex, ITexture *colorTex) = 0;
+	virtual bool attachColorTexture(
+		u32 attachIndex, core::dimension2di &size, img::E_COLOR_FORMAT format) = 0;
+	virtual ITexture* getColorAttachement(u32 attachIndex = 0) = 0;
 	virtual u32 getColorAttachementsCount() = 0;
 
+	virtual bool attachDepthTexture(
+		ITexture *depthTex) = 0;
+	virtual bool attachDepthTexture(
+		core::dimension2di &size, img::E_COLOR_FORMAT format) = 0;
 	virtual ITexture* getDepthAttachement() = 0;
-	virtual ITexture* getStencilAttachement() = 0;
 };
 
 //---------------------------------------------------------------------------

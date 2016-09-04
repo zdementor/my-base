@@ -1165,7 +1165,7 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 						rtt_name.sprintf("%simposter_%s_%03d_%03d.tga",
 							tmppath, fname.c_str(), v, a);
 
-						rtt = m_VideoDriver.getTexture(rtt_name.c_str());
+						rtt = m_VideoDriver.findTexture(rtt_name.c_str());
 
 						if (rtt)
 						{
@@ -1177,8 +1177,8 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 							rtt_loaded = false;
 							rtt = m_VideoDriver.createRenderTargetTexture(
 								core::dimension2di(imp_tex_res, imp_tex_res));	
-							m_VideoDriver.setRenderTarget(NULL);
-							m_VideoDriver.setRenderTarget(rtt, true, true, imp_bk_color);
+							m_VideoDriver.setColorRenderTarget(NULL);
+							m_VideoDriver.setColorRenderTarget(rtt, true, true, imp_bk_color);
 						}
 						imp_tex_cnt++;
 
@@ -1273,7 +1273,7 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 				}
 			}
 		}
-		m_VideoDriver.setRenderTarget(NULL);
+		m_VideoDriver.setColorRenderTarget(NULL);
 
 		u32 tcnt = bill_textures.size();
 		for (u32 t = 0; t < tcnt; t++)

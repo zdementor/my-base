@@ -779,18 +779,6 @@ vid::ITexture* CNullDriver::_createDeviceDependentTexture(core::dimension2di &si
 
 //---------------------------------------------------------------------------
 
-//! sets a render target
-bool CNullDriver::setRenderTarget(
-	ITexture* texture,
-	bool clearBackBuffer, bool clearZBuffer, 
-	img::SColor color
-	)
-{
-	return false;
-}
-
-//---------------------------------------------------------------------------
-
 //! sets a viewport
 void CNullDriver::setViewPort(const core::rect<s32>& area)
 {

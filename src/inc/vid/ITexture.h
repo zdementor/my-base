@@ -96,6 +96,9 @@ public:
 
 	//! return true if this texture is compressed
 	virtual bool isCompressed() = 0;
+
+	//! return true if this texture able to serve as render target
+	virtual bool isRenderTarget() = 0;
 };
 
 //---------------------------------------------------------------------------

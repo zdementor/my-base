@@ -8,11 +8,11 @@
 //|     Copyright (c) 2004-2009 by Zhuk Dmitry, Krasnoyarsk - Moscow
 //|                      All Rights Reserved.
 //|-------------------------------------------------------------------------
-#ifndef CD3D9TextureHPP
-#define CD3D9TextureHPP
+#ifndef CD3D9RenderTargetTextureHPP
+#define CD3D9RenderTargetTextureHPP
 //----------------------------------------------------------------------------
 
-#include "../CNullHardwareTexture.h" 
+#include "CD3D9Texture.h" 
 
 #include <d3d/d3d9.h>
 
@@ -21,39 +21,25 @@ namespace my {
 namespace vid {
 //----------------------------------------------------------------------------
 
-class CD3D9Texture : public CNullHardwareTexture
+class CD3D9RenderTargetTexture : public CD3D9Texture
 {
 public:
 
-	CD3D9Texture(img::IImage* image, u32 flags);
-	CD3D9Texture(core::dimension2di &size, img::E_COLOR_FORMAT format, u32 flags);
-    virtual ~CD3D9Texture();
+    CD3D9RenderTargetTexture(const core::dimension2di &size);
+    virtual ~CD3D9RenderTargetTexture();
 
-	// interface CNullHardwareTexture
+	// interface CD3D9Texture
 
-	virtual void clear();
+	virtual img::IImage* lock(u32 level);
+	virtual void unlock(u32 level);
 
-    virtual img::IImage* lock(u32 level);
-    virtual void unlock(u32 level);
+	virtual bool isRenderTarget() { return true; }
 
-	virtual bool freeImageData();
+	// interface CD3D9RenderTargetTexture
 
-    virtual void regenerateMipMapLevels();
+	IDirect3DSurface9* getRenderTargetSurface();
 
-	virtual void* getHardwareTexture() { return (void*)Texture; }
-
-protected:
-
-	CD3D9Texture();
-
-	virtual bool createHardwareTexture();
-
-	virtual bool createTextureLevel(u32 level, void *data, u32 dataSize, img::E_COLOR_FORMAT format);
-
-	void _init();
-
-    IDirect3DDevice9* Device;
-    IDirect3DTexture9* Texture;
+private:
 };
 
 //----------------------------------------------------------------------------
@@ -61,5 +47,5 @@ protected:
 } // end namespace my
 //----------------------------------------------------------------------------
 
-#endif 
+#endif // #ifndef CD3D9RenderTargetTextureHPP
 

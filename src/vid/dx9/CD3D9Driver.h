@@ -38,11 +38,8 @@ public:
 
     virtual void setTransform(E_TRANSFORMATION_STATE state, const core::matrix4& mat);
 
-    virtual bool setRenderTarget(
-		ITexture* texture,
-		bool clearBackBuffer=false, bool clearZBuffer=false, 
-		img::SColor color = img::SColor(0,0,0,0)
-		);
+    virtual bool setColorRenderTarget(ITexture* texture,
+		bool clearBackBuffer, bool clearZBuffer,  img::SColor color);
 
     virtual void setViewPort(const core::rect<s32>& area);
 

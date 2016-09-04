@@ -15,6 +15,7 @@
 //----------------------------------------------------------------------------
 
 #include "CD3D9Texture.h" 
+#include "CD3D9RenderTargetTexture.h" 
 #include "CD3D9GPUProgram.h"
 #include "CD3D9RenderBuffer.h"
 
@@ -693,29 +694,25 @@ void CD3D9Driver::setTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag, bool enab
 
 //----------------------------------------------------------------------------
 
-//! sets a render target
-bool CD3D9Driver::setRenderTarget(
-	ITexture* texture,		
-	bool clearBackBuffer, bool clearZBuffer, 
-	img::SColor color
-	)
+bool CD3D9Driver::setColorRenderTarget(ITexture* texture,		
+	bool clearBackBuffer, bool clearZBuffer, img::SColor color)
 {
+    CD3D9RenderTargetTexture *rtt = NULL;
+
     // check for valid render target
 
-    CD3D9Texture* tex = (CD3D9Texture*)texture;
-
-    if (texture && !tex->isRenderTarget())
+    if (texture && !texture->isRenderTarget())
     {
-        LOGGER.log("Tried to set a non render target texture as render target.",
-			io::ELL_ERROR);
+        LOGGER.logErr("Tried to set a non render target texture as render target.");
         return false;
     }
 
-    if (texture && (tex->getSize().Width > m_ScreenSize.Width || 
-        tex->getSize().Height > m_ScreenSize.Height ))
+    rtt = (CD3D9RenderTargetTexture*)texture;
+
+    if (rtt && (rtt->getSize().Width > m_ScreenSize.Width || 
+			rtt->getSize().Height > m_ScreenSize.Height ))
     {
-        LOGGER.log("Tried to set a render target texture which is bigger than the screen.",
-			io::ELL_ERROR);
+        LOGGER.logErr("Tried to set a render target texture which is bigger than the screen.");
         return false;
     }
 
@@ -723,13 +720,13 @@ bool CD3D9Driver::setRenderTarget(
 
     bool ret = true;
 
-    if (tex == 0)
+    if (rtt == 0)
     {
         if (PrevRenderTarget)
         {
             if (FAILED(pID3DDevice->SetRenderTarget(0, PrevRenderTarget)))
             {
-                LOGGER.log("Could not set back to previous render target.", io::ELL_ERROR);
+                LOGGER.logErr("Could not set back to previous render target.");
                 ret = false;
             }
 
@@ -743,23 +740,23 @@ bool CD3D9Driver::setRenderTarget(
         // we want to set a new target. so do this.
 
         // store previous target
-
         if (!PrevRenderTarget)
+		{
             if (FAILED(pID3DDevice->GetRenderTarget(0, &PrevRenderTarget)))
             {
-                LOGGER.log("Could not get previous render target.", io::ELL_ERROR);
+                LOGGER.logErr("Could not get previous render target.");
                 return false;
             }
+		}
 
         // set new render target
-
-        if (FAILED(pID3DDevice->SetRenderTarget(0, tex->getRenderTargetSurface())))
+        if (FAILED(pID3DDevice->SetRenderTarget(0, rtt->getRenderTargetSurface())))
         {
-            LOGGER.log("Could not set render target.", io::ELL_ERROR);
+            LOGGER.logErr("Could not set render target.");
             return false;
         }
 
-        CurrentRendertargetSize = tex->getSize();
+        CurrentRendertargetSize = rtt->getSize();
     }
 
     if (clearBackBuffer || clearZBuffer)
@@ -1474,7 +1471,7 @@ void CD3D9Driver::makeScreenShot(ITexture* texture)
 //! Creates a render target texture.
 ITexture* CD3D9Driver::createRenderTargetTexture(core::dimension2d<s32> size)
 {
-    return new CD3D9Texture(size);
+    return new CD3D9RenderTargetTexture(size);
 }
 
 //---------------------------------------------------------------------------

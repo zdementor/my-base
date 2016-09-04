@@ -27,7 +27,6 @@ public:
 
     COpenGLTexture(img::IImage* surface, u32 flags);
 	COpenGLTexture(core::dimension2di &size, img::E_COLOR_FORMAT format, u32 flags);
-	COpenGLTexture(core::dimension2d<s32> size);
     virtual ~COpenGLTexture();
 
 	virtual void clear();
@@ -41,7 +40,9 @@ public:
 
 	virtual void* getHardwareTexture() { return (void*)m_TextureName.v; }
 
-private:
+protected:
+
+	COpenGLTexture();
 
 	virtual bool createHardwareTexture();
 
@@ -62,7 +63,6 @@ private:
 	GLenum m_PixelFormat;
 	GLenum m_PixelType;
 
-	bool m_RenderTarget;
 	bool m_Created;
 };
 

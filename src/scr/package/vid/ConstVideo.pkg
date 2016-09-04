@@ -5,7 +5,8 @@ namespace vid {
 
 enum
 {
-    MY_MATERIAL_MAX_LAYERS = 4
+    MY_MATERIAL_MAX_LAYERS = 4,
+	MY_MAX_COLOR_ATTACHEMENTS = 4,
 };
 
 //----------------------------------------------------------------------------

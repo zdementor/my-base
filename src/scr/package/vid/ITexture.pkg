@@ -10,10 +10,10 @@ class ITexture
     //! \return Returns a pointer to the pixel data. The format of the pixel can
     //! be determinated by using getColorFormat(). NULL is returned, if
     //! the texture cannot be locked.
-	virtual img::IImage* lock();
+	img::IImage* lock();
 
     //! Unlock function. Must be called after a lock() to the texture.
-    virtual void unlock();
+    void unlock();
 
     //! Returns original size of the texture. The texture is usually
     //! scaled, if it was created with an unoptimal size. For example if the size
@@ -23,16 +23,34 @@ class ITexture
     //! of the original texture. Use ITexture::getSize() if you want to know 
     //! the real size it has now stored in the system.
     //! \return Returns the original size of the texture.
-    virtual const core::dimension2di& getOriginalSize();
+    const core::dimension2di& getOriginalSize();
 
     //! Returns (=size) of the texture.
     //! \return Returns the size of the texture.
-    virtual const core::dimension2di& getSize();
+    const core::dimension2di& getSize();
 
     //! Returns the color format of texture. This format is in most cases
     //! ECF_A1R5G5B5 or ECF_A8R8G8B8.
     //! \return Returns the color format of texture.
-    virtual img::E_COLOR_FORMAT getColorFormat();
+    img::E_COLOR_FORMAT getColorFormat();
+
+	//! getting texture type
+    E_TEXTURE_TYPE getType();
+
+	//! getting texture format
+	E_TEXTURE_FORMAT getFormat();
+
+	//! return true if this texture has mip map levels
+	bool hasMipMaps();
+
+	//! return maximal amount of the texture mip levels
+	unsigned getMaxMipMapLevels();
+
+	//! return true if this texture is compressed
+	bool isCompressed();
+
+	//! return true if this texture able to serve as render target
+	bool isRenderTarget();
 };
 
 //----------------------------------------------------------------------------

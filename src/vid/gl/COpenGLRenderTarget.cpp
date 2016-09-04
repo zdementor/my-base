@@ -10,13 +10,14 @@
 //|-------------------------------------------------------------------------
 
 #include "COpenGLRenderTarget.h"
+#include "COpenGLDriver.h"
 
 //----------------------------------------------------------------------------
 namespace my {
 namespace vid {  
 //----------------------------------------------------------------------------
 
-COpenGLRenderTarget::COpenGLRenderTarget()
+COpenGLRenderTarget::COpenGLRenderTarget(const core::dimension2di &size)
 	: CNullRenderTarget()
 {
 }

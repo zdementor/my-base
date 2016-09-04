@@ -17,6 +17,7 @@ namespace vid {
 //----------------------------------------------------------------------------
 
 CNullRenderTarget::CNullRenderTarget()
+	: m_ColorAttachementsCount(0), m_DepthAttachement(0)
 {
 	memset(m_ColorAttachements, 0, sizeof(m_ColorAttachements));
 }
@@ -25,34 +26,6 @@ CNullRenderTarget::CNullRenderTarget()
 
 CNullRenderTarget::~CNullRenderTarget()
 {
-}
-
-//----------------------------------------------------------------------------
-
-ITexture* CNullRenderTarget::getColorAttachement(u32 attachIndex)
-{
-	return NULL;
-}
-
-//----------------------------------------------------------------------------
-
-u32 CNullRenderTarget::getColorAttachementsCount()
-{
-	return 0;
-}
-
-//----------------------------------------------------------------------------
-
-ITexture* CNullRenderTarget::getDepthAttachement()
-{
-	return NULL;
-}
-
-//----------------------------------------------------------------------------
-
-ITexture* CNullRenderTarget::getStencilAttachement()
-{
-	return NULL;
 }
 
 //----------------------------------------------------------------------------

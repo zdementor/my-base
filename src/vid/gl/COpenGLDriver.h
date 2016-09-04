@@ -80,9 +80,8 @@ public:
 
 	virtual void setTextureFilter(E_TEXTURE_FILTER textureFilter);
 
-	virtual bool setRenderTarget(
-		ITexture* texture, bool clearBackBuffer, 
-        bool clearZBuffer, img::SColor color);
+	virtual bool setColorRenderTarget(ITexture* texture,
+		bool clearBackBuffer, bool clearZBuffer, img::SColor color);
 
 	virtual ITexture* createRenderTargetTexture(core::dimension2d<s32> size);
         

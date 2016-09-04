@@ -93,9 +93,10 @@ public:
     virtual ITexture* addTexture(const core::dimension2d < s32 > & size,
 		const c8 * name, img::E_COLOR_FORMAT format = img::ECF_A8R8G8B8);
 
-	virtual bool setRenderTarget(ITexture* texture,
+	virtual bool setColorRenderTarget(ITexture* texture,
 		bool clearBackBuffer = false, bool clearZBuffer = false,
-		img::SColor color = img::SColor(0,0,0,0));
+		img::SColor color = img::SColor(0,0,0,0))
+	{ return false; }
 
     virtual void setViewPort(const core::rect<s32>& area);
 

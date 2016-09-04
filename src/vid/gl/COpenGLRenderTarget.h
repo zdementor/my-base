@@ -22,8 +22,9 @@ namespace vid {
 class __MY_VID_LIB_API__ COpenGLRenderTarget : public CNullRenderTarget
 {
 public:
-	COpenGLRenderTarget();
+	COpenGLRenderTarget(const core::dimension2di &size);
 	virtual ~COpenGLRenderTarget();
+private:
 };
 
 //---------------------------------------------------------------------------

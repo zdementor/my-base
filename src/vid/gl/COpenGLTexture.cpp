@@ -23,9 +23,20 @@ namespace vid {
 
 #include "OGLHelper.h"
 
-//! constructor 1
+//----------------------------------------------------------------------------
+
+COpenGLTexture::COpenGLTexture() 
+	: CNullHardwareTexture(), m_Created(false)
+{
+#if MY_DEBUG_MODE 
+	IUnknown::setClassName("COpenGLTexture");
+#endif
+}
+
+//----------------------------------------------------------------------------
+
 COpenGLTexture::COpenGLTexture(img::IImage* image, u32 flags) 
-	: CNullHardwareTexture(flags), m_RenderTarget(false), m_Created(false)
+	: CNullHardwareTexture(flags), m_Created(false)
 {
 #if MY_DEBUG_MODE 
 	IUnknown::setClassName("COpenGLTexture");
@@ -53,9 +64,8 @@ COpenGLTexture::COpenGLTexture(img::IImage* image, u32 flags)
 
 //----------------------------------------------------------------------------
 
-//! constructor 2
 COpenGLTexture::COpenGLTexture(core::dimension2di &size, img::E_COLOR_FORMAT format, u32 flags) 
-	: CNullHardwareTexture(flags), m_RenderTarget(false), m_Created(false)
+	: CNullHardwareTexture(flags), m_Created(false)
 {
 #if MY_DEBUG_MODE 
 	IUnknown::setClassName("COpenGLTexture");
@@ -77,63 +87,6 @@ COpenGLTexture::COpenGLTexture(core::dimension2di &size, img::E_COLOR_FORMAT for
 		img::ColorFormatStr[m_ColorFormat],
 		hasMipMaps() ? "on" : "off",
 		getSize().Width, getSize().Height);
-
-	m_Created = true;
-}
-
-//----------------------------------------------------------------------------
-
-//! rendertarget constructor
-COpenGLTexture::COpenGLTexture(core::dimension2d<s32> size)
-	: m_RenderTarget(true), m_Created(false)
-{
-#if MY_DEBUG_MODE 
-	IUnknown::setClassName("COpenGLTexture");    
-#endif
-
-	m_TextureName.v = NULL;
-
-	memset(m_ImageData, 0, MY_TEXTURE_MAX_MIP_LEVELS * sizeof(*m_ImageData));
-
-	m_MaxMipMapLevels = 1;
-	m_AutogenMipMaps = false;
-
-	m_ImageSize = size;
-	m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(size.Width);
-	m_TextureSize.Height = core::math::GetNearestPowerOfTwo(size.Height);
-   
-	m_Pitch = m_TextureSize.Width*4;
-	m_ColorFormat = img::ECF_A8B8G8R8;
-
-	m_ImageDataSizeBytes[0] = m_Pitch * m_TextureSize.Width;
-
-	createHardwareTexture();
-
-	ITexture *curtex0 = m_Driver->_getCurrentTexture(0);
-	if (this != curtex0)
-		m_Driver->_setTexture(0, this);
-
-	glTexImage2D(
-		GL_TEXTURE_2D, 
-		0, 
-		m_InternalFormat = GL_RGBA8, 
-		m_TextureSize.Width,
-		m_TextureSize.Height, 
-		0, 
-		m_PixelFormat = GL_RGBA, 
-		m_PixelType = GL_UNSIGNED_BYTE,
-		0);
-
-	if (this != curtex0)
-		m_Driver->_setTexture(0, curtex0);
-
-	core::stringc msg;
-	msg.sprintf(
-		"Created render target texture ( %s, mips %s, %dx%d )", 
-		img::ColorFormatStr[m_ColorFormat],
-		hasMipMaps() ? "on" : "off",
-		getSize().Width, getSize().Height);
-	LOGGER.log(msg.c_str());
 
 	m_Created = true;
 }
@@ -356,7 +309,7 @@ void COpenGLTexture::unlock(u32 level)
 
 	createTextureLevel(level,  m_ImageData[level], m_ImageDataSizeBytes[level], m_ColorFormat);
 
-	if (m_RenderTarget)
+	if (isRenderTarget())
 		SAFE_DELETE_ARRAY(m_ImageData[level]);
 }
 

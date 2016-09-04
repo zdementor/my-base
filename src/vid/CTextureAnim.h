@@ -136,6 +136,8 @@ public:
 
 	virtual bool isCompressed() { return false; }
 
+	virtual bool isRenderTarget() { return false; }
+
 private:
 
 	inline ITexture* _getCurrentTexture();

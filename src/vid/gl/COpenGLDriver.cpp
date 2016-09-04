@@ -16,6 +16,7 @@
 #include "COpenGLRenderBuffer.h"
 #include "COpenGLHardwareOcclusionQuery.h"
 #include "COpenGLTexture.h"
+#include "COpenGLRenderTargetTexture.h"
 
 #include <scn/ISceneManager.h>
 #include <io/ILogger.h>
@@ -1799,9 +1800,8 @@ void COpenGLDriver::setTextureFilter(E_TEXTURE_FILTER textureFilter)
 
 //---------------------------------------------------------------------------
 
-bool COpenGLDriver::setRenderTarget(
-	ITexture* texture, bool clearBackBuffer, bool clearZBuffer, img::SColor color
-	)
+bool COpenGLDriver::setColorRenderTarget(ITexture* texture,
+	bool clearBackBuffer, bool clearZBuffer, img::SColor color)
 {
     // check if we should set the previous RT back
 
@@ -1860,7 +1860,7 @@ bool COpenGLDriver::setRenderTarget(
 
 ITexture* COpenGLDriver::createRenderTargetTexture(core::dimension2d<s32> size)
 {
-	return new COpenGLTexture(size);
+	return new COpenGLRenderTargetTexture(size);
 }
 
 //---------------------------------------------------------------------------

@@ -163,7 +163,7 @@ public:
     //! \param texture: Texture to delete from the engines cache.
     virtual bool removeTexture(ITexture* texture) = 0;
 
-	//! Sets a new render target. 
+	//! Sets a new render target for the color buffer. 
     //! This will only work if the driver
     //! supports the EVDF_RENDER_TO_TARGET feature, which can be 
     //! queried with queryFeature(). Usually, rendering to textures is done in this
@@ -174,9 +174,9 @@ public:
 	//! 
     //! // ...
 	//! 
-    //! driver->setRenderTarget(target); // set render target
+    //! driver->setColorRenderTarget(target); // set render target
     //! // .. draw stuff here
-    //! driver->setRenderTarget(0);     // set previous render target
+    //! driver->setColorRenderTarget(0);     // set previous render target
     //! Please note that you cannot render 3D or 2D geometry with a render target as texture
     //! on it when you are rendering the scene into this render target at the same time. It is 
     //! usually only possible to render into a texture between the IVideoDriver::beginScene() and endScene()
@@ -192,11 +192,9 @@ public:
     //! buffer shares the zbuffer with the rendertarget, its zbuffer will be partially cleared 
     //! too with this.
     //! \return Returns true if sucessful and false if not. */
-    virtual bool setRenderTarget(
-		ITexture* texture,
+    virtual bool setColorRenderTarget(ITexture* texture,
         bool clearBackBuffer=true, bool clearZBuffer=true, 
-		img::SColor color = img::SColor(0,0,0,0)
-		) = 0;
+		img::SColor color = img::SColor(0,0,0,0)) = 0;
 
     //! Sets a new viewport. Every rendering operation is done into this
     //! new area.
