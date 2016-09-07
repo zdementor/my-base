@@ -83,7 +83,12 @@ public:
 	virtual bool setColorRenderTarget(ITexture* texture,
 		bool clearBackBuffer, bool clearZBuffer, img::SColor color);
 
-	virtual ITexture* createRenderTargetTexture(core::dimension2d<s32> size);
+	virtual ITexture* createRenderTargetTexture(const core::dimension2di &size);
+
+	virtual IRenderTarget* createRenderTarget(
+		const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags);
+	virtual IRenderTarget* createRenderTarget(
+		ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags);
         
 	virtual const core::vector3df& get3DPositionFromScreenCoordinates(
 		const core::position2di &scr_pos) const;

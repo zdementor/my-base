@@ -23,7 +23,7 @@ class __MY_VID_LIB_API__ CNullRenderTarget : public IRenderTarget
 {
 public:
 
-	CNullRenderTarget();
+	CNullRenderTarget(const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags);
 	virtual ~CNullRenderTarget();
 
 	virtual bool attachColorTexture(
@@ -69,6 +69,9 @@ private:
 	ITexture *m_DepthAttachement;
 
 	u32 m_ColorAttachementsCount;
+
+	core::dimension2di m_Size;
+	E_RENDER_TARGET_CREATION_FLAG m_Flags;
 };
 
 //---------------------------------------------------------------------------

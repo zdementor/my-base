@@ -1127,13 +1127,6 @@ IVideoModeList* CNullDriver::getVideoModeList()
 
 //---------------------------------------------------------------------------
 
-ITexture* CNullDriver::createRenderTargetTexture(core::dimension2d<s32> size)
-{
-    return 0;
-}
-
-//---------------------------------------------------------------------------
-
 ITexture* CNullDriver::createTexture(img::IImage* image)
 {
      if (!image)

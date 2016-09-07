@@ -13,6 +13,7 @@
 //---------------------------------------------------------------------------
 
 #include "../CNullRenderTarget.h"
+#include "COpenGLDriver.h"
 
 //---------------------------------------------------------------------------
 namespace my {
@@ -22,9 +23,11 @@ namespace vid {
 class __MY_VID_LIB_API__ COpenGLRenderTarget : public CNullRenderTarget
 {
 public:
-	COpenGLRenderTarget(const core::dimension2di &size);
+	COpenGLRenderTarget(const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags);
+	COpenGLRenderTarget(ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags);
 	virtual ~COpenGLRenderTarget();
 private:
+	GLuint m_FBO;
 };
 
 //---------------------------------------------------------------------------

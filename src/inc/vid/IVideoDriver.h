@@ -147,7 +147,7 @@ public:
     //! \return Returns a pointer to the created texture or 0 if the texture could not
     //! be created. If you no longer need the image, you should call ITexture::drop().
     //! See IUnknown::drop() for more information. */
-    virtual ITexture* createRenderTargetTexture(core::dimension2d<s32> size) = 0;
+    virtual ITexture* createRenderTargetTexture(const core::dimension2di &size) = 0;
 
 	//! Creates a texture.
     virtual ITexture* createTexture(img::IImage* image) = 0;
@@ -162,6 +162,12 @@ public:
     //! materials which are using this texture to null or another texture first.
     //! \param texture: Texture to delete from the engines cache.
     virtual bool removeTexture(ITexture* texture) = 0;
+
+	//! Creates a render target object.
+    virtual IRenderTarget* createRenderTarget(
+		const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags) = 0;
+	virtual IRenderTarget* createRenderTarget(
+		ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags) = 0;
 
 	//! Sets a new render target for the color buffer. 
     //! This will only work if the driver
@@ -195,6 +201,9 @@ public:
     virtual bool setColorRenderTarget(ITexture* texture,
         bool clearBackBuffer=true, bool clearZBuffer=true, 
 		img::SColor color = img::SColor(0,0,0,0)) = 0;
+
+	//! Sets a new render target for the whole rendering.
+    virtual bool setRenderTarget(IRenderTarget *renderTarget) = 0;
 
     //! Sets a new viewport. Every rendering operation is done into this
     //! new area.

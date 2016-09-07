@@ -16,6 +16,7 @@
 
 #include "CD3D9Texture.h" 
 #include "CD3D9RenderTargetTexture.h" 
+#include "CD3D9RenderTarget.h" 
 #include "CD3D9GPUProgram.h"
 #include "CD3D9RenderBuffer.h"
 
@@ -1465,10 +1466,28 @@ void CD3D9Driver::makeScreenShot(ITexture* texture)
 
 //----------------------------------------------------------------------------
 
-//! Creates a render target texture.
-ITexture* CD3D9Driver::createRenderTargetTexture(core::dimension2d<s32> size)
+ITexture* CD3D9Driver::createRenderTargetTexture(const core::dimension2di &size)
 {
-    return new CD3D9RenderTargetTexture(size);
+    return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+		new CD3D9RenderTargetTexture(size) : NULL;
+}
+
+//---------------------------------------------------------------------------
+
+IRenderTarget* CD3D9Driver::createRenderTarget(
+	const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags)
+{
+	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+		new CD3D9RenderTarget(size, flags) : NULL;
+}
+
+//---------------------------------------------------------------------------
+
+IRenderTarget* CD3D9Driver::createRenderTarget(
+	ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags)
+{
+	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+		new CD3D9RenderTarget(colorRenderTarget, flags) : NULL;
 }
 
 //---------------------------------------------------------------------------

@@ -57,7 +57,12 @@ public:
 
     virtual void makeScreenShot(ITexture* texture);
 
-	virtual ITexture* createRenderTargetTexture(core::dimension2d<s32> size);
+	virtual ITexture* createRenderTargetTexture(const core::dimension2di &size);
+
+	virtual IRenderTarget* createRenderTarget(
+		const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags);
+	virtual IRenderTarget* createRenderTarget(
+		ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags);
         
 	virtual IHardwareOcclusionQuery& getHardwareOcclusionQuery();
 

@@ -17,6 +17,7 @@
 #include "COpenGLHardwareOcclusionQuery.h"
 #include "COpenGLTexture.h"
 #include "COpenGLRenderTargetTexture.h"
+#include "COpenGLRenderTarget.h"
 
 #include <scn/ISceneManager.h>
 #include <io/ILogger.h>
@@ -784,7 +785,11 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
     case EVDF_ANISOTROPIC_FILTER:
         return MaxAnisotropyLevel > 0;
     case EVDF_RENDER_TO_TARGET:
-        return true;
+#if defined(GL_ARB_framebuffer_object)
+		return !!GLEW_ARB_framebuffer_object;
+#else
+        return false;
+#endif
     case EVDF_MIP_MAP:
         return true;
     case EVDF_STENCIL_BUFFER:
@@ -1879,9 +1884,28 @@ bool COpenGLDriver::setColorRenderTarget(ITexture* texture,
 
 //---------------------------------------------------------------------------
 
-ITexture* COpenGLDriver::createRenderTargetTexture(core::dimension2d<s32> size)
+ITexture* COpenGLDriver::createRenderTargetTexture(const core::dimension2di &size)
 {
-	return new COpenGLRenderTargetTexture(size);
+	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+		new COpenGLRenderTargetTexture(size) : NULL;
+}
+
+//---------------------------------------------------------------------------
+
+IRenderTarget* COpenGLDriver::createRenderTarget(
+	const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags)
+{
+	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+		new COpenGLRenderTarget(size, flags) : NULL;
+}
+
+//---------------------------------------------------------------------------
+
+IRenderTarget* COpenGLDriver::createRenderTarget(
+	ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags)
+{
+	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+		new COpenGLRenderTarget(colorRenderTarget, flags) : NULL;
 }
 
 //---------------------------------------------------------------------------

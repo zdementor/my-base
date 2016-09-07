@@ -16,8 +16,10 @@ namespace my {
 namespace vid {  
 //----------------------------------------------------------------------------
 
-CNullRenderTarget::CNullRenderTarget()
-	: m_ColorAttachementsCount(0), m_DepthAttachement(0)
+CNullRenderTarget::CNullRenderTarget(
+	const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags)
+	: m_ColorAttachementsCount(0), m_DepthAttachement(0),
+	m_Size(size), m_Flags(flags)
 {
 	memset(m_ColorAttachements, 0, sizeof(m_ColorAttachements));
 }

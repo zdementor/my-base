@@ -93,11 +93,6 @@ public:
     virtual ITexture* addTexture(const core::dimension2d < s32 > & size,
 		const c8 * name, img::E_COLOR_FORMAT format = img::ECF_A8R8G8B8);
 
-	virtual bool setColorRenderTarget(ITexture* texture,
-		bool clearBackBuffer = false, bool clearZBuffer = false,
-		img::SColor color = img::SColor(0,0,0,0))
-	{ return false; }
-
     virtual void setViewPort(const core::rect<s32>& area);
 
     virtual const core::rect<s32>& getViewPort() const;
@@ -136,10 +131,22 @@ public:
 
     virtual bool removeTexture(ITexture* texture);
 
-    virtual ITexture* createRenderTargetTexture(core::dimension2d<s32> size);
+	virtual ITexture* createRenderTargetTexture(const core::dimension2di &size) { return 0; }
 
     virtual ITexture* createTexture(img::IImage* image);
     virtual ITexture* createTexture(core::dimension2di &size, img::E_COLOR_FORMAT format);
+
+	virtual IRenderTarget* createRenderTarget(
+		const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags) { return 0; }
+	virtual IRenderTarget* createRenderTarget(
+		ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags) { return 0; }
+
+	virtual bool setColorRenderTarget(ITexture* texture,
+		bool clearBackBuffer = false, bool clearZBuffer = false,
+		img::SColor color = img::SColor(0,0,0,0))
+	{ return false; }
+
+	virtual bool setRenderTarget(IRenderTarget *renderTarget) { return false; }
 
     virtual const c8* getName()
 	{ return DriverTypeReadableName[m_DriverType]; }

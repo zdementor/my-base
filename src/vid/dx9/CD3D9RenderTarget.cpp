@@ -10,14 +10,24 @@
 //|-------------------------------------------------------------------------
 
 #include "CD3D9RenderTarget.h"
+#include "CD3D9Driver.h"
 
 //----------------------------------------------------------------------------
 namespace my {
 namespace vid {  
 //----------------------------------------------------------------------------
 
-CD3D9RenderTarget::CD3D9RenderTarget()
-	: CNullRenderTarget()
+CD3D9RenderTarget::CD3D9RenderTarget(
+	const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags)
+	: CNullRenderTarget(size, flags)
+{
+}
+
+//----------------------------------------------------------------------------
+
+CD3D9RenderTarget::CD3D9RenderTarget(
+	ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags)
+	: CNullRenderTarget(colorRenderTarget->getSize(), flags)
 {
 }
 
