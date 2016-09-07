@@ -39,7 +39,7 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize)
 	: CNullDriver(screenSize),
 HWnd(0), HDc(0), m_RenderContext(0), m_ResourceContext(0),
 screenshot(0), screenshot_counter(0), StencilFogTexture(0),
-RenderTargetTexture(0), m_OpenGLHardwareOcclusionQuery(0)
+m_RenderTargetTexture(0), m_OpenGLHardwareOcclusionQuery(0)
 {
 #if MY_DEBUG_MODE 
 	IVideoDriver::setClassName("COpenGLDriver::IVideoDriver");
@@ -1803,55 +1803,76 @@ void COpenGLDriver::setTextureFilter(E_TEXTURE_FILTER textureFilter)
 bool COpenGLDriver::setColorRenderTarget(ITexture* texture,
 	bool clearBackBuffer, bool clearZBuffer, img::SColor color)
 {
+	COpenGLRenderTargetTexture *rtt = NULL;
+
+    // check for valid render target
+
+    if (texture && !texture->isRenderTarget())
+    {
+        LOGGER.logErr("Tried to set a non render target texture as render target.");
+        return false;
+    }
+
+    rtt = (COpenGLRenderTargetTexture*)texture;
+
+    if (rtt && (rtt->getSize().Width > m_ScreenSize.Width || 
+			rtt->getSize().Height > m_ScreenSize.Height ))
+    {
+        LOGGER.logErr("Tried to set a render target texture which is bigger than the screen.");
+        return false;
+    }
+
     // check if we should set the previous RT back
 
     bool ret = true;
 
-	if (RenderTargetTexture && texture != RenderTargetTexture)
+	if (m_RenderTargetTexture && rtt != m_RenderTargetTexture)
     {
 		// flush old render target
-		_setTexture(0, RenderTargetTexture);
+		_setTexture(0, m_RenderTargetTexture);
+
+		const core::dimension2di &rtsize = m_RenderTargetTexture->getSize();
 
 		// Reading GL texture data in inversed order,
 		// because frame buffer have Y-inversed pixel data
-		u32 hsrc = 0, hdst = CurrentRendertargetSize.Height - 1;
-		for (; hsrc < (u32)CurrentRendertargetSize.Height; hsrc ++, hdst--)
+		u32 hsrc = 0, hdst = rtsize.Height - 1;
+		for (; hsrc < (u32)rtsize.Height; hsrc ++, hdst--)
 			glCopyTexSubImage2D(GL_TEXTURE_2D, 0,
-				0, hdst, 0, hsrc, CurrentRendertargetSize.Width, 1);
+				0, hdst, 0, hsrc, rtsize.Width, 1);
     }
 
-    if (texture == 0)
+    if (rtt == 0)
     {
-		CurrentRendertargetSize = core::dimension2d<s32>(0,0);
-		glViewport(0,0,m_ScreenSize.Width,m_ScreenSize.Height);		
+		glViewport(0, 0, m_ScreenSize.Width,m_ScreenSize.Height);		
     }
     else
     {
         // we want to set a new target. so do this.
-		CurrentRendertargetSize = texture->getSize();
-        glViewport(0, 0, CurrentRendertargetSize.Width, CurrentRendertargetSize.Height);
+		const core::dimension2di &rtsize = rtt->getSize();
+        glViewport(0, 0, rtsize.Width, rtsize.Height);
  	}
 
-	_setTexture(0, texture);
+	_setTexture(0, rtt);
 
-	RenderTargetTexture = (COpenGLTexture*)texture;
+	m_RenderTargetTexture = (COpenGLTexture*)rtt;
 
-    GLbitfield mask = 0;
-    if (clearBackBuffer)
-    {
-		glClearColor(
-			color.getRed() * inv_color, color.getGreen() * inv_color,
-            color.getBlue() * inv_color, color.getAlpha() * inv_color
-			);
-        mask |= GL_COLOR_BUFFER_BIT;
-    }
-    if (clearZBuffer)
-    {
-        glDepthMask(GL_TRUE);
-        mask |= GL_DEPTH_BUFFER_BIT;
-    }
-
-    glClear(mask);
+	if (clearBackBuffer || clearZBuffer)
+	{
+		GLbitfield mask = 0;
+		if (clearBackBuffer)
+		{
+			glClearColor(
+				color.getRed() * inv_color, color.getGreen() * inv_color,
+				color.getBlue() * inv_color, color.getAlpha() * inv_color);
+			mask |= GL_COLOR_BUFFER_BIT;
+		}
+		if (clearZBuffer)
+		{
+			glDepthMask(GL_TRUE);
+			mask |= GL_DEPTH_BUFFER_BIT;
+		}
+		glClear(mask);
+	}
 
     return ret; 
 }
@@ -1928,17 +1949,6 @@ bool COpenGLDriver::setNullContextCurrent()
 		return false;
 	}
 	return true;
-}
-
-//---------------------------------------------------------------------------
-
-// returns the current size of the screen or rendertarget
-core::dimension2d<s32> COpenGLDriver::getCurrentRenderTargetSize()
-{
-    if ( CurrentRendertargetSize.Width == 0 )
-        return m_ScreenSize;
-    else
-        return CurrentRendertargetSize;
 }
 
 //---------------------------------------------------------------------------

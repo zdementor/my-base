@@ -270,9 +270,6 @@ private:
     //! prints error if an error happened.
     void printGLError();
 
-	// returns the current size of the screen or rendertarget
-    core::dimension2d<s32> getCurrentRenderTargetSize();
-
 	virtual CNullGPUProgram* _createGPUProgram(u32 uniforms, u32 lightcnt,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader);
@@ -285,9 +282,7 @@ private:
     HGLRC m_RenderContext, m_ResourceContext; // Rendering Context
 #endif
     
-	COpenGLTexture *RenderTargetTexture;
-	
-	core::dimension2d<s32> CurrentRendertargetSize;
+	COpenGLTexture *m_RenderTargetTexture;
 
 #ifdef LINUX
     bool DoubleBuffered;

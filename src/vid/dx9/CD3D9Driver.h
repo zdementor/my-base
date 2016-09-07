@@ -93,7 +93,7 @@ public:
 	virtual void _setTexture(s32 stage, ITexture *texture);
 
 	IDirect3DDevice9 * _getDirect3DDevice()
-	{ return pID3DDevice; }
+	{ return m_D3DDevice; }
 
 	virtual bool _initDriver(SExposedVideoData &out_video_data);
 
@@ -177,10 +177,7 @@ private:
     virtual ITexture* _createDeviceDependentTexture(img::IImage* surface);
 	virtual ITexture* _createDeviceDependentTexture(core::dimension2di &size, img::E_COLOR_FORMAT format);
 
-	// returns the current size of the screen or rendertarget
-    core::dimension2d<s32> getCurrentRenderTargetSize();
-
-    //! Create An Empty D3D9 Texture
+	//! Create An Empty D3D9 Texture
     IDirect3DTexture9 * createEmptyD3D9Texture(s32 w, s32 h);
 
 	virtual CNullGPUProgram* _createGPUProgram(u32 uniforms, u32 lightcnt,
@@ -189,14 +186,13 @@ private:
 
     D3DPRESENT_PARAMETERS m_PresentParams;
 
-    HINSTANCE D3DLibrary;
-    IDirect3D9* pID3D;
-    IDirect3DDevice9* pID3DDevice;
+    HINSTANCE m_D3DLibrary;
+    IDirect3D9* m_D3D;
+    IDirect3DDevice9* m_D3DDevice;
 
-	IDirect3DSurface9* PrevRenderTarget;
-    core::dimension2d<s32> CurrentRendertargetSize;
+	IDirect3DSurface9* m_D3DRenderTargetSurface;
 
-    D3DCAPS9 Caps;
+    D3DCAPS9 m_D3DCaps;
 
     f32 MaxLightDistance;
     bool DeviceLost;
