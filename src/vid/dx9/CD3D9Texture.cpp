@@ -50,7 +50,7 @@ CD3D9Texture::CD3D9Texture(img::IImage* image, u32 flags)
 	}  
 
 	LOGGER.logInfo("Created texture ( %s, mips %s, %dx%d )", 
-		img::ColorFormatStr[m_ColorFormat],
+		img::getColorFormatName(m_ColorFormat),
 		hasMipMaps() ? "on" : "off",
 		getSize().Width, getSize().Height);
 }
@@ -72,7 +72,7 @@ CD3D9Texture::CD3D9Texture(core::dimension2di &size, img::E_COLOR_FORMAT format,
 	}  
     
 	LOGGER.logInfo("Created empty texture ( %s, mips %s, %dx%d )", 
-		img::ColorFormatStr[m_ColorFormat],
+		img::getColorFormatName(m_ColorFormat),
 		hasMipMaps() ? "on" : "off",
 		getSize().Width, getSize().Height);
 }
@@ -138,7 +138,7 @@ bool CD3D9Texture::createHardwareTexture()
 		break;
 	default:
 		LOGGER.logErr("Unsupported data format %s.",
-			img::ColorFormatStr[m_ColorFormat]);
+			img::getColorFormatName(m_ColorFormat));
 		return false;
 	}
 

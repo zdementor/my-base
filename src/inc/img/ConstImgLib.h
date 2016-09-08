@@ -55,9 +55,7 @@ enum E_COLOR_FORMAT
 	E_COLOR_FORMAT_FORCE_32BIT = 0xffffffff
 };
 
-//----------------------------------------------------------------------------
-
-static const c8* ColorFormatStr[E_COLOR_FORMAT_COUNT] =
+static const c8* ColorFormatName[E_COLOR_FORMAT_COUNT] =
 { 
 	"ECF_A1R5G5B5",
 	"ECF_R5G6B5", 
@@ -70,6 +68,9 @@ static const c8* ColorFormatStr[E_COLOR_FORMAT_COUNT] =
 	"ECF_DEPTH16",
 	"ECF_ALPHA32F",
 };
+
+MY_FORCEINLINE const c8* getColorFormatName(E_COLOR_FORMAT fmt)
+{ return ColorFormatName[fmt]; }
 
 //----------------------------------------------------------------------------
 

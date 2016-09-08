@@ -257,7 +257,7 @@ SColor CImage::getPixel(s32 x, s32 y) const
         }
 	default:
 		LOGGER.logErr("%s - Incorrect operation with image format %s.",
-			__FUNCTION__, ColorFormatStr[m_Format]);
+			__FUNCTION__, img::getColorFormatName(m_Format));
     }
     return SColor(0);
 }
@@ -305,7 +305,7 @@ void CImage::setPixel(s32 x, s32 y, const SColor &color)
 		break;
 	default:
 		LOGGER.logErr("%s - Incorrect operation with image format %s.",
-			__FUNCTION__, ColorFormatStr[m_Format]);
+			__FUNCTION__, img::getColorFormatName(m_Format));
     }
 }
 
@@ -363,7 +363,7 @@ void CImage::operate(E_IMAGE_OPERATION op, f32 arg)
 		break;
 	default:
 		LOGGER.logErr("%s - Incorrect operation with image format %s.",
-			__FUNCTION__, ColorFormatStr[m_Format]);
+			__FUNCTION__, img::getColorFormatName(m_Format));
     }
 }
 
@@ -439,7 +439,7 @@ void CImage::blendWith(const IImage *img, E_IMAGE_OPERATION op)
 		break;
 	default:
 		LOGGER.logErr("%s - Incorrect operation with image format %s.",
-			__FUNCTION__, ColorFormatStr[m_Format]);
+			__FUNCTION__, img::getColorFormatName(m_Format));
     }
 }
 
@@ -463,7 +463,7 @@ void CImage::smoothingFilter(bool rmask, bool gmask, bool bmask, bool amask)
 		break;
 	default:
 		LOGGER.logErr("%s - Incorrect operation with image format %s.",
-			__FUNCTION__, ColorFormatStr[m_Format]);
+			__FUNCTION__, img::getColorFormatName(m_Format));
 		return;
 	}
 
@@ -557,7 +557,7 @@ void CImage::stampingFilter()
 		break;
 	default:
 		LOGGER.logErr("%s - Incorrect operation with image format %s.",
-			__FUNCTION__, ColorFormatStr[m_Format]);
+			__FUNCTION__, getColorFormatName(m_Format));
 		return;
 	}
 				
@@ -656,7 +656,7 @@ void CImage::drawBorder(s32 x, s32 y, s32 x2, s32 y2, const SColor &color)
 		break;
 	default:
 		LOGGER.logErr("%s - Incorrect operation with image format %s.",
-			__FUNCTION__, ColorFormatStr[m_Format]);
+			__FUNCTION__, getColorFormatName(m_Format));
 		return;
 	}
 
@@ -746,7 +746,7 @@ bool CImage::convertTo(E_COLOR_FORMAT new_color_format)
 		break;
 	default:
 		LOGGER.logErr("%s - Incorrect operation with image format %s.",
-			__FUNCTION__, ColorFormatStr[m_Format]);
+			__FUNCTION__, getColorFormatName(m_Format));
 		return false;
 	}
 
@@ -1005,7 +1005,7 @@ void CImage::fill(const SColor &color)
 		break;
 	default:
 		LOGGER.logErr("%s - Incorrect operation with image format %s.",
-			__FUNCTION__, ColorFormatStr[m_Format]);
+			__FUNCTION__, img::getColorFormatName(m_Format));
 		return;
 	}
 
@@ -1028,7 +1028,7 @@ void CImage::floodFill(s32 startx, s32 starty, const SColor &color, const SColor
 		break;
 	default:
 		LOGGER.logErr("%s - Incorrect operation with image format %s.",
-			__FUNCTION__, ColorFormatStr[m_Format]);
+			__FUNCTION__, img::getColorFormatName(m_Format));
 		return;
 	}
 
@@ -1087,7 +1087,7 @@ bool CImage::requestToDecreaseSize(core::recti *newrect_out)
 		break;
 	default:
 		LOGGER.logErr("%s - Incorrect operation with image format %s.",
-			__FUNCTION__, ColorFormatStr[m_Format]);
+			__FUNCTION__, img::getColorFormatName(m_Format));
 		return false;
 	}
 

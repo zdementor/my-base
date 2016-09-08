@@ -79,7 +79,7 @@ bool CNullHardwareTexture::createEmptyTexture(core::dimension2di &size, img::E_C
 			format == img::ECF_DXT5))
 	{
 		LOGGER.logErr("Unsupported data format %s by your hardware.",
-			img::ColorFormatStr[m_ColorFormat]);
+			img::getColorFormatName(m_ColorFormat));
 		return false;
 	}
 
@@ -151,7 +151,7 @@ bool CNullHardwareTexture::createTextureFrom(img::IImage *image)
 			m_ColorFormat == img::ECF_DXT5))
 	{
 		LOGGER.logErr("Unsupported data format %s by your hardware.",
-			img::ColorFormatStr[m_ColorFormat]);
+			img::getColorFormatName(m_ColorFormat));
 		return false;
 	}
 
@@ -291,7 +291,7 @@ bool CNullHardwareTexture::createTextureLevel(u32 level, void *data, u32 dataSiz
 			format == img::ECF_DXT5))
 	{
 		LOGGER.logErr("Unsupported data format %s by your hardware.",
-			img::ColorFormatStr[m_ColorFormat]);
+			img::getColorFormatName(m_ColorFormat));
 		return false;
 	}
 

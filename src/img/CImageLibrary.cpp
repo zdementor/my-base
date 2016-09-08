@@ -85,7 +85,7 @@ IImage* CImageLibrary::createImageFromFile(const char* filename)
 	if (image)
     {
 		LOGGER.logInfo("Loaded image ( %s, %dx%d ): %s", 
-			img::ColorFormatStr[image->getColorFormat()],
+			img::getColorFormatName(image->getColorFormat()),
 			image->getDimension().Width, image->getDimension().Height,
 			filename);
 	}
@@ -101,7 +101,7 @@ IImage* CImageLibrary::createImageFromFile(io::IReadFile* file)
 	if (image)
     {
 		LOGGER.logInfo("Loaded image ( %s, %dx%d ): %s", 
-			img::ColorFormatStr[image->getColorFormat()],
+			img::getColorFormatName(image->getColorFormat()),
 			image->getDimension().Width, image->getDimension().Height,
 			file->getFileName());
 	}
@@ -121,7 +121,7 @@ IImage* CImageLibrary::createImageFromData(
 			format == ECF_DXT5))
 	{
 		LOGGER.logErr("Can't create %s compressed image without its data size",
-			ColorFormatStr[format]);
+			img::getColorFormatName(format));
 		return NULL;
 	}
 	return new CImage(format, size, data_size, data, own_data);
@@ -137,7 +137,7 @@ IImage* CImageLibrary::createEmptyImage(
 		format == ECF_DXT5)
 	{
 		LOGGER.logErr("Can't create empty image with %s format",
-			ColorFormatStr[format]);
+			img::getColorFormatName(format));
 		return NULL;
 	}
 	return new CImage(format, size);
@@ -153,7 +153,7 @@ IImage* CImageLibrary::createImageFromAnother(
 		format == ECF_DXT5)
 	{
 		LOGGER.logErr("Can't copy image with %s format",
-			ColorFormatStr[format]);
+			img::getColorFormatName(format));
 		return NULL;
 	}
 	return new CImage(format, imageToCopy);
@@ -408,7 +408,7 @@ bool CImageLibrary::saveImageToFile(IImage* image, io::IWriteFile *file)
 	if (SurfaceSaver->saveImageToFile(image, file))
 	{
 		LOGGER.logInfo("Saved image ( %s, %dx%d ): %s",
-			img::ColorFormatStr[image->getColorFormat()],
+			img::getColorFormatName(image->getColorFormat()),
 			image->getDimension().Width,
 			image->getDimension().Height,
 			file->getFileName());
@@ -424,7 +424,7 @@ bool CImageLibrary::saveImageToFile(IImage* image, const c8 *filename)
 	if (SurfaceSaver->saveImageToFile(image, filename))
 	{
 		LOGGER.logInfo("Saved image ( %s, %dx%d ): %s",
-			img::ColorFormatStr[image->getColorFormat()],
+			img::getColorFormatName(image->getColorFormat()),
 			image->getDimension().Width, image->getDimension().Height,
 			filename);
 		return true;
@@ -539,7 +539,8 @@ static void copyToAlpha32F(
 	if (src_img->getColorFormat() != img::ECF_ALPHA32F || dst_img->getColorFormat() != img::ECF_ALPHA32F)
 	{
 		LOGGER.logErr("Can't copy data format %s to %s",
-			img::ColorFormatStr[src_img->getColorFormat()], img::ColorFormatStr[dst_img->getColorFormat()]);
+			img::getColorFormatName(src_img->getColorFormat()),
+			img::getColorFormatName(dst_img->getColorFormat()));
         return;
 	}
 
@@ -586,7 +587,8 @@ static void copyToDepth16(
 	if (src_img->getColorFormat() != img::ECF_DEPTH16 || dst_img->getColorFormat() != img::ECF_DEPTH16)
 	{
 		LOGGER.logErr("Can't copy data format %s to %s",
-			img::ColorFormatStr[src_img->getColorFormat()], img::ColorFormatStr[dst_img->getColorFormat()]);
+			img::getColorFormatName(src_img->getColorFormat()),
+			img::getColorFormatName(dst_img->getColorFormat()));
         return;
 	}
 

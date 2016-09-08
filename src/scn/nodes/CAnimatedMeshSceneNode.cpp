@@ -1176,7 +1176,8 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 						{
 							rtt_loaded = false;
 							rtt = m_VideoDriver.createRenderTargetTexture(
-								core::dimension2di(imp_tex_res, imp_tex_res), img::ECF_A8B8G8R8);	
+								core::dimension2di(imp_tex_res, imp_tex_res),
+								m_VideoDriver.getBackColorFormat());	
 							m_VideoDriver.setColorRenderTarget(NULL);
 							m_VideoDriver.setColorRenderTarget(rtt, true, true, imp_bk_color);
 						}

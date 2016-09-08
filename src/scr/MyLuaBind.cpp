@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/08/16 16:41:28.
+** Generated automatically by tolua++-1.0.92 on 09/08/16 21:44:56.
 */
 
 #ifndef __cplusplus
@@ -908,6 +908,35 @@ static int tolua_MyLuaBind_game_getGameNodeCorePropertiesTagValue00(lua_State* t
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'getGameNodeCorePropertiesTagValue'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* function: img::getColorFormatName */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_img_getColorFormatName00
+static int tolua_MyLuaBind_img_getColorFormatName00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isnumber(tolua_S,1,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  img::E_COLOR_FORMAT fmt = ((img::E_COLOR_FORMAT) (int)  tolua_tonumber(tolua_S,1,0));
+ {
+  const char* tolua_ret = (const char*)  img::getColorFormatName(fmt);
+ tolua_pushstring(tolua_S,(const char*)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getColorFormatName'.",&tolua_err);
  return 0;
 #endif
 }
@@ -46547,6 +46576,38 @@ static int tolua_MyLuaBind_vid_IVideoDriver_getSingleton00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: getBackColorFormat of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_getBackColorFormat00
+static int tolua_MyLuaBind_vid_IVideoDriver_getBackColorFormat00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getBackColorFormat'",NULL);
+#endif
+ {
+  img::E_COLOR_FORMAT tolua_ret = (img::E_COLOR_FORMAT)  self->getBackColorFormat();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getBackColorFormat'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: beginRendering of class  vid::IVideoDriver */
 #ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_beginRendering00
 static int tolua_MyLuaBind_vid_IVideoDriver_beginRendering00(lua_State* tolua_S)
@@ -58312,6 +58373,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"ECF_DEPTH16",img::ECF_DEPTH16);
   tolua_constant(tolua_S,"ECF_ALPHA32F",img::ECF_ALPHA32F);
   tolua_constant(tolua_S,"E_COLOR_FORMAT_COUNT",img::E_COLOR_FORMAT_COUNT);
+  tolua_function(tolua_S,"getColorFormatName",tolua_MyLuaBind_img_getColorFormatName00);
   tolua_constant(tolua_S,"EIO_ADD",img::EIO_ADD);
   tolua_constant(tolua_S,"EIO_MUL",img::EIO_MUL);
   tolua_constant(tolua_S,"EIO_SUB",img::EIO_SUB);
@@ -60828,6 +60890,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_cclass(tolua_S,"IVideoDriver","vid::IVideoDriver","",NULL);
   tolua_beginmodule(tolua_S,"IVideoDriver");
    tolua_function(tolua_S,"getSingleton",tolua_MyLuaBind_vid_IVideoDriver_getSingleton00);
+   tolua_function(tolua_S,"getBackColorFormat",tolua_MyLuaBind_vid_IVideoDriver_getBackColorFormat00);
    tolua_function(tolua_S,"beginRendering",tolua_MyLuaBind_vid_IVideoDriver_beginRendering00);
    tolua_function(tolua_S,"renderAll",tolua_MyLuaBind_vid_IVideoDriver_renderAll00);
    tolua_function(tolua_S,"renderPass",tolua_MyLuaBind_vid_IVideoDriver_renderPass00);

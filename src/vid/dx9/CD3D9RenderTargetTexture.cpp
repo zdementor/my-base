@@ -101,7 +101,7 @@ CD3D9RenderTargetTexture::CD3D9RenderTargetTexture(
 
 	LOGGER.log(FAILED(hr) ? io::ELL_ERROR : io::ELL_INFORMATION,
 		"Created render target texture ( %s, mips %s, %dx%d )%s", 
-		img::ColorFormatStr[m_ColorFormat],
+		img::getColorFormatName(m_ColorFormat),
 		hasMipMaps() ? "on" : "off",
 		getSize().Width, getSize().Height,
 		FAILED(hr) ? " with errors" : "");
@@ -112,7 +112,7 @@ CD3D9RenderTargetTexture::CD3D9RenderTargetTexture(
 CD3D9RenderTargetTexture::~CD3D9RenderTargetTexture()
 {
 	LOGGER.logInfo("Destroyed render target texture ( %s, mips %s, %dx%d )", 
-		img::ColorFormatStr[m_ColorFormat],
+		img::getColorFormatName(m_ColorFormat),
 		hasMipMaps() ? "on" : "off",
 		getSize().Width, getSize().Height);
 }

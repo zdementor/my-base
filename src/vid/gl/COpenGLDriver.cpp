@@ -88,6 +88,8 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 
     GLuint PixelFormat;
 
+	m_BackColorFormat = (img::E_COLOR_FORMAT)-1;
+
     for (int i = 0; i < 3; ++i)
     {
         if (i == 1)
@@ -135,10 +137,9 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 				if (DescribePixelFormat(HDc, j, sizeof(tmppfd), &tmppfd) &&
 						(tmppfd.dwFlags & PFD_GENERIC_FORMAT) &&
 						(tmppfd.dwFlags & PFD_DOUBLEBUFFER) &&
-						tmppfd.cColorBits >= 16 &&
+						(tmppfd.cColorBits >= 16) &&
 						tmppfd.cDepthBits >= 16 &&
-						tmppfd.iPixelType == PFD_TYPE_RGBA
-						)
+						tmppfd.iPixelType == PFD_TYPE_RGBA)
 				{
 					PixelFormat = j;
 					dpfd = tmppfd;
@@ -175,8 +176,23 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 			LOGGER.logInfo(" OGL context activated");            
 		}
 
-        break;
+		if (dpfd.cColorBits == 15 && dpfd.cAlphaBits == 1)
+			m_BackColorFormat = img::ECF_A1R5G5B5;
+		else if (dpfd.cColorBits == 16 && dpfd.cAlphaBits == 0)
+			m_BackColorFormat = img::ECF_R5G6B5;
+		else if (dpfd.cColorBits >= 32)
+			m_BackColorFormat = img::ECF_A8R8G8B8;
+		else if (dpfd.cColorBits >= 24)
+			m_BackColorFormat = img::ECF_R8G8B8;
+
+		break;
     }
+
+	if ((u32)m_BackColorFormat >= img::E_COLOR_FORMAT_COUNT)
+	{
+		LOGGER.logErr("Could not detect BackBuffer color format!");
+		return false;
+	}
 
     // print renderer information
     core::stringc glRend = glGetString(GL_RENDERER);
@@ -288,6 +304,9 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 		m_TwoSidedStencil = false;
 
 	LOGGER.logInfo(" OpenGL driver features:");
+
+	LOGGER.logInfo("  Back Color Format: %s",
+		img::getColorFormatName(getBackColorFormat()));
 	LOGGER.logInfo("  Multitexturing   : %s",
 		queryFeature(EVDF_MULITEXTURE) ? "OK" : "None");
 	LOGGER.logInfo("  Vertex buffer    : %s", vboSupport ?

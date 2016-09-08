@@ -49,6 +49,9 @@ class __MY_VID_LIB_API__ IVideoDriver :
 {
 public:
 
+	//! Returns color format of the Back Color Buffer
+	virtual img::E_COLOR_FORMAT getBackColorFormat() = 0;
+
     //! Queries the features of the driver, returns true if a feature is available
     //! \param feature: A feature to query.
     //! \return Returns true if the feature is available, false if not.

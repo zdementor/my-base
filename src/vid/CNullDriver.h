@@ -66,8 +66,9 @@ class CNullDriver : public IVideoDriver
 public:
 
     CNullDriver(const core::dimension2d<s32>& screenSize);
-
     virtual ~CNullDriver();
+
+	virtual img::E_COLOR_FORMAT getBackColorFormat() { return m_BackColorFormat; }
 
     virtual bool queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 	{ return false; }
@@ -793,6 +794,8 @@ protected:
 	core::list <CNullRenderTarget*> m_RTs;
 
 	s32 m_GenShaderMaxLights;
+
+	img::E_COLOR_FORMAT m_BackColorFormat;
 };
 
 //---------------------------------------------------------------------------

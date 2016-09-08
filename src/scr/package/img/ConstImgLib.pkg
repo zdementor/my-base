@@ -39,6 +39,8 @@ enum E_COLOR_FORMAT
 	E_COLOR_FORMAT_COUNT
 };
 
+const char* getColorFormatName(E_COLOR_FORMAT fmt);
+
 //----------------------------------------------------------------------------
 
 enum E_IMAGE_OPERATION

@@ -55,7 +55,7 @@ COpenGLTexture::COpenGLTexture(img::IImage* image, u32 flags)
 	freeImageData();
 	
 	LOGGER.logInfo("Created texture ( %s, mips %s, %dx%d )", 
-		img::ColorFormatStr[m_ColorFormat],
+		img::getColorFormatName(m_ColorFormat),
 		hasMipMaps() ? "on" : "off",
 		getSize().Width, getSize().Height);
 
@@ -84,7 +84,7 @@ COpenGLTexture::COpenGLTexture(core::dimension2di &size, img::E_COLOR_FORMAT for
 	freeImageData();
 	
 	LOGGER.logInfo("Created empty texture ( %s, mips %s, %dx%d )", 
-		img::ColorFormatStr[m_ColorFormat],
+		img::getColorFormatName(m_ColorFormat),
 		hasMipMaps() ? "on" : "off",
 		getSize().Width, getSize().Height);
 
@@ -187,7 +187,7 @@ bool COpenGLTexture::createHardwareTexture()
 #endif
 	default:
 		LOGGER.logErr("Unsupported texture format %s.",
-			img::ColorFormatStr[m_ColorFormat]);
+			img::getColorFormatName(m_ColorFormat));
 		return false;
 	}
 

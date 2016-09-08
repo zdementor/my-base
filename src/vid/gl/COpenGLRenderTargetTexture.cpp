@@ -54,19 +54,19 @@ COpenGLRenderTargetTexture::COpenGLRenderTargetTexture(
 	glTexImage2D(
 		GL_TEXTURE_2D, 
 		0, 
-		m_InternalFormat = GL_RGBA8, 
+		m_InternalFormat, 
 		m_TextureSize.Width,
 		m_TextureSize.Height, 
 		0, 
-		m_PixelFormat = GL_RGBA, 
-		m_PixelType = GL_UNSIGNED_BYTE,
-		0);
+		m_PixelFormat, 
+		m_PixelType,
+		NULL);
 
 	if (this != curtex0)
 		m_Driver->_setTexture(0, curtex0);
 
 	LOGGER.logInfo("Created render target texture ( %s, mips %s, %dx%d )", 
-		img::ColorFormatStr[m_ColorFormat],
+		img::getColorFormatName(m_ColorFormat),
 		hasMipMaps() ? "on" : "off",
 		getSize().Width, getSize().Height);
 
@@ -78,7 +78,7 @@ COpenGLRenderTargetTexture::COpenGLRenderTargetTexture(
 COpenGLRenderTargetTexture::~COpenGLRenderTargetTexture()
 {
 	LOGGER.logInfo("Destroyed render target texture ( %s, mips %s, %dx%d )", 
-		img::ColorFormatStr[m_ColorFormat],
+		img::getColorFormatName(m_ColorFormat),
 		hasMipMaps() ? "on" : "off",
 		getSize().Width, getSize().Height);
 }

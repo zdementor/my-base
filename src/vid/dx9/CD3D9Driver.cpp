@@ -248,6 +248,52 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
         }
     }
 
+	// detect back buffer format
+
+	m_BackColorFormat = (img::E_COLOR_FORMAT)-1;
+
+	IDirect3DSurface9* bb;
+
+	hr = m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &bb);
+
+    if (!FAILED(hr))
+    {
+        D3DSURFACE_DESC desc;
+        bb->GetDesc(&desc);
+        D3DFORMAT d3DFormat = desc.Format;
+        
+		switch (d3DFormat)
+		{
+		case D3DFMT_X1R5G5B5:
+		case D3DFMT_A1R5G5B5:
+			m_BackColorFormat = img::ECF_A1R5G5B5;
+			break;
+		case D3DFMT_A8B8G8R8:
+		case D3DFMT_A8R8G8B8:
+		case D3DFMT_X8R8G8B8:
+			m_BackColorFormat = img::ECF_A8R8G8B8;
+			break;
+		case D3DFMT_R5G6B5:
+			m_BackColorFormat = img::ECF_R5G6B5;
+			break;
+		default:
+			LOGGER.logWarn("Unknown BackBuffer color format (0x%08X).", d3DFormat);
+			break;
+		}
+
+        bb->Release();
+    }
+    else
+    {
+        LOGGER.logWarn("Could not get BackBuffer color format.");
+    }
+
+	if ((u32)m_BackColorFormat >= img::E_COLOR_FORMAT_COUNT)
+	{
+		LOGGER.logErr("Could not detect BackBuffer color format!");
+		return false;
+	}
+
 	LOGGER.log(" D3D device created");            
 
 	// print device information
@@ -282,7 +328,7 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
         m_StencilBuffer = false;
     }
 	
-	if( ( m_D3DCaps.StencilCaps & D3DSTENCILCAPS_TWOSIDED ) != 0 )
+	if ((m_D3DCaps.StencilCaps & D3DSTENCILCAPS_TWOSIDED ) != 0)
 	{
 		m_TwoSidedStencil = true;
 	}
@@ -332,6 +378,8 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 
 	LOGGER.logInfo(" Direct3D driver features:");
 
+	LOGGER.logInfo("  Back Color Format: %s",
+		getColorFormatName(getBackColorFormat()));
 	LOGGER.logInfo("  Multitexturing   : %s",
 		queryFeature(EVDF_MULITEXTURE) ?
 		"OK" : "None");

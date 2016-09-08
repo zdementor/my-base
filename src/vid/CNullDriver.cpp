@@ -102,7 +102,8 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 	m_DriverType(EDT_NULL), m_Profiler(PROFILER),
 	m_DirtyTexUnit(-1), m_CurrentGPUProgram(NULL),
 	m_ColorMask(ECM_RED | ECM_GREEN | ECM_BLUE | ECM_ALPHA),
-	m_CurrentRenderPassType(ERP_3D_SOLID_PASS), m_GenShaderMaxLights(-1)
+	m_CurrentRenderPassType(ERP_3D_SOLID_PASS), m_GenShaderMaxLights(-1),
+	m_BackColorFormat((img::E_COLOR_FORMAT)-1)
 {
 #if MY_DEBUG_MODE 
 	IUnknown::setClassName("CNullDriver");
