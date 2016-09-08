@@ -110,11 +110,6 @@ public:
     //! This pointer should not be dropped. See IUnknown::drop() for more information.
     virtual ITexture* getTexture(io::IReadFile* file) = 0;
 
-	//! Creates an Animatred Texture of and adds it to textures cache
-	virtual ITextureAnim* addTextureAnim( 
-		core::array<ITexture*> &frames, SAnimatedTextureParams &params
-		) = 0;
-
     //! Creates an empty Texture of specified size.
     //! \param size: Size of the texture.
     //! \param name: A name for the texture. Later calls of getTexture() with this name
@@ -126,7 +121,7 @@ public:
     //! The format of the new texture will be chosen by the driver, and will in most 
     //! cases have the ECF_A1R5G5B5 or ECF_A8R8G8B8 format.
     virtual ITexture* addTexture(
-		const core::dimension2d<s32>& size, const c8* name,
+		const core::dimension2di &size, const c8 *name,
 		img::E_COLOR_FORMAT format = img::ECF_A8R8G8B8) = 0;
 
     //! Creates a texture from a loaded IImage.
@@ -138,7 +133,18 @@ public:
     //! The format of the new texture will be chosen by the driver, and will in most 
     //! cases have the ECF_A1R5G5B5 or ECF_A8R8G8B8 format.
     virtual ITexture* addTexture(const c8* name, img::IImage* image) = 0;
-	
+
+	//! Creates an Animatred Texture of and adds it to textures cache
+	virtual ITextureAnim* addTextureAnim( 
+		core::array<ITexture*> &frames, SAnimatedTextureParams &params
+		) = 0;
+
+	//! Creates a texture.
+    virtual ITexture* createTexture(img::IImage* image) = 0;
+
+	//! Creates a texture.
+    virtual ITexture* createTexture(core::dimension2di &size, img::E_COLOR_FORMAT format) = 0;
+
 	//! Creates a render target texture.
     //! \param size: Size of the texture, in pixels. Width and height should
     //! be a power of two (for example 64, 128, 256, 512, ...) and it should not
@@ -149,12 +155,6 @@ public:
     //! See IUnknown::drop() for more information. */
     virtual ITexture* createRenderTargetTexture(const core::dimension2di &size) = 0;
 
-	//! Creates a texture.
-    virtual ITexture* createTexture(img::IImage* image) = 0;
-
-	//! Creates a texture.
-    virtual ITexture* createTexture(core::dimension2di &size, img::E_COLOR_FORMAT format) = 0;
-
     //! Removes a texture from the texture cache and deletes it, freeing lot of
     //! memory. Please note that after calling this, the pointer to the ITexture
     //! may not be longer valid, if it was not grabbed before by other parts of 
@@ -163,11 +163,14 @@ public:
     //! \param texture: Texture to delete from the engines cache.
     virtual bool removeTexture(ITexture* texture) = 0;
 
-	//! Creates a render target object.
-    virtual IRenderTarget* createRenderTarget(
+	//! Add/remove a render target object.
+    virtual IRenderTarget* addRenderTarget(
+		u32 width, u32 height, E_RENDER_TARGET_CREATION_FLAG flags) = 0;
+    virtual IRenderTarget* addRenderTarget(
 		const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags) = 0;
-	virtual IRenderTarget* createRenderTarget(
+	virtual IRenderTarget* addRenderTarget(
 		ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags) = 0;
+	virtual bool removeRenderTarget(IRenderTarget *renderTarget) = 0;
 
 	//! Sets a new render target for the color buffer. 
     //! This will only work if the driver
@@ -202,8 +205,18 @@ public:
         bool clearBackBuffer=true, bool clearZBuffer=true, 
 		img::SColor color = img::SColor(0,0,0,0)) = 0;
 
-	//! Sets a new render target for the whole rendering.
-    virtual bool setRenderTarget(IRenderTarget *renderTarget) = 0;
+	//! Set/Get a render target for the whole rendering.
+    virtual bool setRenderTarget(IRenderTarget *rt) = 0;
+	virtual IRenderTarget* getRenderTarget() = 0;
+
+	//! looks if the image is already loaded
+    virtual vid::ITexture* findTexture(const c8 *name) = 0;
+
+	//! looks if the image is already loaded
+	virtual const c8* findTextureName(vid::ITexture *texture) = 0;
+
+	//! set up texture name
+	virtual bool setTextureName(vid::ITexture *texture, const c8 *name) = 0;
 
     //! Sets a new viewport. Every rendering operation is done into this
     //! new area.
@@ -315,15 +328,6 @@ public:
 
     //! Return Background Color
     virtual img::SColor getBackgroundColor() = 0;
-
-	//! looks if the image is already loaded
-    virtual vid::ITexture* findTexture(const c8 *name) = 0;
-
-	//! looks if the image is already loaded
-	virtual const c8* findTextureName(vid::ITexture *texture) = 0;
-
-	//! set up texture name
-	virtual bool setTextureName(vid::ITexture *texture, const c8 *name) = 0;
 
 	//! sets texture filtering mode
 	virtual void setTextureFilter(E_TEXTURE_FILTER textureFilter) = 0;

@@ -19,7 +19,7 @@ namespace vid {
 CNullRenderTarget::CNullRenderTarget(
 	const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags)
 	: m_ColorAttachementsCount(0), m_DepthAttachement(0),
-	m_Size(size), m_Flags(flags)
+	m_Size(size), m_Flags(flags), m_RTEntry(0)
 {
 	memset(m_ColorAttachements, 0, sizeof(m_ColorAttachements));
 }

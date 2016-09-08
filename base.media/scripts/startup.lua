@@ -26,6 +26,8 @@ MyGameAI	= nil
 MyTimer		= nil
 MyMemStat	= nil
 
+MyRT = nil
+
 CEGUISystem		= nil
 CEGUIRenderer	= nil
 CEGUISchemeMgr	= nil
@@ -90,6 +92,8 @@ function SetupResources()
 	end
 end
 
+
+
 function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 
 	local ver = os.getversion()
@@ -122,6 +126,13 @@ function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 		OPTIONS.Window.Icon.Height)
 	MyDevice:setWindowCaption(OPTIONS.Window.Caption)
 	MyDriver:useMultiThreadRendering(OPTIONS.UseMultiThreadRendering)
+
+	if MyDriver:queryFeature(vid.EVDF_RENDER_TO_TARGET) then
+		local flags = bit.bor(vid.ERTCF_DEPTH24, vid.ERTCF_STENCIL8)
+		MyRT = MyDriver:addRenderTarget(winWidth, winHeight, flags)
+	else
+		MyRT = nil
+	end
 
 end
 

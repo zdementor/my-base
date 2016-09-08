@@ -31,6 +31,7 @@
 #include "CVideoModeList.h"
 #include "CNullHardwareOcclusionQuery.h"
 #include "CNullGPUProgram.h"
+#include "CNullRenderTarget.h"
 #include "SRenderPool.h"
 
 //---------------------------------------------------------------------------
@@ -83,16 +84,6 @@ public:
 
     virtual void setRenderPass(const SRenderPass& material);
 
-    virtual ITexture* getTexture(const c8* filename);
-
-	virtual ITexture* getTexture(io::IReadFile* file);
-
-	virtual ITextureAnim* addTextureAnim( 
-		core::array<ITexture*> &frames, SAnimatedTextureParams &params);
-
-    virtual ITexture* addTexture(const core::dimension2d < s32 > & size,
-		const c8 * name, img::E_COLOR_FORMAT format = img::ECF_A8R8G8B8);
-
     virtual void setViewPort(const core::rect<s32>& area);
 
     virtual const core::rect<s32>& getViewPort() const;
@@ -129,24 +120,37 @@ public:
 		
     virtual const SLight& getGlobalLightParams();
 
-    virtual bool removeTexture(ITexture* texture);
-
-	virtual ITexture* createRenderTargetTexture(const core::dimension2di &size) { return 0; }
-
+    virtual ITexture* getTexture(const c8* filename);
+	virtual ITexture* getTexture(io::IReadFile* file);
+    virtual vid::ITexture* findTexture(const c8 *name);
+    virtual ITexture* addTexture(const core::dimension2di &size,
+		const c8 *name, img::E_COLOR_FORMAT format = img::ECF_A8R8G8B8);
+    virtual ITexture* addTexture(const c8 *name, img::IImage *image);
+	virtual ITextureAnim* addTextureAnim( 
+		core::array<ITexture*> &frames, SAnimatedTextureParams &params);
     virtual ITexture* createTexture(img::IImage* image);
     virtual ITexture* createTexture(core::dimension2di &size, img::E_COLOR_FORMAT format);
+	virtual ITexture* createRenderTargetTexture(const core::dimension2di &size) { return 0; }
+    virtual bool removeTexture(ITexture* texture);
 
-	virtual IRenderTarget* createRenderTarget(
+    virtual IRenderTarget* addRenderTarget(
+		u32 width, u32 height, E_RENDER_TARGET_CREATION_FLAG flags)
+	{ return addRenderTarget(core::dimension2di(width, height), flags); }
+    virtual IRenderTarget* addRenderTarget(
 		const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags) { return 0; }
-	virtual IRenderTarget* createRenderTarget(
+	virtual IRenderTarget* addRenderTarget(
 		ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags) { return 0; }
+	virtual bool removeRenderTarget(IRenderTarget *rt);
 
 	virtual bool setColorRenderTarget(ITexture* texture,
 		bool clearBackBuffer = false, bool clearZBuffer = false,
 		img::SColor color = img::SColor(0,0,0,0))
 	{ return false; }
+	virtual bool setRenderTarget(IRenderTarget *rt) { return false; }
+	virtual IRenderTarget* getRenderTarget() { return NULL; }
 
-	virtual bool setRenderTarget(IRenderTarget *renderTarget) { return false; }
+	virtual const c8* findTextureName(vid::ITexture *texture);
+	virtual bool setTextureName(vid::ITexture *texture, const c8 *name);
 
     virtual const c8* getName()
 	{ return DriverTypeReadableName[m_DriverType]; }
@@ -176,10 +180,6 @@ public:
     virtual void setBackgroundColor(const img::SColor &color);
 
     virtual img::SColor getBackgroundColor();
-
-    virtual vid::ITexture* findTexture(const c8 *name);
-    virtual const c8* findTextureName(vid::ITexture *texture);
-	virtual bool setTextureName(vid::ITexture *texture, const c8 *name);
 
 	virtual void setTextureFilter(E_TEXTURE_FILTER textureFilter);
 
@@ -648,14 +648,11 @@ protected:
     //! for automated screenshot texture naming
     u32 screenshot_counter;
 
-    //! opens the file and loads it into the surface
-    vid::ITexture* loadTextureFromFile(io::IReadFile* file, core::stringc& desired_texname);
+    vid::ITexture* _loadTextureFromFile(io::IReadFile* file, core::stringc& desired_texname);
 
-    //! adds a surface, not loaded or created by the Irrlicht Engine
-    void addTexture(vid::ITexture* surface, const c8* filename);
+    void _addTexture(vid::ITexture* surface, const c8* filename);
 
-    //! Creates a texture from a loaded IImage.
-    virtual ITexture* addTexture(const c8* name, img::IImage* image);
+	bool _addRenderTarget(CNullRenderTarget *rt);
 
     //! returns a device dependent texture from a software surface (IImage)
     //! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
@@ -798,6 +795,7 @@ protected:
 	IGPUProgram *m_CurrentGPUProgram;
 
 	core::array <SRenderPool*> m_RenderData[E_RENDER_PASS_COUNT];
+	core::list <CNullRenderTarget*> m_RTs;
 
 	s32 m_GenShaderMaxLights;
 };

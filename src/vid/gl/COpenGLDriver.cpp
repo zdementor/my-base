@@ -771,7 +771,6 @@ bool COpenGLDriver::_swapBuffers()
 
 //---------------------------------------------------------------------------
 
-//! queries the features of the driver, returns true if feature is available
 bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 {
     switch (feature)
@@ -1892,20 +1891,26 @@ ITexture* COpenGLDriver::createRenderTargetTexture(const core::dimension2di &siz
 
 //---------------------------------------------------------------------------
 
-IRenderTarget* COpenGLDriver::createRenderTarget(
+IRenderTarget* COpenGLDriver::addRenderTarget(
 	const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags)
 {
-	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
 		new COpenGLRenderTarget(size, flags) : NULL;
+	if (rt)
+		_addRenderTarget(rt);
+	return rt;
 }
 
 //---------------------------------------------------------------------------
 
-IRenderTarget* COpenGLDriver::createRenderTarget(
+IRenderTarget* COpenGLDriver::addRenderTarget(
 	ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags)
 {
-	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
 		new COpenGLRenderTarget(colorRenderTarget, flags) : NULL;
+	if (rt)
+		_addRenderTarget(rt);
+	return rt;
 }
 
 //---------------------------------------------------------------------------

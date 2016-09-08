@@ -167,6 +167,17 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 
 CNullDriver::~CNullDriver()
 {
+	core::list<CNullRenderTarget *>::iterator it = m_RTs.begin();
+	for (; it != m_RTs.end(); ++it)
+	{
+		CNullRenderTarget *rt = *it;
+		if (rt->isLocked())
+			rt->unlockObject();
+		if (rt->getReferenceCounter() != 1)
+			LOGGER.logErr("Can not remove Render Target. Possible leaked object!");
+		rt->drop();
+	}
+
 	useMultiThreadRendering(false);
 
 	if (getDriverType() == EDT_NULL)
@@ -477,38 +488,6 @@ void CNullDriver::setRenderPass(const SRenderPass& pass)
 
 //---------------------------------------------------------------------------
 
-//! Removes a texture from the texture cache and deletes it, freeing lot of
-//! memory. 
-bool CNullDriver::removeTexture(ITexture* texture)
-{
-	if (texture->isLocked())
-		return false;
-
-    for (u32 i=0; i<m_Textures.size(); ++i)
-	{
-        if (texture && m_Textures[i].Surface == texture)
-        {
-			if (texture->getReferenceCounter()==1)
-			{
-				SAFE_DROP(texture);				
-				LOGGER.logInfo("Texture '%s' removed.",
-					m_Textures[i].Filename.c_str());
-				m_Textures.erase(i);
-				return true;				
-			}
-			LOGGER.logWarn("Can't remove '%s' referenced texture.",
-				m_Textures[i].Filename.c_str());
-			return false;
-        }
-	}
-	LOGGER.logWarn("Can't remove texture.");
-
-	return false;
-}
-
-//---------------------------------------------------------------------------
-
-//! loads a Texture
 ITexture* CNullDriver::getTexture(const c8* filename)
 {
 	if (!filename || core::stringc(filename) == NONAME_FILE_NAME)
@@ -526,11 +505,11 @@ ITexture* CNullDriver::getTexture(const c8* filename)
     {
 		core::stringc texname = filename;
 
-        texture = loadTextureFromFile(file, texname);        
+        texture = _loadTextureFromFile(file, texname);
 
         if (texture)
         {
-            addTexture(texture, texname.c_str());
+            _addTexture(texture, texname.c_str());
             texture->drop(); // drop it becaus we created it, one grab to much
         }
 
@@ -551,7 +530,6 @@ ITexture* CNullDriver::getTexture(const c8* filename)
 
 //---------------------------------------------------------------------------
 
-//! loads a Texture
 ITexture* CNullDriver::getTexture(io::IReadFile* file)
 {
     ITexture* texture = 0;
@@ -565,11 +543,11 @@ ITexture* CNullDriver::getTexture(io::IReadFile* file)
 
 		core::stringc texname = file->getFileName();
 
-        texture = loadTextureFromFile(file, texname);
+        texture = _loadTextureFromFile(file, texname);
 
         if (texture)
         {
-            addTexture(texture, texname.c_str());
+            _addTexture(texture, texname.c_str());
             texture->drop(); // drop it because we created it, one grab to much
         }
 		else
@@ -585,7 +563,129 @@ ITexture* CNullDriver::getTexture(io::IReadFile* file)
 
 //---------------------------------------------------------------------------
 
-vid::ITexture* CNullDriver::loadTextureFromFile(io::IReadFile* file, core::stringc& desired_texname)
+vid::ITexture* CNullDriver::findTexture(const c8 *name)
+{
+	vid::ITexture *tex = 0;
+
+	SSurface s;
+	s.Filename = name ? name : "";
+	s.Filename.make_lower();
+
+	s32 index = m_Textures.binary_search(s);
+	if (index != -1)
+		tex = m_Textures[index].Surface;
+
+    return tex;
+}
+
+//---------------------------------------------------------------------------
+
+ITexture* CNullDriver::addTexture(const c8 *name, img::IImage *image)
+{
+	if (!name || !image)
+		return 0;
+	ITexture* t = _createDeviceDependentTexture(image);
+	_addTexture(t, image->getOverridedFileName()?image->getOverridedFileName():name);
+	t->drop();
+	return t;
+}
+
+//---------------------------------------------------------------------------
+
+ITexture* CNullDriver::addTexture(
+	const core::dimension2di &size, const c8 *name, img::E_COLOR_FORMAT format)
+{
+	if (!name)
+		return 0;
+
+	img::IImage* image = IMAGE_LIBRARY.createEmptyImage(size, format);
+
+	ITexture* t = _createDeviceDependentTexture(image);
+	image->drop();
+	_addTexture(t, name);
+
+	if (t)
+		t->drop();
+
+	return t;
+}
+
+//---------------------------------------------------------------------------
+
+ITextureAnim* CNullDriver::addTextureAnim( 
+	core::array<ITexture*> &frames, SAnimatedTextureParams &params)
+{
+	// loading textures from xml file
+
+	ITextureAnim* anitex = new CTextureAnim();
+
+	for (u32 t=0; t<frames.size(); t++)
+	{
+		if (frames[t])
+			anitex->addFrame(frames[t]);
+	}
+
+	anitex->setParameters(params);
+
+	c8 texfname[255];
+	sprintf(texfname, "anitexture%p", anitex);
+
+	_addTexture(anitex, texfname);
+
+	anitex->drop();
+
+	return anitex;
+}
+
+//---------------------------------------------------------------------------
+
+ITexture* CNullDriver::createTexture(img::IImage* image)
+{
+     if (!image)
+        return 0;
+    return _createDeviceDependentTexture(image);
+}
+
+//---------------------------------------------------------------------------
+
+ITexture* CNullDriver::createTexture(core::dimension2di &size, img::E_COLOR_FORMAT format)
+{
+	ITexture *texture = _createDeviceDependentTexture(size, format);
+	return texture;
+}
+
+//---------------------------------------------------------------------------
+
+bool CNullDriver::removeTexture(ITexture* texture)
+{
+	if (texture->isLocked())
+		return false;
+
+	for (u32 i=0; i < m_Textures.size(); ++i)
+	{
+        if (texture && m_Textures[i].Surface == texture)
+        {
+			if (texture->getReferenceCounter()==1)
+			{
+				SAFE_DROP(texture);
+				LOGGER.logInfo("Texture '%s' removed.",
+					m_Textures[i].Filename.c_str());
+				m_Textures.erase(i);
+				return true;
+			}
+			LOGGER.logWarn("Can't remove '%s' referenced texture.",
+				m_Textures[i].Filename.c_str());
+			return false;
+        }
+	}
+	LOGGER.logWarn("Can't remove texture.");
+
+	return false;
+}
+
+//---------------------------------------------------------------------------
+
+vid::ITexture* CNullDriver::_loadTextureFromFile(io::IReadFile* file, core::stringc& desired_texname)
 {
     ITexture* texture = 0;
 
@@ -632,36 +732,7 @@ vid::ITexture* CNullDriver::loadTextureFromFile(io::IReadFile* file, core::strin
 
 //---------------------------------------------------------------------------
 
-//! Creates an Animatred Texture of and adds it to textures cache
-ITextureAnim* CNullDriver::addTextureAnim( 
-	core::array<ITexture*> &frames, SAnimatedTextureParams &params
-	)
-{
-	// loading textures from xml file
-
-	ITextureAnim* anitex = new CTextureAnim();	
-		
-	for (u32 t=0; t<frames.size(); t++)
-	{
-		if (frames[t])
-			anitex->addFrame(frames[t]);
-	}
-
-	anitex->setParameters(params);	
-
-	c8 texfname[255];
-	sprintf(texfname, "anitexture%p", anitex);
-
-	addTexture(anitex, texfname);
-
-	anitex->drop();
-	
-	return anitex;
-}
-
-//---------------------------------------------------------------------------
-
-void CNullDriver::addTexture(vid::ITexture* texture, const c8* name)
+void CNullDriver::_addTexture(vid::ITexture* texture, const c8* name)
 {
     if (!texture)
 		return;
@@ -673,23 +744,6 @@ void CNullDriver::addTexture(vid::ITexture* texture, const c8* name)
     texture->grab();
 
     m_Textures.push_back(s);
-}
-
-//---------------------------------------------------------------------------
-
-vid::ITexture* CNullDriver::findTexture(const c8 *name)
-{    
-	vid::ITexture *tex = 0;
-	
-	SSurface s;
-	s.Filename = name ? name : "";;
-	s.Filename.make_lower();
-
-	s32 index = m_Textures.binary_search(s);		
-	if (index != -1)
-		tex = m_Textures[index].Surface;
-
-    return tex;
 }
 
 //---------------------------------------------------------------------------
@@ -733,38 +787,6 @@ bool CNullDriver::setTextureName(vid::ITexture *texture, const c8 *name)
 
 //---------------------------------------------------------------------------
 
-ITexture* CNullDriver::addTexture(const c8* name, img::IImage* image)
-{
-    if (!name || !image)
-        return 0;
-    ITexture* t = _createDeviceDependentTexture(image);
-    addTexture(t, image->getOverridedFileName()?image->getOverridedFileName():name);
-	t->drop();
-    return t;
-}
-
-//---------------------------------------------------------------------------
-
-ITexture* CNullDriver::addTexture(
-	const core::dimension2d<s32>& size, const c8* name, img::E_COLOR_FORMAT format)
-{
-    if (!name)
-        return 0;
-
-    img::IImage* image = IMAGE_LIBRARY.createEmptyImage(size, format);
-
-    ITexture* t = _createDeviceDependentTexture(image);
-    image->drop();
-    addTexture(t, name);
-
-    if (t)
-        t->drop();
-
-    return t;
-}
-
-//---------------------------------------------------------------------------
-
 ITexture* CNullDriver::_createDeviceDependentTexture(img::IImage* surface)
 {
     return new CSoftwareTexture(surface);
@@ -779,14 +801,49 @@ vid::ITexture* CNullDriver::_createDeviceDependentTexture(core::dimension2di &si
 
 //---------------------------------------------------------------------------
 
-//! sets a viewport
+bool CNullDriver::_addRenderTarget(CNullRenderTarget *rt)
+{
+	if (!rt || rt->m_RTEntry != 0)
+	{
+		LOGGER.logErr("Can not add Render Target to the resources pool!");
+		return false;
+	}
+	m_RTs.push_back(rt);
+	rt->m_RTEntry = m_RTs.get_last();
+	return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool CNullDriver::removeRenderTarget(IRenderTarget *_rt)
+{
+	vid::CNullRenderTarget *rt = (vid::CNullRenderTarget *)_rt;
+	if (rt->isLocked())
+		return false;
+
+	bool ret = false;
+
+	if (rt->m_RTEntry != 0)
+	{
+		m_RTs.erase(rt->m_RTEntry);
+		rt->m_RTEntry = 0;
+		ret = rt->drop();
+	}
+
+	if (!ret)
+		LOGGER.logWarn("Can't remove render target.");
+
+	return ret;
+}
+
+//---------------------------------------------------------------------------
+
 void CNullDriver::setViewPort(const core::rect<s32>& area)
 {
 }
 
 //---------------------------------------------------------------------------
 
-//! gets the area of the current viewport
 const core::rect<s32>& CNullDriver::getViewPort() const
 {
     return ViewPort;
@@ -1123,23 +1180,6 @@ IVideoModeList* CNullDriver::getVideoModeList()
 #endif
 
     return &VideoModeList;
-}
-
-//---------------------------------------------------------------------------
-
-ITexture* CNullDriver::createTexture(img::IImage* image)
-{
-     if (!image)
-        return 0;
-    return _createDeviceDependentTexture(image);
-}
-
-//---------------------------------------------------------------------------
-
-ITexture* CNullDriver::createTexture(core::dimension2di &size, img::E_COLOR_FORMAT format)
-{
-	ITexture *texture = _createDeviceDependentTexture(size, format);
-	return texture;
 }
 
 //---------------------------------------------------------------------------

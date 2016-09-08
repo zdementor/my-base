@@ -1474,20 +1474,26 @@ ITexture* CD3D9Driver::createRenderTargetTexture(const core::dimension2di &size)
 
 //---------------------------------------------------------------------------
 
-IRenderTarget* CD3D9Driver::createRenderTarget(
+IRenderTarget* CD3D9Driver::addRenderTarget(
 	const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags)
 {
-	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
 		new CD3D9RenderTarget(size, flags) : NULL;
+	if (rt)
+		_addRenderTarget(rt);
+	return rt;
 }
 
 //---------------------------------------------------------------------------
 
-IRenderTarget* CD3D9Driver::createRenderTarget(
+IRenderTarget* CD3D9Driver::addRenderTarget(
 	ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags)
 {
-	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
 		new CD3D9RenderTarget(colorRenderTarget, flags) : NULL;
+	if (rt)
+		_addRenderTarget(rt);
+	return rt;
 }
 
 //---------------------------------------------------------------------------

@@ -24,6 +24,7 @@ COpenGLRenderTarget::COpenGLRenderTarget(
 #if GL_ARB_framebuffer_object
 	glGenFramebuffers(1, &m_FBO);
 #endif
+	LOGGER.logInfo("%s (%p)", __FUNCTION__, this);
 }
 
 //----------------------------------------------------------------------------
@@ -36,6 +37,7 @@ COpenGLRenderTarget::COpenGLRenderTarget(
 #if GL_ARB_framebuffer_object
 	glGenFramebuffers(1, &m_FBO);
 #endif
+	LOGGER.logInfo("%s (%p)", __FUNCTION__, this);
 }
 
 //----------------------------------------------------------------------------
@@ -45,6 +47,7 @@ COpenGLRenderTarget::~COpenGLRenderTarget()
 #if GL_ARB_framebuffer_object
 	glDeleteFramebuffers(1, &m_FBO);
 #endif
+	LOGGER.logInfo("%s (%p)", __FUNCTION__, this);
 }
 
 //----------------------------------------------------------------------------

@@ -21,6 +21,7 @@ namespace vid {
 
 class __MY_VID_LIB_API__ CNullRenderTarget : public IRenderTarget
 {
+	friend class CNullDriver;
 public:
 
 	CNullRenderTarget(const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags);
@@ -72,6 +73,8 @@ private:
 
 	core::dimension2di m_Size;
 	E_RENDER_TARGET_CREATION_FLAG m_Flags;
+
+	core::list<CNullRenderTarget *>::iterator m_RTEntry;
 };
 
 //---------------------------------------------------------------------------

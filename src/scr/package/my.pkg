@@ -226,6 +226,8 @@ $pfile "vid/IGPUProgram.pkg"
 
 $pfile "vid/IRenderBuffer.pkg"
 
+$pfile "vid/IRenderTarget.pkg"
+
 //////////////////////////////////////////////////////
 
 $pfile "os/os.pkg"

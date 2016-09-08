@@ -247,6 +247,24 @@ class IVideoDriver
 
 	//! Getting polygon fill mode
 	E_POLYGON_FILL_MODE getPolygonFillMode();
+
+	//! Add/remove a render target object.
+	IRenderTarget* addRenderTarget(
+		unsigned width, unsigned height, E_RENDER_TARGET_CREATION_FLAG flags);
+	IRenderTarget* addRenderTarget(
+		const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags);
+	IRenderTarget* addRenderTarget(
+		ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags);
+	bool removeRenderTarget(IRenderTarget *renderTarget);
+
+	//! Set/Get a render target for the whole rendering.
+	bool setRenderTarget(IRenderTarget *rt);
+	IRenderTarget* getRenderTarget();
+
+	//! Queries the features of the driver, returns true if a feature is available
+	//! \param feature: A feature to query.
+	//! \return Returns true if the feature is available, false if not.
+	bool queryFeature(E_VIDEO_DRIVER_FEATURE feature);
 };
 
 //----------------------------------------------------------------------------
