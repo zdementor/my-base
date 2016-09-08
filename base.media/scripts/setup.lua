@@ -620,8 +620,10 @@ MyDevice:show()
 while MyDevice:run() do
 	if needToRender then
 		MyCEGUI.registerForRendering()
-		MyDriver:render()
-		MyDriver:swapBuffers()
+		if MyDriver:beginRendering() then
+			MyDriver:renderAll()
+			MyDriver:endRendering()
+		end
 		needToRender = false
 	end
 end

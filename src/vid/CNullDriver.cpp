@@ -96,8 +96,7 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 	m_LightSphereWhiteTexture(NULL), m_LightGradientWhiteTexture(NULL),
 	m_EnvTexture(NULL), m_WhiteTexture(NULL), m_DefaultTexture(NULL),
 	m_MinimalMeshBufferSizeForVBORendering(0), m_ResetRenderStates(true), m_RenderPoolsCacheIndex(0),
-	m_UseMultiThreadRendering(false), m_RenderEvent(NULL), m_RenderCompleteEvent(NULL),
-	m_RenderThread(NULL), m_StencilEnabled(false), m_ScissorEnabled(false), m_ShadowColor(100,0,0,0),
+	m_StencilEnabled(false), m_ScissorEnabled(false), m_ShadowColor(100,0,0,0),
 	m_Fullscreen(false), m_Antialiasing(false), m_VerticalSync(false), m_Shadows(false),
 	m_StencilBuffer(false), m_TwoSidedStencil(false), m_CurrentVertexType((E_VERTEX_TYPE)-1), 
 	m_DriverType(EDT_NULL), m_Profiler(PROFILER),
@@ -178,58 +177,11 @@ CNullDriver::~CNullDriver()
 		rt->drop();
 	}
 
-	useMultiThreadRendering(false);
-
 	if (getDriverType() == EDT_NULL)
 	{
 		free();
 		LOGGER.log("NULL graphic deactivated");
 	}
-}
-
-//----------------------------------------------------------------------------
-
-void CNullDriver::useMultiThreadRendering ( bool value )
-{
-	if ( m_UseMultiThreadRendering != value )
-	{
-		m_UseMultiThreadRendering = value;
-
-		if ( m_UseMultiThreadRendering )
-		{
-			m_RenderEvent			= os::createEvent ( true );
-			m_RenderCompleteEvent	= os::createEvent ( true );
-			m_RenderThread = os::createComputationThread ( this );
-
-			m_RenderThread->run();
-
-			LOGGER.log("Multithread rendering enabled");
-		}
-		else
-		{
-			m_RenderEvent->set();
-			m_RenderCompleteEvent->set();
-			m_RenderThread->stop();
-
-			delete m_RenderThread;
-			delete m_RenderCompleteEvent;
-			delete m_RenderEvent;
-
-			LOGGER.log("Multithread rendering disabled");
-		}
-	}
-}
-
-//----------------------------------------------------------------------------
-
-void CNullDriver::run(void * user_data)
-{
-	m_RenderEvent->wait();
-	m_RenderEvent->reset();
-
-	_render();
-
-	m_RenderCompleteEvent->set();
 }
 
 //---------------------------------------------------------------------------
@@ -2621,7 +2573,6 @@ void CNullDriver::_renderStencilVolume(IRenderBuffer *rbuf, bool zfail)
 	m_DIPsDrawn += (m_TwoSidedStencil ? 1 : 2) ;
 }
 
-
 //---------------------------------------------------------------------------
 
 void CNullDriver::_sort()
@@ -2647,22 +2598,18 @@ void CNullDriver::_sort()
 
 //---------------------------------------------------------------------------
 
-void CNullDriver::_render()
+void CNullDriver::renderAll()
 {
-	core::stringc profileInfo = "";
+	for (u32 i = 0; i < E_RENDER_PASS_COUNT; i++)
+		renderPass((E_RENDER_PASS)i);
+}
 
-	//setRenderContextCurrent();
-	setResourceContextCurrent();
+//---------------------------------------------------------------------------
 
-	_sort();
-
-	m_Profiler.startProfiling(m_ProfileRender);
-
-	m_Rendering = true;
-	m_ResetRenderStates = true;
-	m_CurrentVertexType = (E_VERTEX_TYPE)-1;
-
-	_beginRendering();
+void CNullDriver::renderPass(E_RENDER_PASS pass)
+{
+	if (!m_Rendering)
+		return;
 
 	u32 sys_time_ms = TIMER.getSystemTime();
 
@@ -2670,26 +2617,7 @@ void CNullDriver::_render()
 	core::matrix4 m_view = Matrices[ETS_VIEW];
 	core::matrix4 m_model = Matrices[ETS_MODEL];
 
-	m_TrianglesDrawn = 0;
-	m_DIPsDrawn = 0;
-
-	memset(m_RenderedDIPsCount, 0, sizeof(m_RenderedDIPsCount));
-	memset(m_RenderedTrianglesCount, 0, sizeof(m_RenderedTrianglesCount));
-
-	BackColor.setAlpha(0);
-
-	setColorMask(true, true, true, true);	
-
-	clearColorBuffer();
-	clearZBuffer();
-
-	setColorMask(true, true, true, false);
-
-	setGlobalAmbientColor(getGlobalAmbientColor());
-
-	resetTextureUnits();
-
-	for (u32 i = 0; i < E_RENDER_PASS_COUNT; i++)
+	u32 i = pass;
 	{
 		m_CurrentRenderPassType = (E_RENDER_PASS)i;
 
@@ -2830,11 +2758,77 @@ void CNullDriver::_render()
 		m_RenderedDIPsCount[i]		+= dips_count;
 		m_RenderedTrianglesCount[i] += tris_count;
 
+		static core::stringc profileInfo;
+		profileInfo = "";
+
 		if (m_Profiler.isProfiling())
 			profileInfo.sprintf("(%6d tris, %4d dips)", tris_count, dips_count);
 
 		m_Profiler.stopProfiling(m_ProfileIds[i], profileInfo.c_str());
 	}
+}
+
+//---------------------------------------------------------------------------
+
+bool CNullDriver::_beginRendering()
+{
+	return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool CNullDriver::_endRendering()
+{
+	return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool CNullDriver::beginRendering()
+{
+	if (m_Rendering)
+		return false;
+
+	setRenderContextCurrent();
+
+	_sort();
+
+	m_Profiler.startProfiling(m_ProfileRender);
+
+	m_Rendering = true;
+	m_ResetRenderStates = true;
+	m_CurrentVertexType = (E_VERTEX_TYPE)-1;
+
+	_beginRendering();
+
+	m_TrianglesDrawn = 0;
+	m_DIPsDrawn = 0;
+
+	memset(m_RenderedDIPsCount, 0, sizeof(m_RenderedDIPsCount));
+	memset(m_RenderedTrianglesCount, 0, sizeof(m_RenderedTrianglesCount));
+
+	BackColor.setAlpha(0);
+
+	setColorMask(true, true, true, true);	
+
+	clearColorBuffer();
+	clearZBuffer();
+
+	setColorMask(true, true, true, false);
+
+	setGlobalAmbientColor(getGlobalAmbientColor());
+
+	resetTextureUnits();
+
+	return true;
+}
+
+//---------------------------------------------------------------------------
+
+void CNullDriver::endRendering()
+{
+	if (!m_Rendering)
+		return;
 
 	u32 cache_index = ( m_RenderPoolsCacheIndex + 1 ) % 2;
 
@@ -2856,45 +2850,18 @@ void CNullDriver::_render()
 
 	if (m_Profiler.isProfiling())
 	{
-		core::stringc profileInfo;
+		static core::stringc profileInfo;
+		profileInfo = "";
 
 		for (unsigned i = 0 ; i < E_RENDER_MODE_COUNT; i++)
 		{
-			profileInfo.sprintf("(%6d tris, %4d dips)", m_RenderedLightedTrianglesCount[i], m_RenderedLightedDIPsCount[i]);
+			profileInfo.sprintf("(%6d tris, %4d dips)",
+				m_RenderedLightedTrianglesCount[i], m_RenderedLightedDIPsCount[i]);
 			m_Profiler.setProfileInfo(m_ProfileLightingIds[i], profileInfo.c_str());
 		}
 	}
 
-	setNullContextCurrent();
-}
-
-//---------------------------------------------------------------------------
-
-void CNullDriver::render()
-{
-	if (m_UseMultiThreadRendering)
-		m_RenderEvent->set();
-	else
-	{
-		_render();
-		setResourceContextCurrent();
-	}
-}
-
-//---------------------------------------------------------------------------
-
-bool CNullDriver::swapBuffers()
-{
-	if (!m_Rendering)
-		return false;
-
 	m_Profiler.startProfiling(m_ProfileSwapBuffers);
-
-	if (m_UseMultiThreadRendering)
-	{
-		m_RenderCompleteEvent->wait();
-		m_RenderCompleteEvent->reset();
-	}
 
 	_swapBuffers();
 
@@ -2912,11 +2879,9 @@ bool CNullDriver::swapBuffers()
     }
 	AverageFPS = avg;	
 
-	m_Rendering=false;
-
 	m_Profiler.stopProfiling(m_ProfileSwapBuffers);
 
-    return true;
+	m_Rendering = false;
 }
 
 //---------------------------------------------------------------------------

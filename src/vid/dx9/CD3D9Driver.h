@@ -89,7 +89,6 @@ public:
 
 	virtual void clearColorBuffer();
 
-	virtual bool setResourceContextCurrent();
 	virtual bool setRenderContextCurrent();
 	virtual bool setNullContextCurrent();
 

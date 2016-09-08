@@ -49,11 +49,6 @@ class __MY_VID_LIB_API__ IVideoDriver :
 {
 public:
 
-	//! Set this to true if you want to render in separate thread,
-	//! otherwise base thread will be used for game logic and rendering.
-	//! Default value is false.
-	virtual void useMultiThreadRendering ( bool value ) = 0;
-
     //! Queries the features of the driver, returns true if a feature is available
     //! \param feature: A feature to query.
     //! \return Returns true if the feature is available, false if not.
@@ -608,18 +603,16 @@ public:
 	virtual void setColorMask(u32 mask) = 0;
 	virtual u32 getColorMask() const = 0;
 
-	virtual bool setResourceContextCurrent() = 0;
 	virtual bool setRenderContextCurrent() = 0;
 	virtual bool setNullContextCurrent() = 0;
 
-	//! Render all 3d data
-	virtual void render() = 0;
+	//! Manages rendering pipeline
+	virtual bool beginRendering() = 0;
+	virtual void renderAll() = 0;
+	virtual void renderPass(E_RENDER_PASS pass) = 0;
+	virtual void endRendering() = 0;
 
-    //! Presents the rendered image on the screen.
-    //! Applications must call this method after performing any rendering. 
-    //! \return Returns false if failed and true if succeeded.
-    virtual bool swapBuffers() = 0;
-
+	//! Returns true if renering is still in progress, otherwise false
 	virtual bool isRendering() = 0;
 
 	//! Returns the maximal amount of dynamic lights the device can handle

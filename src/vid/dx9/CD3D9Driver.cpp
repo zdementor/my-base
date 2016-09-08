@@ -423,6 +423,8 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 
 bool CD3D9Driver::_beginRendering()
 {
+	CNullDriver::_beginRendering();
+
     HRESULT hr;
 
     if (DeviceLost)
@@ -461,6 +463,8 @@ bool CD3D9Driver::_beginRendering()
 
 bool CD3D9Driver::_endRendering()
 {
+	CNullDriver::_endRendering();
+
 	if (DeviceLost)
 		return false;
 
@@ -478,6 +482,8 @@ bool CD3D9Driver::_endRendering()
 
 bool CD3D9Driver::_swapBuffers()
 {
+	CNullDriver::_swapBuffers();
+
 	if (DeviceLost)
 		return false;
 
@@ -1584,13 +1590,6 @@ void CD3D9Driver::clearColorBuffer()
 	setTransform(ETS_MODEL, matModel);
 	setTransform(ETS_VIEW, matView);
 	setTransform(ETS_PROJ, matProj);
-}
-
-//----------------------------------------------------------------------------
-
-bool CD3D9Driver::setResourceContextCurrent()
-{
-	return true;
 }
 
 //----------------------------------------------------------------------------

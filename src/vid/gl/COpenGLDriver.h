@@ -120,7 +120,6 @@ public:
 
 	virtual void clearColorBuffer();
 
-	virtual bool setResourceContextCurrent();
 	virtual bool setRenderContextCurrent();
 	virtual bool setNullContextCurrent();
 
@@ -284,7 +283,7 @@ private:
 #ifdef WIN32  
 	HWND HWnd;
     HDC HDc; // Private GDI Device Context
-    HGLRC m_RenderContext, m_ResourceContext; // Rendering Context
+    HGLRC m_RenderContext; // Rendering Context
 #endif
     
 	COpenGLTexture *m_RenderTargetTexture;

@@ -14,18 +14,13 @@ class IVideoDriver
     //! Return singleton object
     static IVideoDriver& getSingleton();
 
-	//! Set this to true if you want to render in separate thread,
-	//! otherwise base thread will be used for game logic and rendering.
-	//! Default value is false.
-	void useMultiThreadRendering ( bool value );
+	//! Manages rendering pipeline
+	bool beginRendering();
+	void renderAll();
+	void renderPass(E_RENDER_PASS pass);
+	void endRendering();
 
-    void render();
-
-    //! Presents the rendered image on the screen.
-    //! Applications must call this method after performing any rendering. 
-    //! \return Returns false if failed and true if succeeded.
-    bool swapBuffers();
-
+	//! Returns true if renering is still in progress, otherwise false
 	bool isRendering();
 
 	//! Returns the maximal amount of dynamic lights the device can handle

@@ -52,7 +52,7 @@ struct SMediaEntry
 
 SMediaEntry MediaEntry[res::E_MEDIA_TYPE_COUNT] =
 {
-	{res::EMT_ROOT,            "../test.media/"  },
+	{res::EMT_ROOT,            "../../base/apps/test.media/"  },
 	{res::EMT_TEXTURES,        "textures/"       },
 	{res::EMT_FONTS,           "gui/fonts/"      },
 	{res::EMT_MESHES,          "models/"         },
@@ -458,9 +458,12 @@ int main(int argc, char* argv[])
 	{
 		GAME_MANAGER.preRenderFrame();
 		SCENE_MANAGER.preRenderScene();
-		VIDEO_DRIVER.render();
+		if (VIDEO_DRIVER.beginRendering())
+		{
+			VIDEO_DRIVER.renderAll();
+			VIDEO_DRIVER.endRendering();
+		}
 		GAME_MANAGER.doGame();
-		VIDEO_DRIVER.swapBuffers();
 		SCENE_MANAGER.postRenderScene();
 		GAME_MANAGER.postRenderFrame();
 

@@ -125,7 +125,6 @@ function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 		OPTIONS.Window.Icon.Width,
 		OPTIONS.Window.Icon.Height)
 	MyDevice:setWindowCaption(OPTIONS.Window.Caption)
-	MyDriver:useMultiThreadRendering(OPTIONS.UseMultiThreadRendering)
 
 	if MyDriver:queryFeature(vid.EVDF_RENDER_TO_TARGET) then
 		local flags = bit.bor(vid.ERTCF_DEPTH24, vid.ERTCF_STENCIL8)

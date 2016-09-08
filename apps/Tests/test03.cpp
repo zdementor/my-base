@@ -167,8 +167,11 @@ int main(int argc, char* argv[])
 	{
 		GAME_MANAGER.preRenderFrame();
 		SCENE_MANAGER.preRenderScene();
-		VIDEO_DRIVER.render();
-		VIDEO_DRIVER.swapBuffers();
+		if (VIDEO_DRIVER.beginRendering())
+		{
+			VIDEO_DRIVER.renderAll();
+			VIDEO_DRIVER.endRendering();
+		}
 		SCENE_MANAGER.postRenderScene();
 		GAME_MANAGER.postRenderFrame();
 	}

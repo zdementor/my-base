@@ -38,7 +38,7 @@ const f32 inv_color = 1.0f / 255.0f;
 //! Win32 constructor and init code
 COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize) 
 	: CNullDriver(screenSize),
-HWnd(0), HDc(0), m_RenderContext(0), m_ResourceContext(0),
+HWnd(0), HDc(0), m_RenderContext(0),
 screenshot(0), screenshot_counter(0), StencilFogTexture(0),
 m_RenderTargetTexture(0), m_OpenGLHardwareOcclusionQuery(0)
 {
@@ -165,20 +165,7 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
             continue;
         }
 
-		// create resources context
-        if (!(m_ResourceContext = wglCreateContext(HDc)))
-        {
-            LOGGER.logErr(" Cannot create a GL shared rendering context");
-            continue;
-        }
-
-		if (!wglShareLists(m_RenderContext, m_ResourceContext))
-		{
-			LOGGER.logErr(" Cannot share GL contexts");
-            continue;
-		}
-
-        if (!setRenderContextCurrent() || !setResourceContextCurrent())
+        if (!setRenderContextCurrent())
         {
             LOGGER.logErr(" Cannot activate GL context");
             continue;
@@ -338,39 +325,31 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 	s32 max_tex_units = m_MaxTextureUnits;
 	CHECK_MAX_RANGE(m_MaxTextureUnits, MY_MATERIAL_MAX_LAYERS);
 
-	for (u32 i = 0; i < 2; i++)
-	{
-		if (i == 0)
-			setRenderContextCurrent();
-		else
-			setResourceContextCurrent();
+	// Set The Current Viewport
+	glViewport(0, 0, m_ScreenSize.Width, m_ScreenSize.Height); 
 
-		// Set The Current Viewport
-		glViewport(0, 0, m_ScreenSize.Width, m_ScreenSize.Height); 
+	// setup ogl initial render states    
+	glShadeModel(GL_SMOOTH);
+    
+	setGlobalAmbientColor(getGlobalAmbientColor());
 
-		// setup ogl initial render states    
-		glShadeModel(GL_SMOOTH);
-	    
-		setGlobalAmbientColor(getGlobalAmbientColor());
+	glClearDepth(1.0f);
+	glClearStencil(MY_STENCIL_ZERO_VALUE);    
 
-		glClearDepth(1.0f);
-		glClearStencil(MY_STENCIL_ZERO_VALUE);    
+	glFrontFace( GL_CCW );		
 
-		glFrontFace( GL_CCW );		
+	// set fog mode
+	setFog(Fog);
 
-		// set fog mode
-		setFog(Fog);
-
-		glDisable(GL_COLOR_MATERIAL);
-		
-		// for specular highlights
-#ifdef GL_VERSION_1_2
-		glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR); 
-#endif
-		glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
-	}
+	glDisable(GL_COLOR_MATERIAL);
 	
-    // set exposed data
+	// for specular highlights
+#ifdef GL_VERSION_1_2
+	glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR); 
+#endif
+	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
+
+	// set exposed data
     out_video_data.Win32.OGL.HDc  = reinterpret_cast<void*>(HDc);
     out_video_data.Win32.OGL.HRc  = reinterpret_cast<void*>(m_RenderContext);	
 	out_video_data.DriverType = EDT_OPENGL21;
@@ -430,12 +409,6 @@ COpenGLDriver::~COpenGLDriver()
             LOGGER.logWarn("Release of rendering context failed.");
         m_RenderContext = 0;
     }
-	if (m_ResourceContext)
-	{
-		if (!wglDeleteContext(m_ResourceContext))
-            LOGGER.logWarn("Release of shared rendering context failed.");
-        m_ResourceContext = 0;
-	}
     if (HDc)
 	{
         ReleaseDC(HWnd, HDc);
@@ -736,6 +709,8 @@ bool COpenGLDriver::_bindGPUProgram(IGPUProgram* gpu_prog)
 
 bool COpenGLDriver::_beginRendering()
 {
+	CNullDriver::_beginRendering();
+
 	if (!StencilPreInitialized && m_StencilBuffer)
 	{
 		// to pre-initialize stencil
@@ -753,7 +728,10 @@ bool COpenGLDriver::_beginRendering()
 
 bool COpenGLDriver::_endRendering()
 {
+	CNullDriver::_endRendering();
+
 	glFlush();
+
 	return true;
 }
 
@@ -761,8 +739,9 @@ bool COpenGLDriver::_endRendering()
 
 bool COpenGLDriver::_swapBuffers()
 {
+	CNullDriver::_swapBuffers();
+
 	bool res = true;
-	
 #if MY_PLATFORM == MY_PLATFORM_WIN32
 	res = SwapBuffers(HDc) != 0;
 #endif
@@ -1940,19 +1919,6 @@ void COpenGLDriver::clearColorBuffer()
         BackColor.getAlpha() * inv_color
         );
     glClear(GL_COLOR_BUFFER_BIT);
-}
-
-//---------------------------------------------------------------------------
-
-bool COpenGLDriver::setResourceContextCurrent()
-{
-	// activate resource context
-	if (!wglMakeCurrent(HDc, m_ResourceContext))
-	{
-		LOGGER.logErr("wglMakeCurrent for render context failed");
-		return false;
-	}
-	return true;
 }
 
 //---------------------------------------------------------------------------

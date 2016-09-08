@@ -61,15 +61,13 @@ enum E_COLOR_MASK_BIT
 
 //---------------------------------------------------------------------------
 
-class CNullDriver : public IVideoDriver, public IRunnable
+class CNullDriver : public IVideoDriver
 {
 public:
 
     CNullDriver(const core::dimension2d<s32>& screenSize);
 
     virtual ~CNullDriver();
-
-	virtual void useMultiThreadRendering ( bool value );
 
     virtual bool queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 	{ return false; }
@@ -424,17 +422,16 @@ public:
 
 	virtual void clearColorBuffer() {}
 
-	virtual bool setResourceContextCurrent()
-	{ LOGGER.logErr("Invalid call %s", __FUNCTION__ ); return false; }
-
 	virtual bool setRenderContextCurrent()
 	{ LOGGER.logErr("Invalid call %s", __FUNCTION__ ); return false; }
 
 	virtual bool setNullContextCurrent()
 	{ LOGGER.logErr("Invalid call %s", __FUNCTION__ ); return false; }
 
-	virtual void render();
-    virtual bool swapBuffers();
+	virtual bool beginRendering();
+	virtual void renderAll();
+	virtual void renderPass(E_RENDER_PASS pass);
+	virtual void endRendering();
 
 	virtual bool isRendering();
 
@@ -517,12 +514,6 @@ public:
 
 protected:
 
-	os::IEvent * m_RenderEvent, * m_RenderCompleteEvent;
-	os::IThread * m_RenderThread;
-
-	//! thread callback function
-	virtual void run(void * user_data = NULL);
-
 	//! enabling stencil
 	virtual void _enableStencil()
 	{ m_StencilEnabled = true; }
@@ -569,8 +560,8 @@ protected:
 
 	void _sort();
 	void _render();
-	virtual bool _beginRendering() { return true; }
-	virtual bool _endRendering() { return true; }
+	virtual bool _beginRendering();
+	virtual bool _endRendering();
 	virtual bool _swapBuffers() { return true; }
 
 	void _registerImageForRendering(
@@ -749,7 +740,7 @@ protected:
 
 	u32 m_MinimalMeshBufferSizeForVBORendering;
 
-	bool m_ResetRenderStates, m_UseMultiThreadRendering, m_StencilEnabled, m_ScissorEnabled;
+	bool m_ResetRenderStates, m_StencilEnabled, m_ScissorEnabled;
 
 	img::SColor m_ShadowColor;
 
