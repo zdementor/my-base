@@ -57,10 +57,12 @@ public:
 
     virtual void makeScreenShot(ITexture* texture);
 
-	virtual ITexture* createRenderTargetTexture(const core::dimension2di &size);
+	virtual ITexture* createRenderTargetTexture(
+		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat);
 
 	virtual IRenderTarget* addRenderTarget(
-		const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags);
+		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
+		E_RENDER_TARGET_CREATION_FLAG flags);
 	virtual IRenderTarget* addRenderTarget(
 		ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags);
         

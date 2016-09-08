@@ -1472,19 +1472,21 @@ void CD3D9Driver::makeScreenShot(ITexture* texture)
 
 //----------------------------------------------------------------------------
 
-ITexture* CD3D9Driver::createRenderTargetTexture(const core::dimension2di &size)
+ITexture* CD3D9Driver::createRenderTargetTexture(
+	const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat)
 {
     return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
-		new CD3D9RenderTargetTexture(size) : NULL;
+		new CD3D9RenderTargetTexture(size, colorFormat) : NULL;
 }
 
 //---------------------------------------------------------------------------
 
 IRenderTarget* CD3D9Driver::addRenderTarget(
-	const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags)
+	const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
+	E_RENDER_TARGET_CREATION_FLAG flags)
 {
 	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
-		new CD3D9RenderTarget(size, flags) : NULL;
+		new CD3D9RenderTarget(size, colorFormat, flags) : NULL;
 	if (rt)
 		_addRenderTarget(rt);
 	return rt;

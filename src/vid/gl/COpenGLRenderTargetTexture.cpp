@@ -21,7 +21,8 @@ namespace my {
 namespace vid {
 //----------------------------------------------------------------------------
 
-COpenGLRenderTargetTexture::COpenGLRenderTargetTexture(const core::dimension2di &size)
+COpenGLRenderTargetTexture::COpenGLRenderTargetTexture(
+	const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat)
 	: COpenGLTexture()
 {
 #if MY_DEBUG_MODE 
@@ -35,12 +36,12 @@ COpenGLRenderTargetTexture::COpenGLRenderTargetTexture(const core::dimension2di 
 	m_MaxMipMapLevels = 1;
 	m_AutogenMipMaps = false;
 
-	m_ImageSize = size;
-	m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(size.Width);
-	m_TextureSize.Height = core::math::GetNearestPowerOfTwo(size.Height);
+	m_TextureSize = m_ImageSize = size;
+	//m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(size.Width);
+	//m_TextureSize.Height = core::math::GetNearestPowerOfTwo(size.Height);
    
 	m_Pitch = m_TextureSize.Width*4;
-	m_ColorFormat = img::ECF_A8B8G8R8;
+	m_ColorFormat = colorFormat;
 
 	m_ImageDataSizeBytes[0] = m_Pitch * m_TextureSize.Width;
 
@@ -64,13 +65,10 @@ COpenGLRenderTargetTexture::COpenGLRenderTargetTexture(const core::dimension2di 
 	if (this != curtex0)
 		m_Driver->_setTexture(0, curtex0);
 
-	core::stringc msg;
-	msg.sprintf(
-		"Created render target texture ( %s, mips %s, %dx%d )", 
+	LOGGER.logInfo("Created render target texture ( %s, mips %s, %dx%d )", 
 		img::ColorFormatStr[m_ColorFormat],
 		hasMipMaps() ? "on" : "off",
 		getSize().Width, getSize().Height);
-	LOGGER.log(msg.c_str());
 
 	m_Created = true;
 }
@@ -79,6 +77,10 @@ COpenGLRenderTargetTexture::COpenGLRenderTargetTexture(const core::dimension2di 
 
 COpenGLRenderTargetTexture::~COpenGLRenderTargetTexture()
 {
+	LOGGER.logInfo("Destroyed render target texture ( %s, mips %s, %dx%d )", 
+		img::ColorFormatStr[m_ColorFormat],
+		hasMipMaps() ? "on" : "off",
+		getSize().Width, getSize().Height);
 }
 
 //----------------------------------------------------------------------------

@@ -1564,6 +1564,7 @@ enum E_RENDER_TARGET_CREATION_FLAG
 {
 	ERTCF_DEPTH24  = (1)<<0,  // 24-bit depth buffer
 	ERTCF_DEPTH32  = (1)<<1,  // 32-bit depth buffer
+
 	ERTCF_STENCIL8 = (1)<<2,  // 8-bit stencil buffer
 
 	E_RENDER_TARGET_CREATION_FLAG_FORCE_32BIT = 0xffffffff

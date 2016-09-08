@@ -92,8 +92,6 @@ function SetupResources()
 	end
 end
 
-
-
 function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 
 	local ver = os.getversion()
@@ -128,7 +126,8 @@ function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 
 	if MyDriver:queryFeature(vid.EVDF_RENDER_TO_TARGET) then
 		local flags = bit.bor(vid.ERTCF_DEPTH24, vid.ERTCF_STENCIL8)
-		MyRT = MyDriver:addRenderTarget(winWidth, winHeight, flags)
+		MyRT = MyDriver:addRenderTarget(
+			winWidth, winHeight, img.ECF_A8R8G8B8, flags)
 	else
 		MyRT = nil
 	end
@@ -139,6 +138,8 @@ function DestroyDevice()
 	for i = 0, scr.ESCT_SCRIPT_CALLBACK_TYPE_COUNT - 1 do
 		MyScript:setScriptCallback(i, nil)
 	end
+	-- will be automatically deleted
+	MyRT = nil
 	MyCEGUI.destroy()
 	dev.destroyDevice()
 end

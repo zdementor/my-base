@@ -245,9 +245,11 @@ class IVideoDriver
 
 	//! Add/remove a render target object.
 	IRenderTarget* addRenderTarget(
-		unsigned width, unsigned height, E_RENDER_TARGET_CREATION_FLAG flags);
+		unsigned width, unsigned height, img::E_COLOR_FORMAT colorFormat,
+		E_RENDER_TARGET_CREATION_FLAG flags);
 	IRenderTarget* addRenderTarget(
-		const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags);
+		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
+		E_RENDER_TARGET_CREATION_FLAG flags);
 	IRenderTarget* addRenderTarget(
 		ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags);
 	bool removeRenderTarget(IRenderTarget *renderTarget);

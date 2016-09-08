@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/08/16 14:15:36.
+** Generated automatically by tolua++-1.0.92 on 09/08/16 16:41:28.
 */
 
 #ifndef __cplusplus
@@ -48573,7 +48573,8 @@ static int tolua_MyLuaBind_vid_IVideoDriver_addRenderTarget00(lua_State* tolua_S
  !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
  !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
  !tolua_isnumber(tolua_S,4,0,&tolua_err) ||
- !tolua_isnoobj(tolua_S,5,&tolua_err)
+ !tolua_isnumber(tolua_S,5,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,6,&tolua_err)
  )
  goto tolua_lerror;
  else
@@ -48582,12 +48583,13 @@ static int tolua_MyLuaBind_vid_IVideoDriver_addRenderTarget00(lua_State* tolua_S
   vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
   unsigned width = ((unsigned)  tolua_tonumber(tolua_S,2,0));
   unsigned height = ((unsigned)  tolua_tonumber(tolua_S,3,0));
-  vid::E_RENDER_TARGET_CREATION_FLAG flags = ((vid::E_RENDER_TARGET_CREATION_FLAG) (int)  tolua_tonumber(tolua_S,4,0));
+  img::E_COLOR_FORMAT colorFormat = ((img::E_COLOR_FORMAT) (int)  tolua_tonumber(tolua_S,4,0));
+  vid::E_RENDER_TARGET_CREATION_FLAG flags = ((vid::E_RENDER_TARGET_CREATION_FLAG) (int)  tolua_tonumber(tolua_S,5,0));
 #ifndef TOLUA_RELEASE
  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'addRenderTarget'",NULL);
 #endif
  {
-  vid::IRenderTarget* tolua_ret = (vid::IRenderTarget*)  self->addRenderTarget(width,height,flags);
+  vid::IRenderTarget* tolua_ret = (vid::IRenderTarget*)  self->addRenderTarget(width,height,colorFormat,flags);
  tolua_pushusertype(tolua_S,(void*)tolua_ret,"vid::IRenderTarget");
  }
  }
@@ -48609,19 +48611,21 @@ static int tolua_MyLuaBind_vid_IVideoDriver_addRenderTarget01(lua_State* tolua_S
  !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
  !tolua_isusertype(tolua_S,2,"const core::dimension2di",0,&tolua_err) ||
  !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
- !tolua_isnoobj(tolua_S,4,&tolua_err)
+ !tolua_isnumber(tolua_S,4,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,5,&tolua_err)
  )
  goto tolua_lerror;
  else
  {
   vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
   const core::dimension2di* size = ((const core::dimension2di*)  tolua_tousertype(tolua_S,2,0));
-  vid::E_RENDER_TARGET_CREATION_FLAG flags = ((vid::E_RENDER_TARGET_CREATION_FLAG) (int)  tolua_tonumber(tolua_S,3,0));
+  img::E_COLOR_FORMAT colorFormat = ((img::E_COLOR_FORMAT) (int)  tolua_tonumber(tolua_S,3,0));
+  vid::E_RENDER_TARGET_CREATION_FLAG flags = ((vid::E_RENDER_TARGET_CREATION_FLAG) (int)  tolua_tonumber(tolua_S,4,0));
 #ifndef TOLUA_RELEASE
  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'addRenderTarget'",NULL);
 #endif
  {
-  vid::IRenderTarget* tolua_ret = (vid::IRenderTarget*)  self->addRenderTarget(*size,flags);
+  vid::IRenderTarget* tolua_ret = (vid::IRenderTarget*)  self->addRenderTarget(*size,colorFormat,flags);
  tolua_pushusertype(tolua_S,(void*)tolua_ret,"vid::IRenderTarget");
  }
  }

@@ -10,6 +10,7 @@
 //|-------------------------------------------------------------------------
 
 #include "CNullRenderTarget.h"
+#include <vid/ITexture.h>
 
 //----------------------------------------------------------------------------
 namespace my {
@@ -17,9 +18,10 @@ namespace vid {
 //----------------------------------------------------------------------------
 
 CNullRenderTarget::CNullRenderTarget(
-	const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags)
+	const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
+	E_RENDER_TARGET_CREATION_FLAG flags)
 	: m_ColorAttachementsCount(0), m_DepthAttachement(0),
-	m_Size(size), m_Flags(flags), m_RTEntry(0)
+	m_Size(size), m_ColorFormat(colorFormat), m_Flags(flags), m_RTEntry(0)
 {
 	memset(m_ColorAttachements, 0, sizeof(m_ColorAttachements));
 }
@@ -28,6 +30,8 @@ CNullRenderTarget::CNullRenderTarget(
 
 CNullRenderTarget::~CNullRenderTarget()
 {
+	for (u32 i = 0; i < sizeof(m_ColorAttachements) / sizeof(*m_ColorAttachements); i++)
+		SAFE_DROP(m_ColorAttachements[i]);
 }
 
 //----------------------------------------------------------------------------

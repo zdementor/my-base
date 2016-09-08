@@ -23,7 +23,8 @@ namespace vid {
 class __MY_VID_LIB_API__ COpenGLRenderTarget : public CNullRenderTarget
 {
 public:
-	COpenGLRenderTarget(const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags);
+	COpenGLRenderTarget(const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
+		E_RENDER_TARGET_CREATION_FLAG flags);
 	COpenGLRenderTarget(ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags);
 	virtual ~COpenGLRenderTarget();
 private:

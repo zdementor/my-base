@@ -18,8 +18,9 @@ namespace vid {
 //----------------------------------------------------------------------------
 
 CD3D9RenderTarget::CD3D9RenderTarget(
-	const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags)
-	: CNullRenderTarget(size, flags)
+	const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
+	E_RENDER_TARGET_CREATION_FLAG flags)
+	: CNullRenderTarget(size, colorFormat, flags)
 {
 	LOGGER.logInfo("%s (%p)", __FUNCTION__, this);
 }
@@ -28,7 +29,7 @@ CD3D9RenderTarget::CD3D9RenderTarget(
 
 CD3D9RenderTarget::CD3D9RenderTarget(
 	ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags)
-	: CNullRenderTarget(colorRenderTarget->getSize(), flags)
+	: CNullRenderTarget(colorRenderTarget->getSize(), colorRenderTarget->getColorFormat(), flags)
 {
 	LOGGER.logInfo("%s (%p)", __FUNCTION__, this);
 }

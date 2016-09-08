@@ -1862,19 +1862,21 @@ bool COpenGLDriver::setColorRenderTarget(ITexture* texture,
 
 //---------------------------------------------------------------------------
 
-ITexture* COpenGLDriver::createRenderTargetTexture(const core::dimension2di &size)
+ITexture* COpenGLDriver::createRenderTargetTexture(
+	const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat)
 {
 	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
-		new COpenGLRenderTargetTexture(size) : NULL;
+		new COpenGLRenderTargetTexture(size, colorFormat) : NULL;
 }
 
 //---------------------------------------------------------------------------
 
 IRenderTarget* COpenGLDriver::addRenderTarget(
-	const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags)
+	const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
+	E_RENDER_TARGET_CREATION_FLAG flags)
 {
 	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
-		new COpenGLRenderTarget(size, flags) : NULL;
+		new COpenGLRenderTarget(size, colorFormat, flags) : NULL;
 	if (rt)
 		_addRenderTarget(rt);
 	return rt;

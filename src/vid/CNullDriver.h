@@ -128,14 +128,18 @@ public:
 		core::array<ITexture*> &frames, SAnimatedTextureParams &params);
     virtual ITexture* createTexture(img::IImage* image);
     virtual ITexture* createTexture(core::dimension2di &size, img::E_COLOR_FORMAT format);
-	virtual ITexture* createRenderTargetTexture(const core::dimension2di &size) { return 0; }
+	virtual ITexture* createRenderTargetTexture(
+		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat)
+	{ return 0; }
     virtual bool removeTexture(ITexture* texture);
 
     virtual IRenderTarget* addRenderTarget(
-		u32 width, u32 height, E_RENDER_TARGET_CREATION_FLAG flags)
-	{ return addRenderTarget(core::dimension2di(width, height), flags); }
+		u32 width, u32 height, img::E_COLOR_FORMAT colorFormat,
+		E_RENDER_TARGET_CREATION_FLAG flags)
+	{ return addRenderTarget(core::dimension2di(width, height), colorFormat, flags); }
     virtual IRenderTarget* addRenderTarget(
-		const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags) { return 0; }
+		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
+		E_RENDER_TARGET_CREATION_FLAG flags) { return 0; }
 	virtual IRenderTarget* addRenderTarget(
 		ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags) { return 0; }
 	virtual bool removeRenderTarget(IRenderTarget *rt);

@@ -24,7 +24,8 @@ class __MY_VID_LIB_API__ CNullRenderTarget : public IRenderTarget
 	friend class CNullDriver;
 public:
 
-	CNullRenderTarget(const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags);
+	CNullRenderTarget(const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
+		E_RENDER_TARGET_CREATION_FLAG flags);
 	virtual ~CNullRenderTarget();
 
 	virtual bool attachColorTexture(
@@ -64,7 +65,7 @@ public:
 	virtual ITexture* getDepthAttachement()
 	{ return m_DepthAttachement; }
 
-private:
+protected:
 
 	ITexture *m_ColorAttachements[MY_MAX_COLOR_ATTACHEMENTS];
 	ITexture *m_DepthAttachement;
@@ -72,6 +73,7 @@ private:
 	u32 m_ColorAttachementsCount;
 
 	core::dimension2di m_Size;
+	img::E_COLOR_FORMAT m_ColorFormat;
 	E_RENDER_TARGET_CREATION_FLAG m_Flags;
 
 	core::list<CNullRenderTarget *>::iterator m_RTEntry;

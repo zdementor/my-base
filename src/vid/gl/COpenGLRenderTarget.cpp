@@ -17,27 +17,34 @@ namespace vid {
 //----------------------------------------------------------------------------
 
 COpenGLRenderTarget::COpenGLRenderTarget(
-	const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags)
-	: CNullRenderTarget(size, flags),
+	const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
+	E_RENDER_TARGET_CREATION_FLAG flags)
+	: CNullRenderTarget(size, colorFormat, flags),
 	m_FBO(0)
 {
 #if GL_ARB_framebuffer_object
 	glGenFramebuffers(1, &m_FBO);
 #endif
-	LOGGER.logInfo("%s (%p)", __FUNCTION__, this);
+	LOGGER.logInfo("%s (%p) %dx%d format=%s flags=0x%08X",
+		__FUNCTION__, this,
+		size.Width, size.Height, img::ColorFormatStr[colorFormat], flags);
+
+	m_ColorAttachements[0] = VIDEO_DRIVER.createRenderTargetTexture(m_Size, m_ColorFormat);
 }
 
 //----------------------------------------------------------------------------
 
 COpenGLRenderTarget::COpenGLRenderTarget(
 	ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags)
-	: CNullRenderTarget(colorRenderTarget->getSize(), flags),
+	: CNullRenderTarget(colorRenderTarget->getSize(), colorRenderTarget->getColorFormat(), flags),
 	m_FBO(0)
 {
 #if GL_ARB_framebuffer_object
 	glGenFramebuffers(1, &m_FBO);
 #endif
 	LOGGER.logInfo("%s (%p)", __FUNCTION__, this);
+
+	m_ColorAttachements[0] = VIDEO_DRIVER.createRenderTargetTexture(m_Size, m_ColorFormat);
 }
 
 //----------------------------------------------------------------------------

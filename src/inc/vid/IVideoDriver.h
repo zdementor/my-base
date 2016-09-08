@@ -148,7 +148,8 @@ public:
     //! \return Returns a pointer to the created texture or 0 if the texture could not
     //! be created. If you no longer need the image, you should call ITexture::drop().
     //! See IUnknown::drop() for more information. */
-    virtual ITexture* createRenderTargetTexture(const core::dimension2di &size) = 0;
+    virtual ITexture* createRenderTargetTexture(
+		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat) = 0;
 
     //! Removes a texture from the texture cache and deletes it, freeing lot of
     //! memory. Please note that after calling this, the pointer to the ITexture
@@ -160,9 +161,11 @@ public:
 
 	//! Add/remove a render target object.
     virtual IRenderTarget* addRenderTarget(
-		u32 width, u32 height, E_RENDER_TARGET_CREATION_FLAG flags) = 0;
+		u32 width, u32 height, img::E_COLOR_FORMAT colorFormat,
+		E_RENDER_TARGET_CREATION_FLAG flags) = 0;
     virtual IRenderTarget* addRenderTarget(
-		const core::dimension2di &size, E_RENDER_TARGET_CREATION_FLAG flags) = 0;
+		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
+		E_RENDER_TARGET_CREATION_FLAG flags) = 0;
 	virtual IRenderTarget* addRenderTarget(
 		ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags) = 0;
 	virtual bool removeRenderTarget(IRenderTarget *renderTarget) = 0;
