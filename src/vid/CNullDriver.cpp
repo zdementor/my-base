@@ -103,7 +103,8 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 	m_DirtyTexUnit(-1), m_CurrentGPUProgram(NULL),
 	m_ColorMask(ECM_RED | ECM_GREEN | ECM_BLUE | ECM_ALPHA),
 	m_CurrentRenderPassType(ERP_3D_SOLID_PASS), m_GenShaderMaxLights(-1),
-	m_BackColorFormat((img::E_COLOR_FORMAT)-1)
+	m_BackColorFormat((img::E_COLOR_FORMAT)-1),
+	m_CurrentRenderTarget(NULL)
 {
 #if MY_DEBUG_MODE 
 	IUnknown::setClassName("CNullDriver");
@@ -167,6 +168,13 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 
 CNullDriver::~CNullDriver()
 {
+	if (m_CurrentRenderTarget)
+	{
+		m_CurrentRenderTarget->unbind();
+		m_CurrentRenderTarget->drop();
+		m_CurrentRenderTarget = NULL;
+	}
+
 	core::list<CNullRenderTarget *>::iterator it = m_RTs.begin();
 	for (; it != m_RTs.end(); ++it)
 	{
@@ -791,8 +799,49 @@ bool CNullDriver::removeRenderTarget(IRenderTarget *_rt)
 
 //---------------------------------------------------------------------------
 
+bool CNullDriver::setRenderTarget(IRenderTarget *rt)
+{
+	bool ret = true;
+
+	if (m_CurrentRenderTarget)
+	{
+		m_CurrentRenderTarget->unbind();
+		m_CurrentRenderTarget->drop();
+	}
+	m_CurrentRenderTarget = rt;
+
+	if (m_CurrentRenderTarget)
+	{
+		m_CurrentRenderTarget->grab();
+		ret = m_CurrentRenderTarget->bind();
+	}
+	else
+	{
+		const core::dimension2di &scrSize = getScreenSize();
+		setViewPort(0, 0, scrSize.Width, scrSize.Height);
+	}
+
+	return ret;
+}
+
+//---------------------------------------------------------------------------
+
+IRenderTarget* CNullDriver::getRenderTarget()
+{
+	return m_CurrentRenderTarget;
+}
+
+//---------------------------------------------------------------------------
+
 void CNullDriver::setViewPort(const core::rect<s32>& area)
 {
+}
+
+//---------------------------------------------------------------------------
+
+void CNullDriver::setViewPort(s32 left, s32 top, s32 right, s32 bottom)
+{
+	setViewPort(core::recti(left, top, right, bottom));
 }
 
 //---------------------------------------------------------------------------

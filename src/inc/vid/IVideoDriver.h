@@ -223,6 +223,7 @@ public:
     //! new area.
     //! \param Rectangle defining the new area of rendering operations.
     virtual void setViewPort(const core::rect<s32>& area) = 0;
+	virtual void setViewPort(s32 left, s32 top, s32 right, s32 bottom) = 0;
 
     //! Gets the area of the current viewport. 
     //! \return Returns rectangle of the current vieport.

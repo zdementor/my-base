@@ -26,8 +26,11 @@ class __MY_VID_LIB_API__ IRenderTarget : public IUnknown
 {
 public:
 
-	virtual ITexture* getColorAttachement() = 0;
-	virtual ITexture* getDepthAttachement() = 0;
+	virtual ITexture* getColorAttachment() = 0;
+	virtual ITexture* getDepthAttachment() = 0;
+
+	virtual bool bind() = 0;
+	virtual bool unbind() = 0;
 };
 
 //---------------------------------------------------------------------------

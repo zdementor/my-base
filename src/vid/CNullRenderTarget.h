@@ -12,6 +12,7 @@
 #define CNullRenderTargetHPP
 //---------------------------------------------------------------------------
 
+#include <vid/IVideoDriver.h>
 #include <vid/IRenderTarget.h>
 
 //---------------------------------------------------------------------------
@@ -28,22 +29,27 @@ public:
 		E_RENDER_TARGET_CREATION_FLAG flags);
 	virtual ~CNullRenderTarget();
 
-	virtual ITexture* getColorAttachement()
-	{ return m_ColorAttachement; }
+	virtual ITexture* getColorAttachment()
+	{ return m_ColorAttachment; }
 
-	virtual ITexture* getDepthAttachement()
-	{ return m_DepthAttachement; }
+	virtual ITexture* getDepthAttachment()
+	{ return m_DepthAttachment; }
+
+	virtual bool bind();
+	virtual bool unbind();
 
 protected:
 
-	ITexture *m_ColorAttachement;
-	ITexture *m_DepthAttachement;
+	ITexture *m_ColorAttachment;
+	ITexture *m_DepthAttachment;
 
 	core::dimension2di m_Size;
 	img::E_COLOR_FORMAT m_ColorFormat, m_DepthFormat, m_StencilFormat;
 	E_RENDER_TARGET_CREATION_FLAG m_Flags;
 
 	core::list<CNullRenderTarget *>::iterator m_RTEntry;
+
+	vid::IVideoDriver &m_Driver;
 };
 
 //---------------------------------------------------------------------------

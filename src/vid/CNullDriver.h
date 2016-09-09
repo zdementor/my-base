@@ -84,6 +84,7 @@ public:
     virtual void setRenderPass(const SRenderPass& material);
 
     virtual void setViewPort(const core::rect<s32>& area);
+	virtual void setViewPort(s32 left, s32 top, s32 right, s32 bottom);
 
     virtual const core::rect<s32>& getViewPort() const;
 
@@ -149,8 +150,8 @@ public:
 		bool clearBackBuffer = false, bool clearZBuffer = false,
 		img::SColor color = img::SColor(0,0,0,0))
 	{ return false; }
-	virtual bool setRenderTarget(IRenderTarget *rt) { return false; }
-	virtual IRenderTarget* getRenderTarget() { return NULL; }
+	virtual bool setRenderTarget(IRenderTarget *rt);
+	virtual IRenderTarget* getRenderTarget();
 
 	virtual const c8* findTextureName(vid::ITexture *texture);
 	virtual bool setTextureName(vid::ITexture *texture, const c8 *name);
@@ -796,6 +797,8 @@ protected:
 	s32 m_GenShaderMaxLights;
 
 	img::E_COLOR_FORMAT m_BackColorFormat;
+
+	IRenderTarget* m_CurrentRenderTarget;
 };
 
 //---------------------------------------------------------------------------

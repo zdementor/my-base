@@ -27,8 +27,14 @@ public:
 		E_RENDER_TARGET_CREATION_FLAG flags);
 	COpenGLRenderTarget(ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags);
 	virtual ~COpenGLRenderTarget();
+
+	virtual bool bind();
+	virtual bool unbind();
 private:
 	GLuint m_FBO;
+	bool _rebuild();
+
+	bool m_OK;
 };
 
 //---------------------------------------------------------------------------

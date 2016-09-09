@@ -8,6 +8,7 @@ $#include <img/SColor.h>
 $#include <os/os.h>
 $#include <os/IMemStat.h>
 $#include <vid/IVideoDriver.h>
+$#include <vid/IRenderTarget.h>
 $#include <io/ILogger.h>
 $#include <io/IFileSystem.h>
 $#include <io/IFileList.h>
