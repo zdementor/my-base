@@ -46,7 +46,7 @@ protected:
 
 	CD3D9Texture();
 
-	virtual bool createHardwareTexture();
+	virtual bool createHardwareTexture(bool renderTarget);
 
 	virtual bool createTextureLevel(u32 level, void *data, u32 dataSize, img::E_COLOR_FORMAT format);
 

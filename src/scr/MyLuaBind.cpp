@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/08/16 21:44:56.
+** Generated automatically by tolua++-1.0.92 on 09/09/16 13:46:15.
 */
 
 #ifndef __cplusplus
@@ -937,6 +937,35 @@ static int tolua_MyLuaBind_img_getColorFormatName00(lua_State* tolua_S)
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'getColorFormatName'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* function: img::getBitsPerPixelFromFormat */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_img_getBitsPerPixelFromFormat00
+static int tolua_MyLuaBind_img_getBitsPerPixelFromFormat00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isnumber(tolua_S,1,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  img::E_COLOR_FORMAT fmt = ((img::E_COLOR_FORMAT) (int)  tolua_tonumber(tolua_S,1,0));
+ {
+  unsigned tolua_ret = (unsigned)  img::getBitsPerPixelFromFormat(fmt);
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getBitsPerPixelFromFormat'.",&tolua_err);
  return 0;
 #endif
 }
@@ -58371,9 +58400,12 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"ECF_DXT3",img::ECF_DXT3);
   tolua_constant(tolua_S,"ECF_DXT5",img::ECF_DXT5);
   tolua_constant(tolua_S,"ECF_DEPTH16",img::ECF_DEPTH16);
+  tolua_constant(tolua_S,"ECF_DEPTH24",img::ECF_DEPTH24);
+  tolua_constant(tolua_S,"ECF_DEPTH32",img::ECF_DEPTH32);
   tolua_constant(tolua_S,"ECF_ALPHA32F",img::ECF_ALPHA32F);
   tolua_constant(tolua_S,"E_COLOR_FORMAT_COUNT",img::E_COLOR_FORMAT_COUNT);
   tolua_function(tolua_S,"getColorFormatName",tolua_MyLuaBind_img_getColorFormatName00);
+  tolua_function(tolua_S,"getBitsPerPixelFromFormat",tolua_MyLuaBind_img_getBitsPerPixelFromFormat00);
   tolua_constant(tolua_S,"EIO_ADD",img::EIO_ADD);
   tolua_constant(tolua_S,"EIO_MUL",img::EIO_MUL);
   tolua_constant(tolua_S,"EIO_SUB",img::EIO_SUB);
@@ -58692,6 +58724,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"ERBT_DYNAMIC",vid::ERBT_DYNAMIC);
   tolua_constant(tolua_S,"ERBT_STATIC",vid::ERBT_STATIC);
   tolua_constant(tolua_S,"E_RENDER_BUFFER_TYPE_COUNT",vid::E_RENDER_BUFFER_TYPE_COUNT);
+  tolua_constant(tolua_S,"ERTCF_DEPTH16",vid::ERTCF_DEPTH16);
   tolua_constant(tolua_S,"ERTCF_DEPTH24",vid::ERTCF_DEPTH24);
   tolua_constant(tolua_S,"ERTCF_DEPTH32",vid::ERTCF_DEPTH32);
   tolua_constant(tolua_S,"ERTCF_STENCIL8",vid::ERTCF_STENCIL8);

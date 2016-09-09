@@ -56,10 +56,11 @@ public:
 
 protected:
 
-	virtual bool createHardwareTexture() { return false; }
+	virtual bool createHardwareTexture(bool renderTarget) { return false; }
 
 	bool createTextureFrom(img::IImage* image);
-	bool createEmptyTexture(core::dimension2di &size, img::E_COLOR_FORMAT format);
+	bool createEmptyTexture(
+		const core::dimension2di &size, img::E_COLOR_FORMAT format, bool renderTarget = false);
 
 	virtual bool createTextureLevel(u32 level, void *data, u32 dataSize, img::E_COLOR_FORMAT format);
 

@@ -139,30 +139,6 @@ public:
 };
 
 //----------------------------------------------------------------------------
-
-static MY_INLINE s32 getBitsPerPixelFromFormat(E_COLOR_FORMAT format)
-{
-    switch(format)
-    {
-    case ECF_A1R5G5B5:
-        return 16;
-    case ECF_R5G6B5:
-        return 16;
-    case ECF_R8G8B8:
-        return 24;
-    case ECF_A8R8G8B8:
-        return 32;
-    case ECF_A8B8G8R8:
-        return 32;
-    case ECF_DEPTH16:
-        return 16;
-    case ECF_ALPHA32F:
-        return 32;
-    }
-    return 0;
-}
-
-//----------------------------------------------------------------------------
 } // end namespace img
 } // end namespace my
 //----------------------------------------------------------------------------

@@ -32,79 +32,14 @@ CD3D9RenderTargetTexture::CD3D9RenderTargetTexture(
     IUnknown::setClassName("CD3D9RenderTargetTexture");
 #endif
 
-	m_TextureSize = m_ImageSize = size;
-	//m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(size.Width);
-	//m_TextureSize.Height = core::math::GetNearestPowerOfTwo(size.Height);
+	bool ret = createEmptyTexture(size, colorFormat, true);
 
-    // get backbuffer format to create the comatible render target 
-    D3DFORMAT d3DFormat;
-    IDirect3DSurface9* bb;
-	HRESULT hr;
-
-	hr = Device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &bb);
-
-    if (!FAILED(hr))
-    {
-        D3DSURFACE_DESC desc;
-        bb->GetDesc(&desc);
-        d3DFormat = desc.Format;
-        
-        if (d3DFormat == D3DFMT_X8R8G8B8)
-            d3DFormat = D3DFMT_A8R8G8B8;
-
-        bb->Release();
-    }
-    else
-    {
-        LOGGER.logWarn("Could not create RenderTarget texture: could not get BackBuffer.");
-    }
-
-	if (!FAILED(hr))
-	{
-		hr = Device->CreateTexture(
-			m_TextureSize.Width,
-	        m_TextureSize.Height,
-		    1, // mip map level count, we don't want mipmaps here
-	        D3DUSAGE_RENDERTARGET,
-		    d3DFormat,
-	        D3DPOOL_DEFAULT,
-		    &Texture,
-	        NULL);
-		if (FAILED(hr))
-		{
-		    LOGGER.logWarn("Could not create RenderTarget texture.");
-			Texture = 0;
-		}
-
-		switch(d3DFormat)
-		{
-		case D3DFMT_X1R5G5B5:
-		case D3DFMT_A1R5G5B5:
-			m_ColorFormat = img::ECF_A1R5G5B5;
-			m_Pitch = m_TextureSize.Width*2;
-			break;
-		case D3DFMT_A8B8G8R8:
-		case D3DFMT_A8R8G8B8:
-		case D3DFMT_X8R8G8B8:
-			m_ColorFormat = img::ECF_A8R8G8B8;
-			m_Pitch = m_TextureSize.Width*4;
-			break;
-		case D3DFMT_R5G6B5:
-			m_ColorFormat = img::ECF_R5G6B5;
-			m_Pitch = m_TextureSize.Width*2;
-			break;
-		default:
-			m_ColorFormat = (img::E_COLOR_FORMAT)-1;
-			m_Pitch = 0;
-		}
-	}
-
-	LOGGER.log(FAILED(hr) ? io::ELL_ERROR : io::ELL_INFORMATION,
+	LOGGER.log((!ret) ? io::ELL_ERROR : io::ELL_INFORMATION,
 		"Created render target texture ( %s, mips %s, %dx%d )%s", 
 		img::getColorFormatName(m_ColorFormat),
 		hasMipMaps() ? "on" : "off",
 		getSize().Width, getSize().Height,
-		FAILED(hr) ? " with errors" : "");
+		!ret ? " with errors" : "");
 }
 
 //----------------------------------------------------------------------------

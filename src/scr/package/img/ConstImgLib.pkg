@@ -30,8 +30,10 @@ enum E_COLOR_FORMAT
     ECF_DXT3,
 	ECF_DXT5,
 
-	//! Depth 16 bit format
+	//! Depth formats
 	ECF_DEPTH16,
+	ECF_DEPTH24,
+	ECF_DEPTH32,
 
 	//! Alpha 32 bit float format
 	ECF_ALPHA32F,
@@ -40,6 +42,8 @@ enum E_COLOR_FORMAT
 };
 
 const char* getColorFormatName(E_COLOR_FORMAT fmt);
+
+unsigned getBitsPerPixelFromFormat(E_COLOR_FORMAT fmt);
 
 //----------------------------------------------------------------------------
 

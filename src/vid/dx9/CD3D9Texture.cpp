@@ -121,76 +121,71 @@ bool CD3D9Texture::freeImageData()
 
 //----------------------------------------------------------------------------
 
-bool CD3D9Texture::createHardwareTexture()
+bool CD3D9Texture::createHardwareTexture(bool renderTarget)
 {
-	D3DFORMAT format; 
+	DWORD usage = 0;
+	D3DPOOL pool = renderTarget ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED;
+	D3DFORMAT format;
 
-	switch(m_ColorFormat)
-    {
-    case img::ECF_A1R5G5B5:
-    case img::ECF_R5G6B5:
-    case img::ECF_A8R8G8B8:
-    case img::ECF_A8B8G8R8:
-    case img::ECF_R8G8B8:
+	if (renderTarget)
+		usage = D3DUSAGE_RENDERTARGET;
+
+	switch (m_ColorFormat)
+	{
+	case img::ECF_A8R8G8B8:
+		format = D3DFMT_A8R8G8B8;
+		break;
+	case img::ECF_R8G8B8:
+		format = D3DFMT_R8G8B8; 
+		break;
+	case img::ECF_A1R5G5B5:
+		format = D3DFMT_A1R5G5B5; 
+		break;
+	case img::ECF_R5G6B5:
+		format = D3DFMT_R5G6B5; 
+		break;
 	case img::ECF_DXT1:
+		format = D3DFMT_DXT1; 
+		break;
 	case img::ECF_DXT3:
+		format = D3DFMT_DXT3; 
+		break;
 	case img::ECF_DXT5:
+		format = D3DFMT_DXT5; 
+		break;
+	case img::ECF_DEPTH16:
+		format = D3DFMT_D16;
+		usage = D3DUSAGE_DEPTHSTENCIL;
+		break;
+	case img::ECF_DEPTH24:
+		format = D3DFMT_D24S8;
+		usage = D3DUSAGE_DEPTHSTENCIL;
+		break;
+	case img::ECF_DEPTH32:
+		format = D3DFMT_D32;
+		usage = D3DUSAGE_DEPTHSTENCIL;
 		break;
 	default:
-		LOGGER.logErr("Unsupported data format %s.",
+		LOGGER.logErr("Unsupported D3D hardware texture format %s.",
 			img::getColorFormatName(m_ColorFormat));
 		return false;
-	}
-
-	if (m_ColorFormat == img::ECF_A8R8G8B8)
-    {
-		format = D3DFMT_A8R8G8B8; 
-    }
-	else
-	if (m_ColorFormat == img::ECF_R8G8B8)
-    {
-		format = D3DFMT_R8G8B8; 
-    }
-	else
-	if (m_ColorFormat == img::ECF_A1R5G5B5)
-    {
-		format = D3DFMT_A1R5G5B5; 
-    }	
-	else
-	if (m_ColorFormat == img::ECF_R5G6B5)
-    {
-		format = D3DFMT_R5G6B5; 
     }
 
-	else
-	if (m_ColorFormat == img::ECF_DXT1)
-    {
-		format = D3DFMT_DXT1; 
-    }
-	else
-	if (m_ColorFormat == img::ECF_DXT3)
-    {
-		format = D3DFMT_DXT3; 
-    }
-	else
-	if (m_ColorFormat == img::ECF_DXT5)
-    {
-		format = D3DFMT_DXT5; 
-    }
-	else
-	{
-		LOGGER.log("Unsupported D3D hardware texture format", io::ELL_ERROR);
-
-		return false;
-	}
-
-	HRESULT hr = Device->CreateTexture(
+	HRESULT hr;
+	
+	hr = Device->CreateTexture(
 		m_TextureSize.Width, m_TextureSize.Height,
-        m_AutogenMipMaps ? 0 : 1, // number of mipmaplevels (0 = automatic all)
-        0, format, D3DPOOL_MANAGED, &Texture, NULL);
+		m_AutogenMipMaps ? 0 : 1, // number of mipmaplevels (0 = automatic all)
+		usage, format, pool, &Texture, NULL);
 
-    if (FAILED(hr))
+	if (FAILED(hr))
+	{
+	    LOGGER.logWarn("Could not create D3D hardware texture %s (%d).",
+			img::getColorFormatName(m_ColorFormat),
+			format);
+		Texture = 0;
 		return false;
+	}
 
 	return true;
 }

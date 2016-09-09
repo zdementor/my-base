@@ -28,49 +28,20 @@ COpenGLRenderTargetTexture::COpenGLRenderTargetTexture(
 #if MY_DEBUG_MODE 
 	IUnknown::setClassName("COpenGLRenderTargetTexture");    
 #endif
-
 	m_TextureName.v = NULL;
-
 	memset(m_ImageData, 0, MY_TEXTURE_MAX_MIP_LEVELS * sizeof(*m_ImageData));
 
-	m_MaxMipMapLevels = 1;
-	m_AutogenMipMaps = false;
+	bool ret = createEmptyTexture(size, colorFormat, true);
+	if (ret)
+		createTextureLevel(0,  NULL, 0, m_ColorFormat);
+	m_Created = true;
 
-	m_TextureSize = m_ImageSize = size;
-	//m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(size.Width);
-	//m_TextureSize.Height = core::math::GetNearestPowerOfTwo(size.Height);
-   
-	m_Pitch = m_TextureSize.Width*4;
-	m_ColorFormat = colorFormat;
-
-	m_ImageDataSizeBytes[0] = m_Pitch * m_TextureSize.Width;
-
-	createHardwareTexture();
-
-	ITexture *curtex0 = m_Driver->_getCurrentTexture(0);
-	if (this != curtex0)
-		m_Driver->_setTexture(0, this);
-
-	glTexImage2D(
-		GL_TEXTURE_2D, 
-		0, 
-		m_InternalFormat, 
-		m_TextureSize.Width,
-		m_TextureSize.Height, 
-		0, 
-		m_PixelFormat, 
-		m_PixelType,
-		NULL);
-
-	if (this != curtex0)
-		m_Driver->_setTexture(0, curtex0);
-
-	LOGGER.logInfo("Created render target texture ( %s, mips %s, %dx%d )", 
+	LOGGER.log((!ret) ? io::ELL_ERROR : io::ELL_INFORMATION,
+		"Created render target texture ( %s, mips %s, %dx%d )%s", 
 		img::getColorFormatName(m_ColorFormat),
 		hasMipMaps() ? "on" : "off",
-		getSize().Width, getSize().Height);
-
-	m_Created = true;
+		getSize().Width, getSize().Height,
+		!ret ? " with errors" : "");
 }
 
 //----------------------------------------------------------------------------

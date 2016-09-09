@@ -71,7 +71,8 @@ void CNullHardwareTexture::clear()
 
 //----------------------------------------------------------------------------
 
-bool CNullHardwareTexture::createEmptyTexture(core::dimension2di &size, img::E_COLOR_FORMAT format)
+bool CNullHardwareTexture::createEmptyTexture(
+	const core::dimension2di &size, img::E_COLOR_FORMAT format, bool renderTarget)
 {
 	if (!m_Driver->queryFeature(EVDF_COMPRESSED_TEXTURES) && (
 			format == img::ECF_DXT1 ||
@@ -83,23 +84,25 @@ bool CNullHardwareTexture::createEmptyTexture(core::dimension2di &size, img::E_C
 		return false;
 	}
 
-	m_ImageSize = size;
-
-	m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(m_ImageSize.Width);
-	m_TextureSize.Height = core::math::GetNearestPowerOfTwo(m_ImageSize.Height);
-
-	m_AutogenMipMaps = (m_CreationFlags & ETCF_AUTOGEN_MIP_MAPS)!=0;
-	m_MaxMipMapLevels = 1;
-	if (!m_AutogenMipMaps)
+	if (!renderTarget)
 	{
-		m_MaxMipMapLevels = 1;
-		CHECK_RANGE(m_MaxMipMapLevels, 1, MY_TEXTURE_MAX_MIP_LEVELS);
+		m_ImageSize = size;
+		m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(m_ImageSize.Width);
+		m_TextureSize.Height = core::math::GetNearestPowerOfTwo(m_ImageSize.Height);
+
+		m_AutogenMipMaps = (m_CreationFlags & ETCF_AUTOGEN_MIP_MAPS)!=0;
+	}
+	else
+	{
+		m_TextureSize = m_ImageSize = size;
+
+		m_AutogenMipMaps = false;
 	}
 
 	m_ColorFormat = format;
-	m_BytesPerPixel = img::getBitsPerPixelFromFormat(format) / 8;
 	m_IsCompressed = false;
-
+	m_MaxMipMapLevels = 1;
+	m_BytesPerPixel = img::getBitsPerPixelFromFormat(format) / 8;
 	if (m_ColorFormat == img::ECF_R8G8B8 && (
 			VIDEO_DRIVER.getDriverFamily() == EDF_DIRECTX ||
 			m_TextureSize != m_ImageSize))
@@ -107,31 +110,28 @@ bool CNullHardwareTexture::createEmptyTexture(core::dimension2di &size, img::E_C
 		m_ColorFormat = img::ECF_R5G6B5;
 		m_BytesPerPixel = 2;
 	}
-
 	m_Pitch = m_TextureSize.Width * m_BytesPerPixel;
-
 	for (u32 level = 0; level < getMaxMipMapLevels(); level++)
-	{
 		m_ImageDataSizeBytes[level] = (m_Pitch * m_TextureSize.Height);
-	}
 
-	bool res = createHardwareTexture();
+	bool res = createHardwareTexture(renderTarget);
 
-	for (u32 level = 0; res && level < m_MaxMipMapLevels; level++)
+	if (!renderTarget)
 	{
-		img::IImage* tex_image = lock(level);
-		if (!tex_image)
+		for (u32 level = 0; res && level < m_MaxMipMapLevels; level++)
 		{
-			res = false;
-			break;
+			img::IImage* tex_image = lock(level);
+			if (!tex_image)
+			{
+				res = false;
+				break;
+			}
+			s32 *dest = (s32*)tex_image->getLevelData(level);
+			memset(dest, 0, tex_image->getLevelDataSizeBytes(level));
+			unlock(level);
 		}
-
-		s32 *dest = (s32*)tex_image->getLevelData(level);
-
-		memset(dest, 0, tex_image->getLevelDataSizeBytes(level));
-
-		unlock(level);
 	}
+
     return res;
 }
 
@@ -263,7 +263,7 @@ bool CNullHardwareTexture::createTextureFrom(img::IImage *image)
 		m_ImageDataSizeBytes[level] = image->isCompressed() ? imgSz : sz;
 	}
 
-	bool res = createHardwareTexture();
+	bool res = createHardwareTexture(false);
 
 	if (res)
 	{

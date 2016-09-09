@@ -31,6 +31,8 @@ COpenGLTexture::COpenGLTexture()
 #if MY_DEBUG_MODE 
 	IUnknown::setClassName("COpenGLTexture");
 #endif
+	m_TextureName.v = NULL;
+	memset(m_ImageData, 0, MY_TEXTURE_MAX_MIP_LEVELS * sizeof(*m_ImageData));
 }
 
 //----------------------------------------------------------------------------
@@ -43,7 +45,6 @@ COpenGLTexture::COpenGLTexture(img::IImage* image, u32 flags)
 #endif
 
 	m_TextureName.v = NULL;
-
 	memset(m_ImageData, 0, MY_TEXTURE_MAX_MIP_LEVELS * sizeof(*m_ImageData));
 
 	if (!createTextureFrom(image))
@@ -70,9 +71,7 @@ COpenGLTexture::COpenGLTexture(core::dimension2di &size, img::E_COLOR_FORMAT for
 #if MY_DEBUG_MODE 
 	IUnknown::setClassName("COpenGLTexture");
 #endif
-
 	m_TextureName.v = NULL;
-
 	memset(m_ImageData, 0, MY_TEXTURE_MAX_MIP_LEVELS * sizeof(*m_ImageData));
 
 	if (!createEmptyTexture(size, format))
@@ -121,7 +120,7 @@ bool COpenGLTexture::freeImageData()
 
 //----------------------------------------------------------------------------
 
-bool COpenGLTexture::createHardwareTexture()
+bool COpenGLTexture::createHardwareTexture(bool renderTarget)
 {
 	switch(m_ColorFormat)
     {
@@ -177,6 +176,16 @@ bool COpenGLTexture::createHardwareTexture()
 		m_PixelFormat	= GL_DEPTH_COMPONENT;
 		m_PixelType		= GL_UNSIGNED_SHORT;
 		break;
+	case img::ECF_DEPTH24:
+		m_InternalFormat= GL_DEPTH_COMPONENT24;
+		m_PixelFormat	= GL_DEPTH_COMPONENT;
+		m_PixelType		= GL_UNSIGNED_BYTE;
+		break;
+	case img::ECF_DEPTH32:
+		m_InternalFormat= GL_DEPTH_COMPONENT32;
+		m_PixelFormat	= GL_DEPTH_COMPONENT;
+		m_PixelType		= GL_UNSIGNED_INT;
+		break;
 #endif
 #ifdef GL_ARB_texture_float
 	case img::ECF_ALPHA32F:
@@ -186,7 +195,7 @@ bool COpenGLTexture::createHardwareTexture()
 		break;
 #endif
 	default:
-		LOGGER.logErr("Unsupported texture format %s.",
+		LOGGER.logErr("Unsupported OGL hardware texture format %s.",
 			img::getColorFormatName(m_ColorFormat));
 		return false;
 	}

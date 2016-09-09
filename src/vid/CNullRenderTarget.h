@@ -28,52 +28,19 @@ public:
 		E_RENDER_TARGET_CREATION_FLAG flags);
 	virtual ~CNullRenderTarget();
 
-	virtual bool attachColorTexture(
-		u32 attachIndex, ITexture *colorTex)
-	{
-		return false;
-	}
-
-	virtual bool attachColorTexture(
-		u32 attachIndex, core::dimension2di &size, img::E_COLOR_FORMAT format)
-	{
-		return false;
-	}
-
-	virtual ITexture* getColorAttachement(u32 attachIndex)
-	{
-		if (attachIndex >= m_ColorAttachementsCount)
-			return NULL;
-		return m_ColorAttachements[attachIndex];
-	}
-
-	virtual u32 getColorAttachementsCount()
-	{ return m_ColorAttachementsCount; }
-
-	virtual bool attachDepthTexture(
-		ITexture *dephTex)
-	{
-		return false;
-	}
-
-	virtual bool attachDepthTexture(
-		core::dimension2di &size, img::E_COLOR_FORMAT format)
-	{
-		return false;
-	}
+	virtual ITexture* getColorAttachement()
+	{ return m_ColorAttachement; }
 
 	virtual ITexture* getDepthAttachement()
 	{ return m_DepthAttachement; }
 
 protected:
 
-	ITexture *m_ColorAttachements[MY_MAX_COLOR_ATTACHEMENTS];
+	ITexture *m_ColorAttachement;
 	ITexture *m_DepthAttachement;
 
-	u32 m_ColorAttachementsCount;
-
 	core::dimension2di m_Size;
-	img::E_COLOR_FORMAT m_ColorFormat;
+	img::E_COLOR_FORMAT m_ColorFormat, m_DepthFormat, m_StencilFormat;
 	E_RENDER_TARGET_CREATION_FLAG m_Flags;
 
 	core::list<CNullRenderTarget *>::iterator m_RTEntry;

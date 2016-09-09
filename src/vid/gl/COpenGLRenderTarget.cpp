@@ -28,8 +28,6 @@ COpenGLRenderTarget::COpenGLRenderTarget(
 	LOGGER.logInfo("%s (%p) %dx%d format=%s flags=0x%08X",
 		__FUNCTION__, this,
 		size.Width, size.Height, img::getColorFormatName(colorFormat), flags);
-
-	m_ColorAttachements[0] = VIDEO_DRIVER.createRenderTargetTexture(m_Size, m_ColorFormat);
 }
 
 //----------------------------------------------------------------------------
@@ -43,8 +41,6 @@ COpenGLRenderTarget::COpenGLRenderTarget(
 	glGenFramebuffers(1, &m_FBO);
 #endif
 	LOGGER.logInfo("%s (%p)", __FUNCTION__, this);
-
-	m_ColorAttachements[0] = VIDEO_DRIVER.createRenderTargetTexture(m_Size, m_ColorFormat);
 }
 
 //----------------------------------------------------------------------------

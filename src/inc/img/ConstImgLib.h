@@ -44,8 +44,10 @@ enum E_COLOR_FORMAT
     ECF_DXT3,
 	ECF_DXT5,
 
-	//! Depth 16 bit format
+	//! Depth formats
 	ECF_DEPTH16,
+	ECF_DEPTH24,
+	ECF_DEPTH32,
 
 	//! Alpha 32 bit float format
 	ECF_ALPHA32F,
@@ -66,11 +68,32 @@ static const c8* ColorFormatName[E_COLOR_FORMAT_COUNT] =
     "ECF_DXT3",
 	"ECF_DXT5",
 	"ECF_DEPTH16",
+	"ECF_DEPTH24",
+	"ECF_DEPTH32",
 	"ECF_ALPHA32F",
+};
+
+static u32 ColorFormatBitsPerPixel[E_COLOR_FORMAT_COUNT] =
+{ 
+	16, //ECF_A1R5G5B5
+	16, //ECF_R5G6B5
+	24, //ECF_R8G8B8
+	32, //ECF_A8R8G8B8
+	32, //ECF_A8B8G8R8
+	0,  //ECF_DXT1
+    0,  //ECF_DXT3
+	0,  //ECF_DXT5
+	16, //ECF_DEPTH16
+	24, //ECF_DEPTH24
+	32, //ECF_DEPTH32
+	32, //ECF_ALPHA32F
 };
 
 MY_FORCEINLINE const c8* getColorFormatName(E_COLOR_FORMAT fmt)
 { return ColorFormatName[fmt]; }
+
+MY_FORCEINLINE u32 getBitsPerPixelFromFormat(E_COLOR_FORMAT fmt)
+{ return ColorFormatBitsPerPixel[fmt]; }
 
 //----------------------------------------------------------------------------
 

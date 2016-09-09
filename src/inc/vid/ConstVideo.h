@@ -1562,10 +1562,11 @@ MY_FORCEINLINE const c8* getPixelShaderVersionReadableName(E_PIXEL_SHADER_VERSIO
 
 enum E_RENDER_TARGET_CREATION_FLAG
 {
-	ERTCF_DEPTH24  = (1)<<0,  // 24-bit depth buffer
-	ERTCF_DEPTH32  = (1)<<1,  // 32-bit depth buffer
+	ERTCF_DEPTH16  = (1)<<0,  // 16-bit depth buffer
+	ERTCF_DEPTH24  = (1)<<1,  // 24-bit depth buffer
+	ERTCF_DEPTH32  = (1)<<2,  // 32-bit depth buffer
 
-	ERTCF_STENCIL8 = (1)<<2,  // 8-bit stencil buffer
+	ERTCF_STENCIL8 = (1)<<3,  // 8-bit stencil buffer
 
 	E_RENDER_TARGET_CREATION_FLAG_FORCE_32BIT = 0xffffffff
 };
