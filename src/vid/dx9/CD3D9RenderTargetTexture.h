@@ -41,6 +41,8 @@ public:
 	IDirect3DSurface9* getRenderTargetSurface();
 
 private:
+
+	IDirect3DSurface9 *m_D3DSurface;
 };
 
 //----------------------------------------------------------------------------

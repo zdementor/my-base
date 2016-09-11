@@ -104,7 +104,7 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 	m_ColorMask(ECM_RED | ECM_GREEN | ECM_BLUE | ECM_ALPHA),
 	m_CurrentRenderPassType(ERP_3D_SOLID_PASS), m_GenShaderMaxLights(-1),
 	m_BackColorFormat((img::E_COLOR_FORMAT)-1),
-	m_CurrentRenderTarget(NULL)
+	m_CurrentColorRenderTarget(NULL), m_CurrentRenderTarget(NULL)
 {
 #if MY_DEBUG_MODE 
 	IUnknown::setClassName("CNullDriver");
@@ -168,6 +168,12 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 
 CNullDriver::~CNullDriver()
 {
+	if (m_CurrentColorRenderTarget)
+	{
+		m_CurrentColorRenderTarget->drop();
+		m_CurrentColorRenderTarget = 0;
+	}
+
 	if (m_CurrentRenderTarget)
 	{
 		m_CurrentRenderTarget->unbind();
@@ -755,7 +761,8 @@ ITexture* CNullDriver::_createDeviceDependentTexture(img::IImage* surface)
 
 //---------------------------------------------------------------------------
 
-vid::ITexture* CNullDriver::_createDeviceDependentTexture(core::dimension2di &size, img::E_COLOR_FORMAT format)
+vid::ITexture* CNullDriver::_createDeviceDependentTexture(
+	core::dimension2di &size, img::E_COLOR_FORMAT format)
 {
 	 return new CSoftwareTexture(size, format);
 }
@@ -803,6 +810,9 @@ bool CNullDriver::setRenderTarget(IRenderTarget *rt)
 {
 	bool ret = true;
 
+	if (rt == m_CurrentRenderTarget)
+		return ret;
+
 	if (m_CurrentRenderTarget)
 	{
 		m_CurrentRenderTarget->unbind();
@@ -829,6 +839,44 @@ bool CNullDriver::setRenderTarget(IRenderTarget *rt)
 IRenderTarget* CNullDriver::getRenderTarget()
 {
 	return m_CurrentRenderTarget;
+}
+
+//---------------------------------------------------------------------------
+
+bool CNullDriver::setColorRenderTarget(ITexture* rtt,		
+	bool clearBackBuffer, bool clearZBuffer, img::SColor color)
+{
+	if (rtt == m_CurrentColorRenderTarget)
+		return true;
+
+	if (rtt && !rtt->isRenderTarget())
+	{
+		LOGGER.logErr("Tried to set a non render target texture as render target.");
+		return false;
+	}
+
+	if (rtt && (rtt->getSize().Width > m_ScreenSize.Width || 
+			rtt->getSize().Height > m_ScreenSize.Height ))
+    {
+        LOGGER.logErr("Tried to set a render target texture which is bigger than the screen.");
+        return false;
+    }
+
+	if (m_CurrentColorRenderTarget)
+		m_CurrentColorRenderTarget->drop();
+	m_CurrentColorRenderTarget = rtt;
+
+	if (m_CurrentColorRenderTarget)
+		m_CurrentColorRenderTarget->grab();
+
+	return true;
+}
+
+//---------------------------------------------------------------------------
+
+ITexture* CNullDriver::getColorRenderTarget()
+{
+	return m_CurrentColorRenderTarget;
 }
 
 //---------------------------------------------------------------------------
@@ -1063,7 +1111,6 @@ void CNullDriver::maxIndexWarning(u8 idxSize)
 
 //---------------------------------------------------------------------------
 
-//! Return the size of the texture, in which stencil fog will be drawn
 s32 CNullDriver::getStencilFogTextureSize() 
 { 
     return 128; 
@@ -1071,7 +1118,6 @@ s32 CNullDriver::getStencilFogTextureSize()
 
 //---------------------------------------------------------------------------
 
-//! Setting Background Color
 void CNullDriver::setBackgroundColor(const img::SColor &color)
 {
 	BackColor = color;
@@ -1080,8 +1126,7 @@ void CNullDriver::setBackgroundColor(const img::SColor &color)
 
 //---------------------------------------------------------------------------
 
-//! Return Background Color
-img::SColor CNullDriver::getBackgroundColor()
+const img::SColor& CNullDriver::getBackgroundColor()
 {
 	return BackColor;
 }
@@ -2226,7 +2271,7 @@ void CNullDriver::_renderLightedRenderPools(
 					if (alpha && shadowground_lidx != l)
 					{
 						setColorMask(false, false, false, true);
-						clearColorBuffer();
+						clearColor(BackColor);
 						alpha = false;
 					}
 
@@ -2275,7 +2320,7 @@ void CNullDriver::_renderLightedRenderPools(
 					if (alpha && shadowground_lidx != l)
 					{
 						setColorMask(false, false, false, true);
-						clearColorBuffer();
+						clearColor(BackColor);
 						alpha = false;
 					}
 
@@ -2323,7 +2368,7 @@ void CNullDriver::_renderLightedRenderPools(
 					if (alpha && shadowground_lidx != l)
 					{
 						setColorMask(false, false, false, true);
-						clearColorBuffer();
+						clearColor(BackColor);
 						alpha = false;
 					}
 
@@ -2399,7 +2444,7 @@ void CNullDriver::_renderLightedRenderPools(
 					if (alpha && shadowground_lidx != l)
 					{
 						setColorMask(false, false, false, true);
-						clearColorBuffer();
+						clearColor(BackColor);
 						alpha = false;
 						setColorMask(colmask);
 					}
@@ -2793,15 +2838,6 @@ void CNullDriver::renderPass(E_RENDER_PASS pass)
 			}
 		}
 
-		// reset render data
-		for ( u32 j = 0; j < rp_size; j++ )
-		{
-			SRenderPool *rpool = rpools_all[j];
-			if (rpool->Type == ERPT_RENDER_CACHE)
-				rpool->setIdentity();
-		}
-		rpools_all.set_used(0);
-
 		dips_count = getRenderedDIPsCount() - dips_count;
 		tris_count = getRenderedTrianglesCount() - tris_count;
 
@@ -2861,8 +2897,8 @@ bool CNullDriver::beginRendering()
 
 	setColorMask(true, true, true, true);	
 
-	clearColorBuffer();
-	clearZBuffer();
+	clearColor(BackColor);
+	clearDepth();
 
 	setColorMask(true, true, true, false);
 
@@ -2880,9 +2916,22 @@ void CNullDriver::endRendering()
 	if (!m_Rendering)
 		return;
 
-	u32 cache_index = ( m_RenderPoolsCacheIndex + 1 ) % 2;
+	// reset render data
+	for (u32 i = 0; i < E_RENDER_PASS_COUNT; i++)
+	{
+		core::array <SRenderPool*> &rpools_all = m_RenderData[i];
+		u32 rp_size = rpools_all.size();
+		for ( u32 j = 0; j < rp_size; j++ )
+		{
+			SRenderPool *rpool = rpools_all[j];
+			if (rpool->Type == ERPT_RENDER_CACHE)
+				rpool->setIdentity();
+		}
+		rpools_all.set_used(0);
+	}
 
 	// clear unused cache
+	u32 cache_index = ( m_RenderPoolsCacheIndex + 1 ) % 2;
 	for ( u32 i = 0; i < E_RENDER_PASS_COUNT; i++ )
 	{
 		m_RenderPools[i].clear();

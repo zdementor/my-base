@@ -26,13 +26,23 @@ namespace vid {
 
 CD3D9RenderTargetTexture::CD3D9RenderTargetTexture(
 	const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat) 
-	: CD3D9Texture()
+	: CD3D9Texture(), m_D3DSurface(0)
 {
 #if MY_DEBUG_MODE 
     IUnknown::setClassName("CD3D9RenderTargetTexture");
 #endif
 
 	bool ret = createEmptyTexture(size, colorFormat, true);
+
+	if (ret)
+	{
+		HRESULT hr = Texture->GetSurfaceLevel(0, &m_D3DSurface);
+		if (FAILED(hr))
+		{
+			LOGGER.logErr("Can't get render texture surface!");
+			ret = false;
+		}
+	}
 
 	LOGGER.log((!ret) ? io::ELL_ERROR : io::ELL_INFORMATION,
 		"Created render target texture ( %s, mips %s, %dx%d )%s", 
@@ -46,6 +56,9 @@ CD3D9RenderTargetTexture::CD3D9RenderTargetTexture(
 
 CD3D9RenderTargetTexture::~CD3D9RenderTargetTexture()
 {
+    if (m_D3DSurface)
+        m_D3DSurface->Release();
+
 	LOGGER.logInfo("Destroyed render target texture ( %s, mips %s, %dx%d )", 
 		img::getColorFormatName(m_ColorFormat),
 		hasMipMaps() ? "on" : "off",
@@ -56,14 +69,7 @@ CD3D9RenderTargetTexture::~CD3D9RenderTargetTexture()
 
 IDirect3DSurface9* CD3D9RenderTargetTexture::getRenderTargetSurface()
 {
-    IDirect3DSurface9 *pRTTSurface = 0;
-    if (Texture)
-        Texture->GetSurfaceLevel(0, &pRTTSurface);
-
-    if (pRTTSurface)
-        pRTTSurface->Release();
-
-    return pRTTSurface;
+    return m_D3DSurface;
 }
 
 //----------------------------------------------------------------------------

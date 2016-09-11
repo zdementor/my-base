@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/09/16 18:01:31.
+** Generated automatically by tolua++-1.0.92 on 09/10/16 21:17:05.
 */
 
 #ifndef __cplusplus
@@ -2359,6 +2359,35 @@ static int tolua_MyLuaBind_vid_getIndexSize00(lua_State* tolua_S)
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'getIndexSize'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* function: vid::getRenderTargetDepthFormatName */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_getRenderTargetDepthFormatName00
+static int tolua_MyLuaBind_vid_getRenderTargetDepthFormatName00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isnumber(tolua_S,1,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::E_RENDER_TARGET_DEPTH_FORMAT fmt = ((vid::E_RENDER_TARGET_DEPTH_FORMAT) (int)  tolua_tonumber(tolua_S,1,0));
+ {
+  const char* tolua_ret = (const char*)  vid::getRenderTargetDepthFormatName(fmt);
+ tolua_pushstring(tolua_S,(const char*)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getRenderTargetDepthFormatName'.",&tolua_err);
  return 0;
 #endif
 }
@@ -46638,6 +46667,305 @@ static int tolua_MyLuaBind_vid_IVideoDriver_getBackColorFormat00(lua_State* tolu
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: clearDepth of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_clearDepth00
+static int tolua_MyLuaBind_vid_IVideoDriver_clearDepth00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'clearDepth'",NULL);
+#endif
+ {
+  self->clearDepth();
+ }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'clearDepth'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: setColorMask of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_setColorMask00
+static int tolua_MyLuaBind_vid_IVideoDriver_setColorMask00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isboolean(tolua_S,2,0,&tolua_err) ||
+ !tolua_isboolean(tolua_S,3,0,&tolua_err) ||
+ !tolua_isboolean(tolua_S,4,0,&tolua_err) ||
+ !tolua_isboolean(tolua_S,5,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,6,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+  bool r = ((bool)  tolua_toboolean(tolua_S,2,0));
+  bool g = ((bool)  tolua_toboolean(tolua_S,3,0));
+  bool b = ((bool)  tolua_toboolean(tolua_S,4,0));
+  bool a = ((bool)  tolua_toboolean(tolua_S,5,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'setColorMask'",NULL);
+#endif
+ {
+  self->setColorMask(r,g,b,a);
+ }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'setColorMask'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: setColorMask of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_setColorMask01
+static int tolua_MyLuaBind_vid_IVideoDriver_setColorMask01(lua_State* tolua_S)
+{
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+  unsigned mask = ((unsigned)  tolua_tonumber(tolua_S,2,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'setColorMask'",NULL);
+#endif
+ {
+  self->setColorMask(mask);
+ }
+ }
+ return 0;
+tolua_lerror:
+ return tolua_MyLuaBind_vid_IVideoDriver_setColorMask00(tolua_S);
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getColorMask of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_getColorMask00
+static int tolua_MyLuaBind_vid_IVideoDriver_getColorMask00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"const vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  const vid::IVideoDriver* self = (const vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getColorMask'",NULL);
+#endif
+ {
+  unsigned tolua_ret = (unsigned)  self->getColorMask();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getColorMask'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: setBackgroundColor of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_setBackgroundColor00
+static int tolua_MyLuaBind_vid_IVideoDriver_setBackgroundColor00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,2,"const img::SColor",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+  const img::SColor* color = ((const img::SColor*)  tolua_tousertype(tolua_S,2,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'setBackgroundColor'",NULL);
+#endif
+ {
+  self->setBackgroundColor(*color);
+ }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'setBackgroundColor'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getBackgroundColor of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_getBackgroundColor00
+static int tolua_MyLuaBind_vid_IVideoDriver_getBackgroundColor00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getBackgroundColor'",NULL);
+#endif
+ {
+  const img::SColor& tolua_ret = (const img::SColor&)  self->getBackgroundColor();
+ tolua_pushusertype(tolua_S,(void*)&tolua_ret,"const img::SColor");
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getBackgroundColor'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: clearColor of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_clearColor00
+static int tolua_MyLuaBind_vid_IVideoDriver_clearColor00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,2,"const img::SColor",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+  const img::SColor* color = ((const img::SColor*)  tolua_tousertype(tolua_S,2,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'clearColor'",NULL);
+#endif
+ {
+  self->clearColor(*color);
+ }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'clearColor'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: clearColor of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_clearColor01
+static int tolua_MyLuaBind_vid_IVideoDriver_clearColor01(lua_State* tolua_S)
+{
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,4,0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,5,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,6,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+  unsigned char r = ((unsigned char)  tolua_tonumber(tolua_S,2,0));
+  unsigned char g = ((unsigned char)  tolua_tonumber(tolua_S,3,0));
+  unsigned char b = ((unsigned char)  tolua_tonumber(tolua_S,4,0));
+  unsigned char a = ((unsigned char)  tolua_tonumber(tolua_S,5,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'clearColor'",NULL);
+#endif
+ {
+  self->clearColor(r,g,b,a);
+ }
+ }
+ return 0;
+tolua_lerror:
+ return tolua_MyLuaBind_vid_IVideoDriver_clearColor00(tolua_S);
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: render2DRect of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_render2DRect00
+static int tolua_MyLuaBind_vid_IVideoDriver_render2DRect00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,2,"const vid::SMaterial",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,3,"const core::rectf",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,4,"const core::rectf",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,5,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+  const vid::SMaterial* material = ((const vid::SMaterial*)  tolua_tousertype(tolua_S,2,0));
+  const core::rectf* drawRect = ((const core::rectf*)  tolua_tousertype(tolua_S,3,0));
+  const core::rectf* texRect = ((const core::rectf*)  tolua_tousertype(tolua_S,4,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'render2DRect'",NULL);
+#endif
+ {
+  self->render2DRect(*material,*drawRect,*texRect);
+ }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'render2DRect'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: beginRendering of class  vid::IVideoDriver */
 #ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_beginRendering00
 static int tolua_MyLuaBind_vid_IVideoDriver_beginRendering00(lua_State* tolua_S)
@@ -47640,39 +47968,6 @@ static int tolua_MyLuaBind_vid_IVideoDriver_getDriverFamily00(lua_State* tolua_S
 #endif //#ifndef TOLUA_DISABLE
 
 /* method: setBackgroundColor of class  vid::IVideoDriver */
-#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_setBackgroundColor00
-static int tolua_MyLuaBind_vid_IVideoDriver_setBackgroundColor00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
- !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
- !tolua_isusertype(tolua_S,2,"const img::SColor",0,&tolua_err) ||
- !tolua_isnoobj(tolua_S,3,&tolua_err)
- )
- goto tolua_lerror;
- else
-#endif
- {
-  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
-  const img::SColor* color = ((const img::SColor*)  tolua_tousertype(tolua_S,2,0));
-#ifndef TOLUA_RELEASE
- if (!self) tolua_error(tolua_S,"invalid 'self' in function 'setBackgroundColor'",NULL);
-#endif
- {
-  self->setBackgroundColor(*color);
- }
- }
- return 0;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'setBackgroundColor'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: setBackgroundColor of class  vid::IVideoDriver */
 #ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_setBackgroundColor01
 static int tolua_MyLuaBind_vid_IVideoDriver_setBackgroundColor01(lua_State* tolua_S)
 {
@@ -47697,6 +47992,34 @@ static int tolua_MyLuaBind_vid_IVideoDriver_setBackgroundColor01(lua_State* tolu
  return 0;
 tolua_lerror:
  return tolua_MyLuaBind_vid_IVideoDriver_setBackgroundColor00(tolua_S);
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: setBackgroundColor of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_setBackgroundColor02
+static int tolua_MyLuaBind_vid_IVideoDriver_setBackgroundColor02(lua_State* tolua_S)
+{
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,2,"const img::SColor",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+  const img::SColor* color = ((const img::SColor*)  tolua_tousertype(tolua_S,2,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'setBackgroundColor'",NULL);
+#endif
+ {
+  self->setBackgroundColor(*color);
+ }
+ }
+ return 0;
+tolua_lerror:
+ return tolua_MyLuaBind_vid_IVideoDriver_setBackgroundColor01(tolua_S);
 }
 #endif //#ifndef TOLUA_DISABLE
 
@@ -47799,6 +48122,45 @@ static int tolua_MyLuaBind_vid_IVideoDriver_setTextureName00(lua_State* tolua_S)
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'setTextureName'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: setViewPort of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_setViewPort00
+static int tolua_MyLuaBind_vid_IVideoDriver_setViewPort00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,4,0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,5,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,6,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+  int left = ((int)  tolua_tonumber(tolua_S,2,0));
+  int top = ((int)  tolua_tonumber(tolua_S,3,0));
+  int right = ((int)  tolua_tonumber(tolua_S,4,0));
+  int bottom = ((int)  tolua_tonumber(tolua_S,5,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'setViewPort'",NULL);
+#endif
+ {
+  self->setViewPort(left,top,right,bottom);
+ }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'setViewPort'.",&tolua_err);
  return 0;
 #endif
 }
@@ -48675,12 +49037,12 @@ static int tolua_MyLuaBind_vid_IVideoDriver_addRenderTarget00(lua_State* tolua_S
   unsigned width = ((unsigned)  tolua_tonumber(tolua_S,2,0));
   unsigned height = ((unsigned)  tolua_tonumber(tolua_S,3,0));
   img::E_COLOR_FORMAT colorFormat = ((img::E_COLOR_FORMAT) (int)  tolua_tonumber(tolua_S,4,0));
-  vid::E_RENDER_TARGET_CREATION_FLAG flags = ((vid::E_RENDER_TARGET_CREATION_FLAG) (int)  tolua_tonumber(tolua_S,5,0));
+  vid::E_RENDER_TARGET_DEPTH_FORMAT depthFormat = ((vid::E_RENDER_TARGET_DEPTH_FORMAT) (int)  tolua_tonumber(tolua_S,5,0));
 #ifndef TOLUA_RELEASE
  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'addRenderTarget'",NULL);
 #endif
  {
-  vid::IRenderTarget* tolua_ret = (vid::IRenderTarget*)  self->addRenderTarget(width,height,colorFormat,flags);
+  vid::IRenderTarget* tolua_ret = (vid::IRenderTarget*)  self->addRenderTarget(width,height,colorFormat,depthFormat);
  tolua_pushusertype(tolua_S,(void*)tolua_ret,"vid::IRenderTarget");
  }
  }
@@ -48711,49 +49073,18 @@ static int tolua_MyLuaBind_vid_IVideoDriver_addRenderTarget01(lua_State* tolua_S
   vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
   const core::dimension2di* size = ((const core::dimension2di*)  tolua_tousertype(tolua_S,2,0));
   img::E_COLOR_FORMAT colorFormat = ((img::E_COLOR_FORMAT) (int)  tolua_tonumber(tolua_S,3,0));
-  vid::E_RENDER_TARGET_CREATION_FLAG flags = ((vid::E_RENDER_TARGET_CREATION_FLAG) (int)  tolua_tonumber(tolua_S,4,0));
+  vid::E_RENDER_TARGET_DEPTH_FORMAT depthFormat = ((vid::E_RENDER_TARGET_DEPTH_FORMAT) (int)  tolua_tonumber(tolua_S,4,0));
 #ifndef TOLUA_RELEASE
  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'addRenderTarget'",NULL);
 #endif
  {
-  vid::IRenderTarget* tolua_ret = (vid::IRenderTarget*)  self->addRenderTarget(*size,colorFormat,flags);
+  vid::IRenderTarget* tolua_ret = (vid::IRenderTarget*)  self->addRenderTarget(*size,colorFormat,depthFormat);
  tolua_pushusertype(tolua_S,(void*)tolua_ret,"vid::IRenderTarget");
  }
  }
  return 1;
 tolua_lerror:
  return tolua_MyLuaBind_vid_IVideoDriver_addRenderTarget00(tolua_S);
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: addRenderTarget of class  vid::IVideoDriver */
-#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_addRenderTarget02
-static int tolua_MyLuaBind_vid_IVideoDriver_addRenderTarget02(lua_State* tolua_S)
-{
- tolua_Error tolua_err;
- if (
- !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
- !tolua_isusertype(tolua_S,2,"vid::ITexture",0,&tolua_err) ||
- !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
- !tolua_isnoobj(tolua_S,4,&tolua_err)
- )
- goto tolua_lerror;
- else
- {
-  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
-  vid::ITexture* colorRenderTarget = ((vid::ITexture*)  tolua_tousertype(tolua_S,2,0));
-  vid::E_RENDER_TARGET_CREATION_FLAG flags = ((vid::E_RENDER_TARGET_CREATION_FLAG) (int)  tolua_tonumber(tolua_S,3,0));
-#ifndef TOLUA_RELEASE
- if (!self) tolua_error(tolua_S,"invalid 'self' in function 'addRenderTarget'",NULL);
-#endif
- {
-  vid::IRenderTarget* tolua_ret = (vid::IRenderTarget*)  self->addRenderTarget(colorRenderTarget,flags);
- tolua_pushusertype(tolua_S,(void*)tolua_ret,"vid::IRenderTarget");
- }
- }
- return 1;
-tolua_lerror:
- return tolua_MyLuaBind_vid_IVideoDriver_addRenderTarget01(tolua_S);
 }
 #endif //#ifndef TOLUA_DISABLE
 
@@ -54842,9 +55173,9 @@ static int tolua_MyLuaBind_vid_IRenderBuffer_getVertices00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
-/* method: getColorAttachment of class  vid::IRenderTarget */
-#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IRenderTarget_getColorAttachment00
-static int tolua_MyLuaBind_vid_IRenderTarget_getColorAttachment00(lua_State* tolua_S)
+/* method: getColorTexture of class  vid::IRenderTarget */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IRenderTarget_getColorTexture00
+static int tolua_MyLuaBind_vid_IRenderTarget_getColorTexture00(lua_State* tolua_S)
 {
 #ifndef TOLUA_RELEASE
  tolua_Error tolua_err;
@@ -54858,49 +55189,17 @@ static int tolua_MyLuaBind_vid_IRenderTarget_getColorAttachment00(lua_State* tol
  {
   vid::IRenderTarget* self = (vid::IRenderTarget*)  tolua_tousertype(tolua_S,1,0);
 #ifndef TOLUA_RELEASE
- if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getColorAttachment'",NULL);
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getColorTexture'",NULL);
 #endif
  {
-  vid::ITexture* tolua_ret = (vid::ITexture*)  self->getColorAttachment();
+  vid::ITexture* tolua_ret = (vid::ITexture*)  self->getColorTexture();
  tolua_pushusertype(tolua_S,(void*)tolua_ret,"vid::ITexture");
  }
  }
  return 1;
 #ifndef TOLUA_RELEASE
  tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'getColorAttachment'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: getDepthAttachment of class  vid::IRenderTarget */
-#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IRenderTarget_getDepthAttachment00
-static int tolua_MyLuaBind_vid_IRenderTarget_getDepthAttachment00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
- !tolua_isusertype(tolua_S,1,"vid::IRenderTarget",0,&tolua_err) ||
- !tolua_isnoobj(tolua_S,2,&tolua_err)
- )
- goto tolua_lerror;
- else
-#endif
- {
-  vid::IRenderTarget* self = (vid::IRenderTarget*)  tolua_tousertype(tolua_S,1,0);
-#ifndef TOLUA_RELEASE
- if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getDepthAttachment'",NULL);
-#endif
- {
-  vid::ITexture* tolua_ret = (vid::ITexture*)  self->getDepthAttachment();
- tolua_pushusertype(tolua_S,(void*)tolua_ret,"vid::ITexture");
- }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'getDepthAttachment'.",&tolua_err);
+ tolua_error(tolua_S,"#ferror in function 'getColorTexture'.",&tolua_err);
  return 0;
 #endif
 }
@@ -58789,10 +59088,17 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"ERBT_DYNAMIC",vid::ERBT_DYNAMIC);
   tolua_constant(tolua_S,"ERBT_STATIC",vid::ERBT_STATIC);
   tolua_constant(tolua_S,"E_RENDER_BUFFER_TYPE_COUNT",vid::E_RENDER_BUFFER_TYPE_COUNT);
-  tolua_constant(tolua_S,"ERTCF_DEPTH16",vid::ERTCF_DEPTH16);
-  tolua_constant(tolua_S,"ERTCF_DEPTH24",vid::ERTCF_DEPTH24);
-  tolua_constant(tolua_S,"ERTCF_DEPTH32",vid::ERTCF_DEPTH32);
-  tolua_constant(tolua_S,"ERTCF_STENCIL8",vid::ERTCF_STENCIL8);
+  tolua_constant(tolua_S,"ERTDF_NONE",vid::ERTDF_NONE);
+  tolua_constant(tolua_S,"ERTDF_DEPTH16",vid::ERTDF_DEPTH16);
+  tolua_constant(tolua_S,"ERTDF_DEPTH24",vid::ERTDF_DEPTH24);
+  tolua_constant(tolua_S,"ERTDF_DEPTH32",vid::ERTDF_DEPTH32);
+  tolua_constant(tolua_S,"ERTDF_DEPTH24_STENCIL8",vid::ERTDF_DEPTH24_STENCIL8);
+  tolua_constant(tolua_S,"E_RENDER_TARGET_DEPTH_FORMAT_COUNT",vid::E_RENDER_TARGET_DEPTH_FORMAT_COUNT);
+  tolua_function(tolua_S,"getRenderTargetDepthFormatName",tolua_MyLuaBind_vid_getRenderTargetDepthFormatName00);
+  tolua_constant(tolua_S,"ECM_RED",vid::ECM_RED);
+  tolua_constant(tolua_S,"ECM_GREEN",vid::ECM_GREEN);
+  tolua_constant(tolua_S,"ECM_BLUE",vid::ECM_BLUE);
+  tolua_constant(tolua_S,"ECM_ALPHA",vid::ECM_ALPHA);
  tolua_endmodule(tolua_S);
  tolua_module(tolua_S,"os",0);
  tolua_beginmodule(tolua_S,"os");
@@ -60989,6 +61295,15 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_beginmodule(tolua_S,"IVideoDriver");
    tolua_function(tolua_S,"getSingleton",tolua_MyLuaBind_vid_IVideoDriver_getSingleton00);
    tolua_function(tolua_S,"getBackColorFormat",tolua_MyLuaBind_vid_IVideoDriver_getBackColorFormat00);
+   tolua_function(tolua_S,"clearDepth",tolua_MyLuaBind_vid_IVideoDriver_clearDepth00);
+   tolua_function(tolua_S,"setColorMask",tolua_MyLuaBind_vid_IVideoDriver_setColorMask00);
+   tolua_function(tolua_S,"setColorMask",tolua_MyLuaBind_vid_IVideoDriver_setColorMask01);
+   tolua_function(tolua_S,"getColorMask",tolua_MyLuaBind_vid_IVideoDriver_getColorMask00);
+   tolua_function(tolua_S,"setBackgroundColor",tolua_MyLuaBind_vid_IVideoDriver_setBackgroundColor00);
+   tolua_function(tolua_S,"getBackgroundColor",tolua_MyLuaBind_vid_IVideoDriver_getBackgroundColor00);
+   tolua_function(tolua_S,"clearColor",tolua_MyLuaBind_vid_IVideoDriver_clearColor00);
+   tolua_function(tolua_S,"clearColor",tolua_MyLuaBind_vid_IVideoDriver_clearColor01);
+   tolua_function(tolua_S,"render2DRect",tolua_MyLuaBind_vid_IVideoDriver_render2DRect00);
    tolua_function(tolua_S,"beginRendering",tolua_MyLuaBind_vid_IVideoDriver_beginRendering00);
    tolua_function(tolua_S,"renderAll",tolua_MyLuaBind_vid_IVideoDriver_renderAll00);
    tolua_function(tolua_S,"renderPass",tolua_MyLuaBind_vid_IVideoDriver_renderPass00);
@@ -61020,11 +61335,12 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
    tolua_function(tolua_S,"getTextureCreationFlag",tolua_MyLuaBind_vid_IVideoDriver_getTextureCreationFlag00);
    tolua_function(tolua_S,"getDriverType",tolua_MyLuaBind_vid_IVideoDriver_getDriverType00);
    tolua_function(tolua_S,"getDriverFamily",tolua_MyLuaBind_vid_IVideoDriver_getDriverFamily00);
-   tolua_function(tolua_S,"setBackgroundColor",tolua_MyLuaBind_vid_IVideoDriver_setBackgroundColor00);
    tolua_function(tolua_S,"setBackgroundColor",tolua_MyLuaBind_vid_IVideoDriver_setBackgroundColor01);
+   tolua_function(tolua_S,"setBackgroundColor",tolua_MyLuaBind_vid_IVideoDriver_setBackgroundColor02);
    tolua_function(tolua_S,"findTexture",tolua_MyLuaBind_vid_IVideoDriver_findTexture00);
    tolua_function(tolua_S,"findTextureName",tolua_MyLuaBind_vid_IVideoDriver_findTextureName00);
    tolua_function(tolua_S,"setTextureName",tolua_MyLuaBind_vid_IVideoDriver_setTextureName00);
+   tolua_function(tolua_S,"setViewPort",tolua_MyLuaBind_vid_IVideoDriver_setViewPort00);
    tolua_function(tolua_S,"getViewPort",tolua_MyLuaBind_vid_IVideoDriver_getViewPort00);
    tolua_function(tolua_S,"setFog",tolua_MyLuaBind_vid_IVideoDriver_setFog00);
    tolua_function(tolua_S,"getFog",tolua_MyLuaBind_vid_IVideoDriver_getFog00);
@@ -61051,7 +61367,6 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
    tolua_function(tolua_S,"getPolygonFillMode",tolua_MyLuaBind_vid_IVideoDriver_getPolygonFillMode00);
    tolua_function(tolua_S,"addRenderTarget",tolua_MyLuaBind_vid_IVideoDriver_addRenderTarget00);
    tolua_function(tolua_S,"addRenderTarget",tolua_MyLuaBind_vid_IVideoDriver_addRenderTarget01);
-   tolua_function(tolua_S,"addRenderTarget",tolua_MyLuaBind_vid_IVideoDriver_addRenderTarget02);
    tolua_function(tolua_S,"removeRenderTarget",tolua_MyLuaBind_vid_IVideoDriver_removeRenderTarget00);
    tolua_function(tolua_S,"setRenderTarget",tolua_MyLuaBind_vid_IVideoDriver_setRenderTarget00);
    tolua_function(tolua_S,"getRenderTarget",tolua_MyLuaBind_vid_IVideoDriver_getRenderTarget00);
@@ -61335,8 +61650,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
  tolua_beginmodule(tolua_S,"vid");
   tolua_cclass(tolua_S,"IRenderTarget","vid::IRenderTarget","",NULL);
   tolua_beginmodule(tolua_S,"IRenderTarget");
-   tolua_function(tolua_S,"getColorAttachment",tolua_MyLuaBind_vid_IRenderTarget_getColorAttachment00);
-   tolua_function(tolua_S,"getDepthAttachment",tolua_MyLuaBind_vid_IRenderTarget_getDepthAttachment00);
+   tolua_function(tolua_S,"getColorTexture",tolua_MyLuaBind_vid_IRenderTarget_getColorTexture00);
   tolua_endmodule(tolua_S);
  tolua_endmodule(tolua_S);
  tolua_module(tolua_S,"os",0);

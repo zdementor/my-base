@@ -36,12 +36,10 @@ namespace vid {
 
 //----------------------------------------------------------------------------
 
-//! constructor
-CD3D9Driver::CD3D9Driver(const core::dimension2d<s32>& screenSize) 
-	: CNullDriver(screenSize), 
-m_D3DLibrary(0), m_D3DDevice(0), m_D3D(0), DeviceLost(false),
-MaxAnisotropyLevel(0), StencilFogTexture(0), pEventQuery(0),
-m_D3D9HardwareOcclusionQuery(0), m_D3DRenderTargetSurface(0)
+CD3D9Driver::CD3D9Driver(const core::dimension2di &screenSize) 
+	: CNullDriver(screenSize), m_D3DLibrary(0), m_D3DDevice(0), m_D3D(0), DeviceLost(false),
+MaxAnisotropyLevel(0), StencilFogTexture(0), pEventQuery(0), m_D3D9HardwareOcclusionQuery(0),
+m_D3DMainRenderTargetSurface(0), m_D3DMainDepthStencilSurface(0)
 {
 #if MY_DEBUG_MODE 
 	IUnknown::setClassName("CD3D9Driver");    
@@ -57,10 +55,12 @@ m_D3D9HardwareOcclusionQuery(0), m_D3DRenderTargetSurface(0)
 
 //----------------------------------------------------------------------------
 
-//! destructor
 CD3D9Driver::~CD3D9Driver()
 {
 	free();
+
+	SAFE_RELEASE(m_D3DMainRenderTargetSurface);
+	SAFE_RELEASE(m_D3DMainDepthStencilSurface);
 
 	SAFE_DROP(m_D3D9HardwareOcclusionQuery);
 
@@ -252,17 +252,24 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 
 	m_BackColorFormat = (img::E_COLOR_FORMAT)-1;
 
-	IDirect3DSurface9* bb;
+	hr = m_D3DDevice->GetDepthStencilSurface(&m_D3DMainDepthStencilSurface);
 
-	hr = m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &bb);
+	if (FAILED(hr))
+    {
+        LOGGER.logWarn("Could not get BackBuffer depth stencil surface.");
+    }
+
+	if (!FAILED(hr))
+		hr = m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_D3DMainRenderTargetSurface);
 
     if (!FAILED(hr))
     {
-        D3DSURFACE_DESC desc;
+		IDirect3DSurface9* bb = m_D3DMainRenderTargetSurface;
+		D3DSURFACE_DESC desc;
+
         bb->GetDesc(&desc);
-        D3DFORMAT d3DFormat = desc.Format;
         
-		switch (d3DFormat)
+		switch (desc.Format)
 		{
 		case D3DFMT_X1R5G5B5:
 		case D3DFMT_A1R5G5B5:
@@ -277,15 +284,13 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 			m_BackColorFormat = img::ECF_R5G6B5;
 			break;
 		default:
-			LOGGER.logWarn("Unknown BackBuffer color format (0x%08X).", d3DFormat);
+			LOGGER.logWarn("Unknown BackBuffer color format (%d).", desc.Format);
 			break;
 		}
-
-        bb->Release();
     }
     else
     {
-        LOGGER.logWarn("Could not get BackBuffer color format.");
+        LOGGER.logWarn("Could not get BackBuffer render target surface.");
     }
 
 	if ((u32)m_BackColorFormat >= img::E_COLOR_FORMAT_COUNT)
@@ -582,7 +587,6 @@ bool CD3D9Driver::_swapBuffers()
 
 //----------------------------------------------------------------------------
 
-//! resets the device
 bool CD3D9Driver::reset()
 {
     // reset
@@ -648,7 +652,6 @@ bool CD3D9Driver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 
 //----------------------------------------------------------------------------
 
-//! sets transformation
 void CD3D9Driver::setTransform(E_TRANSFORMATION_STATE state, const core::matrix4& mat)
 {
 	CNullDriver::setTransform(state, mat);
@@ -738,7 +741,6 @@ ITexture* CD3D9Driver::_createDeviceDependentTexture(core::dimension2di &size, i
 
 //----------------------------------------------------------------------------
 
-//! Enables or disables a texture creation flag.
 void CD3D9Driver::setTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag, bool enabled)
 {
     if (flag == ETCF_AUTOGEN_MIP_MAPS && !queryFeature(EVDF_MIP_MAP))
@@ -752,24 +754,15 @@ void CD3D9Driver::setTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag, bool enab
 bool CD3D9Driver::setColorRenderTarget(ITexture* texture,		
 	bool clearBackBuffer, bool clearZBuffer, img::SColor color)
 {
-    CD3D9RenderTargetTexture *rtt = NULL;
+	ITexture *prevRTT = getColorRenderTarget();
 
-    // check for valid render target
+	if (texture == prevRTT)
+		return true;
 
-    if (texture && !texture->isRenderTarget())
-    {
-        LOGGER.logErr("Tried to set a non render target texture as render target.");
-        return false;
-    }
+	if (!CNullDriver::setColorRenderTarget(texture, clearBackBuffer, clearZBuffer, color))
+		return false;
 
-    rtt = (CD3D9RenderTargetTexture*)texture;
-
-    if (rtt && (rtt->getSize().Width > m_ScreenSize.Width || 
-			rtt->getSize().Height > m_ScreenSize.Height ))
-    {
-        LOGGER.logErr("Tried to set a render target texture which is bigger than the screen.");
-        return false;
-    }
+    CD3D9RenderTargetTexture *rtt = (CD3D9RenderTargetTexture*)texture;
 
     // check if we should set the previous RT back
 
@@ -777,32 +770,14 @@ bool CD3D9Driver::setColorRenderTarget(ITexture* texture,
 
     if (rtt == 0)
     {
-        if (m_D3DRenderTargetSurface)
+		if (FAILED(m_D3DDevice->SetRenderTarget(0, m_D3DMainRenderTargetSurface)))
         {
-            if (FAILED(m_D3DDevice->SetRenderTarget(0, m_D3DRenderTargetSurface)))
-            {
-                LOGGER.logErr("Could not set back to previous render target.");
-                ret = false;
-            }
-
-            m_D3DRenderTargetSurface->Release();
-            m_D3DRenderTargetSurface = 0;
-        }
+			LOGGER.logErr("Could not set back to previous render target.");
+			ret = false;
+		}
     }
     else
     {
-        // we want to set a new target. so do this.
-
-        // store previous target
-        if (!m_D3DRenderTargetSurface)
-		{
-            if (FAILED(m_D3DDevice->GetRenderTarget(0, &m_D3DRenderTargetSurface)))
-            {
-                LOGGER.logErr("Could not get previous render target.");
-                return false;
-            }
-		}
-
         // set new render target
         if (FAILED(m_D3DDevice->SetRenderTarget(0, rtt->getRenderTargetSurface())))
         {
@@ -1529,24 +1504,11 @@ ITexture* CD3D9Driver::createRenderTargetTexture(
 
 //---------------------------------------------------------------------------
 
-IRenderTarget* CD3D9Driver::addRenderTarget(
-	const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
-	E_RENDER_TARGET_CREATION_FLAG flags)
+IRenderTarget* CD3D9Driver::addRenderTarget(const core::dimension2di &size,
+	img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat)
 {
 	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
-		new CD3D9RenderTarget(size, colorFormat, flags) : NULL;
-	if (rt)
-		_addRenderTarget(rt);
-	return rt;
-}
-
-//---------------------------------------------------------------------------
-
-IRenderTarget* CD3D9Driver::addRenderTarget(
-	ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags)
-{
-	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
-		new CD3D9RenderTarget(colorRenderTarget, flags) : NULL;
+		new CD3D9RenderTarget(size, colorFormat, depthFormat) : NULL;
 	if (rt)
 		_addRenderTarget(rt);
 	return rt;
@@ -1566,7 +1528,7 @@ void CD3D9Driver::setColorMask(bool r, bool g, bool b, bool a)
 
 //----------------------------------------------------------------------------
 
-void CD3D9Driver::clearZBuffer()
+void CD3D9Driver::clearDepth()
 {
     HRESULT hr = m_D3DDevice->Clear( 0, NULL, D3DCLEAR_ZBUFFER, 0, 1.0, 0);
 
@@ -1576,7 +1538,7 @@ void CD3D9Driver::clearZBuffer()
 
 //---------------------------------------------------------------------------
 
-void CD3D9Driver::clearColorBuffer()
+void CD3D9Driver::clearColor(u8 r, u8 g, u8 b, u8 a)
 {
 	// Emulate clear color buffer via redraw all screen rectangle.
 	// This trick is needed only for DirectX, because
@@ -1585,28 +1547,17 @@ void CD3D9Driver::clearColorBuffer()
 	// m_D3DDevice->Clear( 0, NULL, D3DCLEAR_TARGET, BackColor.color, 1.0, 0);
 	//
 
-	m_TrianglesDrawn += 2;
-	m_DIPsDrawn += 1;
-
-    // store initial render states
-
-	bool stencil = _isStencilEnabled();
-
-	core::matrix4 matModel = getTransform(ETS_MODEL);
-	core::matrix4 matView = getTransform(ETS_VIEW);
-	core::matrix4 matProj = getTransform(ETS_PROJ);
-
 	// Draw A Rectangle Covering The Entire Screen
 	//  (-1, 1) 0---2 ( 1, 1)
 	//          | / |
 	//  (-1,-1) 1---3 ( 1,-1)
-
+	img::SColor color(a, r, g, b);
     S3DVertexSimpleColoured vtx[4] =
 	{
-		S3DVertexSimpleColoured(-1.0f, 1.0f, 0.0f, BackColor.color),
-		S3DVertexSimpleColoured(-1.0f,-1.0f, 0.0f, BackColor.color),
-		S3DVertexSimpleColoured( 1.0f, 1.0f, 0.0f, BackColor.color),
-		S3DVertexSimpleColoured( 1.0f,-1.0f, 0.0f, BackColor.color),
+		S3DVertexSimpleColoured(-1.0f, 1.0f, 0.0f, color),
+		S3DVertexSimpleColoured(-1.0f,-1.0f, 0.0f, color),
+		S3DVertexSimpleColoured( 1.0f, 1.0f, 0.0f, color),
+		S3DVertexSimpleColoured( 1.0f,-1.0f, 0.0f, color),
 	};
 
 	static SRenderPass pass;
@@ -1618,25 +1569,109 @@ void CD3D9Driver::clearColorBuffer()
 	pass.setFlag(EMF_BACK_FACE_CULLING, false);
 	pass.setFlag(EMF_BLENDING, false);
 
-	_disableStencil();
+    // store initial render states
+	bool stencil = _isStencilEnabled();
+	core::matrix4 matModel = getTransform(ETS_MODEL);
+	core::matrix4 matView = getTransform(ETS_VIEW);
+	core::matrix4 matProj = getTransform(ETS_PROJ);
 
+	// identity Rasterizator space
 	core::matrix4 m;
-
 	setTransform(ETS_MODEL, m);
 	setTransform(ETS_VIEW, m);
 	setTransform(ETS_PROJ, m);
 
-	setRenderPass(pass);
-	_setVertexType(EVT_SIMPLE_COLOURED);
-	_setRenderStates();
+	// set render states
+	_disableStencil();
+	_setVertexType(vtx->Type);
 
-	m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vtx, sizeof(*vtx));
+	// draw
+	CD3D9RenderArray<S3DVertexSimpleColoured, u16> arr(
+		m_D3DDevice,
+		vtx, sizeof(vtx) / sizeof(*vtx),
+		NULL, 0,
+		vid::EDPT_TRIANGLE_STRIP,
+		false);
+	setRenderPass(pass);
+	_setRenderStates();
+	arr.draw();
+
+	m_TrianglesDrawn += 2;
+	m_DIPsDrawn += 1;
 
 	// restore modified states
-
 	if (stencil)
 		_enableStencil();
+	setTransform(ETS_MODEL, matModel);
+	setTransform(ETS_VIEW, matView);
+	setTransform(ETS_PROJ, matProj);
+}
 
+//----------------------------------------------------------------------------
+
+void CD3D9Driver::render2DRect(const SMaterial &material,
+	const core::rectf &drawRect, const core::rectf &texRect)
+{
+	// Recalculate draw Rectangle
+	// from normalized Screen space to identity Rasterizator space
+	// (0, 0) 0---2 (1, 0)             (-1, 1) 0---2 ( 1, 1)
+	//        | / |           ---->            | / |
+	// (0, 1) 1---3 (1, 1)             (-1,-1) 1---3 ( 1,-1)
+	f32 drawLeft   = drawRect.UpperLeftCorner.X * 2.f - 1.f;
+	f32 drawTop    =(drawRect.UpperLeftCorner.Y * 2.f - 1.f) * (-1);
+	f32 drawRight  = drawRect.LowerRightCorner.X * 2.f - 1.f;
+	f32 drawBottom =(drawRect.LowerRightCorner.Y * 2.f - 1.f) * (-1);
+	vid::S3DVertex1TCoords vertices[4] =
+	{
+		S3DVertex1TCoords(drawLeft,  drawTop, 0, 0, 0, 0,
+			texRect.UpperLeftCorner.X,	texRect.UpperLeftCorner.Y),
+		S3DVertex1TCoords(drawLeft,  drawBottom, 0, 0, 0, 0,
+			texRect.UpperLeftCorner.X,	texRect.LowerRightCorner.Y),
+		S3DVertex1TCoords(drawRight, drawTop, 0, 0, 0, 0,
+			texRect.LowerRightCorner.X,	texRect.UpperLeftCorner.Y),
+		S3DVertex1TCoords(drawRight, drawBottom, 0, 0, 0, 0,
+			texRect.LowerRightCorner.X,	texRect.LowerRightCorner.Y),
+	};
+
+    // store initial render states
+	bool stencil = _isStencilEnabled();
+	core::matrix4 matModel = getTransform(ETS_MODEL);
+	core::matrix4 matView = getTransform(ETS_VIEW);
+	core::matrix4 matProj = getTransform(ETS_PROJ);
+
+	// identity Rasterizator space
+	core::matrix4 m;
+	setTransform(ETS_MODEL, m);
+	setTransform(ETS_VIEW, m);
+	setTransform(ETS_PROJ, m);
+
+	// set render states
+	_disableStencil();
+	_setVertexType(vertices->Type);
+
+	// draw
+	CD3D9RenderArray<vid::S3DVertex1TCoords, u16> arr(
+		m_D3DDevice,
+		vertices, sizeof(vertices) / sizeof(*vertices),
+		NULL, 0,
+		vid::EDPT_TRIANGLE_STRIP,
+		false);
+	u32 passes_size = material.getPassesCount();
+	for (u32 p = 0; p < passes_size; p++)
+	{					
+		const vid::SRenderPass &pass = material.getPass(p);
+
+		setRenderPass(pass);
+		_setRenderStates();
+		arr.draw();
+
+		m_TrianglesDrawn += 2;
+		m_DIPsDrawn += 1;
+	}
+
+	// restore modified states
+	if (stencil)
+		_enableStencil();
 	setTransform(ETS_MODEL, matModel);
 	setTransform(ETS_VIEW, matView);
 	setTransform(ETS_PROJ, matProj);

@@ -25,31 +25,29 @@ class __MY_VID_LIB_API__ CNullRenderTarget : public IRenderTarget
 	friend class CNullDriver;
 public:
 
-	CNullRenderTarget(const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
-		E_RENDER_TARGET_CREATION_FLAG flags);
+	CNullRenderTarget(const core::dimension2di &size,
+		img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat);
 	virtual ~CNullRenderTarget();
 
-	virtual ITexture* getColorAttachment()
-	{ return m_ColorAttachment; }
-
-	virtual ITexture* getDepthAttachment()
-	{ return m_DepthAttachment; }
+	virtual ITexture* getColorTexture()
+	{ return m_ColorTexture; }
 
 	virtual bool bind();
 	virtual bool unbind();
 
 protected:
 
-	ITexture *m_ColorAttachment;
-	ITexture *m_DepthAttachment;
+	bool m_OK;
 
-	core::dimension2di m_Size;
-	img::E_COLOR_FORMAT m_ColorFormat, m_DepthFormat, m_StencilFormat;
-	E_RENDER_TARGET_CREATION_FLAG m_Flags;
+	vid::IVideoDriver &m_Driver;
 
 	core::list<CNullRenderTarget *>::iterator m_RTEntry;
 
-	vid::IVideoDriver &m_Driver;
+	ITexture *m_ColorTexture;
+
+	core::dimension2di m_Size;
+	img::E_COLOR_FORMAT m_ColorFormat;
+	E_RENDER_TARGET_DEPTH_FORMAT m_DepthFormat;
 };
 
 //---------------------------------------------------------------------------

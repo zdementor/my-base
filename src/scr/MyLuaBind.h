@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/09/16 18:01:31.
+** Generated automatically by tolua++-1.0.92 on 09/10/16 21:17:05.
 */
 
 /* Exported function */

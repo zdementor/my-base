@@ -86,11 +86,8 @@ public:
 	virtual ITexture* createRenderTargetTexture(
 		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat);
 
-	virtual IRenderTarget* addRenderTarget(
-		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
-		E_RENDER_TARGET_CREATION_FLAG flags);
-	virtual IRenderTarget* addRenderTarget(
-		ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags);
+	virtual IRenderTarget* addRenderTarget(const core::dimension2di &size,
+		img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat);
         
 	virtual const core::vector3df& get3DPositionFromScreenCoordinates(
 		const core::position2di &scr_pos) const;
@@ -118,9 +115,11 @@ public:
 
 	virtual void setColorMask(bool r, bool g, bool b, bool a);
 
-    virtual void clearZBuffer();
+    virtual void clearDepth();
+	virtual void clearColor(u8 r, u8 g, u8 b, u8 a);
 
-	virtual void clearColorBuffer();
+	virtual void render2DRect(const SMaterial &material,
+		const core::rectf &drawRect, const core::rectf &texRect);
 
 	virtual bool setRenderContextCurrent();
 	virtual bool setNullContextCurrent();
@@ -288,14 +287,6 @@ private:
     HGLRC m_RenderContext; // Rendering Context
 #endif
     
-	COpenGLTexture *m_RenderTargetTexture;
-
-#ifdef LINUX
-    bool DoubleBuffered;
-    Window XWindow;
-    Display* XDisplay;
-#endif
-
 	bool m_EnabledTextureClientState[MY_MATERIAL_MAX_LAYERS];
 
 	CNullHardwareOcclusionQuery *m_OpenGLHardwareOcclusionQuery;

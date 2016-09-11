@@ -18,33 +18,19 @@ namespace my {
 namespace vid {  
 //----------------------------------------------------------------------------
 
-CNullRenderTarget::CNullRenderTarget(
-	const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
-	E_RENDER_TARGET_CREATION_FLAG flags)
-	: m_ColorAttachment(0), m_DepthAttachment(0),
-	m_Size(size), m_ColorFormat(colorFormat), m_Flags(flags), m_RTEntry(0),
-	m_Driver(VIDEO_DRIVER)
+CNullRenderTarget::CNullRenderTarget(const core::dimension2di &size,
+	img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat)
+	: m_OK(false), m_Driver(VIDEO_DRIVER), m_RTEntry(0), m_ColorTexture(NULL),
+m_Size(size), m_ColorFormat(colorFormat), m_DepthFormat(depthFormat)
 {
-	m_ColorAttachment = m_Driver.createRenderTargetTexture(m_Size, m_ColorFormat);
-
-	img::E_COLOR_FORMAT depthFormat = (img::E_COLOR_FORMAT)-1;
-	if (flags & ERTCF_DEPTH16)
-		depthFormat = img::ECF_DEPTH16;
-	else if (flags & ERTCF_DEPTH24)
-		depthFormat = img::ECF_DEPTH24;
-	else if (flags & ERTCF_DEPTH24)
-		depthFormat = img::ECF_DEPTH32;
-
-	if ((u32)depthFormat < img::E_COLOR_FORMAT_COUNT)
-		m_DepthAttachment = m_Driver.createRenderTargetTexture(m_Size, depthFormat);
+	m_ColorTexture = m_Driver.createRenderTargetTexture(m_Size, m_ColorFormat);
 }
 
 //----------------------------------------------------------------------------
 
 CNullRenderTarget::~CNullRenderTarget()
 {
-	SAFE_DROP(m_ColorAttachment);
-	SAFE_DROP(m_DepthAttachment);
+	SAFE_DROP(m_ColorTexture);
 }
 
 //----------------------------------------------------------------------------

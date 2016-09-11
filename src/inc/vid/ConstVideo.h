@@ -1560,15 +1560,40 @@ MY_FORCEINLINE const c8* getPixelShaderVersionReadableName(E_PIXEL_SHADER_VERSIO
 
 //----------------------------------------------------------------------------
 
-enum E_RENDER_TARGET_CREATION_FLAG
+enum E_RENDER_TARGET_DEPTH_FORMAT
 {
-	ERTCF_DEPTH16  = (1)<<0,  // 16-bit depth buffer
-	ERTCF_DEPTH24  = (1)<<1,  // 24-bit depth buffer
-	ERTCF_DEPTH32  = (1)<<2,  // 32-bit depth buffer
+	ERTDF_NONE = 0,
 
-	ERTCF_STENCIL8 = (1)<<3,  // 8-bit stencil buffer
+	ERTDF_DEPTH16,
+	ERTDF_DEPTH24,
+	ERTDF_DEPTH32,
+	ERTDF_DEPTH24_STENCIL8,
 
-	E_RENDER_TARGET_CREATION_FLAG_FORCE_32BIT = 0xffffffff
+	E_RENDER_TARGET_DEPTH_FORMAT_COUNT,
+
+	E_RENDER_TARGET_DEPTH_FORMAT_FORCE_32BIT = 0xffffffff
+};
+
+static const c8* RenderTargetDepthFormatName[E_RENDER_TARGET_DEPTH_FORMAT_COUNT] =
+{
+	"ERTDF_NONE",
+	"ERTDF_DEPTH16",
+	"ERTDF_DEPTH24",
+	"ERTDF_DEPTH32",
+	"ERTDF_DEPTH24_STENCIL8",
+};
+
+MY_FORCEINLINE const c8* getRenderTargetDepthFormatName(E_RENDER_TARGET_DEPTH_FORMAT fmt)
+{ return RenderTargetDepthFormatName[fmt]; }
+
+//----------------------------------------------------------------------------
+
+enum E_COLOR_MASK_BIT
+{
+	ECM_RED		= 1 << 0,
+	ECM_GREEN	= 1 << 1,
+	ECM_BLUE	= 1 << 2,
+	ECM_ALPHA	= 1 << 3,
 };
 
 //----------------------------------------------------------------------------

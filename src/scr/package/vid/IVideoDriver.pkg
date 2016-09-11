@@ -17,6 +17,26 @@ class IVideoDriver
 	//! Returns color format of the Back Color Buffer
 	img::E_COLOR_FORMAT getBackColorFormat();
 
+	//! Clear Depth buffer
+	void clearDepth();
+
+	//! Set/Get Color buffer write mask
+	void setColorMask(bool r, bool g, bool b, bool a);
+	void setColorMask(unsigned mask);
+	unsigned getColorMask() const;
+
+	//! Set/Get Background Color
+    void setBackgroundColor(const img::SColor &color);
+    const img::SColor& getBackgroundColor();
+
+	//! Clear Color buffer
+	void clearColor(const img::SColor &color);
+	void clearColor(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+
+	//! Immediate rendering
+	void render2DRect(const SMaterial &material,
+		const core::rectf &drawRect, const core::rectf &texRect);
+
 	//! Manages rendering pipeline
 	bool beginRendering();
 	void renderAll();
@@ -133,11 +153,15 @@ class IVideoDriver
 	//! set up texture name
 	bool setTextureName(vid::ITexture *texture, const char *name);
 
+    //! Sets a new viewport. Every rendering operation is done into this
+    //! new area.
+    //! \param Rectangle defining the new area of rendering operations.
+	void setViewPort(int left, int top, int right, int bottom);
+
     //! Gets the area of the current viewport. 
     const core::recti& getViewPort() const;
 
     void setFog(const SFog &fog);
-
     const SFog& getFog();
 
 	//! Gets a list with all video modes available.
@@ -247,14 +271,10 @@ class IVideoDriver
 	E_POLYGON_FILL_MODE getPolygonFillMode();
 
 	//! Add/remove a render target object.
-	IRenderTarget* addRenderTarget(
-		unsigned width, unsigned height, img::E_COLOR_FORMAT colorFormat,
-		E_RENDER_TARGET_CREATION_FLAG flags);
-	IRenderTarget* addRenderTarget(
-		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
-		E_RENDER_TARGET_CREATION_FLAG flags);
-	IRenderTarget* addRenderTarget(
-		ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags);
+	IRenderTarget* addRenderTarget(unsigned width, unsigned height,
+		img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat);
+	IRenderTarget* addRenderTarget(const core::dimension2di &size,
+		img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat);
 	bool removeRenderTarget(IRenderTarget *renderTarget);
 
 	//! Set/Get a render target for the whole rendering.

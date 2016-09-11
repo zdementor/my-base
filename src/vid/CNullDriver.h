@@ -46,16 +46,6 @@ const u32 MY_STENCIL_ZERO_VALUE = 127;
 
 const u32 MY_MAX_POINT_SPECULAR_LIGHTS = 3;
 
-enum E_COLOR_MASK_BIT
-{
-	ECM_RED		= 1 << 0,
-	ECM_GREEN	= 1 << 1,
-	ECM_BLUE	= 1 << 2,
-	ECM_ALPHA	= 1 << 3,
-
-	MY_COLOR_MASK_BIT_FORCE_32_BIT = 0xffffffff
-};
-
 #define PRL_MAX_SHADER_LIGHTS	32
 #define PRL_MAX_FFP_LIGHTS		8
 
@@ -135,21 +125,18 @@ public:
 	{ return 0; }
     virtual bool removeTexture(ITexture* texture);
 
-    virtual IRenderTarget* addRenderTarget(
-		u32 width, u32 height, img::E_COLOR_FORMAT colorFormat,
-		E_RENDER_TARGET_CREATION_FLAG flags)
-	{ return addRenderTarget(core::dimension2di(width, height), colorFormat, flags); }
-    virtual IRenderTarget* addRenderTarget(
-		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
-		E_RENDER_TARGET_CREATION_FLAG flags) { return 0; }
-	virtual IRenderTarget* addRenderTarget(
-		ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags) { return 0; }
+    virtual IRenderTarget* addRenderTarget(u32 width, u32 height,
+		img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat)
+	{ return addRenderTarget(core::dimension2di(width, height), colorFormat, depthFormat); }
+    virtual IRenderTarget* addRenderTarget(const core::dimension2di &size,
+		img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat)
+	{ return 0; }
 	virtual bool removeRenderTarget(IRenderTarget *rt);
 
-	virtual bool setColorRenderTarget(ITexture* texture,
-		bool clearBackBuffer = false, bool clearZBuffer = false,
-		img::SColor color = img::SColor(0,0,0,0))
-	{ return false; }
+	virtual bool setColorRenderTarget(ITexture* rtt,
+		bool clearBackBuffer, bool clearZBuffer, img::SColor color);
+	virtual ITexture* getColorRenderTarget();
+
 	virtual bool setRenderTarget(IRenderTarget *rt);
 	virtual IRenderTarget* getRenderTarget();
 
@@ -181,9 +168,31 @@ public:
 
     virtual s32 getStencilFogTextureSize();
 
-    virtual void setBackgroundColor(const img::SColor &color);
+	virtual void clearDepth() {}
 
-    virtual img::SColor getBackgroundColor();
+	virtual void setColorMask(bool r, bool g, bool b, bool a)
+	{
+		m_ColorMask = (r * ECM_RED) | (g * ECM_GREEN) | (b * ECM_BLUE) | (a * ECM_ALPHA);
+	}
+
+	virtual void setColorMask(u32 mask)
+	{
+		setColorMask(
+			!!(mask & ECM_RED), !!(mask & ECM_GREEN), !!(mask & ECM_BLUE), !!(mask & ECM_ALPHA));
+	}
+
+	virtual u32 getColorMask() const
+	{ return m_ColorMask; }
+
+    virtual void setBackgroundColor(const img::SColor &color);
+    virtual const img::SColor& getBackgroundColor();
+
+	virtual void clearColor(const img::SColor &color)
+		{ clearColor(color.red, color.green, color.blue, color.alpha); }
+	virtual void clearColor(u8 r, u8 g, u8 b, u8 a) {}
+
+	virtual void render2DRect(const SMaterial &material,
+		const core::rectf &drawRect, const core::rectf &texRect) {}
 
 	virtual void setTextureFilter(E_TEXTURE_FILTER textureFilter);
 
@@ -407,26 +416,6 @@ public:
 		bool depth_test,
 		bool useAlphaBlending, bool useColorBlending,
 		E_RENDER_MODE mode);
-
-	virtual void setColorMask(bool r, bool g, bool b, bool a)
-	{
-		m_ColorMask = (r * ECM_RED) | (g * ECM_GREEN) | (b * ECM_BLUE) | (a * ECM_ALPHA);
-	}
-
-	virtual void setColorMask(u32 mask)
-	{
-		setColorMask(
-			!!(mask & ECM_RED), !!(mask & ECM_GREEN), !!(mask & ECM_BLUE), !!(mask & ECM_ALPHA));
-	}
-
-	virtual u32 getColorMask() const
-	{
-		return m_ColorMask;
-	}
-	
-	virtual void clearZBuffer() {}
-
-	virtual void clearColorBuffer() {}
 
 	virtual bool setRenderContextCurrent()
 	{ LOGGER.logErr("Invalid call %s", __FUNCTION__ ); return false; }
@@ -798,6 +787,7 @@ protected:
 
 	img::E_COLOR_FORMAT m_BackColorFormat;
 
+	ITexture* m_CurrentColorRenderTarget;
 	IRenderTarget* m_CurrentRenderTarget;
 };
 

@@ -26,8 +26,6 @@ MyGameAI	= nil
 MyTimer		= nil
 MyMemStat	= nil
 
-MyRT = nil
-
 CEGUISystem		= nil
 CEGUIRenderer	= nil
 CEGUISchemeMgr	= nil
@@ -123,23 +121,12 @@ function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 		OPTIONS.Window.Icon.Width,
 		OPTIONS.Window.Icon.Height)
 	MyDevice:setWindowCaption(OPTIONS.Window.Caption)
-
-	if MyDriver:queryFeature(vid.EVDF_RENDER_TO_TARGET) then
-		local flags = bit.bor(vid.ERTCF_DEPTH24, vid.ERTCF_STENCIL8)
-		MyRT = MyDriver:addRenderTarget(
-			winWidth, winHeight, img.ECF_A8R8G8B8, flags)
-	else
-		MyRT = nil
-	end
-
 end
 
 function DestroyDevice()
 	for i = 0, scr.ESCT_SCRIPT_CALLBACK_TYPE_COUNT - 1 do
 		MyScript:setScriptCallback(i, nil)
 	end
-	-- will be automatically deleted
-	MyRT = nil
 	MyCEGUI.destroy()
 	dev.destroyDevice()
 end

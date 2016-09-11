@@ -60,11 +60,8 @@ public:
 	virtual ITexture* createRenderTargetTexture(
 		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat);
 
-	virtual IRenderTarget* addRenderTarget(
-		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
-		E_RENDER_TARGET_CREATION_FLAG flags);
-	virtual IRenderTarget* addRenderTarget(
-		ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags);
+	virtual IRenderTarget* addRenderTarget(const core::dimension2di &size,
+		img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat);
         
 	virtual IHardwareOcclusionQuery& getHardwareOcclusionQuery();
 
@@ -87,9 +84,11 @@ public:
 
 	virtual void setColorMask(bool r, bool g, bool b, bool a);
 
-    virtual void clearZBuffer();
+    virtual void clearDepth();
+	virtual void clearColor(u8 r, u8 g, u8 b, u8 a);
 
-	virtual void clearColorBuffer();
+	virtual void render2DRect(const SMaterial &material,
+		const core::rectf &drawRect, const core::rectf &texRect);
 
 	virtual bool setRenderContextCurrent();
 	virtual bool setNullContextCurrent();
@@ -100,6 +99,12 @@ public:
 
 	IDirect3DDevice9 * _getDirect3DDevice()
 	{ return m_D3DDevice; }
+
+	IDirect3DSurface9* _getMainRenderTargetSurface()
+	{ return m_D3DMainRenderTargetSurface; }
+
+	IDirect3DSurface9* _getMainDepthStencilSurface()
+	{ return m_D3DMainDepthStencilSurface; }
 
 	virtual bool _initDriver(SExposedVideoData &out_video_data);
 
@@ -196,7 +201,8 @@ private:
     IDirect3D9* m_D3D;
     IDirect3DDevice9* m_D3DDevice;
 
-	IDirect3DSurface9* m_D3DRenderTargetSurface;
+	IDirect3DSurface9* m_D3DMainRenderTargetSurface;
+	IDirect3DSurface9* m_D3DMainDepthStencilSurface;
 
     D3DCAPS9 m_D3DCaps;
 

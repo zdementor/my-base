@@ -155,15 +155,12 @@ bool CD3D9Texture::createHardwareTexture(bool renderTarget)
 		break;
 	case img::ECF_DEPTH16:
 		format = D3DFMT_D16;
-		usage = D3DUSAGE_DEPTHSTENCIL;
 		break;
 	case img::ECF_DEPTH24:
 		format = D3DFMT_D24S8;
-		usage = D3DUSAGE_DEPTHSTENCIL;
 		break;
 	case img::ECF_DEPTH32:
 		format = D3DFMT_D32;
-		usage = D3DUSAGE_DEPTHSTENCIL;
 		break;
 	default:
 		LOGGER.logErr("Unsupported D3D hardware texture format %s.",

@@ -40,11 +40,10 @@ COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize)
 	: CNullDriver(screenSize),
 HWnd(0), HDc(0), m_RenderContext(0),
 screenshot(0), screenshot_counter(0), StencilFogTexture(0),
-m_RenderTargetTexture(0), m_OpenGLHardwareOcclusionQuery(0)
+m_OpenGLHardwareOcclusionQuery(0)
 {
 #if MY_DEBUG_MODE 
 	IVideoDriver::setClassName("COpenGLDriver::IVideoDriver");
-	IRunnable::setClassName("COpenGLDriver::IRunnable");
 #endif
 
 	memset(m_EnabledTextureClientState, 0, sizeof(m_EnabledTextureClientState));
@@ -1805,35 +1804,26 @@ void COpenGLDriver::setTextureFilter(E_TEXTURE_FILTER textureFilter)
 bool COpenGLDriver::setColorRenderTarget(ITexture* texture,
 	bool clearBackBuffer, bool clearZBuffer, img::SColor color)
 {
-	COpenGLRenderTargetTexture *rtt = NULL;
+	ITexture *prevRTT = getColorRenderTarget();
 
-    // check for valid render target
+	if (texture == prevRTT)
+		return true;
 
-    if (texture && !texture->isRenderTarget())
-    {
-        LOGGER.logErr("Tried to set a non render target texture as render target.");
-        return false;
-    }
+	if (!CNullDriver::setColorRenderTarget(texture, clearBackBuffer, clearZBuffer, color))
+		return false;
 
-    rtt = (COpenGLRenderTargetTexture*)texture;
-
-    if (rtt && (rtt->getSize().Width > m_ScreenSize.Width || 
-			rtt->getSize().Height > m_ScreenSize.Height ))
-    {
-        LOGGER.logErr("Tried to set a render target texture which is bigger than the screen.");
-        return false;
-    }
+	COpenGLRenderTargetTexture *rtt = (COpenGLRenderTargetTexture*)texture;
 
     // check if we should set the previous RT back
 
     bool ret = true;
 
-	if (m_RenderTargetTexture && rtt != m_RenderTargetTexture)
+	if (prevRTT && rtt != prevRTT)
     {
 		// flush old render target
-		_setTexture(0, m_RenderTargetTexture);
+		_setTexture(0, prevRTT);
 
-		const core::dimension2di &rtsize = m_RenderTargetTexture->getSize();
+		const core::dimension2di &rtsize = prevRTT->getSize();
 
 		// Reading GL texture data in inversed order,
 		// because frame buffer have Y-inversed pixel data
@@ -1855,8 +1845,6 @@ bool COpenGLDriver::setColorRenderTarget(ITexture* texture,
  	}
 
 	_setTexture(0, rtt);
-
-	m_RenderTargetTexture = (COpenGLTexture*)rtt;
 
 	if (clearBackBuffer || clearZBuffer)
 	{
@@ -1890,24 +1878,11 @@ ITexture* COpenGLDriver::createRenderTargetTexture(
 
 //---------------------------------------------------------------------------
 
-IRenderTarget* COpenGLDriver::addRenderTarget(
-	const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
-	E_RENDER_TARGET_CREATION_FLAG flags)
+IRenderTarget* COpenGLDriver::addRenderTarget(const core::dimension2di &size,
+	img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat)
 {
 	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
-		new COpenGLRenderTarget(size, colorFormat, flags) : NULL;
-	if (rt)
-		_addRenderTarget(rt);
-	return rt;
-}
-
-//---------------------------------------------------------------------------
-
-IRenderTarget* COpenGLDriver::addRenderTarget(
-	ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags)
-{
-	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
-		new COpenGLRenderTarget(colorRenderTarget, flags) : NULL;
+		new COpenGLRenderTarget(size, colorFormat, depthFormat) : NULL;
 	if (rt)
 		_addRenderTarget(rt);
 	return rt;
@@ -1923,7 +1898,7 @@ void COpenGLDriver::setColorMask(bool r, bool g, bool b, bool a)
 
 //---------------------------------------------------------------------------
 
-void COpenGLDriver::clearZBuffer()
+void COpenGLDriver::clearDepth()
 {
 	glDepthMask(GL_TRUE);
     glClear(GL_DEPTH_BUFFER_BIT); 
@@ -1931,15 +1906,81 @@ void COpenGLDriver::clearZBuffer()
 
 //---------------------------------------------------------------------------
 
-void COpenGLDriver::clearColorBuffer()
+void COpenGLDriver::clearColor(u8 r, u8 g, u8 b, u8 a)
 {
 	glClearColor(
-		BackColor.getRed()   * inv_color,
-        BackColor.getGreen() * inv_color,
-        BackColor.getBlue()  * inv_color,
-        BackColor.getAlpha() * inv_color
-        );
+		r * inv_color, g * inv_color, b * inv_color, a * inv_color);
     glClear(GL_COLOR_BUFFER_BIT);
+}
+
+//---------------------------------------------------------------------------
+
+void COpenGLDriver::render2DRect(const SMaterial &material,
+	const core::rectf &drawRect, const core::rectf &texRect)
+{
+	// Recalculate draw Rectangle
+	// from normalized Screen space to identity Rasterizator space
+	// (0, 0) 0---2 (1, 0)             (-1, 1) 0---2 ( 1, 1)
+	//        | / |           ---->            | / |
+	// (0, 1) 1---3 (1, 1)             (-1,-1) 1---3 ( 1,-1)
+	f32 drawLeft   = drawRect.UpperLeftCorner.X * 2.f - 1.f;
+	f32 drawTop    =(drawRect.UpperLeftCorner.Y * 2.f - 1.f) * (-1);
+	f32 drawRight  = drawRect.LowerRightCorner.X * 2.f - 1.f;
+	f32 drawBottom =(drawRect.LowerRightCorner.Y * 2.f - 1.f) * (-1);
+	vid::S3DVertex1TCoords vertices[4] =
+	{
+		S3DVertex1TCoords(drawLeft,  drawTop, 0, 0, 0, 0,
+			texRect.UpperLeftCorner.X,	texRect.UpperLeftCorner.Y),
+		S3DVertex1TCoords(drawLeft,  drawBottom, 0, 0, 0, 0,
+			texRect.UpperLeftCorner.X,	texRect.LowerRightCorner.Y),
+		S3DVertex1TCoords(drawRight, drawTop, 0, 0, 0, 0,
+			texRect.LowerRightCorner.X,	texRect.UpperLeftCorner.Y),
+		S3DVertex1TCoords(drawRight, drawBottom, 0, 0, 0, 0,
+			texRect.LowerRightCorner.X,	texRect.LowerRightCorner.Y),
+	};
+
+	// store initial render states
+	bool stencil = _isStencilEnabled();
+	core::matrix4 matModel = getTransform(ETS_MODEL);
+	core::matrix4 matView = getTransform(ETS_VIEW);
+	core::matrix4 matProj = getTransform(ETS_PROJ);
+
+	// identity Rasterizator space
+	core::matrix4 m;
+	setTransform(ETS_MODEL, m);
+	setTransform(ETS_VIEW, m);
+	setTransform(ETS_PROJ, m);
+
+	// seet render states
+	_disableStencil();
+	_setVertexType(vertices->Type);
+
+	// draw
+	COpenGLRenderArray<vid::S3DVertex1TCoords, u16> arr(
+		this,
+		vertices, sizeof(vertices) / sizeof(*vertices),
+		NULL, 0,
+		vid::EDPT_TRIANGLE_STRIP,
+		false);
+	u32 passes_size = material.getPassesCount();
+	for (u32 p = 0; p < passes_size; p++)
+	{					
+		const vid::SRenderPass &pass = material.getPass(p);
+
+		setRenderPass(pass);
+		_setRenderStates();
+		arr.draw();
+
+		m_TrianglesDrawn += 2;
+		m_DIPsDrawn += 1;
+	}
+
+	// restore modified states
+	if (stencil)
+		_enableStencil();
+	setTransform(ETS_MODEL, matModel);
+	setTransform(ETS_VIEW, matView);
+	setTransform(ETS_PROJ, matProj);
 }
 
 //---------------------------------------------------------------------------

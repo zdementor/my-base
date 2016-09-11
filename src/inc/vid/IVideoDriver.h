@@ -163,48 +163,20 @@ public:
     virtual bool removeTexture(ITexture* texture) = 0;
 
 	//! Add/remove a render target object.
-    virtual IRenderTarget* addRenderTarget(
-		u32 width, u32 height, img::E_COLOR_FORMAT colorFormat,
-		E_RENDER_TARGET_CREATION_FLAG flags) = 0;
-    virtual IRenderTarget* addRenderTarget(
-		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat,
-		E_RENDER_TARGET_CREATION_FLAG flags) = 0;
-	virtual IRenderTarget* addRenderTarget(
-		ITexture *colorRenderTarget, E_RENDER_TARGET_CREATION_FLAG flags) = 0;
+    virtual IRenderTarget* addRenderTarget(u32 width, u32 height,
+		img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat) = 0;
+    virtual IRenderTarget* addRenderTarget(const core::dimension2di &size,
+		img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat) = 0;
 	virtual bool removeRenderTarget(IRenderTarget *renderTarget) = 0;
 
-	//! Sets a new render target for the color buffer. 
+	//! Set/Get a new render target for the color buffer. 
     //! This will only work if the driver
     //! supports the EVDF_RENDER_TO_TARGET feature, which can be 
-    //! queried with queryFeature(). Usually, rendering to textures is done in this
-    //! way:
-    //! \code
-    //! // create render target
-    //! ITexture* target = driver->createRenderTargetTexture(core::dimension2d<s32>(128,128);
-	//! 
-    //! // ...
-	//! 
-    //! driver->setColorRenderTarget(target); // set render target
-    //! // .. draw stuff here
-    //! driver->setColorRenderTarget(0);     // set previous render target
-    //! Please note that you cannot render 3D or 2D geometry with a render target as texture
-    //! on it when you are rendering the scene into this render target at the same time. It is 
-    //! usually only possible to render into a texture between the IVideoDriver::beginScene() and endScene()
-    //! method calls. And please also note that the scene will be rendered upside down into the texture 
-    //! in some devices (e.g. OpenGL vs. D3D). A simple workaround for this is to flip the
-    //! texture coordinates of the geometry where the render target texture is displayed on.
-    //! \endcode
-    //! \param texture: New render target. Must be a texture created with 
-    //! IVideoDriver::createRenderTargetTexture(). If set to 0, it sets the previous render
-    //! target which was set before the last setRenderTarget() call.
-    //! \param clearBackBuffer: Clears the backbuffer of the render target with the color parameter
-    //! \param clearZBuffer: Clears the zBuffer of the rendertarget. Note that, because the frame
-    //! buffer shares the zbuffer with the rendertarget, its zbuffer will be partially cleared 
-    //! too with this.
-    //! \return Returns true if sucessful and false if not. */
-    virtual bool setColorRenderTarget(ITexture* texture,
+    //! queried with queryFeature().
+    virtual bool setColorRenderTarget(ITexture* rtt,
         bool clearBackBuffer=true, bool clearZBuffer=true, 
 		img::SColor color = img::SColor(0,0,0,0)) = 0;
+	virtual ITexture* getColorRenderTarget() = 0;
 
 	//! Set/Get a render target for the whole rendering.
     virtual bool setRenderTarget(IRenderTarget *rt) = 0;
@@ -325,11 +297,25 @@ public:
     //! Return the size of the texture, in which stencil fog will be drawn
     virtual s32 getStencilFogTextureSize() = 0;
 
-	//! Setting Background Color
-    virtual void setBackgroundColor(const img::SColor &color) = 0;
+	//! Clear Depth buffer
+	virtual void clearDepth() = 0;
 
-    //! Return Background Color
-    virtual img::SColor getBackgroundColor() = 0;
+	//! Set/Get Color buffer write mask
+	virtual void setColorMask(bool r, bool g, bool b, bool a) = 0;
+	virtual void setColorMask(u32 mask) = 0;
+	virtual u32 getColorMask() const = 0;
+
+	//! Set/Get Background Color
+    virtual void setBackgroundColor(const img::SColor &color) = 0;
+    virtual const img::SColor& getBackgroundColor() = 0;
+
+	//! Clear Color buffer
+	virtual void clearColor(const img::SColor &color) = 0;
+	virtual void clearColor(u8 alpha, u8 red, u8 green, u8 blue) = 0;
+
+	//! Immediate rendering
+	virtual void render2DRect(const SMaterial &material,
+		const core::rectf &drawRect, const core::rectf &texRect) = 0;
 
 	//! sets texture filtering mode
 	virtual void setTextureFilter(E_TEXTURE_FILTER textureFilter) = 0;
@@ -605,10 +591,6 @@ public:
 		bool depth_test = false,
 		bool useAlphaBlending = false, bool useColorBlending = false,
 		E_RENDER_MODE mode = ERM_RENDER_STANDARD) = 0;
-
-	virtual void setColorMask(bool r, bool g, bool b, bool a) = 0;
-	virtual void setColorMask(u32 mask) = 0;
-	virtual u32 getColorMask() const = 0;
 
 	virtual bool setRenderContextCurrent() = 0;
 	virtual bool setNullContextCurrent() = 0;
