@@ -85,6 +85,7 @@ public:
 	virtual void setColorMask(bool r, bool g, bool b, bool a);
 
     virtual void clearDepth();
+	virtual void clearStencil();
 	virtual void clearColor(u8 r, u8 g, u8 b, u8 a);
 
 	virtual void render2DRect(const SMaterial &material,
@@ -111,7 +112,6 @@ public:
 private:
 
 	virtual void _enableStencil();
-	virtual void _clearStencil();
 	virtual void _setupStencil(
 		E_STENCIL_OPERATION fail,  // to do if stencil test fails
 		E_STENCIL_OPERATION zfail, // to do if stencil test passes and Z test fails

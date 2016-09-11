@@ -169,6 +169,10 @@ public:
     virtual s32 getStencilFogTextureSize();
 
 	virtual void clearDepth() {}
+	virtual void clearStencil() {}
+	virtual void clearColor(const img::SColor &color)
+		{ clearColor(color.red, color.green, color.blue, color.alpha); }
+	virtual void clearColor(u8 r, u8 g, u8 b, u8 a) {}
 
 	virtual void setColorMask(bool r, bool g, bool b, bool a)
 	{
@@ -186,10 +190,6 @@ public:
 
     virtual void setBackgroundColor(const img::SColor &color);
     virtual const img::SColor& getBackgroundColor();
-
-	virtual void clearColor(const img::SColor &color)
-		{ clearColor(color.red, color.green, color.blue, color.alpha); }
-	virtual void clearColor(u8 r, u8 g, u8 b, u8 a) {}
 
 	virtual void render2DRect(const SMaterial &material,
 		const core::rectf &drawRect, const core::rectf &texRect) {}
@@ -516,9 +516,6 @@ protected:
 	virtual bool _isStencilEnabled()
 	{ return m_StencilEnabled; }
 
-	//! clear stencil
-	virtual void _clearStencil() {}
-	
 	//! setting up stencil buffer
 	virtual void _setupStencil(
 		E_STENCIL_OPERATION fail,  // to do if stencil test fails

@@ -1536,6 +1536,16 @@ void CD3D9Driver::clearDepth()
         LOGGER.log("CD3D9Driver clearZBuffer() failed.", io::ELL_ERROR);
 }
 
+//----------------------------------------------------------------------------
+
+void CD3D9Driver::clearStencil()
+{
+	if (!m_StencilBuffer)
+		return;
+	m_D3DDevice->Clear(0, NULL, D3DCLEAR_STENCIL , 0, 0.0f,
+		MY_STENCIL_ZERO_VALUE);
+}
+
 //---------------------------------------------------------------------------
 
 void CD3D9Driver::clearColor(u8 r, u8 g, u8 b, u8 a)
@@ -1614,23 +1624,19 @@ void CD3D9Driver::render2DRect(const SMaterial &material,
 {
 	// Recalculate draw Rectangle
 	// from normalized Screen space to identity Rasterizator space
-	// (0, 0) 0---2 (1, 0)             (-1, 1) 0---2 ( 1, 1)
-	//        | / |           ---->            | / |
-	// (0, 1) 1---3 (1, 1)             (-1,-1) 1---3 ( 1,-1)
+	// (0, 0) 0---1 (1, 0)             (-1, 1) 0---1 ( 1, 1)
+	//        | \ |           ---->            | \ |
+	// (0, 1) 3---2 (1, 1)             (-1,-1) 3---2 ( 1,-1)
 	f32 drawLeft   = drawRect.UpperLeftCorner.X * 2.f - 1.f;
 	f32 drawTop    =(drawRect.UpperLeftCorner.Y * 2.f - 1.f) * (-1);
 	f32 drawRight  = drawRect.LowerRightCorner.X * 2.f - 1.f;
 	f32 drawBottom =(drawRect.LowerRightCorner.Y * 2.f - 1.f) * (-1);
-	vid::S3DVertex1TCoords vertices[4] =
+	vid::S3DVertex1TCoords vertices[] =
 	{
-		S3DVertex1TCoords(drawLeft,  drawTop, 0, 0, 0, 0,
-			texRect.UpperLeftCorner.X,	texRect.UpperLeftCorner.Y),
-		S3DVertex1TCoords(drawLeft,  drawBottom, 0, 0, 0, 0,
-			texRect.UpperLeftCorner.X,	texRect.LowerRightCorner.Y),
-		S3DVertex1TCoords(drawRight, drawTop, 0, 0, 0, 0,
-			texRect.LowerRightCorner.X,	texRect.UpperLeftCorner.Y),
-		S3DVertex1TCoords(drawRight, drawBottom, 0, 0, 0, 0,
-			texRect.LowerRightCorner.X,	texRect.LowerRightCorner.Y),
+		S3DVertex1TCoords(drawLeft,  drawTop,    0, 0, 0, 0, texRect.Left,  texRect.Top),
+		S3DVertex1TCoords(drawRight, drawTop,    0, 0, 0, 0, texRect.Right,	texRect.Top),
+		S3DVertex1TCoords(drawRight, drawBottom, 0, 0, 0, 0, texRect.Right,	texRect.Bottom),
+		S3DVertex1TCoords(drawLeft,  drawBottom, 0, 0, 0, 0, texRect.Left,  texRect.Bottom),
 	};
 
     // store initial render states
@@ -1654,7 +1660,7 @@ void CD3D9Driver::render2DRect(const SMaterial &material,
 		m_D3DDevice,
 		vertices, sizeof(vertices) / sizeof(*vertices),
 		NULL, 0,
-		vid::EDPT_TRIANGLE_STRIP,
+		vid::EDPT_TRIANGLE_FAN,
 		false);
 	u32 passes_size = material.getPassesCount();
 	for (u32 p = 0; p < passes_size; p++)
@@ -2023,16 +2029,6 @@ void CD3D9Driver::_enableStencil()
 		return;
 	m_D3DDevice->SetRenderState( D3DRS_STENCILENABLE, TRUE );
 	CNullDriver::_enableStencil();
-}
-
-//----------------------------------------------------------------------------
-
-void CD3D9Driver::_clearStencil()
-{
-	if (!m_StencilBuffer)
-		return;
-	m_D3DDevice->Clear(0, NULL, D3DCLEAR_STENCIL , 0, 0.0f,
-		MY_STENCIL_ZERO_VALUE);
 }
 
 //----------------------------------------------------------------------------

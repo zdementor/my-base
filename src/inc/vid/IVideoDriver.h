@@ -300,6 +300,13 @@ public:
 	//! Clear Depth buffer
 	virtual void clearDepth() = 0;
 
+	//! Clear Stencil buffer
+	virtual void clearStencil() = 0;
+
+	//! Clear Color buffer
+	virtual void clearColor(const img::SColor &color) = 0;
+	virtual void clearColor(u8 alpha, u8 red, u8 green, u8 blue) = 0;
+
 	//! Set/Get Color buffer write mask
 	virtual void setColorMask(bool r, bool g, bool b, bool a) = 0;
 	virtual void setColorMask(u32 mask) = 0;
@@ -308,10 +315,6 @@ public:
 	//! Set/Get Background Color
     virtual void setBackgroundColor(const img::SColor &color) = 0;
     virtual const img::SColor& getBackgroundColor() = 0;
-
-	//! Clear Color buffer
-	virtual void clearColor(const img::SColor &color) = 0;
-	virtual void clearColor(u8 alpha, u8 red, u8 green, u8 blue) = 0;
 
 	//! Immediate rendering
 	virtual void render2DRect(const SMaterial &material,

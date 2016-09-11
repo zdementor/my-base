@@ -1715,15 +1715,6 @@ void COpenGLDriver::_enableStencil()
 
 //----------------------------------------------------------------------------
 
-void COpenGLDriver::_clearStencil()
-{
-	if (!m_StencilBuffer)
-		return;
-	glClear(GL_STENCIL_BUFFER_BIT);
-}
-
-//----------------------------------------------------------------------------
-
 void COpenGLDriver::_setupStencil(
 	E_STENCIL_OPERATION fail,  // to do if stencil test fails
 	E_STENCIL_OPERATION zfail, // to do if stencil test passes and Z test fails
@@ -1904,6 +1895,15 @@ void COpenGLDriver::clearDepth()
     glClear(GL_DEPTH_BUFFER_BIT); 
 }
 
+//----------------------------------------------------------------------------
+
+void COpenGLDriver::clearStencil()
+{
+	if (!m_StencilBuffer)
+		return;
+	glClear(GL_STENCIL_BUFFER_BIT);
+}
+
 //---------------------------------------------------------------------------
 
 void COpenGLDriver::clearColor(u8 r, u8 g, u8 b, u8 a)
@@ -1920,23 +1920,19 @@ void COpenGLDriver::render2DRect(const SMaterial &material,
 {
 	// Recalculate draw Rectangle
 	// from normalized Screen space to identity Rasterizator space
-	// (0, 0) 0---2 (1, 0)             (-1, 1) 0---2 ( 1, 1)
-	//        | / |           ---->            | / |
-	// (0, 1) 1---3 (1, 1)             (-1,-1) 1---3 ( 1,-1)
+	// (0, 0) 0---1 (1, 0)             (-1, 1) 0---1 ( 1, 1)
+	//        | \ |           ---->            | \ |
+	// (0, 1) 3---2 (1, 1)             (-1,-1) 3---2 ( 1,-1)
 	f32 drawLeft   = drawRect.UpperLeftCorner.X * 2.f - 1.f;
 	f32 drawTop    =(drawRect.UpperLeftCorner.Y * 2.f - 1.f) * (-1);
 	f32 drawRight  = drawRect.LowerRightCorner.X * 2.f - 1.f;
 	f32 drawBottom =(drawRect.LowerRightCorner.Y * 2.f - 1.f) * (-1);
-	vid::S3DVertex1TCoords vertices[4] =
+	vid::S3DVertex1TCoords vertices[] =
 	{
-		S3DVertex1TCoords(drawLeft,  drawTop, 0, 0, 0, 0,
-			texRect.UpperLeftCorner.X,	texRect.UpperLeftCorner.Y),
-		S3DVertex1TCoords(drawLeft,  drawBottom, 0, 0, 0, 0,
-			texRect.UpperLeftCorner.X,	texRect.LowerRightCorner.Y),
-		S3DVertex1TCoords(drawRight, drawTop, 0, 0, 0, 0,
-			texRect.LowerRightCorner.X,	texRect.UpperLeftCorner.Y),
-		S3DVertex1TCoords(drawRight, drawBottom, 0, 0, 0, 0,
-			texRect.LowerRightCorner.X,	texRect.LowerRightCorner.Y),
+		S3DVertex1TCoords(drawLeft,  drawTop,    0, 0, 0, 0, texRect.Left,  texRect.Top),
+		S3DVertex1TCoords(drawRight, drawTop,    0, 0, 0, 0, texRect.Right,	texRect.Top),
+		S3DVertex1TCoords(drawRight, drawBottom, 0, 0, 0, 0, texRect.Right,	texRect.Bottom),
+		S3DVertex1TCoords(drawLeft,  drawBottom, 0, 0, 0, 0, texRect.Left,  texRect.Bottom),
 	};
 
 	// store initial render states
@@ -1960,7 +1956,7 @@ void COpenGLDriver::render2DRect(const SMaterial &material,
 		this,
 		vertices, sizeof(vertices) / sizeof(*vertices),
 		NULL, 0,
-		vid::EDPT_TRIANGLE_STRIP,
+		vid::EDPT_TRIANGLE_FAN,
 		false);
 	u32 passes_size = material.getPassesCount();
 	for (u32 p = 0; p < passes_size; p++)

@@ -20,6 +20,13 @@ class IVideoDriver
 	//! Clear Depth buffer
 	void clearDepth();
 
+	//! Clear Stencil buffer
+	void clearStencil();
+
+	//! Clear Color buffer
+	void clearColor(const img::SColor &color);
+	void clearColor(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+
 	//! Set/Get Color buffer write mask
 	void setColorMask(bool r, bool g, bool b, bool a);
 	void setColorMask(unsigned mask);
@@ -28,10 +35,6 @@ class IVideoDriver
 	//! Set/Get Background Color
     void setBackgroundColor(const img::SColor &color);
     const img::SColor& getBackgroundColor();
-
-	//! Clear Color buffer
-	void clearColor(const img::SColor &color);
-	void clearColor(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 
 	//! Immediate rendering
 	void render2DRect(const SMaterial &material,

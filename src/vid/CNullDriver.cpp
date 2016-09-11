@@ -2265,7 +2265,7 @@ void CNullDriver::_renderLightedRenderPools(
 					}
 					else if (stencil_lidx != l || owner != rpool.Owner || zorder != rpool.Z)
 					{
-						_clearStencil();
+						clearStencil();
 					}
 
 					if (alpha && shadowground_lidx != l)
@@ -2314,7 +2314,7 @@ void CNullDriver::_renderLightedRenderPools(
 					}
 					else if (stencil_lidx != l || owner != rpool.Owner || zorder != rpool.Z)
 					{
-						_clearStencil();
+						clearStencil();
 					}
 
 					if (alpha && shadowground_lidx != l)
@@ -2354,7 +2354,7 @@ void CNullDriver::_renderLightedRenderPools(
 					{
 						if (stencil_lidx != l || owner != rpool.Owner || zorder != rpool.Z)
 						{
-							_clearStencil();
+							clearStencil();
 							_disableStencil();
 							stencil = false;
 						}
@@ -2430,7 +2430,7 @@ void CNullDriver::_renderLightedRenderPools(
 					{
 						if (stencil_lidx != l || owner != rpool.Owner || zorder != rpool.Z)
 						{
-							_clearStencil();
+							clearStencil();
 							_disableStencil();
 							stencil = false;
 						}
@@ -2563,7 +2563,7 @@ void CNullDriver::_renderLightedRenderPools(
 	if (stencil)
 	{
 		_disableStencil();
-		_clearStencil();
+		clearStencil();
 	}
 }
 
