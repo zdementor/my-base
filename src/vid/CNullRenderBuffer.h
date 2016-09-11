@@ -41,12 +41,10 @@ public:
 
 //----------------------------------------------------------------------------
 
-#define PRE_CREATE_VBO(name)
-
 #define POST_CREATE_VBO(name) \
-	if (m_VertexBuffer->getMaxSize() != vert_size || m_IndexBuffer->getMaxSize() != ind_size ) \
+	if (m_VertexBuffer.getMaxSize() != vert_size || m_IndexBuffer.getMaxSize() != ind_size ) \
 		LOGGER.logErr("Can't create %s (tri=%d vert=%d type='%s' isize=%dbit)", \
-			name, ind_size/3, vert_size, VertexTypeName[m_VertexBuffer->getType()], sizeof(TInd)*8)
+			name, ind_size/3, vert_size, VertexTypeName[m_VertexBuffer.getType()], sizeof(TInd)*8)
 
 //----------------------------------------------------------------------------
 } // end namespace vid

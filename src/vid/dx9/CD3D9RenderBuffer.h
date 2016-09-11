@@ -298,13 +298,13 @@ public:
 		s32 vert_size, s32 ind_size, E_DRAW_PRIMITIVE_TYPE dpt
 		) : CNullRenderBuffer(dpt), m_Device(device),
 		m_D3DDrawPrimitiveType(convertToD3D9PrimitiveType(dpt)),
-		m_D3DIndicesType((sizeof(TInd)==2) ?  D3DFMT_INDEX16 : D3DFMT_INDEX32)
+		m_D3DIndicesType((sizeof(TInd)==2) ?  D3DFMT_INDEX16 : D3DFMT_INDEX32),
+		m_VertexArray(device, vert_size),
+		m_IndexArray(device, ind_size)
 	{
 #if MY_DEBUG_MODE 
 		setClassName("CD3D9RenderArray");
 #endif
-		m_VertexArray = new CD3D9VertexArray < TVert > (device, vert_size);
-		m_IndexArray = new CD3D9IndexArray < TInd > (device, ind_size);
 	}
 
 	CD3D9RenderArray(
@@ -315,55 +315,61 @@ public:
 		bool own_data = false
 		) : CNullRenderBuffer(dpt), m_Device(device),
 		m_D3DDrawPrimitiveType(convertToD3D9PrimitiveType(dpt)),
-		m_D3DIndicesType((sizeof(TInd)==2) ?  D3DFMT_INDEX16 : D3DFMT_INDEX32)
+		m_D3DIndicesType((sizeof(TInd)==2) ?  D3DFMT_INDEX16 : D3DFMT_INDEX32),
+		m_VertexArray(device, vertices, vert_size, own_data),
+		m_IndexArray(device, indices, ind_size, own_data)
 	{
 #if MY_DEBUG_MODE 
 		setClassName("CD3D9RenderArray");
 #endif
-		m_VertexArray = new CD3D9VertexArray < TVert > (device, vertices, vert_size, own_data);
-		m_IndexArray = new CD3D9IndexArray < TInd > (device, indices, ind_size, own_data);		
 	}
 
 	virtual ~CD3D9RenderArray()
 	{
-		SAFE_DELETE(m_VertexArray);
-		SAFE_DELETE(m_IndexArray);
 	}
 
 	virtual E_RENDER_BUFFER_TYPE getType()
 	{ return ERBT_DYNAMIC; }
 
 	virtual IVertexBuffer * getVertices()
-	{ return m_VertexArray; }
+	{ return &m_VertexArray; }
 
 	virtual IIndexBuffer * getIndices()
-	{ return m_IndexArray; }
+	{ return &m_IndexArray; }
 
 	virtual void draw()
 	{
-		u32 vsize = m_VertexArray->getSize();
-		u32 isize = m_IndexArray->getSize();
+		u32 vsize = m_VertexArray.getSize();
+		u32 isize = m_IndexArray.getSize();
 
-		void * indices = m_IndexArray->lock(ERBLM_READ_ONLY);
-		void * vertices = m_VertexArray->lock(ERBLM_READ_ONLY);
-		if (indices)
-			m_Device->DrawIndexedPrimitiveUP(
-				m_D3DDrawPrimitiveType, 0, vsize, isize / 3,
-				indices, m_D3DIndicesType,
-				vertices, sizeof(TVert));
+		void *vertices = m_VertexArray.lock(ERBLM_READ_ONLY);
+		if (isize)
+		{
+			void *indices = m_IndexArray.lock(ERBLM_READ_ONLY);
+			if (indices)
+			{
+				u32 primCount = getPrimitiveCountForPrimitiveType(m_DrawPrimitiveType, isize);
+				m_Device->DrawIndexedPrimitiveUP(
+					m_D3DDrawPrimitiveType, 0, vsize, primCount,
+					indices, m_D3DIndicesType, vertices, sizeof(TVert));
+			}
+			m_IndexArray.unlock();
+		}
 		else
+		{
+			u32 primCount = getPrimitiveCountForPrimitiveType(m_DrawPrimitiveType, vsize);
 			m_Device->DrawPrimitiveUP(
-				m_D3DDrawPrimitiveType, vsize / 3, vertices, sizeof(TVert));
-		m_IndexArray->unlock();
-		m_VertexArray->unlock();
+				m_D3DDrawPrimitiveType, primCount, vertices, sizeof(TVert));
+		}
+		m_VertexArray.unlock();
 	}
 
 private:
 
-	IDirect3DDevice9 * m_Device;
+	IDirect3DDevice9 *m_Device;
 
-	CD3D9VertexArray < TVert > * m_VertexArray;
-	CD3D9IndexArray < TInd > * m_IndexArray;
+	CD3D9VertexArray < TVert > m_VertexArray;
+	CD3D9IndexArray < TInd > m_IndexArray;
 
 	D3DPRIMITIVETYPE	m_D3DDrawPrimitiveType;
 	D3DFORMAT			m_D3DIndicesType;
@@ -381,52 +387,56 @@ public:
 		s32 vert_size, s32 ind_size, E_DRAW_PRIMITIVE_TYPE dpt
 		) : CNullRenderBuffer(dpt), m_Device(device),
 		m_D3DDrawPrimitiveType(convertToD3D9PrimitiveType(dpt)),
-		m_D3DIndicesType((sizeof(TInd)==2) ?  D3DFMT_INDEX16 : D3DFMT_INDEX32)
+		m_D3DIndicesType((sizeof(TInd)==2) ?  D3DFMT_INDEX16 : D3DFMT_INDEX32),
+		m_VertexBuffer(device, vert_size),
+		m_IndexBuffer(device, ind_size)
 	{
 	#if MY_DEBUG_MODE 
 		setClassName("CD3D9VertexBufferObject");
 	#endif
-		PRE_CREATE_VBO("D3D9 vertex buffer object");
-		m_VertexBuffer = new CD3D9VertexBuffer<TVert>(device, vert_size);
-		m_IndexBuffer = new CD3D9IndexBuffer<TInd>(device, ind_size);
 		POST_CREATE_VBO("D3D9 vertex buffer object");
 	}
 
 	virtual ~CD3D9VertexBufferObject()
 	{
-		SAFE_DELETE(m_VertexBuffer);
-		SAFE_DELETE(m_IndexBuffer);
 	}
 
 	virtual E_RENDER_BUFFER_TYPE getType()
 	{ return ERBT_STATIC; }
 
-	virtual IVertexBuffer * getVertices()
-	{ return m_VertexBuffer; }
+	virtual IVertexBuffer *getVertices()
+	{ return &m_VertexBuffer; }
 
-	virtual IIndexBuffer * getIndices()
-	{ return m_IndexBuffer; }
+	virtual IIndexBuffer *getIndices()
+	{ return &m_IndexBuffer; }
 
 	virtual void draw()
 	{
-		u32 vsize = m_VertexBuffer->getSize();
-		u32 isize = m_IndexBuffer->getSize();
+		u32 vsize = m_VertexBuffer.getSize();
+		u32 isize = m_IndexBuffer.getSize();
 
-		m_VertexBuffer->bind();
-		m_IndexBuffer->bind();
+		m_VertexBuffer.bind();
 		if (isize)
+		{
+			u32 primCount = getPrimitiveCountForPrimitiveType(m_DrawPrimitiveType, isize);
+			m_IndexBuffer.bind();
 			m_Device->DrawIndexedPrimitive(
-				m_D3DDrawPrimitiveType, 0, 0, vsize, 0, isize / 3);
+				m_D3DDrawPrimitiveType, 0, 0, vsize, 0, primCount);
+			m_IndexBuffer.unbind();
+		}
 		else
-			m_Device->DrawPrimitive(m_D3DDrawPrimitiveType, 0, vsize / 3);
-		m_VertexBuffer->unbind();
-		m_IndexBuffer->unbind();
+		{
+			u32 primCount = getPrimitiveCountForPrimitiveType(m_DrawPrimitiveType, vsize);
+			m_Device->DrawPrimitive(
+				m_D3DDrawPrimitiveType, 0, primCount);
+		}
+		m_VertexBuffer.unbind();
 	}
 
 private:
 
-	CD3D9VertexBuffer < TVert > * m_VertexBuffer;
-	CD3D9IndexBuffer < TInd > * m_IndexBuffer;
+	CD3D9VertexBuffer < TVert > m_VertexBuffer;
+	CD3D9IndexBuffer < TInd > m_IndexBuffer;
 
 	IDirect3DDevice9 * m_Device;
 

@@ -148,6 +148,29 @@ protected:
 };
 
 //---------------------------------------------------------------------------
+
+MY_FORCEINLINE u32 getPrimitiveCountForPrimitiveType(E_DRAW_PRIMITIVE_TYPE pt, u32 vertCount)
+{
+	switch (pt)
+	{
+	case EDPT_TRIANGLE_LIST:
+		return vertCount / 3;
+	case EDPT_TRIANGLE_STRIP:
+	case EDPT_TRIANGLE_FAN:
+		return (vertCount > 2) ? (vertCount - 2) : 0;
+	case EDPT_POINT_LIST:
+		return vertCount;
+    case EDPT_LINE_LIST:
+		return vertCount / 2;
+    case EDPT_LINE_STRIP:
+		return (vertCount > 1) ? (vertCount - 1) : 0;
+	default:
+		break;
+	}
+	return 0;
+}
+
+//---------------------------------------------------------------------------
 } // end namespace vid
 } // end namespace my
 //---------------------------------------------------------------------------

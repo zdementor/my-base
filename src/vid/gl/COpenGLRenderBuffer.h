@@ -348,13 +348,13 @@ public:
 		s32 vert_size, s32 ind_size, E_DRAW_PRIMITIVE_TYPE dpt
 		) : CNullRenderBuffer(dpt),
 		m_GLDrawPrimitiveType(convertToOGLPrimitiveType(dpt)),
-		m_GLIndicesType((sizeof(TInd)==2) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT)
+		m_GLIndicesType((sizeof(TInd)==2) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT),
+		m_VertexArray(driver, vert_size),
+		m_IndexArray(driver, ind_size)
 	{
 #if MY_DEBUG_MODE 
 		setClassName("COpenGLRenderArray");
 #endif
-		m_VertexArray = new COpenGLVertexArray < TVert > (driver, vert_size);
-		m_IndexArray = new COpenGLIndexArray < TInd > (driver, ind_size);
 	}
 
 	COpenGLRenderArray(
@@ -365,52 +365,54 @@ public:
 		bool own_data = false
 		) : CNullRenderBuffer(dpt),
 		m_GLDrawPrimitiveType(convertToOGLPrimitiveType(dpt)),
-		m_GLIndicesType((sizeof(TInd)==2) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT)
+		m_GLIndicesType((sizeof(TInd)==2) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT),
+		m_VertexArray(driver, vertices, vert_size, own_data),
+		m_IndexArray(driver, indices, ind_size, own_data)
 	{
 #if MY_DEBUG_MODE 
 		setClassName("COpenGLRenderArray");
 #endif
-		m_VertexArray = new COpenGLVertexArray <TVert> (driver, vertices, vert_size, own_data);
-		m_IndexArray = new COpenGLIndexArray <TInd> (driver, indices, ind_size, own_data);		
 	}
 
 	virtual ~COpenGLRenderArray()
 	{
-		SAFE_DELETE(m_VertexArray);
-		SAFE_DELETE(m_IndexArray);
 	}
 
 	virtual E_RENDER_BUFFER_TYPE getType()
 	{ return ERBT_DYNAMIC; }
 
 	virtual IVertexBuffer* getVertices()
-	{ return m_VertexArray; }
+	{ return &m_VertexArray; }
 
 	virtual IIndexBuffer* getIndices()
-	{ return m_IndexArray; }
+	{ return &m_IndexArray; }
 
 	virtual void draw()
 	{
-		u32 vsize = m_VertexArray->getSize();
-		u32 isize = m_IndexArray->getSize();
+		u32 vsize = m_VertexArray.getSize();
+		u32 isize = m_IndexArray.getSize();
 
-		m_VertexArray->setPointers();
-		void *indices = m_IndexArray->lock(ERBLM_READ_ONLY);
+		m_VertexArray.setPointers();
 
-		if (indices)
-			glDrawElements(m_GLDrawPrimitiveType, isize,
-				m_GLIndicesType, indices);
+		if (isize)
+		{
+			void *indices = m_IndexArray.lock(ERBLM_READ_ONLY);
+			if (indices)
+				glDrawElements(
+					m_GLDrawPrimitiveType, isize, m_GLIndicesType, indices);
+			m_IndexArray.unlock();
+		}
 		else
-			glDrawArrays(m_GLDrawPrimitiveType, 0, vsize);
+			glDrawArrays(
+				m_GLDrawPrimitiveType, 0, vsize);
 
-		m_IndexArray->unlock();
-		m_VertexArray->unsetPointers();
+		m_VertexArray.unsetPointers();
 	}
 
 private:
 
-	COpenGLVertexArray < TVert > * m_VertexArray;
-	COpenGLIndexArray < TInd > * m_IndexArray;
+	COpenGLVertexArray < TVert > m_VertexArray;
+	COpenGLIndexArray < TInd > m_IndexArray;
 
 	GLuint m_GLDrawPrimitiveType;
 	GLuint m_GLIndicesType;
@@ -430,58 +432,56 @@ public:
 		) : CNullRenderBuffer(dpt),
 		m_GLDrawPrimitiveType(convertToOGLPrimitiveType(dpt)),
 		m_GLIndicesType((sizeof(TInd)==2) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT),
-		m_Dynamic(dynamic)
+		m_Dynamic(dynamic),
+		m_VertexBuffer(dynamic, driver, vert_size),
+		m_IndexBuffer(dynamic, driver, ind_size)
 	{
 #if MY_DEBUG_MODE 
 		setClassName("COpenGLVertexBufferObject");
 #endif
-		PRE_CREATE_VBO("OGL vertex buffer object");
-		m_VertexBuffer = new COpenGLVertexBuffer <TVert> (m_Dynamic, driver, vert_size);
-		m_IndexBuffer = new COpenGLIndexBuffer <TInd> (m_Dynamic, driver, ind_size);
 		POST_CREATE_VBO("OGL vertex buffer object");
 	}
 
 	virtual ~COpenGLVertexBufferObject()
 	{
-		SAFE_DELETE(m_VertexBuffer);
-		SAFE_DELETE(m_IndexBuffer);
 	}
 
 	virtual E_RENDER_BUFFER_TYPE getType()
 	{ return m_Dynamic ? ERBT_DYNAMIC : ERBT_STATIC; }
 
 	virtual IVertexBuffer* getVertices()
-	{ return m_VertexBuffer; }
+	{ return &m_VertexBuffer; }
 
 	virtual IIndexBuffer* getIndices()
-	{ return m_IndexBuffer; }
+	{ return &m_IndexBuffer; }
 
 	virtual void draw()
 	{
-		u32 vsize = m_VertexBuffer->getSize();
-		u32 isize = m_IndexBuffer->getSize();
+		u32 vsize = m_VertexBuffer.getSize();
+		u32 isize = m_IndexBuffer.getSize();
 
-		m_VertexBuffer->bind();
-		m_VertexBuffer->setPointers();
+		m_VertexBuffer.bind();
+		m_VertexBuffer.setPointers();
 		
 		if (isize)
 		{
-			m_IndexBuffer->bind();
-			glDrawElements(m_GLDrawPrimitiveType, isize,
-				m_GLIndicesType, 0);
-			m_IndexBuffer->unbind();
+			m_IndexBuffer.bind();
+			glDrawElements(
+				m_GLDrawPrimitiveType, isize, m_GLIndicesType, 0);
+			m_IndexBuffer.unbind();
 		}
 		else
-			glDrawArrays(m_GLDrawPrimitiveType, 0, vsize);
+			glDrawArrays(
+				m_GLDrawPrimitiveType, 0, vsize);
 
-		m_VertexBuffer->unsetPointers();
-		m_VertexBuffer->unbind();
+		m_VertexBuffer.unsetPointers();
+		m_VertexBuffer.unbind();
 	}
 
 private:
 
-	COpenGLVertexBuffer < TVert > * m_VertexBuffer;
-	COpenGLIndexBuffer < TInd > * m_IndexBuffer;
+	COpenGLVertexBuffer < TVert > m_VertexBuffer;
+	COpenGLIndexBuffer < TInd > m_IndexBuffer;
 
 	GLuint m_GLDrawPrimitiveType;
 	GLuint m_GLIndicesType;
