@@ -197,7 +197,19 @@ Helper =
 	getPassLayerIndex,
 	getMaterialPassIndex,
 	getSelectedMaterial,
+
+	--------------------------------------------------------------------------------
+	-- INFO: Creating normal map from heightmap image
+	--------------------------------------------------------------------------------
+	-- PARAMETERS:
+	--   hmap_full_file_name - height map input file name
+	--   nmap_full_file_name - normal map output file name
+	--   amplitude - Constant value by which the height information is multiplied.
+	--   swapX       - flag to swap X coord in result normal
+	--   swapX       - flag to swap Y coord in result normal
+	--   hmapInAlpha - flag to store heightmap in alpha channel
 	convertToNormalMap,
+
 	--------------------------------------------------------------------------------
 	-- INFO: Returns XML text for Scene Node
 	--------------------------------------------------------------------------------

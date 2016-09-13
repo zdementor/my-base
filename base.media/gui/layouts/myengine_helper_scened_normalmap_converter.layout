@@ -8,28 +8,32 @@
             <Property Name="Text" Value="Normal Map converter" />
             <Property Name="TitlebarFont" Value="Tahoma-12" />
             <Property Name="TitlebarEnabled" Value="True" />
-            <Property Name="UnifiedAreaRect" Value="{{0,78},{0,100},{0,538},{0,337}}" />
+            <Property Name="UnifiedAreaRect" Value="{{0,78},{0,100},{0,538},{0,399}}" />
             <Window Type="MyScened/Button" Name="Scened.NormalMapConverter.ConvertBtn" >
                 <Property Name="Font" Value="Tahoma-10" />
                 <Property Name="Text" Value="Convert" />
                 <Property Name="Tooltip" Value="Convert to normal map" />
-                <Property Name="UnifiedAreaRect" Value="{{0,105},{0,150},{0,214},{0,182}}" />
+                <Property Name="UnifiedAreaRect" Value="{{0,105},{0,209},{0,214},{0,241}}" />
             </Window>
             <Window Type="MyScened/Button" Name="Scened.NormalMapConverter.CancelBtn" >
                 <Property Name="Font" Value="Tahoma-10" />
                 <Property Name="Text" Value="Cancel" />
                 <Property Name="Tooltip" Value="Cancel convert" />
-                <Property Name="UnifiedAreaRect" Value="{{0,229},{0,150},{0,338},{0,182}}" />
+                <Property Name="UnifiedAreaRect" Value="{{0,229},{0,209},{0,338},{0,241}}" />
             </Window>
             <Window Type="MyScened/StaticText" Name="Scened.NormalMapConverter.FileNameText" >
                 <Property Name="Font" Value="Tahoma-10" />
                 <Property Name="Text" Value="FileName" />
+                <Property Name="HorzExtent" Value="72" />
+                <Property Name="VertExtent" Value="21.0665" />
                 <Property Name="HorzFormatting" Value="RightAligned" />
                 <Property Name="UnifiedAreaRect" Value="{{0,13},{0,37},{0,391},{0,68}}" />
             </Window>
             <Window Type="MyScened/StaticText" Name="Scened.NormalMapConverter.FileNameLabel" >
                 <Property Name="Font" Value="Tahoma-10" />
                 <Property Name="Text" Value="Height Map to convert:" />
+                <Property Name="HorzExtent" Value="187" />
+                <Property Name="VertExtent" Value="21.0665" />
                 <Property Name="FrameEnabled" Value="False" />
                 <Property Name="UnifiedAreaRect" Value="{{0,11},{0,9},{0,255},{0,30}}" />
                 <Property Name="BackgroundEnabled" Value="False" />
@@ -42,6 +46,8 @@
             <Window Type="MyScened/StaticText" Name="Scened.NormalMapConverter.AmplitudeLabel" >
                 <Property Name="Font" Value="Tahoma-10" />
                 <Property Name="Text" Value="Amplitude:" />
+                <Property Name="HorzExtent" Value="85" />
+                <Property Name="VertExtent" Value="21.0665" />
                 <Property Name="FrameEnabled" Value="False" />
                 <Property Name="UnifiedAreaRect" Value="{{0,11},{0,94},{0,132},{0,115}}" />
                 <Property Name="BackgroundEnabled" Value="False" />
@@ -52,7 +58,22 @@
                 <Property Name="OverlapSize" Value="0" />
                 <Property Name="DocumentSize" Value="1" />
                 <Property Name="ScrollPosition" Value="0" />
-                <Property Name="UnifiedAreaRect" Value="{{0,126},{0,96},{0,428},{0,117}}" />
+                <Property Name="UnifiedAreaRect" Value="{{0,136},{0,96},{0,428},{0,117}}" />
+            </Window>
+            <Window Type="TaharezLook/Checkbox" Name="Scened.NormalMapConverter.CheckXSwap" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Swap X coord." />
+                <Property Name="UnifiedAreaRect" Value="{{0,47},{0,129},{0,197},{0,161}}" />
+            </Window>
+            <Window Type="TaharezLook/Checkbox" Name="Scened.NormalMapConverter.CheckYSwap" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Swap Y coord." />
+                <Property Name="UnifiedAreaRect" Value="{{0,47},{0,160},{0,197},{0,192}}" />
+            </Window>
+            <Window Type="TaharezLook/Checkbox" Name="Scened.NormalMapConverter.CheckHeightmapInAlpha" >
+                <Property Name="Font" Value="Tahoma-10" />
+                <Property Name="Text" Value="Heightmap in Alpha" />
+                <Property Name="UnifiedAreaRect" Value="{{0,226},{0,140},{0,427},{0,187}}" />
             </Window>
         </Window>
     </Window>

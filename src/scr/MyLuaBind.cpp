@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/11/16 17:59:46.
+** Generated automatically by tolua++-1.0.92 on 09/13/16 23:20:22.
 */
 
 #ifndef __cplusplus
@@ -45838,20 +45838,26 @@ static int tolua_MyLuaBind_img_IImage_makeNormalMap00(lua_State* tolua_S)
  tolua_Error tolua_err;
  if (
  !tolua_isusertype(tolua_S,1,"img::IImage",0,&tolua_err) ||
- !tolua_isnumber(tolua_S,2,1,&tolua_err) ||
- !tolua_isnoobj(tolua_S,3,&tolua_err)
+ !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
+ !tolua_isboolean(tolua_S,3,0,&tolua_err) ||
+ !tolua_isboolean(tolua_S,4,0,&tolua_err) ||
+ !tolua_isboolean(tolua_S,5,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,6,&tolua_err)
  )
  goto tolua_lerror;
  else
 #endif
  {
   img::IImage* self = (img::IImage*)  tolua_tousertype(tolua_S,1,0);
-  float amplitude = ((float)  tolua_tonumber(tolua_S,2,1.0f));
+  float amplitude = ((float)  tolua_tonumber(tolua_S,2,0));
+  bool swapX = ((bool)  tolua_toboolean(tolua_S,3,0));
+  bool swapY = ((bool)  tolua_toboolean(tolua_S,4,0));
+  bool hmapInAlpha = ((bool)  tolua_toboolean(tolua_S,5,0));
 #ifndef TOLUA_RELEASE
  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'makeNormalMap'",NULL);
 #endif
  {
-  bool tolua_ret = (bool)  self->makeNormalMap(amplitude);
+  bool tolua_ret = (bool)  self->makeNormalMap(amplitude,swapX,swapY,hmapInAlpha);
  tolua_pushboolean(tolua_S,(bool)tolua_ret);
  }
  }

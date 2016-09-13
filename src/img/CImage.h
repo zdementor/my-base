@@ -89,7 +89,7 @@ public:
     virtual bool resizeTo(const core::dimension2di &size);
     virtual bool makeColorKey(const img::SColor &color);
     virtual bool makeColorKey(const core::position2di &colorKeyPixelPos);
-    virtual bool makeNormalMap(f32 amplitude=1.0f);	
+    virtual bool makeNormalMap(f32 amplitude, bool swapX, bool swapY, bool hmapInAlpha);	
 
 	virtual const c8* getOverridedFileName();	
 	virtual void setOverridedFileName(const c8* fname);	

@@ -131,7 +131,11 @@ public:
 
 	//! Creating normal map from heightmap image
 	//! \param amplitude: Constant value by which the height information is multiplied.
-    virtual bool makeNormalMap(f32 amplitude=1.0f) = 0;	
+	//! \param swapX: flag to swap X coord in result normal
+	//! \param swapY: flag to swap Y coord in result normal
+	//! \param hmapInAlpha: flag to store heightmap in alpha channel
+    virtual bool makeNormalMap(f32 amplitude=1.0f,
+		bool swapX=false, bool swapY=false, bool hmapInAlpha=true) = 0;
 
 	virtual const c8* getOverridedFileName() = 0;	
 

@@ -68,7 +68,7 @@ public:
 
 	//! Creating normal map from heightmap image
 	//! \param amplitude: Constant value by which the height information is multiplied.
-    virtual bool makeNormalMap(float amplitude=1.0f);	
+    virtual bool makeNormalMap(float amplitude, bool swapX, bool swapY, bool hmapInAlpha);	
 };
 
 //----------------------------------------------------------------------------

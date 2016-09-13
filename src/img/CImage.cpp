@@ -1305,7 +1305,7 @@ bool CImage::makeColorKey(const core::position2di &colorKeyPixelPos)
 
 //---------------------------------------------------------------------------- 
 
-bool CImage::makeNormalMap(f32 _amplitude)
+bool CImage::makeNormalMap(f32 amplitude, bool swapX, bool swapY, bool hmapInAlpha)
 {
 	if (WithColorKey)
 	{
@@ -1316,8 +1316,8 @@ bool CImage::makeNormalMap(f32 _amplitude)
 	if (NormalMap)
 		return true;
 
-	CHECK_RANGE(_amplitude, 0.0f, 9.0f);
-	_amplitude += 1.0f;
+	CHECK_RANGE(amplitude, 0.0f, 9.0f);
+	amplitude += 1.0f;
 
 	core::dimension2d<s32> dim = m_Dim;
 
@@ -1328,9 +1328,7 @@ bool CImage::makeNormalMap(f32 _amplitude)
 
     if (m_Format == img::ECF_A8R8G8B8)
     {
-		f32 amplitude = _amplitude;
-
-        s32 *p = (s32*)getData();
+		s32 *p = (s32*)getData();
 
         if (!p)
         {
@@ -1338,8 +1336,8 @@ bool CImage::makeNormalMap(f32 _amplitude)
             return false;
         }
 
-#define INTENCITY(x) ((((double)x.red + (double)x.green + (double)x.blue) / 3.0) / 255.0)
-#define CLAMP(pX, pMax) ((pX > pMax) ? pMax : ((pX < 0) ? 0 : pX))
+#define INTENCITY(x) ((((f64)x.red + (f64)x.green + (f64)x.blue) / 3.0) / 255.0)
+#define CLAMP(pX, pMax) ((pX>=pMax) ? (pX-pMax) : ((pX<0) ? (pX+pMax) : (pX)))
 #define MAP_COMPONENT(x) ((x + 1.0) * (255.0 / 2.0))
 
 		// copy texture
@@ -1351,8 +1349,8 @@ bool CImage::makeNormalMap(f32 _amplitude)
 		{
 			for (s32 column = 0; column < dim.Width; ++column)
 			{
-				const img::SColor main(in[row * dim.Width + column]);
-				u32 height = u32(INTENCITY(main) * 255.);
+				const img::SColor center(in[row * dim.Width + column]);
+				u32 height = u32(INTENCITY(center) * 255.);
 
 				// surrounding pixels
 				const img::SColor topLeft     (in[CLAMP(row - 1, dim.Height) * dim.Width + CLAMP(column - 1, dim.Width)]);
@@ -1375,66 +1373,31 @@ bool CImage::makeNormalMap(f32 _amplitude)
 				const f64 l  = INTENCITY(left);
 
 				// sobel filter
-				const double dX = (tr + 2.0 * r + br) - (tl + 2.0 * l + bl);
-				const double dY = (bl + 2.0 * b + br) - (tl + 2.0 * t + tr);
-				const double dZ = 1.0 / amplitude;
+				const f64 dX = (tr + 2.0 * r + br) - (tl + 2.0 * l + bl);
+				const f64 dY = (bl + 2.0 * b + br) - (tl + 2.0 * t + tr);
+				const f64 dZ = 1.0 / amplitude;
 
 				core::vector3df v(dX, dY, dZ);
 				v.normalize();
 
+				v.X *= -1.f; // X-inverted bu default
+
+				if (swapX)
+					v.X *= -1.f;
+				if (swapY)
+					v.Y *= -1.f;				
+
 				// convert to rgb
-				p[row * dim.Width + column] = img::SColor(height,
-					MAP_COMPONENT(v.X), MAP_COMPONENT(v.Y), MAP_COMPONENT(v.Z)).color;
+				p[row * dim.Width + column] = img::SColor(
+					hmapInAlpha ? height : 255,
+					MAP_COMPONENT(v.X),
+					MAP_COMPONENT(v.Y),
+					MAP_COMPONENT(v.Z)).color;
 			}
 		}
 
 		delete [] in;
     }
-	else
-	if (m_Format == img::ECF_R5G6B5)
-	{
-		f32 amplitude = _amplitude;
-
-		amplitude = amplitude / 255.0f;
-
-		s32 *p = (s32*)getData();
-
-        if (!p)
-        {
-            LOGGER.logErr("Could not lock image for making normal map.");
-            return false;
-        }
-
-		// copy texture
-
-		s16* in = new s16[dim.Height * pitch];
-		memcpy(in, p, dim.Height * pitch * 2);
-
-		for (s32 x=0; x<pitch; ++x)
-		{
-			for (s32 y=0; y<dim.Height; ++y)
-			{
-				// TODO: this could be optimized really a lot
-
-				core::vector3df h1((x-1)*hh, nml16(x-1, y, pitch, dim.Height, in)*amplitude, y*vh);
-				core::vector3df h2((x+1)*hh, nml16(x+1, y, pitch, dim.Height, in)*amplitude, y*vh);
-				core::vector3df v1(x*hh, nml16(x, y-1, pitch, dim.Height, in)*amplitude, (y-1)*vh);
-				core::vector3df v2(x*hh, nml16(x, y+1, pitch, dim.Height, in)*amplitude, (y+1)*vh);
-
-				core::vector3df v = v1-v2;
-				core::vector3df h = h1-h2;
-
-				core::vector3df n = v.getCrossProduct(h);
-				n.normalize();
-				n *= 0.5f;
-				n += core::vector3df(0.5f,0.5f,0.5f); // now between 0 and 1
-				n *= 255.0f;
-
-				p[y*pitch + x] = RGB16((s32)n.X, (s32)n.Z, (s32)n.Y);
-			}
-		}
-		delete [] in;
-	}
 	else
 	{
         LOGGER.logErr("Unsupported image color format for making normal map.");

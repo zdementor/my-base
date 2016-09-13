@@ -11,6 +11,10 @@ local _Ctrls =
 	},
 	FileNameText = {},
 	AmplitudeScroll = {},
+	AmplitudeLabel = {},
+	CheckXSwap = {},
+	CheckYSwap = {},
+	CheckHeightmapInAlpha = {},
 }
 
 local function _ScenedNMapConvOpenAccepted(full_file_name)
@@ -24,13 +28,36 @@ local function _ScenedNMapConvOpenAccepted(full_file_name)
 	end
 end
 
+local function _ScenedNMapConvGetAmplitude()
+	local amplitude = _Ctrls.AmplitudeScroll.Ctrl:getScrollPosition() * 9.0
+	amplitude = Helper.getClampedValue(amplitude, 0.0, 9.0)
+	return math.floor(amplitude)
+end
+
 local function _ScenedNMapConvSaveAccepted(nmap_full_file_name)
 	_Ctrls.Root.Ctrl:setVisible(false)
 	local hmap_full_file_name = core.Utf8ToAnsi(
 		_Ctrls.FileNameText.Ctrl:getText())
-	local amplitude = _Ctrls.AmplitudeScroll.Ctrl:getScrollPosition() * 10.0
-	amplitude = Helper.getClampedValue(amplitude, 0.0, 10.0)
-	Helper.convertToNormalMap(amplitude, hmap_full_file_name, nmap_full_file_name)
+	local amplitude = _ScenedNMapConvGetAmplitude()
+	local swapX = _Ctrls.CheckXSwap.Ctrl:isSelected()
+	local swapY = _Ctrls.CheckYSwap.Ctrl:isSelected()
+	local hmapInAlpha = _Ctrls.CheckHeightmapInAlpha.Ctrl:isSelected()
+	Helper.convertToNormalMap(
+		hmap_full_file_name, nmap_full_file_name, amplitude, swapX, swapY, hmapInAlpha)
+end
+
+local function _ScenedNMapConvScrollHandler(args)
+	local ampl = _ScenedNMapConvGetAmplitude()
+	_Ctrls.AmplitudeLabel.Ctrl:setText(string.format("Amplitude: %d", ampl))
+end
+
+local function _ScenedNMapConvStateChanged(args)
+	local we = CEGUI.toWindowEventArgs(args)
+	local name = we.window:getName()
+	if name == "Scened.NormalMapConverter.CheckXSwap" then
+	elseif name == "Scened.NormalMapConverter.CheckYSwap" then
+	elseif name == "Scened.NormalMapConverter.CheckHeightmapInAlpha" then
+	end
 end
 
 local function _ScenedNMapConvWidgetClicked(args)
@@ -86,11 +113,28 @@ function _ScenedNMapConvInit()
 		
 	_Ctrls.FileNameText.Ctrl = CEGUIWinMgr:getWindow(
 		"Scened.NormalMapConverter.FileNameText")
-		
+
+	_Ctrls.AmplitudeLabel.Ctrl = CEGUIWinMgr:getWindow(
+		"Scened.NormalMapConverter.AmplitudeLabel")
+
 	_Ctrls.AmplitudeScroll.Ctrl = tolua.cast(
 			CEGUIWinMgr:getWindow("Scened.NormalMapConverter.AmplitudeScroll"), "CEGUI::Scrollbar")
-	_Ctrls.AmplitudeScroll.Ctrl:setScrollPosition(0.5)
-		
+	_Ctrls.AmplitudeScroll.Ctrl:subscribeEvent("ScrollPosChanged", _ScenedNMapConvScrollHandler)
+	_Ctrls.AmplitudeScroll.Ctrl:setScrollPosition(0.25)
+
+	_Ctrls.CheckXSwap.Ctrl = tolua.cast(
+		CEGUIWinMgr:getWindow("Scened.NormalMapConverter.CheckXSwap"), "CEGUI::Checkbox")
+	_Ctrls.CheckXSwap.Ctrl:subscribeEvent("CheckStateChanged", _ScenedNMapConvStateChanged)
+
+	_Ctrls.CheckYSwap.Ctrl = tolua.cast(
+		CEGUIWinMgr:getWindow("Scened.NormalMapConverter.CheckYSwap"), "CEGUI::Checkbox")
+	_Ctrls.CheckYSwap.Ctrl:subscribeEvent("CheckStateChanged", _ScenedNMapConvStateChanged)
+
+	_Ctrls.CheckHeightmapInAlpha.Ctrl = tolua.cast(
+		CEGUIWinMgr:getWindow("Scened.NormalMapConverter.CheckHeightmapInAlpha"), "CEGUI::Checkbox")
+	_Ctrls.CheckHeightmapInAlpha.Ctrl:subscribeEvent("CheckStateChanged", _ScenedNMapConvStateChanged)
+	_Ctrls.CheckHeightmapInAlpha.Ctrl:setSelected(true)
+
 	Helper.GUI.setCenteredWindowPosition(_Ctrls.Frame.Ctrl)
 end
 
