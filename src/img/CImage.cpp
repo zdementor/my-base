@@ -1305,7 +1305,7 @@ bool CImage::makeColorKey(const core::position2di &colorKeyPixelPos)
 
 //---------------------------------------------------------------------------- 
 
-bool CImage::makeNormalMap(f32 amplitude)
+bool CImage::makeNormalMap(f32 _amplitude)
 {
 	if (WithColorKey)
 	{
@@ -1316,11 +1316,11 @@ bool CImage::makeNormalMap(f32 amplitude)
 	if (NormalMap)
 		return true;
 
-	CHECK_RANGE(amplitude, 0.0f, 9.0f);
-	amplitude += 1.0f;
+	CHECK_RANGE(_amplitude, 0.0f, 9.0f);
+	_amplitude += 1.0f;
 
 	core::dimension2d<s32> dim = m_Dim;
-	amplitude = amplitude / 255.0f;
+
 	f32 vh = dim.Height / (f32)dim.Width;
 	f32 hh = dim.Width / (f32)dim.Height;
 
@@ -1328,6 +1328,8 @@ bool CImage::makeNormalMap(f32 amplitude)
 
     if (m_Format == img::ECF_A8R8G8B8)
     {
+		f32 amplitude = _amplitude;
+
         s32 *p = (s32*)getData();
 
         if (!p)
@@ -1336,43 +1338,65 @@ bool CImage::makeNormalMap(f32 amplitude)
             return false;
         }
 
+#define INTENCITY(x) ((((double)x.red + (double)x.green + (double)x.green) / 3.0) / 255.0)
+#define CLAMP(pX, pMax) ((pX > pMax) ? pMax : ((pX < 0) ? 0 : pX))
+#define MAP_COMPONENT(x) ((x + 1.0) * (255.0 / 2.0))
+
 		// copy texture
 
 		s32* in = new s32[dim.Height * pitch];
 		memcpy(in, p, dim.Height * pitch * 4);
 
-		for (s32 x=0; x<pitch; ++x)
+		for (s32 row = 0; row < dim.Height; ++row)
 		{
-			for (s32 y=0; y<dim.Height; ++y)
+			for (s32 column = 0; column < dim.Width; ++column)
 			{
-				// TODO: this could be optimized really a lot
+				const img::SColor main(in[row * dim.Width + column]);
+				u32 height = INTENCITY(main);
 
-				core::vector3df h1((x-1)*hh, nml32(x-1, y, pitch, dim.Height, in)*amplitude, y*vh);
-				core::vector3df h2((x+1)*hh, nml32(x+1, y, pitch, dim.Height, in)*amplitude, y*vh);
-				core::vector3df v1(x*hh, nml32(x, y+1, pitch, dim.Height, in)*amplitude, (y-1)*vh);
-				core::vector3df v2(x*hh, nml32(x, y-1, pitch, dim.Height, in)*amplitude, (y+1)*vh);
+				// surrounding pixels
+				const img::SColor topLeft     (in[CLAMP(row - 1, dim.Height) * dim.Width + CLAMP(column - 1, dim.Width)]);
+				const img::SColor top         (in[CLAMP(row - 1, dim.Height) * dim.Width + CLAMP(column,     dim.Width)]);
+				const img::SColor topRight    (in[CLAMP(row - 1, dim.Height) * dim.Width + CLAMP(column + 1, dim.Width)]);
+				const img::SColor right       (in[CLAMP(row,     dim.Height) * dim.Width + CLAMP(column + 1, dim.Width)]);
+				const img::SColor bottomRight (in[CLAMP(row + 1, dim.Height) * dim.Width + CLAMP(column + 1, dim.Width)]);
+				const img::SColor bottom      (in[CLAMP(row + 1, dim.Height) * dim.Width + CLAMP(column,     dim.Width)]);
+				const img::SColor bottomLeft  (in[CLAMP(row + 1, dim.Height) * dim.Width + CLAMP(column - 1, dim.Width)]);
+				const img::SColor left        (in[CLAMP(row,     dim.Height) * dim.Width + CLAMP(column - 1, dim.Width)]);
 
-				core::vector3df v = v1-v2;
-				core::vector3df h = h1-h2;
+				// their intensities
+				const f64 tl = INTENCITY(topLeft);
+				const f64 t  = INTENCITY(top);
+				const f64 tr = INTENCITY(topRight);
+				const f64 r  = INTENCITY(right);
+				const f64 br = INTENCITY(bottomRight);
+				const f64 b  = INTENCITY(bottom);
+				const f64 bl = INTENCITY(bottomLeft);
+				const f64 l  = INTENCITY(left);
 
-				core::vector3df n = v.getCrossProduct(h);
-				n.normalize();
-				n *= 0.5f;
-				n += core::vector3df(0.5f,0.5f,0.5f); // now between 0 and 1
-				n *= 255.0f;
+				// sobel filter
+				const double dX = (tr + 2.0 * r + br) - (tl + 2.0 * l + bl);
+				const double dY = (bl + 2.0 * b + br) - (tl + 2.0 * t + tr);
+				const double dZ = 1.0 / amplitude;
 
-				s32 height = (s32)nml32(x, y, pitch, dim.Height, in);
-				p[y*pitch + x] = SColor(
-					height, // store height in alpha
-					(s32)n.X, (s32)n.Z, (s32)n.Y
-					).color;
+				core::vector3df v(dX, dY, dZ);
+				v.normalize();
+
+				// convert to rgb
+				p[row * dim.Width + column] = img::SColor(height,
+					MAP_COMPONENT(v.X), MAP_COMPONENT(v.Y), MAP_COMPONENT(v.Z)).color;
 			}
 		}
+
 		delete [] in;
     }
 	else
 	if (m_Format == img::ECF_R5G6B5)
 	{
+		f32 amplitude = _amplitude;
+
+		amplitude = amplitude / 255.0f;
+
 		s32 *p = (s32*)getData();
 
         if (!p)
