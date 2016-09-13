@@ -1338,7 +1338,7 @@ bool CImage::makeNormalMap(f32 _amplitude)
             return false;
         }
 
-#define INTENCITY(x) ((((double)x.red + (double)x.green + (double)x.green) / 3.0) / 255.0)
+#define INTENCITY(x) ((((double)x.red + (double)x.green + (double)x.blue) / 3.0) / 255.0)
 #define CLAMP(pX, pMax) ((pX > pMax) ? pMax : ((pX < 0) ? 0 : pX))
 #define MAP_COMPONENT(x) ((x + 1.0) * (255.0 / 2.0))
 
@@ -1352,7 +1352,7 @@ bool CImage::makeNormalMap(f32 _amplitude)
 			for (s32 column = 0; column < dim.Width; ++column)
 			{
 				const img::SColor main(in[row * dim.Width + column]);
-				u32 height = INTENCITY(main);
+				u32 height = u32(INTENCITY(main) * 255.);
 
 				// surrounding pixels
 				const img::SColor topLeft     (in[CLAMP(row - 1, dim.Height) * dim.Width + CLAMP(column - 1, dim.Width)]);
