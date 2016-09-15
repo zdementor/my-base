@@ -153,20 +153,11 @@ bool CD3D9Texture::createHardwareTexture(bool renderTarget)
 	case img::ECF_DXT5:
 		format = D3DFMT_DXT5; 
 		break;
-	case img::ECF_DEPTH16:
-		format = D3DFMT_D16;
-		usage = D3DUSAGE_DEPTHSTENCIL;
-		break;
-	case img::ECF_DEPTH24:
-		format = D3DFMT_D24X8;
-		usage = D3DUSAGE_DEPTHSTENCIL;
-		break;
-	case img::ECF_DEPTH32:
-		format = D3DFMT_D32;
-		usage = D3DUSAGE_DEPTHSTENCIL;
+	case img::ECF_LUMINANCE16:
+		format = D3DFMT_L16;
 		break;
 	case img::ECF_DEPTH24_STENCIL8:
-		format = D3DFMT_D24S8;
+		format = FOURCC_INTZ;
 		usage = D3DUSAGE_DEPTHSTENCIL;
 		break;
 	default:

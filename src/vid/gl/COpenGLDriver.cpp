@@ -304,32 +304,34 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 
 	LOGGER.logInfo(" OpenGL driver features:");
 
-	LOGGER.logInfo("  Back Color Format: %s",
+	LOGGER.logInfo("  Back Color Format : %s",
 		img::getColorFormatName(getBackColorFormat()));
-	LOGGER.logInfo("  Multitexturing   : %s",
+	LOGGER.logInfo("  Multitexturing    : %s",
 		queryFeature(EVDF_MULITEXTURE) ? "OK" : "None");
-	LOGGER.logInfo("  Vertex buffer    : %s", vboSupport ?
+	LOGGER.logInfo("  Vertex buffer     : %s", vboSupport ?
 		"OK" : "None (using vertex arrays instead)");
-	LOGGER.logInfo("  Anisotropic filt.: %s (%d level)",
+	LOGGER.logInfo("  Anisotropic filt. : %s (%d level)",
 		queryFeature(EVDF_ANISOTROPIC_FILTER) ?
 			"OK" : "None", MaxAnisotropyLevel);
-	LOGGER.logInfo("  Swap control     : %s",
+	LOGGER.logInfo("  Swap control      : %s",
 		WGLEW_EXT_swap_control ? "OK" : "None"); 
-	LOGGER.logInfo("  GLSL             : %s",
+	LOGGER.logInfo("  GLSL              : %s",
 		queryFeature(EVDF_SHADER_LANGUAGE) ? "OK" : "None");
 #ifdef GL_ARB_shading_language_100
 	if (!!GLEW_ARB_shading_language_100)
 		LOGGER.logInfo("   Vertex/Pixel shader v.%s",
 			glGetString(GL_SHADING_LANGUAGE_VERSION_ARB));
 #endif
-	LOGGER.logInfo("  Two side stencil : %s",
+	LOGGER.logInfo("  Two side stencil  : %s",
 		m_TwoSidedStencil ? "OK" : "None");
-	LOGGER.logInfo("  Occlusion Query  : %s",
+	LOGGER.logInfo("  Occlusion Query   : %s",
 		queryFeature(EVDF_OCCLUSION_QUERY) ? "OK" : "None");
-	LOGGER.logInfo("  Render Target    : %s",
+	LOGGER.logInfo("  Render Target     : %s",
 		queryFeature(EVDF_RENDER_TO_TARGET) ? "OK" : "None");
-	LOGGER.logInfo("  Compressed tex.  : %s",
+	LOGGER.logInfo("  Compressed tex.   : %s",
 		queryFeature(EVDF_COMPRESSED_TEXTURES) ? "OK" : "None");
+	LOGGER.logInfo("  Depth Stencil tex.: %s",
+		queryFeature(EVDF_DEPTH_STENCIL_TEXTURES) ? "OK" : "None");
 
 	// OpenGL driver constants
 
@@ -781,6 +783,7 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
     case EVDF_ANISOTROPIC_FILTER:
         return MaxAnisotropyLevel > 0;
     case EVDF_RENDER_TO_TARGET:
+	case EVDF_DEPTH_STENCIL_TEXTURES:
 #if defined(GL_ARB_framebuffer_object)
 		return !!GLEW_ARB_framebuffer_object;
 #else
@@ -809,6 +812,8 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 #else
 		return false;
 #endif
+	default:
+		break;
     };
 
     return false;

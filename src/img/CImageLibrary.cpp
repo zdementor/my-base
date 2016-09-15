@@ -488,7 +488,7 @@ __MY_EXPORT__ IImageLibrary* createImageLibrary()
 //----------------------------------------------------------------------------
 
 static void copyToAlpha32F  (u32 level, img::IImage* src_img, img::IImage* dst_img);
-static void copyToDepth16   (u32 level, img::IImage *src_img, img::IImage *dst_img);
+static void copyToLum16		(u32 level, img::IImage *src_img, img::IImage *dst_img);
 static void copyToA8R8G8B8	(u32 level, img::IImage *src_img, img::IImage *dst_img);
 static void copyToR8G8B8	(u32 level, img::IImage *src_img, img::IImage *dst_img);
 static void copyToA1R5G5B5	(u32 level, img::IImage *src_img, img::IImage *dst_img);
@@ -522,8 +522,8 @@ bool CImageLibrary::copy(img::IImage* image, img::IImage* tex_image)
 	case img::ECF_DXT5:
 		copyTo = copyToDXT;
 		break;
-	case img::ECF_DEPTH16:
-		copyTo = copyToDepth16;
+	case img::ECF_LUMINANCE16:
+		copyTo = copyToLum16;
 		break;
 	case img::ECF_ALPHA32F:
 		copyTo = copyToAlpha32F;
@@ -589,7 +589,7 @@ static void copyToAlpha32F(
 
 //----------------------------------------------------------------------------
 
-static void copyToDepth16(
+static void copyToLum16(
 	u32 level, img::IImage* src_img, img::IImage* dst_img)
 {
 	core::dimension2di src_dim = src_img->getDimension();
@@ -598,7 +598,8 @@ static void copyToDepth16(
 	s16* source = (s16*)src_img->getLevelData(level);
 	s16* dest = (s16*)dst_img->getLevelData(level);
 
-	if (src_img->getColorFormat() != img::ECF_DEPTH16 || dst_img->getColorFormat() != img::ECF_DEPTH16)
+	if (src_img->getColorFormat() != img::ECF_LUMINANCE16
+			|| dst_img->getColorFormat() != img::ECF_LUMINANCE16)
 	{
 		LOGGER.logErr("Can't copy data format %s to %s",
 			img::getColorFormatName(src_img->getColorFormat()),
@@ -618,7 +619,7 @@ static void copyToDepth16(
         f32 sourceYStep = (f32)src_dim.Height / (f32)dst_dim.Height;
         f32 sy;
 
-        if (src_img->getColorFormat() == img::ECF_DEPTH16)
+        if (src_img->getColorFormat() == img::ECF_LUMINANCE16)
         {
 			// copy texture scaling, fast
             for (s32 x = 0; x < dst_dim.Width; ++x)

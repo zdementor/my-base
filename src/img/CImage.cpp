@@ -212,7 +212,7 @@ s32 CImage::_getBitsPerPixelFromFormat()
         GreenMask = 0xFF<<8;
         RedMask = 0xFF;
         break;
-    case ECF_DEPTH16:
+    case ECF_LUMINANCE16:
         AlphaMask = 0;
         BlueMask = 0;
         GreenMask = 0xFF<<8;
@@ -250,7 +250,7 @@ SColor CImage::getPixel(s32 x, s32 y) const
             u8* p = &((u8*)m_Data)[(y*3)*m_Dim.Width + (x*3)];
             return SColor(255,p[0],p[1],p[2]);
         }
-   case ECF_DEPTH16:
+   case ECF_LUMINANCE16:
         {
             u8 *p = (u8*)&((s16*)m_Data)[y*m_Dim.Width + x];
             return SColor(0,0,p[1],p[0]);

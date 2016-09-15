@@ -170,23 +170,11 @@ bool COpenGLTexture::createHardwareTexture(bool renderTarget)
 		m_PixelType		= GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 		break;
 #endif
-#ifdef GL_VERSION_1_4
-	case img::ECF_DEPTH16:
-		m_InternalFormat= GL_DEPTH_COMPONENT16;
-		m_PixelFormat	= GL_DEPTH_COMPONENT;
+	case img::ECF_LUMINANCE16:
+		m_InternalFormat= GL_LUMINANCE16;
+		m_PixelFormat	= GL_LUMINANCE;
 		m_PixelType		= GL_UNSIGNED_SHORT;
 		break;
-	case img::ECF_DEPTH24:
-		m_InternalFormat= GL_DEPTH_COMPONENT24;
-		m_PixelFormat	= GL_DEPTH_COMPONENT;
-		m_PixelType		= GL_UNSIGNED_BYTE;
-		break;
-	case img::ECF_DEPTH32:
-		m_InternalFormat= GL_DEPTH_COMPONENT32;
-		m_PixelFormat	= GL_DEPTH_COMPONENT;
-		m_PixelType		= GL_UNSIGNED_INT;
-		break;
-#endif
 #ifdef GL_ARB_framebuffer_object
 	case img::ECF_DEPTH24_STENCIL8:
 		m_InternalFormat= GL_DEPTH24_STENCIL8;

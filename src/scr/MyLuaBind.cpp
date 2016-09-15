@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/15/16 14:15:44.
+** Generated automatically by tolua++-1.0.92 on 09/15/16 22:09:57.
 */
 
 #ifndef __cplusplus
@@ -58945,9 +58945,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"ECF_DXT1",img::ECF_DXT1);
   tolua_constant(tolua_S,"ECF_DXT3",img::ECF_DXT3);
   tolua_constant(tolua_S,"ECF_DXT5",img::ECF_DXT5);
-  tolua_constant(tolua_S,"ECF_DEPTH16",img::ECF_DEPTH16);
-  tolua_constant(tolua_S,"ECF_DEPTH24",img::ECF_DEPTH24);
-  tolua_constant(tolua_S,"ECF_DEPTH32",img::ECF_DEPTH32);
+  tolua_constant(tolua_S,"ECF_LUMINANCE16",img::ECF_LUMINANCE16);
   tolua_constant(tolua_S,"ECF_DEPTH24_STENCIL8",img::ECF_DEPTH24_STENCIL8);
   tolua_constant(tolua_S,"ECF_ALPHA32F",img::ECF_ALPHA32F);
   tolua_constant(tolua_S,"E_COLOR_FORMAT_COUNT",img::E_COLOR_FORMAT_COUNT);
@@ -59116,6 +59114,8 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"EVDF_STENCIL_BUFFER",vid::EVDF_STENCIL_BUFFER);
   tolua_constant(tolua_S,"EVDF_SHADER_LANGUAGE",vid::EVDF_SHADER_LANGUAGE);
   tolua_constant(tolua_S,"EVDF_OCCLUSION_QUERY",vid::EVDF_OCCLUSION_QUERY);
+  tolua_constant(tolua_S,"EVDF_COMPRESSED_TEXTURES",vid::EVDF_COMPRESSED_TEXTURES);
+  tolua_constant(tolua_S,"EVDF_DEPTH_STENCIL_TEXTURES",vid::EVDF_DEPTH_STENCIL_TEXTURES);
   tolua_constant(tolua_S,"E_VIDEO_DRIVER_FEATURE_COUNT",vid::E_VIDEO_DRIVER_FEATURE_COUNT);
   tolua_constant(tolua_S,"ETS_VIEW",vid::ETS_VIEW);
   tolua_constant(tolua_S,"ETS_MODEL",vid::ETS_MODEL);

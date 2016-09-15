@@ -47,10 +47,10 @@ enum E_COLOR_FORMAT
     ECF_DXT3,
 	ECF_DXT5,
 
+	//! Luminance formats (for the heightmaps)
+	ECF_LUMINANCE16,
+
 	//! Depth formats
-	ECF_DEPTH16,
-	ECF_DEPTH24,
-	ECF_DEPTH32,
 	ECF_DEPTH24_STENCIL8,
 
 	//! Alpha 32 bit float format
@@ -72,9 +72,7 @@ static const c8* ColorFormatName[E_COLOR_FORMAT_COUNT] =
 	"ECF_DXT1",
     "ECF_DXT3",
 	"ECF_DXT5",
-	"ECF_DEPTH16",
-	"ECF_DEPTH24",
-	"ECF_DEPTH32",
+	"ECF_LUMINANCE16",
 	"ECF_DEPTH24_STENCIL8",
 	"ECF_ALPHA32F",
 };
@@ -90,9 +88,7 @@ static u32 ColorFormatBitsPerPixel[E_COLOR_FORMAT_COUNT] =
 	0,  //ECF_DXT1
     0,  //ECF_DXT3
 	0,  //ECF_DXT5
-	16, //ECF_DEPTH16
-	24, //ECF_DEPTH24
-	32, //ECF_DEPTH32
+	16, //ECF_LUMINANCE16
 	32, //ECF_DEPTH24_STENCIL8
 	32, //ECF_ALPHA32F
 };

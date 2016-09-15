@@ -33,10 +33,10 @@ enum E_COLOR_FORMAT
     ECF_DXT3,
 	ECF_DXT5,
 
+	//! Luminance formats (for the heightmaps)
+	ECF_LUMINANCE16,
+
 	//! Depth formats
-	ECF_DEPTH16,
-	ECF_DEPTH24,
-	ECF_DEPTH32,
 	ECF_DEPTH24_STENCIL8,
 
 	//! Alpha 32 bit float format

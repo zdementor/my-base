@@ -39,7 +39,8 @@ namespace vid {
 CD3D9Driver::CD3D9Driver(const core::dimension2di &screenSize) 
 	: CNullDriver(screenSize), m_D3DLibrary(0), m_D3DDevice(0), m_D3D(0), DeviceLost(false),
 MaxAnisotropyLevel(0), StencilFogTexture(0), pEventQuery(0), m_D3D9HardwareOcclusionQuery(0),
-m_D3DMainRenderTargetSurface(0), m_D3DMainDepthStencilSurface(0)
+m_D3DMainRenderTargetSurface(0), m_D3DMainDepthStencilSurface(0),
+m_DepthStencilTexturesSupport(false)
 {
 #if MY_DEBUG_MODE 
 	IUnknown::setClassName("CD3D9Driver");    
@@ -223,7 +224,13 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 
 	m_StencilBuffer &= m_Shadows;
 
-    // create device
+	if (SUCCEEDED(m_D3D->CheckDeviceFormat(
+			D3DADAPTER_DEFAULT,	D3DDEVTYPE_HAL,  
+			adapterFormat, D3DUSAGE_DEPTHSTENCIL, 
+			D3DRTYPE_TEXTURE, FOURCC_INTZ)))
+		m_DepthStencilTexturesSupport = true;
+
+	// create device
 
 	HWND hwnd = reinterpret_cast<HWND>(out_video_data.Win32.HWnd);
 
@@ -383,19 +390,19 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 
 	LOGGER.logInfo(" Direct3D driver features:");
 
-	LOGGER.logInfo("  Back Color Format: %s",
+	LOGGER.logInfo("  Back Color Format : %s",
 		getColorFormatName(getBackColorFormat()));
-	LOGGER.logInfo("  Multitexturing   : %s",
+	LOGGER.logInfo("  Multitexturing    : %s",
 		queryFeature(EVDF_MULITEXTURE) ?
 		"OK" : "None");
-	LOGGER.logInfo("  Vertex buffer    : OK"); 
-	LOGGER.logInfo("  Anisotropic filt.: %s (%d level)",
+	LOGGER.logInfo("  Vertex buffer     : OK"); 
+	LOGGER.logInfo("  Anisotropic filt. : %s (%d level)",
 		queryFeature(EVDF_ANISOTROPIC_FILTER) ?
 			"OK" : "None", MaxAnisotropyLevel);
-	LOGGER.logInfo("  Swap control     : OK");
+	LOGGER.logInfo("  Swap control      : OK");
 	if (queryFeature(EVDF_SHADER_LANGUAGE))
 	{
-		LOGGER.logInfo("  HLSL             : OK");
+		LOGGER.logInfo("  HLSL              : OK");
 		LOGGER.logInfo("   Vertex shader v.%d.%d",
 			0xff & m_D3DCaps.VertexShaderVersion >> 8,
 			0xff & m_D3DCaps.VertexShaderVersion);
@@ -406,14 +413,16 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 	else
 		LOGGER.logInfo("  HLSL             : None");
 
-	LOGGER.logInfo("  Two side stencil : %s",
+	LOGGER.logInfo("  Two side stencil  : %s",
 		m_TwoSidedStencil ? "OK" : "None");
-	LOGGER.logInfo("  Occlusion Query  : %s",
+	LOGGER.logInfo("  Occlusion Query   : %s",
 		queryFeature(EVDF_OCCLUSION_QUERY) ? "OK" : "None");
-	LOGGER.logInfo("  Render Target    : %s",
+	LOGGER.logInfo("  Render Target     : %s",
 		queryFeature(EVDF_RENDER_TO_TARGET) ? "OK" : "None");
-	LOGGER.logInfo("  Compressed tex.  : %s",
+	LOGGER.logInfo("  Compressed tex.   : %s",
 		queryFeature(EVDF_COMPRESSED_TEXTURES) ? "OK" : "None");
+	LOGGER.logInfo("  Depth Stencil tex.: %s",
+		queryFeature(vid::EVDF_DEPTH_STENCIL_TEXTURES) ? "OK" : "None");
 
 	//antialiasing ON! 
 	if (m_Antialiasing)
@@ -619,7 +628,6 @@ bool CD3D9Driver::reset()
 
 //----------------------------------------------------------------------------
 
-//! queries the features of the driver, returns true if feature is available
 bool CD3D9Driver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 {
     switch (feature)
@@ -645,6 +653,8 @@ bool CD3D9Driver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 		return m_D3D9HardwareOcclusionQuery!=NULL;
 	case EVDF_COMPRESSED_TEXTURES:
 		return true;
+	case EVDF_DEPTH_STENCIL_TEXTURES:
+		return m_DepthStencilTexturesSupport;
     };
 
     return false;

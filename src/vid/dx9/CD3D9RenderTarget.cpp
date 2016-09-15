@@ -70,15 +70,6 @@ bool CD3D9RenderTarget::_rebuild()
 			D3DFORMAT format = D3DFMT_UNKNOWN;
 			switch (m_DepthFormat)
 			{
-			case img::ECF_DEPTH16:
-				format = D3DFMT_D16;
-				break;
-			case img::ECF_DEPTH24:
-				format = D3DFMT_D24X8;
-				break;
-			case img::ECF_DEPTH32:
-				format = D3DFMT_D32;
-				break;
 			case img::ECF_DEPTH24_STENCIL8:
 				format = D3DFMT_D24S8;
 				break;

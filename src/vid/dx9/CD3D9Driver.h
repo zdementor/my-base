@@ -19,6 +19,8 @@
 
 #include <d3d/d3d9.h>
 
+#define FOURCC_INTZ ((D3DFORMAT)(MAKEFOURCC('I','N','T','Z'))) 
+
 //----------------------------------------------------------------------------
 namespace my {
 namespace vid {	
@@ -232,6 +234,8 @@ private:
 	CD3D9HardwareOcclusionQuery* m_D3D9HardwareOcclusionQuery;
 
 	IDirect3DVertexDeclaration9* m_VertexDecls[E_VERTEX_TYPE_COUNT];
+
+	bool m_DepthStencilTexturesSupport;
 };
 
 //----------------------------------------------------------------------------

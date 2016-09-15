@@ -192,7 +192,8 @@ bool CTerrainSceneNode::_setMaps(
 
 	m_SizeDiv2Dim = m_GridPointSpacing * (m_HeightFieldSizeValue / 2.0f - 0.5);
 
-	img::IImage* heightImage = IMAGE_LIBRARY.createEmptyImage(core::dimension2di(m_HeightFieldSize, m_HeightFieldSize), img::ECF_DEPTH16);
+	img::IImage* heightImage = IMAGE_LIBRARY.createEmptyImage(
+		core::dimension2di(m_HeightFieldSize, m_HeightFieldSize), img::ECF_LUMINANCE16);
 
 	if (heightmap)
 	{
@@ -592,7 +593,7 @@ vid::ITexture* CTerrainSceneNode::getHeightMapTexture()
 	if (!tex)
 	{
 		tex = m_VideoDriver.addTexture(core::dimension2di(m_HeightFieldSizeValue, m_HeightFieldSizeValue),
-			m_HeightMapTextureName.c_str(), img::ECF_DEPTH16);
+			m_HeightMapTextureName.c_str(), img::ECF_LUMINANCE16);
 
 		if (tex)
 		{

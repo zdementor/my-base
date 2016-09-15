@@ -820,6 +820,9 @@ enum E_VIDEO_DRIVER_FEATURE
 	//! Is Compressed textures (DXT1/DXT3/DXT5) supported by video hardware?
 	EVDF_COMPRESSED_TEXTURES,
 
+	//! Is Depth Stencil textures supported by video hardware?
+	EVDF_DEPTH_STENCIL_TEXTURES,
+
 	E_VIDEO_DRIVER_FEATURE_COUNT,
 
 	E_VIDEO_DRIVER_FEATURE_FORCE_32_BIT = 0xffffffff

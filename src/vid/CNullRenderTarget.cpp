@@ -25,10 +25,8 @@ m_ColorTexture(NULL), m_DepthTexture(NULL),
 m_Size(size), m_ColorFormat(colorFormat), m_DepthFormat(depthFormat)
 {
 	m_ColorTexture = m_Driver.createRenderTargetTexture(m_Size, m_ColorFormat);
-	if (m_DepthFormat == img::ECF_DEPTH16
-			|| m_DepthFormat == img::ECF_DEPTH24
-			|| m_DepthFormat == img::ECF_DEPTH32
-			|| m_DepthFormat == img::ECF_DEPTH24_STENCIL8)
+	if (m_Driver.queryFeature(vid::EVDF_DEPTH_STENCIL_TEXTURES)
+			&& m_DepthFormat == img::ECF_DEPTH24_STENCIL8)
 		m_DepthTexture = m_Driver.createRenderTargetTexture(m_Size, m_DepthFormat);
 }
 
