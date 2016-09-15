@@ -6,10 +6,13 @@ namespace img {
 //! A color format specifies how color information is stored. 
 enum E_COLOR_FORMAT
 { 
+	// Empty color format
+	ECF_NONE = 0,
+
 	//! 16 bit color format used by the software driver, and thus preferred 
 	//! by all other irrlicht engine video drivers. There are 5 bits for every  
 	//! color component, and a single bit is left for alpha information.    
-	ECF_A1R5G5B5 = 0,
+	ECF_A1R5G5B5,
 
 	//! Standard 16 bit color format.   
 	ECF_R5G6B5, 
@@ -34,6 +37,7 @@ enum E_COLOR_FORMAT
 	ECF_DEPTH16,
 	ECF_DEPTH24,
 	ECF_DEPTH32,
+	ECF_DEPTH24_STENCIL8,
 
 	//! Alpha 32 bit float format
 	ECF_ALPHA32F,

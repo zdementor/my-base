@@ -19,11 +19,17 @@ namespace vid {
 //----------------------------------------------------------------------------
 
 CNullRenderTarget::CNullRenderTarget(const core::dimension2di &size,
-	img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat)
-	: m_OK(false), m_Driver(VIDEO_DRIVER), m_RTEntry(0), m_ColorTexture(NULL),
+	img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
+	: m_OK(false), m_Driver(VIDEO_DRIVER), m_RTEntry(0),
+m_ColorTexture(NULL), m_DepthTexture(NULL),
 m_Size(size), m_ColorFormat(colorFormat), m_DepthFormat(depthFormat)
 {
 	m_ColorTexture = m_Driver.createRenderTargetTexture(m_Size, m_ColorFormat);
+	if (m_DepthFormat == img::ECF_DEPTH16
+			|| m_DepthFormat == img::ECF_DEPTH24
+			|| m_DepthFormat == img::ECF_DEPTH32
+			|| m_DepthFormat == img::ECF_DEPTH24_STENCIL8)
+		m_DepthTexture = m_Driver.createRenderTargetTexture(m_Size, m_DepthFormat);
 }
 
 //----------------------------------------------------------------------------
@@ -31,6 +37,7 @@ m_Size(size), m_ColorFormat(colorFormat), m_DepthFormat(depthFormat)
 CNullRenderTarget::~CNullRenderTarget()
 {
 	SAFE_DROP(m_ColorTexture);
+	SAFE_DROP(m_DepthTexture);
 }
 
 //----------------------------------------------------------------------------

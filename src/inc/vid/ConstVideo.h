@@ -1560,34 +1560,6 @@ MY_FORCEINLINE const c8* getPixelShaderVersionReadableName(E_PIXEL_SHADER_VERSIO
 
 //----------------------------------------------------------------------------
 
-enum E_RENDER_TARGET_DEPTH_FORMAT
-{
-	ERTDF_NONE = 0,
-
-	ERTDF_DEPTH16,
-	ERTDF_DEPTH24,
-	ERTDF_DEPTH32,
-	ERTDF_DEPTH24_STENCIL8,
-
-	E_RENDER_TARGET_DEPTH_FORMAT_COUNT,
-
-	E_RENDER_TARGET_DEPTH_FORMAT_FORCE_32BIT = 0xffffffff
-};
-
-static const c8* RenderTargetDepthFormatName[E_RENDER_TARGET_DEPTH_FORMAT_COUNT] =
-{
-	"ERTDF_NONE",
-	"ERTDF_DEPTH16",
-	"ERTDF_DEPTH24",
-	"ERTDF_DEPTH32",
-	"ERTDF_DEPTH24_STENCIL8",
-};
-
-MY_FORCEINLINE const c8* getRenderTargetDepthFormatName(E_RENDER_TARGET_DEPTH_FORMAT fmt)
-{ return RenderTargetDepthFormatName[fmt]; }
-
-//----------------------------------------------------------------------------
-
 enum E_COLOR_MASK_BIT
 {
 	ECM_RED		= 1 << 0,

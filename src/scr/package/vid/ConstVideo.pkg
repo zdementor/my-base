@@ -709,22 +709,6 @@ enum E_RENDER_BUFFER_TYPE
 
 //----------------------------------------------------------------------------
 
-enum E_RENDER_TARGET_DEPTH_FORMAT
-{
-	ERTDF_NONE = 0,
-
-	ERTDF_DEPTH16,
-	ERTDF_DEPTH24,
-	ERTDF_DEPTH32,
-	ERTDF_DEPTH24_STENCIL8,
-
-	E_RENDER_TARGET_DEPTH_FORMAT_COUNT
-};
-
-const char* getRenderTargetDepthFormatName(E_RENDER_TARGET_DEPTH_FORMAT fmt);
-
-//----------------------------------------------------------------------------
-
 enum E_COLOR_MASK_BIT
 {
 	ECM_RED		= 1 << 0,

@@ -1087,6 +1087,13 @@ void COpenGLDriver::_setBasicRenderStates()
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
 				GL_NEAREST);
 		}
+#if GL_ARB_framebuffer_object
+		if (tex->getColorFormat() == img::ECF_DEPTH24_STENCIL8)
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+			glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
+		}
+#endif
 	}
 
 	// alpha test
@@ -1870,7 +1877,7 @@ ITexture* COpenGLDriver::createRenderTargetTexture(
 //---------------------------------------------------------------------------
 
 IRenderTarget* COpenGLDriver::addRenderTarget(const core::dimension2di &size,
-	img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat)
+	img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
 {
 	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
 		new COpenGLRenderTarget(size, colorFormat, depthFormat) : NULL;

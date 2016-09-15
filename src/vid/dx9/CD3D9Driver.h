@@ -61,7 +61,7 @@ public:
 		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat);
 
 	virtual IRenderTarget* addRenderTarget(const core::dimension2di &size,
-		img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat);
+		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat);
         
 	virtual IHardwareOcclusionQuery& getHardwareOcclusionQuery();
 

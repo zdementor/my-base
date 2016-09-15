@@ -9,6 +9,7 @@ class IRenderTarget
 public:
 
 	ITexture* getColorTexture();
+	ITexture* getDepthTexture();
 };
 
 //----------------------------------------------------------------------------

@@ -26,11 +26,14 @@ class __MY_VID_LIB_API__ CNullRenderTarget : public IRenderTarget
 public:
 
 	CNullRenderTarget(const core::dimension2di &size,
-		img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat);
+		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat);
 	virtual ~CNullRenderTarget();
 
 	virtual ITexture* getColorTexture()
 	{ return m_ColorTexture; }
+
+	virtual ITexture* getDepthTexture()
+	{ return m_DepthTexture; }
 
 	virtual bool bind();
 	virtual bool unbind();
@@ -43,11 +46,10 @@ protected:
 
 	core::list<CNullRenderTarget *>::iterator m_RTEntry;
 
-	ITexture *m_ColorTexture;
+	ITexture *m_ColorTexture, *m_DepthTexture;
 
 	core::dimension2di m_Size;
-	img::E_COLOR_FORMAT m_ColorFormat;
-	E_RENDER_TARGET_DEPTH_FORMAT m_DepthFormat;
+	img::E_COLOR_FORMAT m_ColorFormat, m_DepthFormat;
 };
 
 //---------------------------------------------------------------------------

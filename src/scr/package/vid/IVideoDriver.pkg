@@ -283,9 +283,9 @@ class IVideoDriver
 
 	//! Add/remove a render target object.
 	IRenderTarget* addRenderTarget(unsigned width, unsigned height,
-		img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat);
+		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat);
 	IRenderTarget* addRenderTarget(const core::dimension2di &size,
-		img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat);
+		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat);
 	bool removeRenderTarget(IRenderTarget *renderTarget);
 
 	//! Set/Get a render target for the whole rendering.

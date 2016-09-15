@@ -24,7 +24,7 @@ class __MY_VID_LIB_API__ COpenGLRenderTarget : public CNullRenderTarget
 {
 public:
 	COpenGLRenderTarget(const core::dimension2di &size,
-		img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat);
+		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat);
 	virtual ~COpenGLRenderTarget();
 
 	virtual bool bind();
@@ -32,7 +32,7 @@ public:
 private:
 	bool _rebuild();
 
-	GLuint m_FBO, m_DepthStencilBuffer;
+	GLuint m_FBO;
 };
 
 //---------------------------------------------------------------------------

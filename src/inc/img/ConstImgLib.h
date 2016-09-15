@@ -20,10 +20,13 @@ namespace img {
 //! A color format specifies how color information is stored. 
 enum E_COLOR_FORMAT
 { 
+	// Empty color format
+	ECF_NONE = 0,
+
 	//! 16 bit color format used by the software driver, and thus preferred 
 	//! by all other irrlicht engine video drivers. There are 5 bits for every  
 	//! color component, and a single bit is left for alpha information.    
-	ECF_A1R5G5B5 = 0,
+	ECF_A1R5G5B5,
 
 	//! Standard 16 bit color format.   
 	ECF_R5G6B5, 
@@ -48,6 +51,7 @@ enum E_COLOR_FORMAT
 	ECF_DEPTH16,
 	ECF_DEPTH24,
 	ECF_DEPTH32,
+	ECF_DEPTH24_STENCIL8,
 
 	//! Alpha 32 bit float format
 	ECF_ALPHA32F,
@@ -58,7 +62,8 @@ enum E_COLOR_FORMAT
 };
 
 static const c8* ColorFormatName[E_COLOR_FORMAT_COUNT] =
-{ 
+{
+	"ECF_NONE",
 	"ECF_A1R5G5B5",
 	"ECF_R5G6B5", 
 	"ECF_R8G8B8", 
@@ -70,11 +75,13 @@ static const c8* ColorFormatName[E_COLOR_FORMAT_COUNT] =
 	"ECF_DEPTH16",
 	"ECF_DEPTH24",
 	"ECF_DEPTH32",
+	"ECF_DEPTH24_STENCIL8",
 	"ECF_ALPHA32F",
 };
 
 static u32 ColorFormatBitsPerPixel[E_COLOR_FORMAT_COUNT] =
 { 
+	0,  //ECF_NONE
 	16, //ECF_A1R5G5B5
 	16, //ECF_R5G6B5
 	24, //ECF_R8G8B8
@@ -86,6 +93,7 @@ static u32 ColorFormatBitsPerPixel[E_COLOR_FORMAT_COUNT] =
 	16, //ECF_DEPTH16
 	24, //ECF_DEPTH24
 	32, //ECF_DEPTH32
+	32, //ECF_DEPTH24_STENCIL8
 	32, //ECF_ALPHA32F
 };
 

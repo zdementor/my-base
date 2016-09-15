@@ -187,6 +187,13 @@ bool COpenGLTexture::createHardwareTexture(bool renderTarget)
 		m_PixelType		= GL_UNSIGNED_INT;
 		break;
 #endif
+#ifdef GL_ARB_framebuffer_object
+	case img::ECF_DEPTH24_STENCIL8:
+		m_InternalFormat= GL_DEPTH24_STENCIL8;
+		m_PixelFormat	= GL_DEPTH_STENCIL;
+		m_PixelType		= GL_UNSIGNED_INT_24_8;
+		break;
+#endif
 #ifdef GL_ARB_texture_float
 	case img::ECF_ALPHA32F:
 		m_InternalFormat= GL_ALPHA32F_ARB;

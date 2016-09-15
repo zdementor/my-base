@@ -19,7 +19,7 @@ namespace vid {
 //----------------------------------------------------------------------------
 
 CD3D9RenderTarget::CD3D9RenderTarget(const core::dimension2di &size,
-	img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat)
+	img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
 	: CNullRenderTarget(size, colorFormat, depthFormat),
 m_D3DDriver((CD3D9Driver*)VIDEO_DRIVER_PTR),
 m_D3DRenderTargetSurface(0), m_D3DDepthStencilSurface(0)
@@ -56,35 +56,48 @@ bool CD3D9RenderTarget::_rebuild()
 			m_OK = false;
 	}
 
-	D3DFORMAT format = D3DFMT_UNKNOWN;
-	switch (m_DepthFormat)
+	if (m_OK)
 	{
-	case ERTDF_DEPTH16:
-		format = D3DFMT_D16;
-		break;
-	case ERTDF_DEPTH24:
-		format = D3DFMT_D24X8;
-		break;
-	case ERTDF_DEPTH32:
-		format = D3DFMT_D32;
-		break;
-	case ERTDF_DEPTH24_STENCIL8:
-		format = D3DFMT_D24S8;
-		break;
-	default:
-		break;
-	}
-	if (m_OK && format != D3DFMT_UNKNOWN)
-	{
-		HRESULT hr = pd3dDevice->CreateDepthStencilSurface(
-			m_Size.Width, m_Size.Height,
-			format,
-			D3DMULTISAMPLE_NONE,
-			0,
-			TRUE,
-			&m_D3DDepthStencilSurface,
-			NULL);
-		m_OK = SUCCEEDED(hr);
+		if (m_DepthTexture && m_DepthTexture->isRenderTarget())
+		{
+			m_D3DDepthStencilSurface =
+				((CD3D9RenderTargetTexture *)m_DepthTexture)->getRenderTargetSurface();
+			if (m_D3DDepthStencilSurface)
+				m_D3DDepthStencilSurface->AddRef();
+		}
+		else
+		{
+			D3DFORMAT format = D3DFMT_UNKNOWN;
+			switch (m_DepthFormat)
+			{
+			case img::ECF_DEPTH16:
+				format = D3DFMT_D16;
+				break;
+			case img::ECF_DEPTH24:
+				format = D3DFMT_D24X8;
+				break;
+			case img::ECF_DEPTH32:
+				format = D3DFMT_D32;
+				break;
+			case img::ECF_DEPTH24_STENCIL8:
+				format = D3DFMT_D24S8;
+				break;
+			default:
+				break;
+			}
+			if (format != D3DFMT_UNKNOWN)
+			{
+				HRESULT hr = pd3dDevice->CreateDepthStencilSurface(
+					m_Size.Width, m_Size.Height,
+					format,
+					D3DMULTISAMPLE_NONE,
+					0,
+					TRUE,
+					&m_D3DDepthStencilSurface,
+					NULL);
+				m_OK = SUCCEEDED(hr);
+			}
+		}
 	}
 
 	return m_OK;
@@ -116,7 +129,7 @@ bool CD3D9RenderTarget::bind()
 	{
 		LOGGER.logErr("Failed to bind Render Target (%dx%d, %s/%s)!",
 			m_Size.Width, m_Size.Height, img::getColorFormatName(m_ColorFormat),
-			getRenderTargetDepthFormatName(m_DepthFormat));
+			img::getColorFormatName(m_DepthFormat));
 
 		_bindMainRT();
 		return false;

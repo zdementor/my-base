@@ -164,9 +164,9 @@ public:
 
 	//! Add/remove a render target object.
     virtual IRenderTarget* addRenderTarget(u32 width, u32 height,
-		img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat) = 0;
+		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat) = 0;
     virtual IRenderTarget* addRenderTarget(const core::dimension2di &size,
-		img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat) = 0;
+		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat) = 0;
 	virtual bool removeRenderTarget(IRenderTarget *renderTarget) = 0;
 
 	//! Set/Get a new render target for the color buffer. 

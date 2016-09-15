@@ -1505,7 +1505,7 @@ ITexture* CD3D9Driver::createRenderTargetTexture(
 //---------------------------------------------------------------------------
 
 IRenderTarget* CD3D9Driver::addRenderTarget(const core::dimension2di &size,
-	img::E_COLOR_FORMAT colorFormat, E_RENDER_TARGET_DEPTH_FORMAT depthFormat)
+	img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
 {
 	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
 		new CD3D9RenderTarget(size, colorFormat, depthFormat) : NULL;

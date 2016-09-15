@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/15/16 10:38:21.
+** Generated automatically by tolua++-1.0.92 on 09/15/16 14:15:44.
 */
 
 #ifndef __cplusplus
@@ -2359,35 +2359,6 @@ static int tolua_MyLuaBind_vid_getIndexSize00(lua_State* tolua_S)
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'getIndexSize'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* function: vid::getRenderTargetDepthFormatName */
-#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_getRenderTargetDepthFormatName00
-static int tolua_MyLuaBind_vid_getRenderTargetDepthFormatName00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
- !tolua_isnumber(tolua_S,1,0,&tolua_err) ||
- !tolua_isnoobj(tolua_S,2,&tolua_err)
- )
- goto tolua_lerror;
- else
-#endif
- {
-  vid::E_RENDER_TARGET_DEPTH_FORMAT fmt = ((vid::E_RENDER_TARGET_DEPTH_FORMAT) (int)  tolua_tonumber(tolua_S,1,0));
- {
-  const char* tolua_ret = (const char*)  vid::getRenderTargetDepthFormatName(fmt);
- tolua_pushstring(tolua_S,(const char*)tolua_ret);
- }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'getRenderTargetDepthFormatName'.",&tolua_err);
  return 0;
 #endif
 }
@@ -49215,7 +49186,7 @@ static int tolua_MyLuaBind_vid_IVideoDriver_addRenderTarget00(lua_State* tolua_S
   unsigned width = ((unsigned)  tolua_tonumber(tolua_S,2,0));
   unsigned height = ((unsigned)  tolua_tonumber(tolua_S,3,0));
   img::E_COLOR_FORMAT colorFormat = ((img::E_COLOR_FORMAT) (int)  tolua_tonumber(tolua_S,4,0));
-  vid::E_RENDER_TARGET_DEPTH_FORMAT depthFormat = ((vid::E_RENDER_TARGET_DEPTH_FORMAT) (int)  tolua_tonumber(tolua_S,5,0));
+  img::E_COLOR_FORMAT depthFormat = ((img::E_COLOR_FORMAT) (int)  tolua_tonumber(tolua_S,5,0));
 #ifndef TOLUA_RELEASE
  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'addRenderTarget'",NULL);
 #endif
@@ -49251,7 +49222,7 @@ static int tolua_MyLuaBind_vid_IVideoDriver_addRenderTarget01(lua_State* tolua_S
   vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
   const core::dimension2di* size = ((const core::dimension2di*)  tolua_tousertype(tolua_S,2,0));
   img::E_COLOR_FORMAT colorFormat = ((img::E_COLOR_FORMAT) (int)  tolua_tonumber(tolua_S,3,0));
-  vid::E_RENDER_TARGET_DEPTH_FORMAT depthFormat = ((vid::E_RENDER_TARGET_DEPTH_FORMAT) (int)  tolua_tonumber(tolua_S,4,0));
+  img::E_COLOR_FORMAT depthFormat = ((img::E_COLOR_FORMAT) (int)  tolua_tonumber(tolua_S,4,0));
 #ifndef TOLUA_RELEASE
  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'addRenderTarget'",NULL);
 #endif
@@ -55383,6 +55354,38 @@ static int tolua_MyLuaBind_vid_IRenderTarget_getColorTexture00(lua_State* tolua_
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: getDepthTexture of class  vid::IRenderTarget */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IRenderTarget_getDepthTexture00
+static int tolua_MyLuaBind_vid_IRenderTarget_getDepthTexture00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IRenderTarget",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::IRenderTarget* self = (vid::IRenderTarget*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getDepthTexture'",NULL);
+#endif
+ {
+  vid::ITexture* tolua_ret = (vid::ITexture*)  self->getDepthTexture();
+ tolua_pushusertype(tolua_S,(void*)tolua_ret,"vid::ITexture");
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getDepthTexture'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* get function: Year of class  os::STimeValue */
 #ifndef TOLUA_DISABLE_tolua_get_os__STimeValue_Year
 static int tolua_get_os__STimeValue_Year(lua_State* tolua_S)
@@ -58933,6 +58936,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
  tolua_endmodule(tolua_S);
  tolua_module(tolua_S,"img",0);
  tolua_beginmodule(tolua_S,"img");
+  tolua_constant(tolua_S,"ECF_NONE",img::ECF_NONE);
   tolua_constant(tolua_S,"ECF_A1R5G5B5",img::ECF_A1R5G5B5);
   tolua_constant(tolua_S,"ECF_R5G6B5",img::ECF_R5G6B5);
   tolua_constant(tolua_S,"ECF_R8G8B8",img::ECF_R8G8B8);
@@ -58944,6 +58948,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"ECF_DEPTH16",img::ECF_DEPTH16);
   tolua_constant(tolua_S,"ECF_DEPTH24",img::ECF_DEPTH24);
   tolua_constant(tolua_S,"ECF_DEPTH32",img::ECF_DEPTH32);
+  tolua_constant(tolua_S,"ECF_DEPTH24_STENCIL8",img::ECF_DEPTH24_STENCIL8);
   tolua_constant(tolua_S,"ECF_ALPHA32F",img::ECF_ALPHA32F);
   tolua_constant(tolua_S,"E_COLOR_FORMAT_COUNT",img::E_COLOR_FORMAT_COUNT);
   tolua_function(tolua_S,"getColorFormatName",tolua_MyLuaBind_img_getColorFormatName00);
@@ -59266,13 +59271,6 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"ERBT_DYNAMIC",vid::ERBT_DYNAMIC);
   tolua_constant(tolua_S,"ERBT_STATIC",vid::ERBT_STATIC);
   tolua_constant(tolua_S,"E_RENDER_BUFFER_TYPE_COUNT",vid::E_RENDER_BUFFER_TYPE_COUNT);
-  tolua_constant(tolua_S,"ERTDF_NONE",vid::ERTDF_NONE);
-  tolua_constant(tolua_S,"ERTDF_DEPTH16",vid::ERTDF_DEPTH16);
-  tolua_constant(tolua_S,"ERTDF_DEPTH24",vid::ERTDF_DEPTH24);
-  tolua_constant(tolua_S,"ERTDF_DEPTH32",vid::ERTDF_DEPTH32);
-  tolua_constant(tolua_S,"ERTDF_DEPTH24_STENCIL8",vid::ERTDF_DEPTH24_STENCIL8);
-  tolua_constant(tolua_S,"E_RENDER_TARGET_DEPTH_FORMAT_COUNT",vid::E_RENDER_TARGET_DEPTH_FORMAT_COUNT);
-  tolua_function(tolua_S,"getRenderTargetDepthFormatName",tolua_MyLuaBind_vid_getRenderTargetDepthFormatName00);
   tolua_constant(tolua_S,"ECM_RED",vid::ECM_RED);
   tolua_constant(tolua_S,"ECM_GREEN",vid::ECM_GREEN);
   tolua_constant(tolua_S,"ECM_BLUE",vid::ECM_BLUE);
@@ -61834,6 +61832,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_cclass(tolua_S,"IRenderTarget","vid::IRenderTarget","",NULL);
   tolua_beginmodule(tolua_S,"IRenderTarget");
    tolua_function(tolua_S,"getColorTexture",tolua_MyLuaBind_vid_IRenderTarget_getColorTexture00);
+   tolua_function(tolua_S,"getDepthTexture",tolua_MyLuaBind_vid_IRenderTarget_getDepthTexture00);
   tolua_endmodule(tolua_S);
  tolua_endmodule(tolua_S);
  tolua_module(tolua_S,"os",0);
