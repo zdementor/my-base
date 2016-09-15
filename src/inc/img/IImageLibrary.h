@@ -101,14 +101,23 @@ public:
     //! \param image: Image wich we wants to add to the images cache
     virtual void addImage(const c8* name, IImage* image) = 0;
 
+	//! Adds an empty image of specified size.
+	//! \param name: A name for the image. Later calls of getImage() with this name
+    //! will return this image
+    //! \param size: Size of the Image.
+    //! \param format: Desired color format of the Image. 
+    //! \return Returns a pointer to the new created Image. 
+	virtual IImage* addImage(const c8* name,
+		const core::dimension2di &size, img::E_COLOR_FORMAT format) = 0;
+
 	//! looks if the image is already loaded
     virtual IImage* findImage(const c8* filename) = 0;
 
 	//! looks if the image is already loaded
-	virtual core::stringc findImageFileName(IImage* img_ptr) = 0;
+	virtual const c8* findImageFileName(IImage* image) = 0;
 
     //! looks if the image is already loaded
-    virtual core::stringc findImageFullFileName(IImage* img_ptr) = 0;
+    virtual const c8* findImageFullFileName(IImage* image) = 0;
 
     //! Removes an image from the images cache and deletes it. Please note that 
 	//! after calling this, the pointer to this IImage

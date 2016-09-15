@@ -783,7 +783,12 @@ bool CImage::copyTo(IImage* target, const core::position2di &pos)
 bool CImage::copyTo(IImage* target, s32 x, s32 y)
 {
 	if (!target)
+	{
+		LOGGER.logWarn("Can't copy image {%s, %dx%d} to null target!",
+			img::getColorFormatName(getColorFormat()),
+			getDimension().Width, getDimension().Height);
 		return false;
+	}
 
     c8* data = (c8*)target->getData();
     core::dimension2d<s32> size = target->getDimension();
@@ -856,7 +861,12 @@ bool CImage::copyTo(IImage *target,
 	const core::recti *clipRect)
 {
 	if (!target)
+	{
+		LOGGER.logWarn("Can't copy image {%s, %dx%d} to null target!",
+			img::getColorFormatName(getColorFormat()),
+			getDimension().Width, getDimension().Height);
 		return false;
+	}
 
     if (sourceRect.UpperLeftCorner.X > sourceRect.LowerRightCorner.X ||
         sourceRect.UpperLeftCorner.Y > sourceRect.LowerRightCorner.Y)
@@ -1312,9 +1322,6 @@ bool CImage::makeNormalMap(f32 amplitude, bool swapX, bool swapY, bool hmapInAlp
 		LOGGER.logErr("It's a color key image, not for making normal map.");
 		return false;
 	}
-
-	if (NormalMap)
-		return true;
 
 	CHECK_RANGE(amplitude, 0.0f, 9.0f);
 	amplitude += 1.0f;

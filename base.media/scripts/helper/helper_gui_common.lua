@@ -73,7 +73,7 @@ Helper.GUI.initImages = _HelperInitImages
 function _HelperSetImageTexture(image, texture)
 	local imageset = image.ImageSetEmpty
 	local cegui_tex = image.Image
-	MyCEGUI.setTexture(cegui_tex, texture)
+	MyCEGUI.setTexture(cegui_tex, texture, false)
 	if texture ~= nil then
 		imageset = image.ImageSet
 		imageset:undefineAllImages()

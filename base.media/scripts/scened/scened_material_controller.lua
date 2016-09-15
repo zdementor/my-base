@@ -633,7 +633,7 @@ function _ScenedMaterialUpdateLayerControls()
 
 	if my_tex ~= nil then
 		local fullfname = MyDriver:findTextureName(my_tex)
-		MyCEGUI.setTexture(cegui_tex, my_tex)
+		MyCEGUI.setTexture(cegui_tex, my_tex, false)
 		imageset:undefineAllImages()
 		imageset:defineImage("ColorImage", CEGUI.Vector2(1,1), cegui_tex:getSize(), CEGUI.Vector2(0, 0));
 		local relfname = Helper.getRelFileName(fullfname, MyResMgr:getMediaDirFull(res.EMT_TEXTURES))

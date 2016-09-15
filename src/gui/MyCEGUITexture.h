@@ -23,6 +23,8 @@
 
 using namespace my;
 
+extern my::vid::ITexture *g_TrackTex;
+
 //------------------------------------------------------------------------------------
 namespace CEGUI { // Start of CEGUI namespace section
 //------------------------------------------------------------------------------------
@@ -35,7 +37,7 @@ public:
     // returns the MyEngine texture
     vid::ITexture* getTexture();
 
-	void setTexture(vid::ITexture *mytex);
+	void setTexture(vid::ITexture *mytex, bool useAlphaBlending);
 
 	bool isUseAlphaBlending() { return m_UseAlphaBlending; }
 

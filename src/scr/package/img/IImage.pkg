@@ -39,9 +39,6 @@ public:
     //! copies this surface into another
     virtual bool copyTo(IImage* target, const core::position2di& pos);
 
-    //! copies this surface into another
-    virtual bool copyTo(IImage* target, const core::position2di& pos, const core::recti& sourceRect, const core::recti* clipRect=0);
-
     //! fills the surface with color
     virtual void fill(const SColor &color);
 

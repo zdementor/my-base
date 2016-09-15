@@ -7,9 +7,27 @@ class IImageLibrary
     //! Return singleton object
     static IImageLibrary& getSingleton();
 
+	//! Adds an empty image of specified size.
+	//! \param name: A name for the image. Later calls of getImage() with this name
+    //! will return this image
+    //! \param size: Size of the Image.
+    //! \param format: Desired color format of the Image. 
+    //! \return Returns a pointer to the new created Image. 
+	IImage* addImage(const char* name,
+		const core::dimension2di &size, img::E_COLOR_FORMAT format);
+
 	//! Returns a pointer to a image. Loads the image if it is not
     //! already loaded.
 	IImage* getImage(const char* filename);
+
+	//! looks if the image is already loaded
+    IImage* findImage(const char* filename) = 0;
+
+	//! looks if the image is already loaded
+	const char* findImageFileName(IImage* image);
+
+    //! looks if the image is already loaded
+	const char* findImageFullFileName(IImage* image);
 
     //! Removes an image from the images cache and deletes it. Please note that 
 	//! after calling this, the pointer to this IImage
@@ -24,7 +42,6 @@ class IImageLibrary
 
 	//! Saves a software image to a file.
 	bool saveImageToFile(IImage* image, const char* filename);
-
 };
 
 //----------------------------------------------------------------------------

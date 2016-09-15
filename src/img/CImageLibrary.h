@@ -50,13 +50,13 @@ public:
 
     virtual IImage* getImage(io::IReadFile* file);
 
-    virtual void addImage(const c8* name, IImage* image);
+    virtual void addImage(const c8 *name, IImage* image);
+	virtual IImage* addImage(const c8 *name,
+		const core::dimension2di &size, img::E_COLOR_FORMAT format);
 
     virtual IImage* findImage(const c8* filename);
-
-	virtual core::stringc findImageFileName(IImage* img_ptr);
-
-    virtual core::stringc findImageFullFileName(IImage* img_ptr);
+	virtual const c8* findImageFileName(IImage* image);
+    virtual const c8* findImageFullFileName(IImage* image);
 
     virtual bool removeImage(IImage* image);
 

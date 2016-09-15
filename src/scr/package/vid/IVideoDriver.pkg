@@ -119,7 +119,15 @@ class IVideoDriver
 
 	//! Creates a texture from a loaded IImage.
 	ITexture* addTexture(const char* name, img::IImage* image);
-    
+
+    //! Removes a texture from the texture cache and deletes it, freeing lot of
+    //! memory. Please note that after calling this, the pointer to the ITexture
+    //! may not be longer valid, if it was not grabbed before by other parts of 
+    //! the engine for storing it longer. So it would be a good idea to set all
+    //! materials which are using this texture to null or another texture first.
+    //! \param texture: Texture to delete from the engines cache.
+	bool removeTexture(ITexture* texture);
+
  	//! Returns pointer to the font with the specified file name. Loads the font if 
     //! it was not loaded before. Returns 0 if the font could not be loaded.
     IFont* getFont(const char* filename);

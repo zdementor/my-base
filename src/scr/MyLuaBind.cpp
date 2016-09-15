@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/13/16 23:20:22.
+** Generated automatically by tolua++-1.0.92 on 09/15/16 10:38:21.
 */
 
 #ifndef __cplusplus
@@ -45526,41 +45526,6 @@ tolua_lerror:
 }
 #endif //#ifndef TOLUA_DISABLE
 
-/* method: copyTo of class  img::IImage */
-#ifndef TOLUA_DISABLE_tolua_MyLuaBind_img_IImage_copyTo02
-static int tolua_MyLuaBind_img_IImage_copyTo02(lua_State* tolua_S)
-{
- tolua_Error tolua_err;
- if (
- !tolua_isusertype(tolua_S,1,"img::IImage",0,&tolua_err) ||
- !tolua_isusertype(tolua_S,2,"img::IImage",0,&tolua_err) ||
- !tolua_isusertype(tolua_S,3,"const core::position2di",0,&tolua_err) ||
- !tolua_isusertype(tolua_S,4,"const core::recti",0,&tolua_err) ||
- !tolua_isusertype(tolua_S,5,"const core::recti",1,&tolua_err) ||
- !tolua_isnoobj(tolua_S,6,&tolua_err)
- )
- goto tolua_lerror;
- else
- {
-  img::IImage* self = (img::IImage*)  tolua_tousertype(tolua_S,1,0);
-  img::IImage* target = ((img::IImage*)  tolua_tousertype(tolua_S,2,0));
-  const core::position2di* pos = ((const core::position2di*)  tolua_tousertype(tolua_S,3,0));
-  const core::recti* sourceRect = ((const core::recti*)  tolua_tousertype(tolua_S,4,0));
-  const core::recti* clipRect = ((const core::recti*)  tolua_tousertype(tolua_S,5,0));
-#ifndef TOLUA_RELEASE
- if (!self) tolua_error(tolua_S,"invalid 'self' in function 'copyTo'",NULL);
-#endif
- {
-  bool tolua_ret = (bool)  self->copyTo(target,*pos,*sourceRect,clipRect);
- tolua_pushboolean(tolua_S,(bool)tolua_ret);
- }
- }
- return 1;
-tolua_lerror:
- return tolua_MyLuaBind_img_IImage_copyTo01(tolua_S);
-}
-#endif //#ifndef TOLUA_DISABLE
-
 /* method: fill of class  img::IImage */
 #ifndef TOLUA_DISABLE_tolua_MyLuaBind_img_IImage_fill00
 static int tolua_MyLuaBind_img_IImage_fill00(lua_State* tolua_S)
@@ -45705,8 +45670,8 @@ tolua_lerror:
 #endif //#ifndef TOLUA_DISABLE
 
 /* method: copyTo of class  img::IImage */
-#ifndef TOLUA_DISABLE_tolua_MyLuaBind_img_IImage_copyTo03
-static int tolua_MyLuaBind_img_IImage_copyTo03(lua_State* tolua_S)
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_img_IImage_copyTo02
+static int tolua_MyLuaBind_img_IImage_copyTo02(lua_State* tolua_S)
 {
  tolua_Error tolua_err;
  if (
@@ -45729,7 +45694,7 @@ static int tolua_MyLuaBind_img_IImage_copyTo03(lua_State* tolua_S)
  }
  return 1;
 tolua_lerror:
- return tolua_MyLuaBind_img_IImage_copyTo02(tolua_S);
+ return tolua_MyLuaBind_img_IImage_copyTo01(tolua_S);
 }
 #endif //#ifndef TOLUA_DISABLE
 
@@ -45898,6 +45863,44 @@ static int tolua_MyLuaBind_img_IImageLibrary_getSingleton00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: addImage of class  img::IImageLibrary */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_img_IImageLibrary_addImage00
+static int tolua_MyLuaBind_img_IImageLibrary_addImage00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"img::IImageLibrary",0,&tolua_err) ||
+ !tolua_isstring(tolua_S,2,0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,3,"const core::dimension2di",0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,4,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,5,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  img::IImageLibrary* self = (img::IImageLibrary*)  tolua_tousertype(tolua_S,1,0);
+  const char* name = ((const char*)  tolua_tostring(tolua_S,2,0));
+  const core::dimension2di* size = ((const core::dimension2di*)  tolua_tousertype(tolua_S,3,0));
+  img::E_COLOR_FORMAT format = ((img::E_COLOR_FORMAT) (int)  tolua_tonumber(tolua_S,4,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'addImage'",NULL);
+#endif
+ {
+  img::IImage* tolua_ret = (img::IImage*)  self->addImage(name,*size,format);
+ tolua_pushusertype(tolua_S,(void*)tolua_ret,"img::IImage");
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'addImage'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: getImage of class  img::IImageLibrary */
 #ifndef TOLUA_DISABLE_tolua_MyLuaBind_img_IImageLibrary_getImage00
 static int tolua_MyLuaBind_img_IImageLibrary_getImage00(lua_State* tolua_S)
@@ -45927,6 +45930,108 @@ static int tolua_MyLuaBind_img_IImageLibrary_getImage00(lua_State* tolua_S)
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'getImage'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: findImage of class  img::IImageLibrary */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_img_IImageLibrary_findImage00
+static int tolua_MyLuaBind_img_IImageLibrary_findImage00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"img::IImageLibrary",0,&tolua_err) ||
+ !tolua_isstring(tolua_S,2,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  img::IImageLibrary* self = (img::IImageLibrary*)  tolua_tousertype(tolua_S,1,0);
+  const char* filename = ((const char*)  tolua_tostring(tolua_S,2,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'findImage'",NULL);
+#endif
+ {
+  img::IImage* tolua_ret = (img::IImage*)  self->findImage(filename);
+ tolua_pushusertype(tolua_S,(void*)tolua_ret,"img::IImage");
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'findImage'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: findImageFileName of class  img::IImageLibrary */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_img_IImageLibrary_findImageFileName00
+static int tolua_MyLuaBind_img_IImageLibrary_findImageFileName00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"img::IImageLibrary",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,2,"img::IImage",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  img::IImageLibrary* self = (img::IImageLibrary*)  tolua_tousertype(tolua_S,1,0);
+  img::IImage* image = ((img::IImage*)  tolua_tousertype(tolua_S,2,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'findImageFileName'",NULL);
+#endif
+ {
+  const char* tolua_ret = (const char*)  self->findImageFileName(image);
+ tolua_pushstring(tolua_S,(const char*)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'findImageFileName'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: findImageFullFileName of class  img::IImageLibrary */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_img_IImageLibrary_findImageFullFileName00
+static int tolua_MyLuaBind_img_IImageLibrary_findImageFullFileName00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"img::IImageLibrary",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,2,"img::IImage",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  img::IImageLibrary* self = (img::IImageLibrary*)  tolua_tousertype(tolua_S,1,0);
+  img::IImage* image = ((img::IImage*)  tolua_tousertype(tolua_S,2,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'findImageFullFileName'",NULL);
+#endif
+ {
+  const char* tolua_ret = (const char*)  self->findImageFullFileName(image);
+ tolua_pushstring(tolua_S,(const char*)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'findImageFullFileName'.",&tolua_err);
  return 0;
 #endif
 }
@@ -46241,7 +46346,8 @@ static int tolua_MyLuaBind_MyCEGUI_setTexture00(lua_State* tolua_S)
  if (
  !tolua_isusertype(tolua_S,1,"CEGUI::Texture",0,&tolua_err) ||
  !tolua_isusertype(tolua_S,2,"vid::ITexture",0,&tolua_err) ||
- !tolua_isnoobj(tolua_S,3,&tolua_err)
+ !tolua_isboolean(tolua_S,3,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,4,&tolua_err)
  )
  goto tolua_lerror;
  else
@@ -46249,8 +46355,9 @@ static int tolua_MyLuaBind_MyCEGUI_setTexture00(lua_State* tolua_S)
  {
   CEGUI::Texture* ceguitex = ((CEGUI::Texture*)  tolua_tousertype(tolua_S,1,0));
   vid::ITexture* mytex = ((vid::ITexture*)  tolua_tousertype(tolua_S,2,0));
+  bool useAlphaBlending = ((bool)  tolua_toboolean(tolua_S,3,0));
  {
-  MyCEGUI::setTexture(*ceguitex,mytex);
+  MyCEGUI::setTexture(*ceguitex,mytex,useAlphaBlending);
  }
  }
  return 0;
@@ -47800,6 +47907,40 @@ static int tolua_MyLuaBind_vid_IVideoDriver_addTexture00(lua_State* tolua_S)
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'addTexture'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: removeTexture of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_removeTexture00
+static int tolua_MyLuaBind_vid_IVideoDriver_removeTexture00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,2,"vid::ITexture",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+  vid::ITexture* texture = ((vid::ITexture*)  tolua_tousertype(tolua_S,2,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'removeTexture'",NULL);
+#endif
+ {
+  bool tolua_ret = (bool)  self->removeTexture(texture);
+ tolua_pushboolean(tolua_S,(bool)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'removeTexture'.",&tolua_err);
  return 0;
 #endif
 }
@@ -61275,12 +61416,11 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
    tolua_function(tolua_S,"convertTo",tolua_MyLuaBind_img_IImage_convertTo00);
    tolua_function(tolua_S,"copyTo",tolua_MyLuaBind_img_IImage_copyTo00);
    tolua_function(tolua_S,"copyTo",tolua_MyLuaBind_img_IImage_copyTo01);
-   tolua_function(tolua_S,"copyTo",tolua_MyLuaBind_img_IImage_copyTo02);
    tolua_function(tolua_S,"fill",tolua_MyLuaBind_img_IImage_fill00);
    tolua_function(tolua_S,"floodFill",tolua_MyLuaBind_img_IImage_floodFill00);
    tolua_function(tolua_S,"drawBorder",tolua_MyLuaBind_img_IImage_drawBorder00);
    tolua_function(tolua_S,"drawBorder",tolua_MyLuaBind_img_IImage_drawBorder01);
-   tolua_function(tolua_S,"copyTo",tolua_MyLuaBind_img_IImage_copyTo03);
+   tolua_function(tolua_S,"copyTo",tolua_MyLuaBind_img_IImage_copyTo02);
    tolua_function(tolua_S,"resizeTo",tolua_MyLuaBind_img_IImage_resizeTo00);
    tolua_function(tolua_S,"makeColorKey",tolua_MyLuaBind_img_IImage_makeColorKey00);
    tolua_function(tolua_S,"makeColorKey",tolua_MyLuaBind_img_IImage_makeColorKey01);
@@ -61292,7 +61432,11 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_cclass(tolua_S,"IImageLibrary","img::IImageLibrary","",NULL);
   tolua_beginmodule(tolua_S,"IImageLibrary");
    tolua_function(tolua_S,"getSingleton",tolua_MyLuaBind_img_IImageLibrary_getSingleton00);
+   tolua_function(tolua_S,"addImage",tolua_MyLuaBind_img_IImageLibrary_addImage00);
    tolua_function(tolua_S,"getImage",tolua_MyLuaBind_img_IImageLibrary_getImage00);
+   tolua_function(tolua_S,"findImage",tolua_MyLuaBind_img_IImageLibrary_findImage00);
+   tolua_function(tolua_S,"findImageFileName",tolua_MyLuaBind_img_IImageLibrary_findImageFileName00);
+   tolua_function(tolua_S,"findImageFullFileName",tolua_MyLuaBind_img_IImageLibrary_findImageFullFileName00);
    tolua_function(tolua_S,"removeImage",tolua_MyLuaBind_img_IImageLibrary_removeImage00);
    tolua_function(tolua_S,"clearUnusedImageCache",tolua_MyLuaBind_img_IImageLibrary_clearUnusedImageCache00);
    tolua_function(tolua_S,"saveImageToFile",tolua_MyLuaBind_img_IImageLibrary_saveImageToFile00);
@@ -61367,6 +61511,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
    tolua_function(tolua_S,"getName",tolua_MyLuaBind_vid_IVideoDriver_getName00);
    tolua_function(tolua_S,"getTexture",tolua_MyLuaBind_vid_IVideoDriver_getTexture00);
    tolua_function(tolua_S,"addTexture",tolua_MyLuaBind_vid_IVideoDriver_addTexture00);
+   tolua_function(tolua_S,"removeTexture",tolua_MyLuaBind_vid_IVideoDriver_removeTexture00);
    tolua_function(tolua_S,"getFont",tolua_MyLuaBind_vid_IVideoDriver_getFont00);
    tolua_function(tolua_S,"getBuiltInFont",tolua_MyLuaBind_vid_IVideoDriver_getBuiltInFont00);
    tolua_function(tolua_S,"setTextureCreationFlag",tolua_MyLuaBind_vid_IVideoDriver_setTextureCreationFlag00);

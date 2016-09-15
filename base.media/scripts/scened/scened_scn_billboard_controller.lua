@@ -119,7 +119,7 @@ local function _ScenedBillboardDialogUpdateCurrentImageFrame(bill_scene_node, an
 		_Ctrls.Tabs.Anim.Editboxes.FrameTCOffsetYEditbox.Ctrl:setText(string.format("%d", toffsy))
 		
 		local cegui_tex = _Resources.Textures.FrameImage
-		MyCEGUI.setTexture(cegui_tex, my_tex)
+		MyCEGUI.setTexture(cegui_tex, my_tex, false)
 		imageset = _Resources.Imagesets.FrameImage
 		imageset:undefineAllImages()
 		imageset:defineImage("FrameImage",
@@ -456,7 +456,7 @@ local function _ScenedBillboardSelectionChanged(args)
 			end
 		end
 
-		MyCEGUI.setTexture(cegui_tex, my_tex)
+		MyCEGUI.setTexture(cegui_tex, my_tex, false)
 
 		if my_tex ~= nil then
 			local imageset = _Resources.Imagesets.TexImage

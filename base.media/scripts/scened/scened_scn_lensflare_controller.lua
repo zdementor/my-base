@@ -222,7 +222,7 @@ local function _ScenedLensFlareUpdateLensControls(index, lens)
 	
 	if my_tex ~= nil then
 		local cegui_tex = _Ctrls.Tabs.Props.Lens.LensArray[i].Resources.Textures.LensTexImage
-		MyCEGUI.setTexture(cegui_tex, my_tex)
+		MyCEGUI.setTexture(cegui_tex, my_tex, false)
 		imageset = _Ctrls.Tabs.Props.Lens.LensArray[i].Resources.Imagesets.LensTexImage
 		imageset:undefineAllImages()
 		imageset:defineImage("ColorImage", CEGUI.Vector2(0,0), cegui_tex:getSize(), CEGUI.Vector2(0, 0));
@@ -256,7 +256,7 @@ local function _ScenedUpdateLensFlareControls()
 	if my_tex ~= nil then
 		local cegui_tex = _Resources.Textures.CoronaTexImage
 
-		MyCEGUI.setTexture(cegui_tex, my_tex)
+		MyCEGUI.setTexture(cegui_tex, my_tex, false)
 		imageset = _Resources.Imagesets.CoronaTexImage
 		imageset:undefineAllImages()
 		imageset:defineImage("ColorImage", CEGUI.Vector2(0,0), cegui_tex:getSize(), CEGUI.Vector2(0, 0));

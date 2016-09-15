@@ -130,7 +130,7 @@ IImage* CImageLibrary::createImageFromData(
 //---------------------------------------------------------------------------
 
 IImage* CImageLibrary::createEmptyImage(
-	const core::dimension2d<s32>& size, img::E_COLOR_FORMAT format)
+	const core::dimension2di &size, img::E_COLOR_FORMAT format)
 {
 	if (format == ECF_DXT1 ||
 		format == ECF_DXT3 ||
@@ -255,6 +255,20 @@ void CImageLibrary::addImage(const c8* name, IImage* image)
 
 //---------------------------------------------------------------------------
 
+IImage* CImageLibrary::addImage(const c8 *name,
+	const core::dimension2di &size, img::E_COLOR_FORMAT format)
+{
+	IImage *image = createEmptyImage(size, format);
+	if (image)
+	{
+		addImage(name, image);
+		image->drop(); // drop it because we created it, one grab is much enough
+	}
+	return image;
+}
+
+//---------------------------------------------------------------------------
+
 IImage* CImageLibrary::findImage(const c8* filename)
 {
 	SImageSurface is;
@@ -273,48 +287,48 @@ IImage* CImageLibrary::findImage(const c8* filename)
 
 //---------------------------------------------------------------------------
 
-core::stringc CImageLibrary::findImageFileName(IImage* img_ptr)
+const c8* CImageLibrary::findImageFileName(IImage* img_ptr)
 {
-	core::stringc filename=NONAME_FILE_NAME;
+	static core::stringc filename;
+	filename = NONAME_FILE_NAME;
 
 	for (u32 i=0; i<Images.size(); i++)
 	{
 		if (Images[i].ImageSurface == img_ptr)
 		{
 			filename = core::extractFileName(Images[i].Filename);
-
 			break;
 		}
 	}
-
 	filename.make_lower();
 
-	if (filename.size()==0) filename=NONAME_FILE_NAME;
+	if (filename.size()==0)
+		filename = NONAME_FILE_NAME;
 
-    return filename;
+	return filename.c_str();
 }
 
 //---------------------------------------------------------------------------
 
-core::stringc CImageLibrary::findImageFullFileName(IImage* img_ptr)
+const c8* CImageLibrary::findImageFullFileName(IImage* img_ptr)
 {
-	core::stringc filename=NONAME_FILE_NAME;
+	static core::stringc filename;
+	filename = NONAME_FILE_NAME;
 
 	for (u32 i=0; i<Images.size(); i++)
 	{
 		if (Images[i].ImageSurface == img_ptr)
 		{
 			filename = Images[i].Filename.c_str();
-
 			break;
 		}
 	}
-
 	filename.make_lower();
 
-	if (filename.size()==0) filename=NONAME_FILE_NAME;
+	if (filename.size()==0)
+		filename = NONAME_FILE_NAME;
 
-    return filename;
+    return filename.c_str();
 }
 
 //---------------------------------------------------------------------------

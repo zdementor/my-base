@@ -394,11 +394,11 @@ vid::ITexture* getTexture(CEGUI::Texture &ceguitex)
 
 //----------------------------------------------------------------------------
 
-void setTexture(CEGUI::Texture &ceguitex, vid::ITexture *mytex)
+void setTexture(CEGUI::Texture &ceguitex, vid::ITexture *mytex, bool useAlphaBlending)
 {
 	if (!(&ceguitex))
 		return;
-	(*(MyCEGUITexture*)&ceguitex).setTexture(mytex);
+	(*(MyCEGUITexture*)&ceguitex).setTexture(mytex, useAlphaBlending);
 }
 
 //----------------------------------------------------------------------------

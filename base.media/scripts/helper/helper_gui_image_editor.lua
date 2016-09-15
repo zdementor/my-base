@@ -65,7 +65,10 @@ local _ImageEditorState = IMAGE_EDITOR_STATE_WINDOWED
 local _ImageEditorFlags = 0
 local _ImageSize = core.dimension2di(255, 255)
 local _ImageEditorUserData = nil
-	
+
+local _ImageEditorImageName = nil
+local _ImageEditorImageSaveFileName = nil
+
 local function _ImageEditorSetScrollScale(scale)
 	if scale <= IMAGE_EDITOR_VIEW_SCALE_MIN then
 		scale = IMAGE_EDITOR_VIEW_SCALE_MIN
@@ -135,20 +138,16 @@ local function _ImageEditorUpdateControls()
 	_ImageEditorUpdateScaleControls()
 end
 
-local function _ImageEditorOpenImage(full_file_name)
+local function _ImageEditorSetTexture(my_tex)
 
 	local cegui_tex = _Resources.Textures.Image
-	local my_tex = MyDriver:findTexture(full_file_name)
-	local image = nil
 
-	image = MyImgLib:getImage(full_file_name)
-	if image ~= nil then
-		if my_tex == nil then
-			my_tex = MyDriver:addTexture(full_file_name, image)
-		end
+	local useAlpha = false
+	if bit.band(_ImageEditorFlags, IMAGE_EDITOR_FLAGS.USE_IMAGE_ALPHA) ~= 0 then
+		useAlpha = true
 	end
 
-	MyCEGUI.setTexture(cegui_tex, my_tex)
+	MyCEGUI.setTexture(cegui_tex, my_tex, useAlpha)
 
 	if my_tex ~= nil then
 		local imageset = _Resources.Imagesets.Image
@@ -159,7 +158,36 @@ local function _ImageEditorOpenImage(full_file_name)
 	else
 		_Ctrls.Image.Ctrl:setProperty("Image", "set:Helper.ImageEditor.ImageEmpty image:Image")
 		_ImageSize:set(256, 256)
-		MyLogger:logErr("Can't open image from file '"..tostring(full_file_name).."'")
+	end
+
+end
+
+local function _ImageEditorOpenImage(full_file_name)
+
+	local my_tex = nil
+	local image = nil
+
+	if full_file_name ~= nil then
+		my_tex = MyDriver:findTexture(full_file_name)
+	end
+
+	if my_tex == nil then
+		if full_file_name ~= nil then
+			image = MyImgLib:getImage(full_file_name)
+		end
+	end
+
+	if image ~= nil then
+   		my_tex = MyDriver:addTexture(full_file_name, image)
+		MyImgLib:removeImage(image)
+	end
+
+	_ImageEditorSetTexture(my_tex)
+
+	if my_tex == nil then
+		if full_file_name ~= nil then
+			LOG_ERR("Can't open image from file '"..tostring(full_file_name).."'")
+		end
 	end
 
 	_ImageEditorFileName = full_file_name
@@ -168,12 +196,11 @@ local function _ImageEditorOpenImage(full_file_name)
 
 	_ImageEditorUpdateScaleControls()
 
-	if my_tex ~= nil then		
-		return true
-	end
-	return false
-end
+	_ImageEditorImageName = full_file_name
+	_ImageEditorImageSaveFileName = full_file_name
 
+	return (my_tex ~= nil)
+end
 
 local function _ImageEditorOpenImageAccepted(full_file_name, rel_full_file_name, user_data)
 	local my_tex = _ImageEditorOpenImage(full_file_name)
@@ -188,10 +215,12 @@ local function _ImageEditorSaveImageAccepted(full_file_name, rel_full_file_name,
 	local cegui_tex = _Resources.Textures.Image
 	local imageset = _Resources.Imagesets.Image
 	local my_tex = MyCEGUI.getTexture(cegui_tex)
-	local tex_file_name = MyDriver:findTextureName(my_tex)
-	local image = nil
-	if tex_file_name ~= nil then
-		image = MyImgLib:getImage(tex_file_name)
+	local image = MyImgLib:findImage(_ImageEditorImageName)
+	if image == nil then
+		local tex_file_name = MyDriver:findTextureName(my_tex)
+		if tex_file_name ~= nil then
+			image = MyImgLib:getImage(tex_file_name)
+		end
 	end
 	if image ~= nil then
 		MyImgLib:saveImageToFile(image, full_file_name)
@@ -216,6 +245,7 @@ local function _ImageEditorClick(args)
 	local we = CEGUI.toWindowEventArgs(args)
 	local name = we.window:getName()
 	if name == "Helper.ImageEditor.Frame" then
+		_ImageEditorSetFileName(nil) -- to release texture
 		_Ctrls.Root.Ctrl:setVisible(false)
 		if _Callbacks.Close ~= nil then
 			_Callbacks.Close()
@@ -229,12 +259,17 @@ local function _ImageEditorClick(args)
 	elseif name == _Ctrls.Buttons.IdentScaleButton.Name then		
 		 _Ctrls.ScaleScroll.Ctrl:setScrollPosition(IMAGE_EDITOR_VIEW_SCROLL_IDENT)
 	elseif name == _Ctrls.Buttons.SaveButton.Name then
-		local cegui_tex = _Resources.Textures.Image
-		local my_tex = MyCEGUI.getTexture(cegui_tex)
-		local tex_file_name = MyDriver:findTextureName(my_tex)
+
+		local save_file_name = _ImageEditorImageSaveFileName
+		if save_file_name == nil then
+			local cegui_tex = _Resources.Textures.Image
+			local my_tex = MyCEGUI.getTexture(cegui_tex)
+			local tex_file_name = MyDriver:findTextureName(my_tex)
+			save_file_name = tex_file_name
+		end
 		Helper.GUI.FileDialog.show(FILE_DIALOG_MODE.SAVE, 0, "Save image...",
 			MyResMgr:getMediaDirFull(res.EMT_TEXTURES),
-			tex_file_name,
+			save_file_name,
 			SCENED_IMAGE_SAVE_FILE_FILTER, _ImageEditorSaveImageAccepted, _ImageEditorUserData)
 	elseif name == _Ctrls.Buttons.OpenButton.Name then
 		local cegui_tex = _Resources.Textures.Image
@@ -341,8 +376,57 @@ function _ImageEditorInit()
 	Helper.GUI.setCenteredWindowPosition(_Ctrls.Frame.Ctrl)
 end
 
-local function _ImageEditorShow(mode, flags, caption, file_name,
-	file_open_callback, file_reload_callback, file_save_callback, close_callback, user_data)
+local function _ImageEditorSetImage(image_name, save_file_name)
+
+	if not _Ctrls.Root.Ctrl:isVisible() then
+		return false
+	end	
+	_Ctrls.Image.Ctrl:setProperty("Image", "set:Helper.ImageEditor.ImageEmpty image:Image")
+	_ImageSize:set(256, 256)
+
+	_ImageEditorImageName = nil
+	_ImageEditorImageSaveFileName = save_file_name
+
+	local my_tex = nil
+	local image = MyImgLib:findImage(image_name)
+
+	if image == nil then
+		LOG_WARN("Can't find image '"..tostring(image_name).."'")
+		return false
+	end	
+
+	my_tex = MyDriver:findTexture(image_name, image)
+	if my_tex ~= nil then
+		MyDriver:removeTexture(my_tex)
+		my_tex = MyDriver:findTexture(image_name, image)
+	end
+	if my_tex ~= nil then
+		LOG_ERR("Can not individualy access to the texture '"..image_name.."'")
+		return false
+	end
+
+	my_tex = MyDriver:addTexture(image_name, image)
+
+	_ImageEditorSetTexture(my_tex)
+
+	if my_tex == nil then
+		LOG_WARN("Can't find image '"..tostring(image_name).."'")
+	end
+
+	return true
+end
+Helper.GUI.ImageEditor.setImage = _ImageEditorSetImage
+
+local function _ImageEditorShow(
+	mode,
+	flags,
+	caption,
+	image_name,
+	file_open_callback,
+	file_reload_callback,
+	file_save_callback,
+	close_callback,
+	user_data)
 	
 	if not _HelperInit() then
 		return false
@@ -357,13 +441,16 @@ local function _ImageEditorShow(mode, flags, caption, file_name,
 	_Callbacks.Save		= file_save_callback
 	_Callbacks.Close	= close_callback
 	
+	_ImageEditorSetFileName(nil) -- to release old texture
+	if image_name ~= nil then
+		_ImageEditorSetFileName(image_name)
+	end
+
+	_ImageEditorUserData = user_data
+
 	_Ctrls.Root.Ctrl:setVisible(true)
 	_Ctrls.Root.Ctrl:moveToFront()
-	
-	_ImageEditorSetFileName(file_name)
-	
-	_ImageEditorUserData = user_data
-	
+
 	return true
 end
 Helper.GUI.ImageEditor.show = _ImageEditorShow

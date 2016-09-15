@@ -120,33 +120,6 @@ local function _HelperGetSelectedMaterial()
 end
 Helper.getSelectedMaterial = _HelperGetSelectedMaterial
 
-local function _HelperConvertToNormalMap(hmap_full_file_name, nmap_full_file_name,
-	amplitude, swapX, swapY, hmapInAlpha)
-
-	LOG_INFO(string.format("Converting %s to Normal Map (amplitude=%.4f, swapX=%s, swapY=%s, hmap=%s) . . .",
-		hmap_full_file_name, amplitude, tostring(swapX), tostring(swapY), tostring(heightmapInAlpha)))
-	MyLogger:increaseFormatLevel()
-	local image = MyImgLib:getImage(hmap_full_file_name)
-	local r = false
-	if image ~= nil then
-		image:convertTo(img.ECF_A8R8G8B8)
-		if image:makeNormalMap(amplitude, swapX, swapY, hmapInAlpha) then
-			if MyImgLib:saveImageToFile(image, nmap_full_file_name) then
-				LOG_INFO("Saved to "..nmap_full_file_name)
-				r = true
-			end
-		end
-		MyImgLib:removeImage(image)		
-	end
-	if r then
-		LOG_INFO("Done. Normal Map created")
-	else
-		LOG_ERR("FAILED Norml Map creation")
-	end
-	MyLogger:decreaseFormatLevel()
-end
-Helper.convertToNormalMap = _HelperConvertToNormalMap
-
 local function _HelperGetSceneNodeFileText(scene_node, scene_only)
 	local file_name = scene_node:getFileName()
 	local text = ""

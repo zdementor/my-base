@@ -51,6 +51,7 @@ Helper =
 			--   close_callback ()
 			--------------------------------------------------------------------------------
 			show,
+
 			setFileName,
 			setText,
 			getText,
@@ -62,7 +63,7 @@ Helper =
 			--------------------------------------------------------------------------------
 			-- PARAMETERS:
 			--   mode            - text editor mode, not used for now, can be 0
-			--   flags           - must be a composition of TEXT_EDITOR_FLAGS flags (IMAGE_EDITOR_FLAGS.OPEN/IMAGE_EDITOR_FLAGS.SAVE/IMAGE_EDITOR_FLAGS.RELOAD))
+			--   flags           - must be a composition of IMAGE_EDITOR_FLAGS flags (OPEN | SAVE | RELOAD | USE_IMAGE_ALPHA)
 			--   caption         - text, shown on the title bar
 			--   file_name       - image file to load and to edit
 			--   open_callback   - entry to call, when Open action performed
@@ -78,6 +79,15 @@ Helper =
 			--   close_callback ()
 			--------------------------------------------------------------------------------
 			show,
+
+			--------------------------------------------------------------------------------
+			-- INFO: Set current editing Image
+			--------------------------------------------------------------------------------
+			-- PARAMETERS:
+			--   image_name     - image name to save
+			--   save_file_name - file name to ave image to
+			--------------------------------------------------------------------------------
+			setImage,
 		},
 		TypeSelectionDialog =
 		{
@@ -199,18 +209,6 @@ Helper =
 	getSelectedMaterial,
 
 	--------------------------------------------------------------------------------
-	-- INFO: Creating normal map from heightmap image
-	--------------------------------------------------------------------------------
-	-- PARAMETERS:
-	--   hmap_full_file_name - height map input file name
-	--   nmap_full_file_name - normal map output file name
-	--   amplitude - Constant value by which the height information is multiplied.
-	--   swapX       - flag to swap X coord in result normal
-	--   swapX       - flag to swap Y coord in result normal
-	--   hmapInAlpha - flag to store heightmap in alpha channel
-	convertToNormalMap,
-
-	--------------------------------------------------------------------------------
 	-- INFO: Returns XML text for Scene Node
 	--------------------------------------------------------------------------------
 	-- PARAMETERS:
@@ -228,16 +226,17 @@ FILE_DIALOG_MODE =
 
 TEXT_EDITOR_FLAGS =
 {
-	OPEN = 1,
-	SAVE = 2,
+	OPEN   = 1,
+	SAVE   = 2,
 	RELOAD = 4,
 }
 
 IMAGE_EDITOR_FLAGS =
 {
-	OPEN = 1,
-	SAVE = 2,
-	RELOAD = 4,
+	OPEN            = 1,
+	SAVE            = 2,
+	RELOAD          = 4,
+	USE_IMAGE_ALPHA = 8,
 }
 
 MULTICOLUMN_FLAGS =

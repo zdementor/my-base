@@ -22,7 +22,7 @@ void setListboxItemTextUtf8(CEGUI::ListboxItem *item, const char* utf8_text);
 vid::ITexture* getTexture(CEGUI::Texture &ceguitex);
 
 //! set CEGUI texture from MyEngine texture
-void setTexture(CEGUI::Texture &ceguitex, vid::ITexture *mytex);
+void setTexture(CEGUI::Texture &ceguitex, vid::ITexture *mytex, bool useAlphaBlending);
 
 //------------------------------------------------------------------------------------
 } // end namespace MyCEGUI

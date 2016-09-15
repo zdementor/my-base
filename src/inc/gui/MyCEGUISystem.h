@@ -51,7 +51,7 @@ MYENGINE_GUIRENDERER_API void setListboxItemTextUtf8(CEGUI::ListboxItem *item, c
 MYENGINE_GUIRENDERER_API vid::ITexture* getTexture(CEGUI::Texture &ceguitex);
 
 //! set CEGUI texture from MyEngine texture
-MYENGINE_GUIRENDERER_API void setTexture(CEGUI::Texture &ceguitex, vid::ITexture *mytex);
+MYENGINE_GUIRENDERER_API void setTexture(CEGUI::Texture &ceguitex, vid::ITexture *mytex, bool useAlphaBlending);
 
 //---------------------------------------------------------------------------- 
 } // end namespace MyCEGUI
