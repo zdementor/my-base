@@ -37,7 +37,7 @@ CTerrainSceneNode::CTerrainSceneNode(ISceneNode* parent, s32 id)
 
 	m_HeightMapTextureName = "";
 
-	m_HeightScale = 1.f;
+	m_HeightScale = 0.1f;
 }
 
 //---------------------------------------------------------------------------
@@ -169,7 +169,7 @@ void CTerrainSceneNode::_resetMaterial()
 
 bool CTerrainSceneNode::_setMaps(
 	const c8* hmap_filename, const c8* fogmap_filename,
-    f32 gridPointSpacing, f32 heightScale, img::IImage **heightImageOut)
+    f32 gridPointSpacing, img::IImage **heightImageOut)
 {
 	img::IImage *heightmap = IMAGE_LIBRARY.getImage(hmap_filename);
 	if (!heightmap)
@@ -179,7 +179,6 @@ bool CTerrainSceneNode::_setMaps(
 	m_FogMapFileName = fogmap_filename ? fogmap_filename : NONAME_FILE_NAME;
 
 	m_GridPointSpacing = m_GridPointSpacingValue = gridPointSpacing;
-	m_HeightScale = heightScale;
 
 	_clearMaps();
 
@@ -256,6 +255,14 @@ const c8* CTerrainSceneNode::getHeightMapFileName()
 f32  CTerrainSceneNode::getHeightScale()
 {
 	return m_HeightScale;
+}
+
+//---------------------------------------------------------------------------
+
+void CTerrainSceneNode::setHeightScale(f32 scale)
+{
+	CHECK_RANGE(scale, 0.001f, 1.f);
+	m_HeightScale = scale;
 }
 
 //---------------------------------------------------------------------------

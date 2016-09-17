@@ -219,6 +219,20 @@ function _ScenedTerrainTextureClearAccepted(user_data)
 	_ScenedTerrainTextureOpenAccepted(nil, nil, user_data)
 end
 
+local function _ScenedTerrainHeightmapOpenAccepted(full_file_name, rel_full_file_name, user_data)
+	local terrain_scene_node = _ScenedTerrainGetSelectedSceneNode()
+
+	terrain_scene_node:setMaps(
+		full_file_name, nil,
+		terrain_scene_node:getGridPointSpacing(), terrain_scene_node:getHeightScale())
+
+	_ScenedTerrainUpdateControls()
+end
+
+local function _ScenedTerrainHeightmapClearAccepted()
+	_ScenedTerrainHeightmapOpenAccepted(nil, nil, user_data)
+end
+
 function _ScenedTerrainWidgetClicked(args)
 	local terrain_scene_node = _ScenedTerrainGetSelectedSceneNode()
 	local tile = _ScenedTerrainGetSelectedTileSet(terrain_scene_node)
@@ -341,19 +355,17 @@ function _ScenedTerrainWidgetClicked(args)
 		end
 		Helper.GUI.FileDialog.show(FILE_DIALOG_MODE.OPEN, 0, "Open height map...",
 			fpath, fullfname,
-			SCENED_TEXTURE_OPEN_FILE_FILTER, _ScenedTerrainTextureOpenAccepted, 4)
+			SCENED_TEXTURE_OPEN_FILE_FILTER, _ScenedTerrainHeightmapOpenAccepted, nil)
 	elseif name == _Ctrls.Tabs.Props.Buttons.HeightMapViewBtn.Ctrl:getName() then
 		if MyFileSys:existFile(terrain_scene_node:getHeightMapFileName()) then
 			local fullfname = terrain_scene_node:getHeightMapFileName()
 			Helper.GUI.ImageEditor.show(0,
 				IMAGE_EDITOR_FLAGS.OPEN,
 				"Image Viewer", fullfname,
-				_ScenedTerrainTextureOpenAccepted, nil, nil, nil, 4)
+				_ScenedTerrainHeightmapOpenAccepted, nil, nil, nil, nil)
 		end
 	elseif name == _Ctrls.Tabs.Props.Buttons.HeightMapClearBtn.Ctrl:getName() then
-		terrain_scene_node:setMaps(
-			nil, nil,
-			terrain_scene_node:getGridPointSpacing(), terrain_scene_node:getHeightScale())
+		_ScenedTerrainHeightmapClearAccepted()
 	else
 	end
 end
@@ -383,14 +395,7 @@ function _ScenedTerrainTextAccepted(args)
 	local name = we.window:getName()
 	if name == _Ctrls.Tabs.Props.Editboxes.HeightScaleEditbox.Ctrl:getName() then
 		local val = tonumber(_Ctrls.Tabs.Props.Editboxes.HeightScaleEditbox.Ctrl:getText())
-		if val <= 0.0 then
-			val = 0.0001
-		elseif val > 128.0 then
-			val = 128.0
-		end
-		terrain_scene_node:setMaps(
-			terrain_scene_node:getHeightMapFileName(), nil,
-			terrain_scene_node:getGridPointSpacing(), val)
+		terrain_scene_node:setHeightScale(val)		
 		_ScenedTerrainUpdateControls()
 	elseif name == _Ctrls.Tabs.Props.Editboxes.GridPointSpacingEditbox.Ctrl:getName() then
 		local val = tonumber(_Ctrls.Tabs.Props.Editboxes.GridPointSpacingEditbox.Ctrl:getText())
@@ -399,9 +404,7 @@ function _ScenedTerrainTextAccepted(args)
 		elseif val > 1280.0 then
 			val = 1280.0
 		end
-		terrain_scene_node:setMaps(
-			terrain_scene_node:getHeightMapFileName(), nil,
-			val, terrain_scene_node:getHeightScale())
+		terrain_scene_node:setMaps(terrain_scene_node:getHeightMapFileName(), nil, val)
 		_ScenedTerrainUpdateControls()
 	end
 end

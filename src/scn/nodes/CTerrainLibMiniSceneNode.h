@@ -35,7 +35,9 @@ public:
     virtual ~CTerrainLibMiniSceneNode(); 
         
     virtual bool setMaps(const c8* hmap_filename, const c8* fogmap_filename,
-        f32 gridPointSpacing, f32 heightScale); 
+        f32 gridPointSpacing);
+
+	virtual void setHeightScale(f32 scale);
 
 	virtual f32 getCellHeight(u32 cell_x, u32 cell_y);
 

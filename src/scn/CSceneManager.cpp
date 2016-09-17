@@ -695,8 +695,9 @@ ITerrainSceneNode* CSceneManager::addLibMiniTerrainSceneNode(ISceneNode* parent,
 
     CTerrainLibMiniSceneNode *node = new CTerrainLibMiniSceneNode(parent, id); 
 
-	node->setMaps(hmap_filename, fogmap_filename,
-		gridPointSpacing, heightScale);
+	node->setMaps(
+		hmap_filename, fogmap_filename, gridPointSpacing);
+	node->setHeightScale(heightScale);
     node->drop();
 
     return node;

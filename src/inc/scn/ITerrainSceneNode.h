@@ -110,9 +110,8 @@ public:
     //! create the terrain 
     //! \param heightmap, image with height values 
     //! \param gridPointSpacing, spacing between the gridpoints of the heightfield 
-    //! \param heightScale, scaling value for image height values        
-    virtual bool setMaps(const c8* hmap_filename, const c8* fogmap_filename,
-		f32 gridPointSpacing, f32 heightScale) = 0;
+	virtual bool setMaps(const c8* hmap_filename, const c8* fogmap_filename,
+		f32 gridPointSpacing) = 0;
 
 	//! return file name of the height map image
     virtual const c8* getHeightMapFileName() = 0;
@@ -120,8 +119,9 @@ public:
 	//! returns geometry size beetween terrain greed cells
 	virtual f32 getGridPointSpacing() = 0;
 
-	//! returns height scale factor
+	//! Get/Set terrain height scale factor
 	virtual f32 getHeightScale() = 0;
+	virtual void setHeightScale(f32 scale) = 0;
 
 	//! set terrains tile sets pool
 	virtual void setTileSets(const core::array<STileSetParams> &tiles) = 0;

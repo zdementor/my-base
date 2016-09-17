@@ -21,7 +21,7 @@ class ITerrainSceneNode : public ISceneNode
     //! \param gridPointSpacing, spacing between the gridpoints of the heightfield 
     //! \param heightScale, scaling value for image height values        
     bool setMaps(const char* hmap_filename, const char* fogmap_filename,
-        float gridPointSpacing, float heightScale);
+        float gridPointSpacing);
 
 	//! return file name of the height map image
 	const char* getHeightMapFileName();
@@ -29,8 +29,9 @@ class ITerrainSceneNode : public ISceneNode
 	//! returns geometry size beetween terrain greed cells
 	float getGridPointSpacing();
 
-	//! returns height scale factor
+	//! Get/Set terrain height scale factor
 	float getHeightScale();
+	void setHeightScale(float scale);
 
 	//! add tile set to the terrain texturing
 	bool addTileSet(

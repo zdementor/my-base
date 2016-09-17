@@ -106,7 +106,7 @@ CTerrainLibMiniSceneNode::CTerrainLibMiniSceneNode(ISceneNode* parent, s32 id)
 	m_RenderVertices.set_used(4092);
 	m_RenderIndices.set_used(1024);
 
-	setMaps(NULL, NULL, 128.f, 0.1f);
+	setMaps(NULL, NULL, 128.f);
 } 
 
 //-----------------------------------------------------------------------
@@ -120,14 +120,12 @@ CTerrainLibMiniSceneNode::~CTerrainLibMiniSceneNode()
 
 bool CTerrainLibMiniSceneNode::setMaps(
 	const c8* hmap_filename, const c8* fogmap_filename,
-    f32 gridPointSpacing, f32 heightScale) 
+    f32 gridPointSpacing) 
 {
 	img::IImage *heightImage = NULL;
 
-	if (!_setMaps(
-			hmap_filename, fogmap_filename,
-			gridPointSpacing, heightScale,
-			&heightImage))
+	if (!_setMaps(hmap_filename, fogmap_filename,
+			gridPointSpacing, &heightImage))
 		return false;
 
 	detail_minus_2 = m_TileRepeatNumber-2.0f;
@@ -179,7 +177,7 @@ bool CTerrainLibMiniSceneNode::setMaps(
 
     m_Stub = new ministub(
 		hmap, &m_HeightFieldSize, // height map
-		&m_GridPointSpacing, m_HeightScale, 1.0f/*cellaspect*/, // grid definition
+		&m_GridPointSpacing, 1.f /*scale*/, 1.0f/*cellaspect*/, // grid definition
 		0.0f, 0.0f, 0.0f, // grid center
         CTerrainLibMiniSceneNode::_BeginFan, CTerrainLibMiniSceneNode::_FanVertex,
         0, 0, 0, 
@@ -196,11 +194,23 @@ bool CTerrainLibMiniSceneNode::setMaps(
 	m_BoundingBox.addInternalPoint(-m_TerrainWidth/2.0f, m_HeightMin,-m_TerrainLength/2.0f );
 	m_BoundingBox.addInternalPoint( m_TerrainWidth/2.0f, m_HeightMax, m_TerrainLength/2.0f );
 
-	LOGGER.logInfo("LibMini terrain initialized (resolution=%.f, size=%dx%d, width=%.f, length=%.f, height=%.f)", 
-		m_Resolution, m_HeightFieldSize, m_HeightFieldSize,  m_TerrainWidth,  m_TerrainLength,  m_TerrainHeight);
+	LOGGER.logInfo("LibMini terrain initialized (resolution=%.f, size=%dx%d(%dx%d), width=%.f, length=%.f, height=%.f)", 
+		m_Resolution, m_HeightFieldSize, m_HeightFieldSize, m_HeightFieldSizeValue, m_HeightFieldSizeValue,
+		m_TerrainWidth,  m_TerrainLength,  m_TerrainHeight);
 
     return true; 
 }  
+
+//-----------------------------------------------------------------------
+
+void CTerrainLibMiniSceneNode::setHeightScale(f32 scale)
+{
+	CTerrainSceneNode::setHeightScale(scale);
+	if (m_Stub)
+	{
+		m_Stub->setrelscale(getHeightScale());
+	}
+}
 
 //-----------------------------------------------------------------------
 

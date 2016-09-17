@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/15/16 22:09:57.
+** Generated automatically by tolua++-1.0.92 on 09/17/16 11:21:08.
 */
 
 #ifndef __cplusplus
@@ -32891,8 +32891,7 @@ static int tolua_MyLuaBind_scn_ITerrainSceneNode_setMaps00(lua_State* tolua_S)
  !tolua_isstring(tolua_S,2,0,&tolua_err) ||
  !tolua_isstring(tolua_S,3,0,&tolua_err) ||
  !tolua_isnumber(tolua_S,4,0,&tolua_err) ||
- !tolua_isnumber(tolua_S,5,0,&tolua_err) ||
- !tolua_isnoobj(tolua_S,6,&tolua_err)
+ !tolua_isnoobj(tolua_S,5,&tolua_err)
  )
  goto tolua_lerror;
  else
@@ -32902,12 +32901,11 @@ static int tolua_MyLuaBind_scn_ITerrainSceneNode_setMaps00(lua_State* tolua_S)
   const char* hmap_filename = ((const char*)  tolua_tostring(tolua_S,2,0));
   const char* fogmap_filename = ((const char*)  tolua_tostring(tolua_S,3,0));
   float gridPointSpacing = ((float)  tolua_tonumber(tolua_S,4,0));
-  float heightScale = ((float)  tolua_tonumber(tolua_S,5,0));
 #ifndef TOLUA_RELEASE
  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'setMaps'",NULL);
 #endif
  {
-  bool tolua_ret = (bool)  self->setMaps(hmap_filename,fogmap_filename,gridPointSpacing,heightScale);
+  bool tolua_ret = (bool)  self->setMaps(hmap_filename,fogmap_filename,gridPointSpacing);
  tolua_pushboolean(tolua_S,(bool)tolua_ret);
  }
  }
@@ -33011,6 +33009,39 @@ static int tolua_MyLuaBind_scn_ITerrainSceneNode_getHeightScale00(lua_State* tol
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'getHeightScale'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: setHeightScale of class  scn::ITerrainSceneNode */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_scn_ITerrainSceneNode_setHeightScale00
+static int tolua_MyLuaBind_scn_ITerrainSceneNode_setHeightScale00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"scn::ITerrainSceneNode",0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  scn::ITerrainSceneNode* self = (scn::ITerrainSceneNode*)  tolua_tousertype(tolua_S,1,0);
+  float scale = ((float)  tolua_tonumber(tolua_S,2,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'setHeightScale'",NULL);
+#endif
+ {
+  self->setHeightScale(scale);
+ }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'setHeightScale'.",&tolua_err);
  return 0;
 #endif
 }
@@ -60833,6 +60864,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
    tolua_function(tolua_S,"getHeightMapFileName",tolua_MyLuaBind_scn_ITerrainSceneNode_getHeightMapFileName00);
    tolua_function(tolua_S,"getGridPointSpacing",tolua_MyLuaBind_scn_ITerrainSceneNode_getGridPointSpacing00);
    tolua_function(tolua_S,"getHeightScale",tolua_MyLuaBind_scn_ITerrainSceneNode_getHeightScale00);
+   tolua_function(tolua_S,"setHeightScale",tolua_MyLuaBind_scn_ITerrainSceneNode_setHeightScale00);
    tolua_function(tolua_S,"addTileSet",tolua_MyLuaBind_scn_ITerrainSceneNode_addTileSet00);
    tolua_function(tolua_S,"setTileSet",tolua_MyLuaBind_scn_ITerrainSceneNode_setTileSet00);
    tolua_function(tolua_S,"removeTileSet",tolua_MyLuaBind_scn_ITerrainSceneNode_removeTileSet00);

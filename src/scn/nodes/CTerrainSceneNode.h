@@ -34,7 +34,9 @@ public:
 
 	virtual const c8* getHeightMapFileName();
 	virtual f32 getGridPointSpacing();
+
 	virtual f32 getHeightScale();
+	virtual void setHeightScale(f32 scale);
 
 	virtual void setTileSets(const core::array<STileSetParams> &tiles);
 
@@ -76,7 +78,7 @@ public:
 protected:
 
 	bool _setMaps(const c8* hmap_filename, const c8* fogmap_filename,
-        f32 gridPointSpacing, f32 heightScale, img::IImage **heightImageOut);
+        f32 gridPointSpacing, img::IImage **heightImageOut);
 
 	virtual u32 getCompatibleHeightFieldSize(u32 origSize) = 0;
 	void _clearMaps();
