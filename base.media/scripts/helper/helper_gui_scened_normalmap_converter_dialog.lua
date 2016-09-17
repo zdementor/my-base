@@ -202,7 +202,7 @@ function _ScenedNMapConvInit()
 	
 	_Ctrls.Frame.Ctrl = CEGUIWinMgr:getWindow("Scened.NormalMapConverter.Frame")
 	
-	_Ctrls.Frame.Ctrl:subscribeEvent("Clicked", _ScenedNMapConvWidgetClicked)
+	_Ctrls.Frame.Ctrl:subscribeEvent("CloseClicked", _ScenedNMapConvWidgetClicked)
 	
 	Helper.GUI.initButtons("Scened.NormalMapConverter.",
 		_Ctrls.Buttons, _ScenedNMapConvWidgetClicked)

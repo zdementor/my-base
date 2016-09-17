@@ -8,7 +8,7 @@
             <Property Name="Text" Value="Image Editor: file_name" />
             <Property Name="TitlebarFont" Value="Tahoma-12" />
             <Property Name="TitlebarEnabled" Value="True" />
-            <Property Name="UnifiedAreaRect" Value="{{0.138281,0},{0.15375,0},{0.66843,0},{0.725164,0}}" />
+            <Property Name="UnifiedAreaRect" Value="{{0.138281,0},{0.15375,0},{0.675461,0},{0.901415,0}}" />
             <Window Type="MyHelper/Button" Name="Helper.ImageEditor.SaveButton" >
                 <Property Name="Font" Value="Tahoma-8" />
                 <Property Name="Text" Value="Save" />
@@ -28,7 +28,7 @@
                 <Property Name="UnifiedAreaRect" Value="{{0,90},{0,5},{0,125},{0,40}}" />
             </Window>
             <Window Type="TaharezLook/StaticText" Name="Helper.ImageEditor.ImageArea" >
-                <Property Name="UnifiedAreaRect" Value="{{0.012305,0},{0,62},{0.988764,0},{0.935716,0}}" />
+                <Property Name="UnifiedAreaRect" Value="{{0.012305,0},{0,104},{0.988764,0},{0.935716,0}}" />
                 <Window Type="MyScened/ScrollablePane" Name="Helper.ImageEditor.ScrollArea" >
                     <Property Name="Font" Value="Cour-8" />
                     <Property Name="ContentArea" Value="l:0 t:0 r:383 b:386" />
@@ -52,7 +52,7 @@
             </Window>
             <Window Type="TaharezLook/StaticText" Name="Helper.ImageEditor.RightControlArea" >
                 <Property Name="FrameEnabled" Value="False" />
-                <Property Name="UnifiedAreaRect" Value="{{0,-10},{0,0},{0,400},{0,59}}" />
+                <Property Name="UnifiedAreaRect" Value="{{-0.00884185,0},{0,0},{0,239},{0,102}}" />
                 <Property Name="HorizontalAlignment" Value="Right" />
                 <Window Type="MyHelper/Button" Name="Helper.ImageEditor.FullscreenButton" >
                     <Property Name="Font" Value="Tahoma-8" />
@@ -94,13 +94,13 @@
                     <Property Name="Font" Value="Tahoma-8" />
                     <Property Name="Text" Value="-" />
                     <Property Name="Tooltip" Value="Decrease image scale" />
-                    <Property Name="UnifiedAreaRect" Value="{{0,240},{0,5},{0,275},{0,40}}" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,7},{0,43},{0,42},{0,78}}" />
                 </Window>
                 <Window Type="MyHelper/Button" Name="Helper.ImageEditor.IncScaleButton" >
                     <Property Name="Font" Value="Tahoma-8" />
                     <Property Name="Text" Value="+" />
                     <Property Name="Tooltip" Value="Increase image scale" />
-                    <Property Name="UnifiedAreaRect" Value="{{0,372},{0,5},{0,407},{0,40}}" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,191},{0,43},{0,226},{0,78}}" />
                 </Window>
                 <Window Type="TaharezLook/HorizontalScrollbar" Name="Helper.ImageEditor.ScaleScroll" >
                     <Property Name="Tooltip" Value="Change image scale" />
@@ -109,13 +109,22 @@
                     <Property Name="OverlapSize" Value="0" />
                     <Property Name="DocumentSize" Value="1" />
                     <Property Name="ScrollPosition" Value="0" />
-                    <Property Name="UnifiedAreaRect" Value="{{0,240},{0,44},{0,407},{0,58}}" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,7},{0,82},{0,227},{0,96}}" />
                 </Window>
                 <Window Type="MyHelper/Button" Name="Helper.ImageEditor.IdentScaleButton" >
                     <Property Name="Font" Value="Tahoma-8" />
                     <Property Name="Text" Value="100%" />
                     <Property Name="Tooltip" Value="Set 100% image scale" />
-                    <Property Name="UnifiedAreaRect" Value="{{0,306},{0,5},{0,341},{0,40}}" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,100},{0,43},{0,135},{0,78}}" />
+                </Window>
+            </Window>
+            <Window Type="TaharezLook/StaticText" Name="Helper.ImageEditor.ControlArea1" >
+                <Property Name="FrameEnabled" Value="False" />
+                <Property Name="UnifiedAreaRect" Value="{{0,139},{0,0},{0.594313,0},{0,102}}" />
+                <Window Type="TaharezLook/Checkbox" Name="Helper.ImageEditor.AlphaCheckbox" >
+                    <Property Name="Font" Value="Tahoma-12" />
+                    <Property Name="Text" Value="Alpha" />
+                    <Property Name="UnifiedAreaRect" Value="{{0,42},{0,13},{0,190},{0,42}}" />
                 </Window>
             </Window>
         </Window>

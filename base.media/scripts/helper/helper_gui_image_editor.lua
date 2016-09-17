@@ -20,6 +20,7 @@ local _Ctrls =
 		IdentScaleButton	= {Name="Helper.ImageEditor.IdentScaleButton", ImageName = nil },
 	},
 	ScaleScroll = {Name="Helper.ImageEditor.ScaleScroll"},
+	AlphaCheckbox = {Name="Helper.ImageEditor.AlphaCheckbox"},
 }
 
 local _Callbacks =
@@ -65,6 +66,8 @@ local _ImageEditorState = IMAGE_EDITOR_STATE_WINDOWED
 local _ImageEditorFlags = 0
 local _ImageSize = core.dimension2di(255, 255)
 local _ImageEditorUserData = nil
+
+local _ImageFrameWindowedAreaRectProperty = nil
 
 local _ImageEditorImageName = nil
 local _ImageEditorImageSaveFileName = nil
@@ -139,16 +142,12 @@ local function _ImageEditorUpdateControls()
 end
 
 local function _ImageEditorSetTexture(my_tex)
-
 	local cegui_tex = _Resources.Textures.Image
-
 	local useAlpha = false
 	if bit.band(_ImageEditorFlags, IMAGE_EDITOR_FLAGS.USE_IMAGE_ALPHA) ~= 0 then
 		useAlpha = true
 	end
-
 	MyCEGUI.setTexture(cegui_tex, my_tex, useAlpha)
-
 	if my_tex ~= nil then
 		local imageset = _Resources.Imagesets.Image
 		imageset:undefineAllImages()
@@ -159,7 +158,6 @@ local function _ImageEditorSetTexture(my_tex)
 		_Ctrls.Image.Ctrl:setProperty("Image", "set:Helper.ImageEditor.ImageEmpty image:Image")
 		_ImageSize:set(256, 256)
 	end
-
 end
 
 local function _ImageEditorOpenImage(full_file_name)
@@ -241,6 +239,29 @@ local function _ImageEditorSetFileName(file_name)
 	return true
 end
 
+local function _ImageEditorSetState(state)
+	if _ImageEditorState == IMAGE_EDITOR_STATE_WINDOWED and state ~= IMAGE_EDITOR_STATE_WINDOWED then
+		_ImageFrameWindowedAreaRectProperty = _Ctrls.Frame.Ctrl:getProperty("UnifiedAreaRect")
+	end
+	if state == IMAGE_EDITOR_STATE_FULLSCREEN then
+		_Ctrls.Frame.Ctrl:setProperty("UnifiedAreaRect", "{{0.0,0},{0.0,0},{1.0,0},{1.0,0}}")
+	elseif state == IMAGE_EDITOR_STATE_WINDOWED then
+		if _ImageFrameWindowedAreaRectProperty == nil then
+			_ImageFrameWindowedAreaRectProperty = "{{0.1,0},{0.1,0},{0.9,0},{0.9,0}}"
+		end
+		_Ctrls.Frame.Ctrl:setProperty("UnifiedAreaRect", _ImageFrameWindowedAreaRectProperty)
+	elseif state == IMAGE_EDITOR_STATE_BOTTOM_ALIGNED then
+		_Ctrls.Frame.Ctrl:setProperty("UnifiedAreaRect", "{{0.0,0},{0.5,0},{1.0,0},{1.0,0}}")
+	elseif state == IMAGE_EDITOR_STATE_TOP_ALIGNED then
+		_Ctrls.Frame.Ctrl:setProperty("UnifiedAreaRect", "{{0.,0},{0.0,0},{1.0,0},{0.5,0}}")
+	elseif state == IMAGE_EDITOR_STATE_LEFT_ALIGNED then
+		_Ctrls.Frame.Ctrl:setProperty("UnifiedAreaRect", "{{0.0,0},{0.0,0},{0.66,0},{1.0,0}}")
+	elseif state == IMAGE_EDITOR_STATE_RIGHT_ALIGNED then
+		_Ctrls.Frame.Ctrl:setProperty("UnifiedAreaRect", "{{0.33,0},{0.0,0},{1.0,0},{1.0,0}}")
+	end
+	_ImageEditorState = state
+end
+
 local function _ImageEditorClick(args)
 	local we = CEGUI.toWindowEventArgs(args)
 	local name = we.window:getName()
@@ -259,7 +280,6 @@ local function _ImageEditorClick(args)
 	elseif name == _Ctrls.Buttons.IdentScaleButton.Name then		
 		 _Ctrls.ScaleScroll.Ctrl:setScrollPosition(IMAGE_EDITOR_VIEW_SCROLL_IDENT)
 	elseif name == _Ctrls.Buttons.SaveButton.Name then
-
 		local save_file_name = _ImageEditorImageSaveFileName
 		if save_file_name == nil then
 			local cegui_tex = _Resources.Textures.Image
@@ -294,23 +314,17 @@ local function _ImageEditorClick(args)
 			_Callbacks.Reload(_ImageEditorFileName, nil, _ImageEditorUserData)
 		end
 	elseif name == _Ctrls.Buttons.FullscreenButton.Name then
-		_ImageEditorState = IMAGE_EDITOR_STATE_FULLSCREEN
-		_Ctrls.Frame.Ctrl:setProperty("UnifiedAreaRect", "{{0.0,0},{0.0,0},{1.0,0},{1.0,0}}")
+		_ImageEditorSetState(IMAGE_EDITOR_STATE_FULLSCREEN)
 	elseif name == _Ctrls.Buttons.WindowedButton.Name then
-		_ImageEditorState = IMAGE_EDITOR_STATE_WINDOWED
-		_Ctrls.Frame.Ctrl:setProperty("UnifiedAreaRect", "{{0.1,0},{0.2,0},{0.9,0},{0.8,0}}")
+		_ImageEditorSetState(IMAGE_EDITOR_STATE_WINDOWED)
 	elseif name == _Ctrls.Buttons.BottomAlignButton.Name then
-		_ImageEditorState = IMAGE_EDITOR_STATE_BOTTOM_ALIGNED
-		_Ctrls.Frame.Ctrl:setProperty("UnifiedAreaRect", "{{0.0,0},{0.5,0},{1.0,0},{1.0,0}}")
+		_ImageEditorSetState(IMAGE_EDITOR_STATE_BOTTOM_ALIGNED)
 	elseif name == _Ctrls.Buttons.TopAlignButton.Name then
-		_ImageEditorState = IMAGE_EDITOR_STATE_TOP_ALIGNED
-		_Ctrls.Frame.Ctrl:setProperty("UnifiedAreaRect", "{{0.,0},{0.0,0},{1.0,0},{0.5,0}}")
+		_ImageEditorSetState(IMAGE_EDITOR_STATE_TOP_ALIGNED)
 	elseif name == _Ctrls.Buttons.LeftAlignButton.Name then
-		_ImageEditorState = IMAGE_EDITOR_STATE_LEFT_ALIGNED
-		_Ctrls.Frame.Ctrl:setProperty("UnifiedAreaRect", "{{0.0,0},{0.0,0},{0.66,0},{1.0,0}}")
+		_ImageEditorSetState(IMAGE_EDITOR_STATE_LEFT_ALIGNED)
 	elseif name == _Ctrls.Buttons.RightAlignButton.Name then
-		_ImageEditorState = IMAGE_EDITOR_STATE_RIGHT_ALIGNED
-		_Ctrls.Frame.Ctrl:setProperty("UnifiedAreaRect", "{{0.33,0},{0.0,0},{1.0,0},{1.0,0}}")
+		_ImageEditorSetState(IMAGE_EDITOR_STATE_RIGHT_ALIGNED)
 	end
 	_ImageEditorUpdateControls()
 end
@@ -322,6 +336,24 @@ local function _ImageEditorScrollPosChanged(args)
 		local scale = math.pow(2, _Ctrls.ScaleScroll.Ctrl:getScrollPosition() - IMAGE_EDITOR_VIEW_SCROLL_IDENT)
 		_ImageEditorSetScrollScale(scale)
 		_ImageEditorUpdateScaleControls()
+	end
+end
+
+local function _ImageEditorCheckStateChanged(args)
+	local we = CEGUI.toWindowEventArgs(args)
+	local name = we.window:getName()
+	if name == _Ctrls.AlphaCheckbox.Name then
+		local cegui_tex = _Resources.Textures.Image
+		local my_tex = MyCEGUI.getTexture(cegui_tex)
+		local useAlpha = _Ctrls.AlphaCheckbox.Ctrl:isSelected()
+		local alphaFlag = IMAGE_EDITOR_FLAGS.USE_IMAGE_ALPHA
+		if not useAlpha then
+			alphaFlag = bit.bnot(alphaFlag)
+			_ImageEditorFlags = bit.band(_ImageEditorFlags, alphaFlag)
+		else
+			_ImageEditorFlags = bit.bor(_ImageEditorFlags, alphaFlag)
+		end
+		_ImageEditorSetTexture(my_tex)
 	end
 end
 
@@ -370,8 +402,12 @@ function _ImageEditorInit()
 
 	_Ctrls.ScaleScroll.Ctrl:setScrollPosition(IMAGE_EDITOR_VIEW_SCROLL_IDENT)
 
-	_ImageEditorState = IMAGE_EDITOR_STATE_WINDOWED
-	_Ctrls.Frame.Ctrl:setProperty("UnifiedAreaRect", "{{0.1,0},{0.2,0},{0.9,0},{0.8,0}}")
+	_ImageEditorSetState(IMAGE_EDITOR_STATE_WINDOWED)
+	_Ctrls.Frame.Ctrl:setProperty("UnifiedMinSize", "{{0.0,600},{0.0,400}}")
+
+	_Ctrls.AlphaCheckbox.Ctrl = tolua.cast(
+		CEGUIWinMgr:getWindow(_Ctrls.AlphaCheckbox.Name), "CEGUI::Checkbox")
+	_Ctrls.AlphaCheckbox.Ctrl:subscribeEvent("CheckStateChanged", _ImageEditorCheckStateChanged)
 
 	Helper.GUI.setCenteredWindowPosition(_Ctrls.Frame.Ctrl)
 end
@@ -435,6 +471,8 @@ local function _ImageEditorShow(
 	_ImageEditorCaption = caption
 
 	_ImageEditorFlags = flags
+
+	_Ctrls.AlphaCheckbox.Ctrl:setSelected(bit.band(_ImageEditorFlags, IMAGE_EDITOR_FLAGS.USE_IMAGE_ALPHA) ~= 0)
 
 	_Callbacks.Open		= file_open_callback
 	_Callbacks.Reload	= file_reload_callback

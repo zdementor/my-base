@@ -88,6 +88,8 @@ my::vid::ITexture* MyCEGUITexture::getTexture()
 
 void MyCEGUITexture::setTexture(vid::ITexture *mytex, bool useAlphaBlending)
 {
+	m_UseAlphaBlending = useAlphaBlending;
+
 	if (m_Texture == mytex)
 		return;
 
@@ -106,8 +108,6 @@ void MyCEGUITexture::setTexture(vid::ITexture *mytex, bool useAlphaBlending)
 			static_cast<float>(m_Texture->getOriginalSize().Width),
 			static_cast<float>(m_Texture->getOriginalSize().Height));
 		_updateCachedScaleValues();
-
-		m_UseAlphaBlending = useAlphaBlending;
 	}
 }
 
