@@ -922,11 +922,12 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 	setCurrentAnimation(0);
 
 	SImposterParameters imposter_params = params;
-	s32 imp_views_cnt = creation_params.ViewsCount;	
-	core::vector2df imp_cam_view_scale = creation_params.CameraViewScale;
-	core::vector2df imp_size_scale = creation_params.SizeScale;
-	f32 imp_tex_res_single = creation_params.TextureResolution;
-	f32 imp_frame_step = creation_params.AnimationFrameStep;
+
+	const s32 imp_views_cnt = creation_params.ViewsCount;	
+	const core::vector2df imp_cam_view_scale = creation_params.CameraViewScale;
+	const core::vector2df imp_size_scale = creation_params.SizeScale;
+	const f32 imp_tex_res_frame = creation_params.TextureResolution;
+	const f32 imp_frame_step = creation_params.AnimationFrameStep;
 	
 	scn::IBillboardSceneNode *imposter = NULL;
 
@@ -995,17 +996,36 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 		core::dimension2di max_tex_size = m_VideoDriver.getMaximalTextureSize();
 
 		const s32 imp_tex_res_arr[]={256,512,1024,2048,4096};	
-		const s32 imp_tex_mix_cnt = sizeof(imp_tex_res_arr)/sizeof(s32);
-		s32 imp_tex_pitch_arr[imp_tex_mix_cnt];
-		s32 imp_tex_in_one_arr[imp_tex_mix_cnt];
-		f32 imp_tex_tcwidth_arr[imp_tex_mix_cnt];				
-
-		for (s32 i=0; i<imp_tex_mix_cnt; i++)
+		const s32 imp_tex_res_cnt = sizeof(imp_tex_res_arr)/sizeof(*imp_tex_res_arr);
+		s32 imp_tex_pitch_arr[imp_tex_res_cnt];
+		s32 imp_tex_in_one_arr[imp_tex_res_cnt];
+		f32 imp_tex_tcwidth_arr[imp_tex_res_cnt];
+		for (s32 i=0; i<imp_tex_res_cnt; i++)
 		{
-			imp_tex_pitch_arr[i]  = (f32)imp_tex_res_arr[i]/imp_tex_res_single;
+			imp_tex_pitch_arr[i]  = (f32)imp_tex_res_arr[i]/imp_tex_res_frame;
 			imp_tex_in_one_arr[i] = imp_tex_pitch_arr[i]*imp_tex_pitch_arr[i];
-			imp_tex_tcwidth_arr[i]  = 1.0f / ((f32)imp_tex_res_arr[i]/imp_tex_res_single);
+			imp_tex_tcwidth_arr[i]  = 1.0f / ((f32)imp_tex_res_arr[i]/imp_tex_res_frame);
 		}
+		s32 imp_tex_size_idx = imp_tex_res_cnt-1;
+		for (s32 i=imp_tex_size_idx; i>=0; i--)
+		{
+			if ((imp_tex_res_arr[i] < imp_tex_res_frame
+					&& max_tex_size.Width >= imp_tex_res_arr[i]
+					&& max_tex_size.Height >= imp_tex_res_arr[i])
+				|| imp_tex_res_arr[imp_tex_size_idx]>m_VideoDriver.getScreenSize().Width
+				|| imp_tex_res_arr[imp_tex_size_idx]>m_VideoDriver.getScreenSize().Height)
+				imp_tex_size_idx=i;
+			else
+				break;
+		}
+		s32 imp_tex_res     = imp_tex_res_arr[imp_tex_size_idx];
+		s32 imp_tex_in_one  = imp_tex_in_one_arr[imp_tex_size_idx];
+		s32 imp_tex_pitch   = imp_tex_pitch_arr[imp_tex_size_idx];
+		f32 imp_tex_tcwidth = imp_tex_tcwidth_arr[imp_tex_size_idx];
+		s32 imp_tex_in_one_cnt = 0;
+
+		LOGGER.logInfo("Choosed Render Target size={%dx%d}",
+			imp_tex_res, imp_tex_res);
 
 		scn::SBillboardParams billparams;
 		billparams.Size.set(
@@ -1073,12 +1093,9 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 			for (s32 v = 0; v < imp_views_cnt; v++)
 			{
 				for (f32 f = start; s32(f * 1000.0) <= end * 1000;
-						f += imp_frame_step, imp_frames_ovr_num++) {}
+					f += imp_frame_step, imp_frames_ovr_num++) {}
 			}
 		}
-
-		s32 imp_tex_size_idx = imp_tex_mix_cnt-1;
-		s32 imp_tex_in_one_cnt = 0;
 
 		vid::ITexture *rtt = 0;
 		u32 rtt_idx = 0;
@@ -1130,11 +1147,6 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 					if (!mesh)
 						continue;	
 
-					s32 imp_tex_res     = imp_tex_res_arr[imp_tex_size_idx];
-					s32 imp_tex_in_one  = imp_tex_in_one_arr[imp_tex_size_idx];
-					s32 imp_tex_pitch   = imp_tex_pitch_arr[imp_tex_size_idx];
-					f32 imp_tex_tcwidth = imp_tex_tcwidth_arr[imp_tex_size_idx];
-
 					s32 xoffset = (imp_tex_in_one_cnt%imp_tex_in_one) % imp_tex_pitch;
 					s32 yoffset = (imp_tex_in_one_cnt%imp_tex_in_one) / imp_tex_pitch;
 
@@ -1143,20 +1155,6 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 						imp_tex_in_one_cnt = 0;
 
 						s32 imp_tex_left = imp_frames_ovr_num-imp_frames_cnt;
-
-						// try to downsample tex size
-						for (s32 i=imp_tex_size_idx; i>=0; i--)
-						{				
-							if ((imp_tex_in_one_arr[i] >= 0.5f*imp_tex_left
-									&& imp_tex_res_arr[i] >= imp_tex_res_single
-									&& max_tex_size.Width >= imp_tex_res_arr[i]
-									&& max_tex_size.Height >= imp_tex_res_arr[i])
-								|| imp_tex_res_arr[imp_tex_size_idx]>m_VideoDriver.getScreenSize().Width
-								|| imp_tex_res_arr[imp_tex_size_idx]>m_VideoDriver.getScreenSize().Height)
-								imp_tex_size_idx=i;										
-							else					
-								break;
-						}
 						imp_tex_res		= imp_tex_res_arr		[imp_tex_size_idx];
 						imp_tex_in_one	= imp_tex_in_one_arr	[imp_tex_size_idx];
 						imp_tex_pitch	= imp_tex_pitch_arr		[imp_tex_size_idx];	
@@ -1171,6 +1169,7 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 						{
 							rtt_loaded = true;
 							rtt->grab();
+							LOGGER.logInfo("Use render target texture '%s'", rtt_name.c_str());
 						}
 						else
 						{
@@ -1190,28 +1189,28 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 					s32 col = imp_tex_in_one_cnt%imp_tex_pitch;							
 					
 					core::rectf tcrect(0,0, imp_tex_tcwidth,imp_tex_tcwidth);
-					core::recti frrect(0,0,imp_tex_res_single-1, imp_tex_res_single-1);
+					core::recti frrect(0,0,imp_tex_res_frame-1, imp_tex_res_frame-1);
 					core::recti frrect_rend = frrect;
 
 					if (m_VideoDriver.getDriverFamily() == vid::EDF_OPENGL)
 					// This vertical inversion is needed due to special order of pixel data in
 					// OpenGL frame buffer we reading from
 					{
-						frrect += core::position2di(imp_tex_res_single*col,
-							imp_tex_res - imp_tex_res_single*(row+1));
+						frrect += core::position2di(imp_tex_res_frame*col,
+							imp_tex_res - imp_tex_res_frame*(row+1));
 						tcrect += core::position2df(imp_tex_tcwidth*col,
 							1.0f - imp_tex_tcwidth*(row+1));
 					}
 					else
 					{
-						frrect += core::position2di(imp_tex_res_single*col,
-							imp_tex_res_single*row);
+						frrect += core::position2di(imp_tex_res_frame*col,
+							imp_tex_res_frame*row);
 						tcrect += core::position2df(imp_tex_tcwidth*col,
 							imp_tex_tcwidth*row   );
 					}
 
-					frrect_rend += core::position2di(imp_tex_res_single*col,
-						imp_tex_res_single*row);
+					frrect_rend += core::position2di(imp_tex_res_frame*col,
+						imp_tex_res_frame*row);
 
 					if (!rtt_loaded)
 					{
