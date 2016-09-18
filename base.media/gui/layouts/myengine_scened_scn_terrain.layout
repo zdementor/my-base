@@ -47,8 +47,8 @@
                         <Window Type="MyScened/StaticText" Name="Scened.Scene.Terrain.TileSets.Tex0Label" >
                             <Property Name="Font" Value="Tahoma-8" />
                             <Property Name="Text" Value="Texture0:" />
-                            <Property Name="HorzExtent" Value="63" />
-                            <Property Name="VertExtent" Value="16.8419" />
+                            <Property Name="HorzExtent" Value="78" />
+                            <Property Name="VertExtent" Value="17.1436" />
                             <Property Name="FrameEnabled" Value="False" />
                             <Property Name="HorzFormatting" Value="RightAligned" />
                             <Property Name="UnifiedAreaRect" Value="{{0,7},{0,2},{0,92},{0,25}}" />
@@ -60,8 +60,8 @@
                         <Window Type="MyScened/StaticText" Name="Scened.Scene.Terrain.TileSets.Tex1Label" >
                             <Property Name="Font" Value="Tahoma-8" />
                             <Property Name="Text" Value="Texture1:" />
-                            <Property Name="HorzExtent" Value="62" />
-                            <Property Name="VertExtent" Value="16.8419" />
+                            <Property Name="HorzExtent" Value="77" />
+                            <Property Name="VertExtent" Value="17.1436" />
                             <Property Name="FrameEnabled" Value="False" />
                             <Property Name="HorzFormatting" Value="RightAligned" />
                             <Property Name="UnifiedAreaRect" Value="{{0,7},{0,122},{0,92},{0,145}}" />
@@ -86,8 +86,8 @@
                         <Window Type="MyScened/StaticText" Name="Scened.Scene.Terrain.TileSets.Tex2Label" >
                             <Property Name="Font" Value="Tahoma-8" />
                             <Property Name="Text" Value="Texture2:" />
-                            <Property Name="HorzExtent" Value="63" />
-                            <Property Name="VertExtent" Value="16.8419" />
+                            <Property Name="HorzExtent" Value="78" />
+                            <Property Name="VertExtent" Value="17.1436" />
                             <Property Name="FrameEnabled" Value="False" />
                             <Property Name="HorzFormatting" Value="RightAligned" />
                             <Property Name="UnifiedAreaRect" Value="{{0,7},{0,245},{0,92},{0,268}}" />
@@ -99,8 +99,8 @@
                         <Window Type="MyScened/StaticText" Name="Scened.Scene.Terrain.TileSets.SplatMapLabel" >
                             <Property Name="Font" Value="Tahoma-8" />
                             <Property Name="Text" Value="Splatting map:" />
-                            <Property Name="HorzExtent" Value="94" />
-                            <Property Name="VertExtent" Value="16.8419" />
+                            <Property Name="HorzExtent" Value="117" />
+                            <Property Name="VertExtent" Value="17.1436" />
                             <Property Name="FrameEnabled" Value="False" />
                             <Property Name="HorzFormatting" Value="RightAligned" />
                             <Property Name="UnifiedAreaRect" Value="{{0,133},{0,122},{0,238},{0,145}}" />
@@ -135,8 +135,8 @@
             <Window Type="MyScened/StaticText" Name="Scened.Scene.Terrain.TileSets.Label" >
                 <Property Name="Font" Value="Tahoma-10" />
                 <Property Name="Text" Value="Tile sets:" />
-                <Property Name="HorzExtent" Value="73" />
-                <Property Name="VertExtent" Value="21.0665" />
+                <Property Name="HorzExtent" Value="88" />
+                <Property Name="VertExtent" Value="21.4437" />
                 <Property Name="TextColours" Value="tl:FFFFFF90 tr:FFFFFF90 bl:FFFFFF90 br:FFFFFF90" />
                 <Property Name="FrameEnabled" Value="False" />
                 <Property Name="HorzFormatting" Value="RightAligned" />
@@ -158,9 +158,9 @@
             <Property Name="UnifiedAreaRect" Value="{{0.651455,0},{0.0303268,0},{0.963362,0},{0.604604,0}}" />
             <Window Type="MyScened/StaticText" Name="Scened.Scene.Terrain.Props.TileRepeeatNumberLabel" >
                 <Property Name="Font" Value="Tahoma-8" />
-                <Property Name="Text" Value="Tile repeat number" />
-                <Property Name="HorzExtent" Value="121" />
-                <Property Name="VertExtent" Value="16.8419" />
+                <Property Name="Text" Value="Tile repeat num." />
+                <Property Name="HorzExtent" Value="130" />
+                <Property Name="VertExtent" Value="17.1436" />
                 <Property Name="FrameEnabled" Value="False" />
                 <Property Name="HorzFormatting" Value="RightAligned" />
                 <Property Name="UnifiedAreaRect" Value="{{0,6},{0,313},{0,148},{0,336}}" />
@@ -169,8 +169,8 @@
             <Window Type="MyScened/StaticText" Name="Scened.Scene.Terrain.Props.HeightMapLabel" >
                 <Property Name="Font" Value="Tahoma-10" />
                 <Property Name="Text" Value="Height map:" />
-                <Property Name="HorzExtent" Value="97" />
-                <Property Name="VertExtent" Value="21.0665" />
+                <Property Name="HorzExtent" Value="119" />
+                <Property Name="VertExtent" Value="21.4437" />
                 <Property Name="FrameEnabled" Value="False" />
                 <Property Name="HorzFormatting" Value="RightAligned" />
                 <Property Name="UnifiedAreaRect" Value="{{0,36},{0,10},{0,209},{0,33}}" />
@@ -202,8 +202,8 @@
             <Window Type="MyScened/StaticText" Name="Scened.Scene.Terrain.Props.GridPointSpacingLabel" >
                 <Property Name="Font" Value="Tahoma-8" />
                 <Property Name="Text" Value="Grid point spacing" />
-                <Property Name="HorzExtent" Value="116" />
-                <Property Name="VertExtent" Value="16.8419" />
+                <Property Name="HorzExtent" Value="143" />
+                <Property Name="VertExtent" Value="17.1436" />
                 <Property Name="FrameEnabled" Value="False" />
                 <Property Name="HorzFormatting" Value="RightAligned" />
                 <Property Name="UnifiedAreaRect" Value="{{0,6},{0,281},{0,148},{0,304}}" />
@@ -218,18 +218,21 @@
             <Window Type="MyScened/StaticText" Name="Scened.Scene.Terrain.Props.HeightScaleLabel" >
                 <Property Name="Font" Value="Tahoma-8" />
                 <Property Name="Text" Value="Height scale" />
-                <Property Name="HorzExtent" Value="79" />
-                <Property Name="VertExtent" Value="16.8419" />
+                <Property Name="HorzExtent" Value="99" />
+                <Property Name="VertExtent" Value="17.1436" />
                 <Property Name="FrameEnabled" Value="False" />
                 <Property Name="HorzFormatting" Value="RightAligned" />
                 <Property Name="UnifiedAreaRect" Value="{{0,6},{0,250},{0,148},{0,273}}" />
                 <Property Name="BackgroundEnabled" Value="False" />
             </Window>
-            <Window Type="TaharezLook/Editbox" Name="Scened.Scene.Terrain.Props.HeightScaleEditbox" >
+            <Window Type="TaharezLook/Spinner" Name="Scened.Scene.Terrain.Props.HeightScaleSpinner" >
                 <Property Name="Font" Value="Tahoma-10" />
-                <Property Name="MaxTextLength" Value="1073741823" />
+                <Property Name="StepSize" Value="0.01" />
+                <Property Name="CurrentValue" Value="0.1" />
+                <Property Name="MaximumValue" Value="1" />
+                <Property Name="MinimumValue" Value="0.01" />
+                <Property Name="TextInputMode" Value="FloatingPoint" />
                 <Property Name="UnifiedAreaRect" Value="{{0,157},{0,250},{0,227},{0,273}}" />
-                <Property Name="TextParsingEnabled" Value="False" />
             </Window>
         </Window>
     </Window>

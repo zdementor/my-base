@@ -54,10 +54,10 @@ local _Ctrls =
 			Spinners =
 			{
 				TileRepeatNumberSpinner = {Ctrl = nil},
+				HeightScaleSpinner = {Ctrl = nil},
 			},
 			Editboxes =
 			{
-				HeightScaleEditbox      = {Ctrl = nil},
 				GridPointSpacingEditbox = {Ctrl = nil},
 			},
 		},
@@ -142,9 +142,9 @@ local function _ScenedTerrainUpdateControls()
 	Helper.GUI.setImageTexture(_Ctrls.Tabs.Props.Images.HeightMapImage, hmap_tex)
 
 	_Ctrls.Tabs.Props.Spinners.TileRepeatNumberSpinner.Ctrl:setCurrentValue(terrain_scene_node:getTileRepeatNumber())
+	_Ctrls.Tabs.Props.Spinners.HeightScaleSpinner.Ctrl:setCurrentValue(terrain_scene_node:getHeightScale())
 	
 	_Ctrls.Tabs.Props.Editboxes.GridPointSpacingEditbox.Ctrl:setText(string.format("%.2f", terrain_scene_node:getGridPointSpacing()))
-	_Ctrls.Tabs.Props.Editboxes.HeightScaleEditbox.Ctrl:setText(string.format("%.4f", terrain_scene_node:getHeightScale()))
 
 	local listbox = _Ctrls.Tabs.TileSets.Listbox.Ctrl
 	listbox:resetList()
@@ -386,6 +386,10 @@ function _ScenedTerrainSpinnerValueChanged(args)
 	if name == _Ctrls.Tabs.Props.Spinners.TileRepeatNumberSpinner.Ctrl:getName() then
 		local val = _Ctrls.Tabs.Props.Spinners.TileRepeatNumberSpinner.Ctrl:getCurrentValue()
 		terrain_scene_node:setTileRepeatNumber(val)
+	elseif name == _Ctrls.Tabs.Props.Spinners.HeightScaleSpinner.Ctrl:getName() then
+		local val = _Ctrls.Tabs.Props.Spinners.HeightScaleSpinner.Ctrl:getCurrentValue()
+		terrain_scene_node:setHeightScale(val)
+		_Ctrls.Tabs.Props.Spinners.HeightScaleSpinner.Ctrl:setText(string.format("%.4f", val))
 	end
 end
 
@@ -393,11 +397,7 @@ function _ScenedTerrainTextAccepted(args)
 	local terrain_scene_node = _ScenedTerrainGetSelectedSceneNode()
 	local we = CEGUI.toWindowEventArgs(args)
 	local name = we.window:getName()
-	if name == _Ctrls.Tabs.Props.Editboxes.HeightScaleEditbox.Ctrl:getName() then
-		local val = tonumber(_Ctrls.Tabs.Props.Editboxes.HeightScaleEditbox.Ctrl:getText())
-		terrain_scene_node:setHeightScale(val)		
-		_ScenedTerrainUpdateControls()
-	elseif name == _Ctrls.Tabs.Props.Editboxes.GridPointSpacingEditbox.Ctrl:getName() then
+	if name == _Ctrls.Tabs.Props.Editboxes.GridPointSpacingEditbox.Ctrl:getName() then
 		local val = tonumber(_Ctrls.Tabs.Props.Editboxes.GridPointSpacingEditbox.Ctrl:getText())
 		if val < 1.0 then
 			val = 1.0
