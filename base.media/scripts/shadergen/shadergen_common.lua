@@ -824,7 +824,7 @@ function AppendPixelShaderBody(vtype, pass, perpixel, lightcnt)
 		text = text.."    FLOAT fstart = FOG_START("..Uniforms.FogParams..");\n"
 		text = text.."    FLOAT fend = FOG_END("..Uniforms.FogParams..");\n"
 		text = text.."    FLOAT fog = clamp((fend - fdepth) / (fend - fstart), 0., 1.);\n"
-		text = text.."    PS_OUT(FragColor).rgb = MIX("..Uniforms.FogColor..", PS_OUT(FragColor).rgb, fog);\n"
+		text = text.."    PS_OUT(FragColor).rgb = MIX("..Uniforms.FogColor.."*PS_OUT(FragColor).a, PS_OUT(FragColor).rgb, fog);\n"
 	end
 	
 	return text
