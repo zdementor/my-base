@@ -128,7 +128,6 @@ end
 local function _ScenedScenePropsSetDiffuseColor(color)
 	_GameScenePropsNew.Video.GlobalLight.DiffuseColor:set(color)
 	MyGameMgr:setGameSceneProps(_GameScenePropsNew)
-	--MyDriver:setGlobalLightParams(_GameScenePropsNew.Video.GlobalLight)
 	_ScenedScenePropsColorUpdate()
 end
 
@@ -221,23 +220,20 @@ local function _ScenedScenePropsValueChanged(args)
 	local we = CEGUI.toWindowEventArgs(args)
 	local name = we.window:getName()
 	if name == "Helper.Scened.SceneProps.Fog.FogStartSpinner" then
-		_GameScenePropsNew.Video.DistanceFog:set(MyDriver:getFog())
 		_GameScenePropsNew.Video.DistanceFog.Start = _Ctrls.Fog.FogStartSpinner.Ctrl:getCurrentValue()
-		MyDriver:setFog(_GameScenePropsNew.Video.DistanceFog)
 	elseif name == "Helper.Scened.SceneProps.Fog.FogEndSpinner" then
-		_GameScenePropsNew.Video.DistanceFog:set(MyDriver:getFog())
 		_GameScenePropsNew.Video.DistanceFog.End = _Ctrls.Fog.FogEndSpinner.Ctrl:getCurrentValue()
-		MyDriver:setFog(_GameScenePropsNew.Video.DistanceFog)
 	elseif name == "Helper.Scened.SceneProps.LODs.LODNearestSpinner" then
-		MyScnMgr:setLODDistance(scn.ELL_LOD_NEAREST,
-			_Ctrls.LODs.LODNearestSpinner.Ctrl:getCurrentValue())
+		_GameScenePropsNew.Scene.LODDistances[scn.ELL_LOD_NEAREST] =
+			_Ctrls.LODs.LODNearestSpinner.Ctrl:getCurrentValue()
 	elseif name == "Helper.Scened.SceneProps.LODs.LODNearSpinner" then
-		MyScnMgr:setLODDistance(scn.ELL_LOD_NEAR,
-			_Ctrls.LODs.LODNearSpinner.Ctrl:getCurrentValue())
+		_GameScenePropsNew.Scene.LODDistances[scn.ELL_LOD_NEAR] =
+			_Ctrls.LODs.LODNearSpinner.Ctrl:getCurrentValue()
 	elseif name == "Helper.Scened.SceneProps.LODs.LODFarSpinner" then
-		MyScnMgr:setLODDistance(scn.ELL_LOD_FAR,
-			_Ctrls.LODs.LODFarSpinner.Ctrl:getCurrentValue())
+		_GameScenePropsNew.Scene.LODDistances[scn.ELL_LOD_FAR] =
+			_Ctrls.LODs.LODFarSpinner.Ctrl:getCurrentValue()
 	end
+	MyGameMgr:setGameSceneProps(_GameScenePropsNew)
 end
 
 local function _ScenedScenePropsCheckStateChanged(args)
