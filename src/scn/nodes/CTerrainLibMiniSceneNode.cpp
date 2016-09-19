@@ -132,7 +132,6 @@ bool CTerrainLibMiniSceneNode::setMaps(
     size_minus_1 = m_HeightFieldSize-1; 
 	size_minus_2 = m_HeightFieldSize-2; 
 	size_plus_1 = m_HeightFieldSize+1;
-	m_TerrainHeight = (f32)fabs(m_HeightMax - m_HeightMin);
     detail_div_size_1 = (float)((float)m_TileRepeatNumber/size_minus_1);
 
     if ( m_TerrainHeight <= 0)  m_TerrainHeight=0.000001f;
@@ -187,12 +186,7 @@ bool CTerrainLibMiniSceneNode::setMaps(
 
 	heightImage->drop();
 
-	m_TerrainWidth  = (m_HeightFieldSize - 1) * m_GridPointSpacing;    
-    m_TerrainLength = (m_HeightFieldSize - 1) * m_GridPointSpacing;    
-
-	m_BoundingBox.reset(0,0,0);
-	m_BoundingBox.addInternalPoint(-m_TerrainWidth/2.0f, m_HeightMin,-m_TerrainLength/2.0f );
-	m_BoundingBox.addInternalPoint( m_TerrainWidth/2.0f, m_HeightMax, m_TerrainLength/2.0f );
+	setHeightScale(m_HeightScale);
 
 	LOGGER.logInfo("LibMini terrain initialized (resolution=%.f, size=%dx%d(%dx%d), width=%.f, length=%.f, height=%.f)", 
 		m_Resolution, m_HeightFieldSize, m_HeightFieldSize, m_HeightFieldSizeValue, m_HeightFieldSizeValue,
@@ -473,6 +467,9 @@ void CTerrainLibMiniSceneNode::OnPreRender(u32 timeMs)
 
 	if (drawDebug)
     {
+		m_VideoDriver.register3DBoxForRendering(
+			getAbsoluteTransformation(),
+			getBoundingBox(), img::SColor(0xffffffff));
     }
 
 	if (drawNormals)

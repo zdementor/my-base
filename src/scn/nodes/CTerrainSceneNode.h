@@ -129,6 +129,7 @@ protected:
 	core::array< TTexArr > m_TilesTextures;
 
 	f32 m_HeightMin, m_HeightMax;
+	f32 m_TerrainWidth,  m_TerrainLength,  m_TerrainHeight;
 
 	f32 m_SizeDiv2Dim;
 

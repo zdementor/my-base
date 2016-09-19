@@ -24,6 +24,7 @@ CTerrainSceneNode::CTerrainSceneNode(ISceneNode* parent, s32 id)
 	m_VideoDriver(VIDEO_DRIVER), m_EnabledLights(0), m_Reset(false)
 {
 	m_HeightFieldSize = m_HeightFieldSizeValue = 0; 
+	m_TerrainWidth = m_TerrainLength = m_TerrainHeight = 0.f;
 
 	m_TileRepeatNumber = 10.f;
 
@@ -232,9 +233,12 @@ bool CTerrainSceneNode::_setMaps(
 			} 
 		}
 	}
-
 	m_HeightMin *= m_HeightScale;
 	m_HeightMax *= m_HeightScale;
+
+	m_TerrainWidth  = (m_HeightFieldSize - 1) * m_GridPointSpacing;    
+    m_TerrainLength = (m_HeightFieldSize - 1) * m_GridPointSpacing;    
+	m_TerrainHeight = (f32)fabs(m_HeightMax - m_HeightMin);
 
 	m_HeightMapTextureName.sprintf("heightmap.texture.%d.%p", m_HeightFieldSizeValue, this);
 
@@ -261,8 +265,22 @@ f32  CTerrainSceneNode::getHeightScale()
 
 void CTerrainSceneNode::setHeightScale(f32 scale)
 {
+	f32 oldHeightScale = m_HeightScale;
+
 	CHECK_RANGE(scale, 0.001f, 1.f);
 	m_HeightScale = scale;
+
+	f32 kScale = m_HeightScale / oldHeightScale;
+
+	m_HeightMin *= kScale;
+	m_HeightMax *= kScale;
+
+	m_BoundingBox.reset(0,0,0);
+	m_BoundingBox.addInternalPoint(-m_TerrainWidth/2.0f, m_HeightMin,-m_TerrainLength/2.0f );
+	m_BoundingBox.addInternalPoint( m_TerrainWidth/2.0f, m_HeightMax, m_TerrainLength/2.0f );
+
+	m_TransformationChanged = true;
+	updateAbsoluteTransformation();
 }
 
 //---------------------------------------------------------------------------

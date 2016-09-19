@@ -108,8 +108,6 @@ private:
     // current camera ciew direction
     vector3df cam_dir; 
 
-    f32 m_TerrainWidth,  m_TerrainLength,  m_TerrainHeight;
-
 	s32 *ColorArrayPtr;
 
     E_TERRAIN_COLOR_SCHEMA ColorScheme;
