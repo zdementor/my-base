@@ -109,19 +109,17 @@ public:
 	//! \param collisions - ref to store all finded collisions
     //! \param excludeNodesList - pointer to array of the pointers 
     //! to objects with wich we don't want to calc collisions
-    virtual bool findCollisionsWithRay(
-        core::line3d<f32> ray, s32 collid_filter, 
+	virtual bool findCollisionsWithRay(
+		const core::line3df &ray, s32 collid_filter, 
 		SCollisionPoints &collisions,
-        core::array<scn::ISceneNode*> *excludeNodesList=0
-        )=0;
+		core::array<scn::ISceneNode*> *excludeNodesList = 0) = 0;
 
 	//! find collisions of this ray with dynamic object
     //! \param obj - dynamic object to find collisions with
     //! \param ray - ray (nothing more to say)
 	//! \param collisions - ref to store all finded collisions
-    virtual bool findCollisionsWithRay(
-		IDynamicObject *obj, core::line3d<f32> ray, SCollisionPoints &collisions
-        )=0;
+	virtual bool findCollisionsWithRay(IDynamicObject *obj,
+		const core::line3df &ray, SCollisionPoints &collisions) = 0;
 
 	//! check intersections of this ray with world
 	//! \param ray - ray (nothing more to say)
@@ -129,14 +127,12 @@ public:
 	//! \param excludeNodesList - pointer to array of the pointers 
 	//! to objects with wich de don't want to check intersections
 	virtual bool checkIntersectionWithRay(
-		core::line3d<f32> ray, s32 collid_filter, 
-		core::array<scn::ISceneNode*> *excludeNodesList=0
-		)=0; 
+		const core::line3df &ray, s32 collid_filter, 
+		core::array<scn::ISceneNode*> *excludeNodesList = 0) = 0; 
 
 	//! translate ODE-object through this dynamic-world by the force
 	virtual void translateObjectThroughTheWorld(
-		IDynamicObject *obj, core::vector3df force
-		)=0;	
+		IDynamicObject *obj, const core::vector3df &force) = 0;	
 
     //! set ODE World Params
     virtual void setParams(SDynamicWorldParams &params) =0;

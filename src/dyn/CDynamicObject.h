@@ -34,7 +34,9 @@ private:
     dBodyID  Body;    // body data of the object
 	core::array<dGeomID> Geometry;
     dMass    Mass;    // mass of the object	
-	dTriMeshDataID TriMeshData; // trimesh data
+
+	dTriMeshDataID m_TriMeshData;
+	dHeightfieldDataID m_HeightfieldData;
 
 	dVector3 *vertices; // vertex array for trimesh geom
 	int *indices;       // index array for trimesh geom

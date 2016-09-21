@@ -481,7 +481,7 @@ local function _ConsoleRegisterForRendering()
 	local posx = 20
 	local posy = 20
 	local height1 = 20
-	local height2 = 15
+	local height2 = 12
 	
 	if MyScnMgr:isSceneEditorStarted() then
 		posy = posy + 30

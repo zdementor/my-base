@@ -217,16 +217,19 @@ void CDynamicManager::nearCollisionCallback(
 
 //---------------------------------------------------------------------------
 
-//! find collisions of this ray with world
 bool CDynamicManager::findCollisionsWithRay(
-    core::line3d<f32> ray, s32 collid_filter, SCollisionPoints &collisions,
-    core::array<scn::ISceneNode*> *excludeNodesList
-    )
+	const core::line3df &ray, s32 collid_filter, SCollisionPoints &collisions,
+	core::array<scn::ISceneNode*> *excludeNodesList)
 { 
 	bool collided = false; 	
 
+	f32 length = ray.getLength();
+
+	if (length <= 0.f)
+		return collided;
+
     // Set the length of the given ray. 
-    dGeomRaySetLength (ray_geom, (dReal)ray.getLength());
+    dGeomRaySetLength (ray_geom, (dReal)length);
 
     // Set the starting position and direction of the given ray.
     core::vector3df dir = ray.getVector();
@@ -300,22 +303,24 @@ bool CDynamicManager::findCollisionsWithRay(
 
 //---------------------------------------------------------------------------
 
-//! find collisions of this ray with dynamic object
-
-bool CDynamicManager::findCollisionsWithRay(
-	IDynamicObject *obj, core::line3d<f32> ray, SCollisionPoints &collisions
-    )
+bool CDynamicManager::findCollisionsWithRay(IDynamicObject *obj,
+	const core::line3df &ray, SCollisionPoints &collisions)
 {	
 	bool collided = false; 	
 
 	IDynamicObject  *o   = obj;   
 	scn::ISceneNode *node= NULL;
 
+	f32 length = ray.getLength();
+
+	if (length <= 0.f)
+		return collided;
+
     if (!o || !(node=o->getSceneNode()) || !node->isVisible()) 
 		return collided;
 
     // Set the length of the given ray. 
-    dGeomRaySetLength (ray_geom, (dReal)ray.getLength());
+    dGeomRaySetLength (ray_geom, (dReal)length);
 
     // Set the starting position and direction of the given ray.
     core::vector3df dir = ray.getVector();
@@ -360,14 +365,18 @@ bool CDynamicManager::findCollisionsWithRay(
 
 //---------------------------------------------------------------------------
 
-//! check intersections of this ray with world
 bool CDynamicManager::checkIntersectionWithRay(
-    core::line3d<f32> ray, s32 collid_filter, 
+    const core::line3df &ray, s32 collid_filter, 
 	core::array<scn::ISceneNode*> *excludeNodesList
     )
 {   
+	f32 length = ray.getLength();
+
+	if (length <= 0.f)
+		return false;
+
     // Set the length of the given ray. 
-    dGeomRaySetLength (ray_geom, (dReal)ray.getLength());
+    dGeomRaySetLength (ray_geom, (dReal)length);
 
     // Set the starting position and direction of the given ray.
 
@@ -429,10 +438,8 @@ bool CDynamicManager::checkIntersectionWithRay(
 
 //---------------------------------------------------------------------------
 
-//! translate ODE-object through this dynamic-world by the force
 void CDynamicManager::translateObjectThroughTheWorld(
-	IDynamicObject *obj, core::vector3df force
-    )
+	IDynamicObject *obj, const core::vector3df &force)
 {
 	if (!obj || force.getLength() <= 0.0f)
 		return;		
@@ -475,6 +482,7 @@ void CDynamicManager::translateObjectThroughTheWorld(
 		// calculaing koeff of attenuation (depending on test rays)	
 		{
 			core::vector3df force_xz_proj(force.X,0,force.Z);
+			f32 force = force_xz_proj.getLength();
 
 			// perfoming testing on test rays
 
@@ -492,7 +500,7 @@ void CDynamicManager::translateObjectThroughTheWorld(
 
 			f32 LimitAngle = 30;
 
-			for (i=0; i<test_rays.size(); i++)
+			for (i=0; force > 0.f && i<test_rays.size(); i++)
 			{
 				m.setRotationDegrees( core::vector3df(0,180+min_test_angle+i*test_angle_step,0) ); 
 				rot_vec = force_xz_proj;
@@ -534,9 +542,7 @@ void CDynamicManager::translateObjectThroughTheWorld(
 
 	f32 k = m_ForceInterolator.getValue(m_DynamicDeltaTimeSec);
 
-	force *= k * koeff_attenuation_common;	 
-
-	obj->addForce(force);
+	obj->addForce(force * k * koeff_attenuation_common);
 }
 
 //---------------------------------------------------------------------------

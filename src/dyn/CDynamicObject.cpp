@@ -40,7 +40,7 @@ CDynamicObject::CDynamicObject(
     dWorldID w, dSpaceID s, scn::ISceneNode* n, SDynamicObjectParams &params 
     ) : 
 World(w), Space(s), Node(n), isFalling(false), isFallingOnLastCalc(false), 
-Body(NULL), TriMeshData(NULL),
+Body(NULL), m_TriMeshData(NULL), m_HeightfieldData(NULL),
 DynVelocity(core::vector3df(0,0,0)), MovingForce(core::vector3df(0,0,0)), 
 vertices(0), indices(0), vertexcount(0), indexcount(0),
 HeightOverGround(0), AutoUpdateGeomParams(false), Moved(true),
@@ -102,12 +102,18 @@ void CDynamicObject::freeGeomData()
 		dBodyDestroy(Body); 
 		Body=0; 
 	}
-	// destroy ode trimesh data
-	if (TriMeshData) 
+
+	if (m_TriMeshData) 
 	{ 
-		dGeomTriMeshDataDestroy (TriMeshData); 
-		TriMeshData=0; 
-	}		
+		dGeomTriMeshDataDestroy(m_TriMeshData); 
+		m_TriMeshData = 0;
+	}
+	if (m_HeightfieldData) 
+	{ 
+		dGeomHeightfieldDataDestroy(m_HeightfieldData);
+		m_HeightfieldData = 0; 
+	}
+
 	// destroy ode geoms
 	for (u32 i=0; i<Geometry.size(); i++)
 	{
@@ -357,11 +363,11 @@ void CDynamicObject::updateGeomData()
         } 
         
 		// creates a dTriMeshData object which is used to store mesh data.
-        TriMeshData = dGeomTriMeshDataCreate();
+        m_TriMeshData = dGeomTriMeshDataCreate();
         
 		// build the trimesh data
         dGeomTriMeshDataBuildSimple(
-			TriMeshData, (dReal*)vertices, vertexcount, (unsigned int*)indices, indexcount
+			m_TriMeshData, (dReal*)vertices, vertexcount, (unsigned int*)indices, indexcount
 			);  		
        
         // creating transform geometry
@@ -372,7 +378,7 @@ void CDynamicObject::updateGeomData()
 		dGeomTransformSetGeom(
 			Geometry[Geometry.size()-1], 
 			dCreateTriMesh(
-				0, TriMeshData, 0, 0, 0
+				0, m_TriMeshData, 0, 0, 0
 				)
 			);  
     }
@@ -385,7 +391,7 @@ void CDynamicObject::updateGeomData()
 		if (terrain)
 		{
 			// our heightfield floor
-			dHeightfieldDataID heightid = dGeomHeightfieldDataCreate();
+			dHeightfieldDataID heightid = m_HeightfieldData = dGeomHeightfieldDataCreate();
 
 			// Create heightfield.
 
