@@ -12,6 +12,7 @@
 #include "CDynamicObject.h"
 
 #include <scn/ICameraSceneNode.h>
+#include <scn/ITerrainSceneNode.h>
 #include <scn/ISceneManager.h>
 #include <vid/IVideoDriver.h>
 #include <game/IGameTasksManager.h>
@@ -26,10 +27,43 @@
 #include <game/IGameEventsDispatcher.h>
 
 #include "ODEHelper.h"
+#include <heightfield.h>
 
 //---------------------------------------------------------------------------
 namespace my {
 namespace dyn {
+//---------------------------------------------------------------------
+
+#define NUMC_MASK (0xffff)
+
+int collide_heightfield_ray(dxGeom *o1, dxGeom *rayGeom, int flags, dContactGeom* contact, int skip )
+{
+	assert( skip >= (int)sizeof(dContactGeom) );
+	assert( rayGeom->type == dRayClass );
+	assert( o1->type == dHeightfieldClass );
+	assert((flags & NUMC_MASK) >= 1);
+
+	int numMaxTerrainContacts = (flags & NUMC_MASK);
+	int numTerrainContacts = 0;
+	const dReal rLen = 1000000.f;
+	dVector3 rOrig, rDir;
+
+	dGeomRayGet(rayGeom, rOrig, rDir);
+
+	core::line3df ray(rOrig[0], rOrig[1], rOrig[2],
+		rOrig[0] + rDir[0] * rLen, rOrig[1] + rDir[1], rOrig[2] + rDir[2] * rLen);
+
+	dxHeightfield *hf = (dxHeightfield*)o1;
+	dxHeightfieldData *hfdata = hf->m_p_data;
+	scn::ITerrainSceneNode *terrain = (scn::ITerrainSceneNode *)hfdata->m_pUserData;
+
+	f32 h0 = terrain->getCellHeight(0, 0);
+	(void)h0;
+
+	// Return contact count.
+	return numTerrainContacts;
+}
+
 //---------------------------------------------------------------------
 
 CDynamicManager::CDynamicManager() 
@@ -51,6 +85,8 @@ EnabledBodies(0), m_DynamicDeltaTimeSec(0)
 
 	// create ray
     ray_geom = dCreateRay (theSpace, 100);	
+
+	dSetColliderOverride(dHeightfieldClass, dRayClass, collide_heightfield_ray);
 
 	// some initialization
 	m_ForceInterolator.init(0.0333f, 7500, 0.0666f, 3500);   
