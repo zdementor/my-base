@@ -222,7 +222,7 @@ void CDynamicObject::updateGeomData()
             length -=2*radius;
 
             // создаем массу цилиндра
-            dMassSetCappedCylinder (&Mass, DENSITY,3,radius,length>0?length:0.000001f);							
+            dMassSetCappedCylinder (&Mass, DENSITY,3,radius,length>0?length:0.000001f);
         }
 		else 
 		if (gf == EDOGF_SPHERE)
@@ -361,7 +361,7 @@ void CDynamicObject::updateGeomData()
         
 		// build the trimesh data
         dGeomTriMeshDataBuildSimple(
-			TriMeshData, (dReal*)vertices, vertexcount, indices,indexcount
+			TriMeshData, (dReal*)vertices, vertexcount, (unsigned int*)indices, indexcount
 			);  		
        
         // creating transform geometry
