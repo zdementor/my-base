@@ -193,7 +193,7 @@ CSound :: ~CSound ()
 
 void CSound::_addSource()
 {
-	if (!m_Source && m_SourcesUsed<MAX_OAL_SOURCES)
+	if (m_SourceIdx == -1 && m_SourcesUsed<MAX_OAL_SOURCES)
 	{   
 		m_SourceIdx=m_SourcesUsed; 
 
@@ -208,7 +208,7 @@ void CSound::_addSource()
 
 void CSound::_removeSource()
 {
-	if (m_Source && m_SourcesUsed>0)
+	if (m_SourceIdx != -1 && m_SourcesUsed>0)
 	{     
 		s32 last_idx = m_SourcesUsed-1;
 
@@ -446,10 +446,15 @@ void CSound::rewind()
 
 //----------------------------------------------------------------------------------
 
-void CSound::stop ()
+void CSound::stop()
 {
 	if (m_Source==0)
+	{
+		m_Time=0;
+		_removeSource();
+		m_AtEnd = true;
 		return;
+	}
 
 	alSourceStop ( m_Source );
 
@@ -468,7 +473,6 @@ void CSound::stop ()
 	}
 
 	_removeSource();
-
 	m_AtEnd = true;
 }
 

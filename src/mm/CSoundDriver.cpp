@@ -79,6 +79,7 @@ void CSoundDriver::updateSounds ()
 {   
 	for (s32 s=0; s<CSound::m_SourcesUsed;)
 	{
+		s32 wasUsed = CSound::m_SourcesUsed;
 		CSound* sound = CSound::m_SoundSources[s].Sound;
 
 		sound->_update();
@@ -88,7 +89,7 @@ void CSoundDriver::updateSounds ()
 			if (sound->isAutoDelete())
 				sound->drop();
 		}
-		else
+		if (wasUsed == CSound::m_SourcesUsed)
 			s++;
 	}
 }
