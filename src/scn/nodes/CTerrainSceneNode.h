@@ -130,8 +130,7 @@ protected:
 
 	f32 m_HeightMin, m_HeightMax;
 	f32 m_TerrainWidth,  m_TerrainLength,  m_TerrainHeight;
-
-	f32 m_SizeDiv2Dim;
+	f32 m_TerrainHalfWidth, m_TerrainHalfLength;
 
 	bool m_Reset;
 };

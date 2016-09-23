@@ -581,16 +581,16 @@ bool CPathFinderAStar::isWalkableLine(const core::vector3df &src, const core::ve
 		!dst_cell.InsideWalkmap)
 		return false;
 
-	core::list <core::vector2di> pixels;
+	static core::array <core::vector2di> pixels;
 	core::math::draw_line(
 		src_cell.Position.X, src_cell.Position.Z,
 		dst_cell.Position.X, dst_cell.Position.Z,
 		pixels);
+	u32 pcnt = pixels.size();
 
-	core::list<core::vector2di>::iterator iter = pixels.begin();
-	for (; iter!=pixels.end(); ++iter)
+	for (u32 i = 0; i < pcnt; i++)
 	{
-		core::vector2di pixel = *iter;
+		core::vector2di &pixel = pixels[i];
 		if (!Pathfinder.isWalkable( pixel.X, pixel.Y ))
 			return false;
 	}

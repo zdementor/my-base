@@ -25,6 +25,7 @@ CTerrainSceneNode::CTerrainSceneNode(ISceneNode* parent, s32 id)
 {
 	m_HeightFieldSize = m_HeightFieldSizeValue = 0; 
 	m_TerrainWidth = m_TerrainLength = m_TerrainHeight = 0.f;
+	m_TerrainHalfWidth = m_TerrainHalfLength = 0.f;
 
 	m_TileRepeatNumber = 10.f;
 
@@ -190,8 +191,6 @@ bool CTerrainSceneNode::_setMaps(
 	m_HeightMin = 10000000; 
     m_HeightMax =-10000000; 
 
-	m_SizeDiv2Dim = m_GridPointSpacing * (m_HeightFieldSizeValue / 2.0f - 0.5);
-
 	img::IImage* heightImage = IMAGE_LIBRARY.createEmptyImage(
 		core::dimension2di(m_HeightFieldSize, m_HeightFieldSize), img::ECF_LUMINANCE16);
 
@@ -235,10 +234,12 @@ bool CTerrainSceneNode::_setMaps(
 	}
 	m_HeightMin *= m_HeightScale;
 	m_HeightMax *= m_HeightScale;
-
-	m_TerrainWidth  = (m_HeightFieldSize - 1) * m_GridPointSpacing;    
-    m_TerrainLength = (m_HeightFieldSize - 1) * m_GridPointSpacing;    
 	m_TerrainHeight = (f32)fabs(m_HeightMax - m_HeightMin);
+
+	m_TerrainHalfLength = m_TerrainHalfWidth =
+		m_GridPointSpacing * (m_HeightFieldSize / 2.0f - 0.5);
+	m_TerrainLength = m_TerrainWidth  =
+		(m_HeightFieldSize - 1) * m_GridPointSpacing;
 
 	m_HeightMapTextureName.sprintf("heightmap.texture.%d.%p", m_HeightFieldSizeValue, this);
 
@@ -576,16 +577,15 @@ u32 CTerrainSceneNode::getHeightFieldSize()
 
 //------------------------------------------------------------------------------
 
-const core::vector3df& CTerrainSceneNode::getCellPosition(u32 cell_x, u32 cell_y)
+const core::vector3df& CTerrainSceneNode::getCellPosition(u32 i, u32 j)
 {	
 	static core::vector3df v;
 
-	f32 x = m_GridPointSpacing * (f32)cell_x - m_SizeDiv2Dim;
-    f32 z = m_SizeDiv2Dim - m_GridPointSpacing * (f32)cell_y;  
-
-	f32 height = getCellHeight(cell_x, cell_y);	
-
+	f32 x = m_GridPointSpacing * (f32)i - m_TerrainHalfWidth;
+	f32 z = m_TerrainHalfLength - m_GridPointSpacing * (f32)j;
+	f32 height = getCellHeight(i, j);
 	v.set(x, height, z);
+
 	return v;
 }
 

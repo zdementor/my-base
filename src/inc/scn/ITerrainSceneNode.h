@@ -149,11 +149,28 @@ public:
 	//! get the length of the square size of the heightfield 
     virtual u32 getHeightFieldSize() = 0;
 
-	//! calculates position of the point (i, j) in the terrain
-	virtual const core::vector3df& getCellPosition(u32 cell_x, u32 cell_y) = 0;
+	//! Return position/height of the cell (i, j) in the terrain
+	//! The terrain local coordinate systems:
+	//!
+	//!             ^ j
+	//!             |       (0, size - 1)
+	//! (0, size-1) o-----------o
+	//!             |  Terrain  |
+	//!             |     o-----|-------------> X
+	//!             |     |     |
+	//!      (0, 0) o-----|-----o---------> i
+	//!                   | (size - 1, 0)
+	//!                   |
+	//!                   v Y
+	//!
+	virtual const core::vector3df& getCellPosition(u32 i, u32 j) = 0;
+	virtual f32 getCellHeight(u32 i, u32 j) = 0;
 
-	//! get the height
-    virtual f32 getCellHeight(u32 cell_x, u32 cell_y) = 0;
+	//! calculates height at the absolute coords (x, z) in the terrain
+	virtual f32 getHeight(f32 x, f32 z) = 0;
+
+	//! calculates position at the absolute coords (x, z) in the terrain
+	virtual const core::vector3df& getNormal(f32 x, f32 z) = 0;
 
     //! set tiles number for the detail map
     virtual void setTileRepeatNumber(u32 value) = 0;

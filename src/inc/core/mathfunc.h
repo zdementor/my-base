@@ -44,6 +44,9 @@ MY_FORCEINLINE T Lerp(const T a, const T b, const T t)
 MY_FORCEINLINE bool Equals(const f32 a, const f32 b, const f32 tolerance = ROUNDING_ERROR_32)
 { return (a + tolerance > b) && (a - tolerance < b); }
 
+MY_FORCEINLINE bool Equals(const f64 a, const f64 b, const f64 tolerance = ROUNDING_ERROR_64)
+{ return (a + tolerance > b) && (a - tolerance < b); }
+
 //! returns if a float equals zero, taking floating 
 //! point rounding errors into account
 MY_FORCEINLINE bool IsZero(const f32 a, const f32 tolerance = ROUNDING_ERROR_32)
@@ -81,9 +84,8 @@ __MY_CORE_LIB_API__ MY_FORCEINLINE f32 ATan2 (const f32& fY, const f32& fX);
 __MY_CORE_LIB_API__ MY_FORCEINLINE f32 Ceil  (const f32& fValue);
 
 //! draw line from (x1,y1) to (x2,y2) into pixels array
-__MY_CORE_LIB_API__ MY_FORCEINLINE void draw_line(
-	s32 x1, s32 y1, s32 x2, s32 y2, core::list<core::vector2di> &pixels
-	);
+__MY_CORE_LIB_API__ void draw_line(
+	s32 x1, s32 y1, s32 x2, s32 y2, core::array<core::vector2di> &pixels);
 
 // Cosine function.
 //  @param
@@ -114,7 +116,9 @@ __MY_CORE_LIB_API__ MY_FORCEINLINE f32 Sin (const f32& fValue, const bool& useTa
 
 __MY_CORE_LIB_API__ MY_FORCEINLINE f32 Sqr (const f32& fValue);
 
-__MY_CORE_LIB_API__ MY_FORCEINLINE f32 Sqrt (const f32& fValue);
+template < class T >
+MY_FORCEINLINE T Sqrt(const T& value)
+	{ return (T)(sqrt(value)); }
   
 //  Inverse square root i.e. 1 / Sqrt(x), good for vector
 //  normalisation.          

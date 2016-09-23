@@ -107,63 +107,7 @@ bool CPathFinderManager::findPath(
 				start_pos = pfinder->getPathCell(startx, starty).Position;
 				dest_pos  = pfinder->getPathCell(destx, desty).Position;
 				
-				// try to find straight way from one pos to another
-
-				core::list<core::vector2di> straight_way;
-				core::math::draw_line(startx, starty, destx, desty, straight_way);
-				
-				core::list<core::vector2di>::iterator iter_begin = straight_way.begin();
-				core::list<core::vector2di>::iterator iter_end   = straight_way.end();
-
-				core::list<core::vector2di>::iterator iter;
-
-				s32 point_counter = 0;
-				s32 first_infl = 0;
-/*
-				for (iter=iter_begin; iter!=iter_end; ++iter, point_counter++)
-				{
-					core::vector2di &p =  *iter;
-
-					core::vector3df v = pfinder->toRealPos(p.X, p.Y);					
-
-					if (point_counter!=0)
-					{
-						if (pfinder->isBusy(p.X, p.Y))
-						{
-							finded = false;
-
-							break;
-						}
-					}
-
-					if (!pfinder->isWalkablePosition(v))
-					{
-						finded = false;
-
-						break;
-					}
-				}	*/	
-				
-				finded = false;
-
-				if (finded)
-				// store straight way finded - we are happy
-				{
-					for (iter=iter_begin; iter!=iter_end; ++iter)
-					{
-						core::vector2di &p =  *iter;
-
-						core::vector3df v = pfinder->getPathCell(p.X, p.Y).Position;
-
-						output_path.push_back(v);
-					}
-
-					return finded;
-				}
-
-				output_path.clear();
-
-				// fire real pathfining
+				// fire pathfining
 
 				finded = pfinder->findPath(
 					start_pos, dest_pos, output_path, force_recalc
@@ -360,18 +304,17 @@ void CPathFinderManager::getPathCellLine(
 		start_cell = pfinder->getPathCellFromPosition(start_pos);
 		end_cell = pfinder->getPathCellFromPosition(end_pos);
 
-		core::list <core::vector2di> way;
+		static core::array <core::vector2di> way;
 		core::math::draw_line(
 			start_cell.Indices.X, start_cell.Indices.Y,
 			end_cell.Indices.X, end_cell.Indices.Y, way);
-
 		u32 wcnt = way.size();
+
 		output_line.set_used(wcnt);
 		output_line.set_used(0);
+		for (u32 i = 0; i < wcnt; i++)
+			output_line.push_back(pfinder->getPathCell(way[i].X, way[i].Y));
 
-		core::list <core::vector2di>::iterator it = way.begin();
-		for (; it != way.end(); ++it)
-			output_line.push_back(pfinder->getPathCell((*it).X, (*it).Y));
 		break;
 	}
 }

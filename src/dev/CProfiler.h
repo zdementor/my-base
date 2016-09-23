@@ -66,7 +66,7 @@ private:
 				TimeSec[i] = 0.0;
 			Info= "";
 			ProfileCount = 0;
-			AverageTimeSec = core::ROUNDING_ERROR_64;
+			AverageTimeSec = ROUNDING_ERROR_64;
 			FirstChild = LastChild = Next = Parent =
 				OldFirstChild = OldLastChild = OldNext = OldParent = NULL;
 			Parameter.ParentDepth		= 0;
@@ -103,7 +103,7 @@ private:
 			if (core::math::Abs(AverageTimeSec - avg) / AverageTimeSec > 0.1)
 				AverageTimeSec = avg;
 			if (AverageTimeSec <= 0.0)
-				AverageTimeSec = core::ROUNDING_ERROR_64;
+				AverageTimeSec = ROUNDING_ERROR_64;
 			ProfileCount++;
 		}
 		SProfileParameter Parameter;

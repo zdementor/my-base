@@ -59,11 +59,28 @@ class ITerrainSceneNode : public ISceneNode
 	//! get the length of the square size of the heightfield 
     unsigned getHeightFieldSize();
 
-	//! calculates position of the point (i, j) in the terrain
-	const core::vector3df& getCellPosition(int cell_x, int cell_y);
+	//! Return position/height of the cell (i, j) in the terrain
+	//! The terrain local coordinate systems:
+	//!
+	//!             ^ j
+	//!             |       (0, size - 1)
+	//! (0, size-1) o-----------o
+	//!             |  Terrain  |
+	//!             |     o-----|-------------> X
+	//!             |     |     |
+	//!      (0, 0) o-----|-----o---------> i
+	//!                   | (size - 1, 0)
+	//!                   |
+	//!                   v Y
+	//!
+	const core::vector3df& getCellPosition(unsigned i, unsigned j);
+	float getCellHeight(unsigned i, unsigned j);
 
-	//! get the height
-    float getCellHeight(int cell_x, int cell_y);
+	//! calculates height at the local coords (x, z) in the terrain
+	float getHeight(float x, float z);
+
+	//! calculates position at the local coords (x, z) in the terrain
+	const core::vector3df& getNormal(float x, float z) = 0;
 
     //! set tiles number for the detail map
 	void setTileRepeatNumber(unsigned value);

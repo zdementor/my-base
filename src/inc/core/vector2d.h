@@ -170,7 +170,7 @@ public:
     //! \return Returns the length of the vector.
     inline f64 getLength() const 
 	{ 
-		return math::Sqrt(X*X + Y*Y); 
+		return math::Sqrt((f64)(X*X + Y*Y)); 
 	}
     
 	//------------------------------------------------------------------------

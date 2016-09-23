@@ -186,6 +186,12 @@ bool CTerrainLibMiniSceneNode::setMaps(
 
 	heightImage->drop();
 
+	// must recalc here
+	m_TerrainHalfLength = m_TerrainHalfWidth =
+		m_GridPointSpacing * (m_HeightFieldSize / 2.0f - 0.5);
+	m_TerrainLength = m_TerrainWidth  =
+		(m_HeightFieldSize - 1) * m_GridPointSpacing;
+
 	setHeightScale(m_HeightScale);
 
 	LOGGER.logInfo("LibMini terrain initialized (resolution=%.f, size=%dx%d(%dx%d), width=%.f, length=%.f, height=%.f)", 
@@ -240,9 +246,8 @@ void CTerrainLibMiniSceneNode::FanVertex(f32 i, f32 y, f32 j)
 
 	// vertex position
 
-	f32 x = m_GridPointSpacing * i - m_SizeDiv2Dim;
-    f32 z = m_SizeDiv2Dim - m_GridPointSpacing * j;  
-
+	f32 x = m_GridPointSpacing * i - m_TerrainHalfWidth;
+    f32 z = m_TerrainHalfWidth - m_GridPointSpacing * j;
 	vertex.Pos.set(x, y * m_HeightScale, z);
 
 	// vertex normal
@@ -486,14 +491,14 @@ void CTerrainLibMiniSceneNode::OnPreRender(u32 timeMs)
 
 //-----------------------------------------------------------------------
 
-void CTerrainLibMiniSceneNode::OnPostRender(u32 timeMs) 
+void CTerrainLibMiniSceneNode::OnPostRender(u32 timeMs)
 {
 	ISceneNode::OnPostRender(timeMs);
 } 
 
 //-----------------------------------------------------------------------
 
-f32 CTerrainLibMiniSceneNode::getHeight(float x,float z) 
+f32 CTerrainLibMiniSceneNode::getHeight(f32 x, f32 z)
 { 
     if (m_Stub) 
 		return m_Stub->getheight(x,z); 
@@ -503,9 +508,10 @@ f32 CTerrainLibMiniSceneNode::getHeight(float x,float z)
 
 //-----------------------------------------------------------------------
 
-vector3df CTerrainLibMiniSceneNode::getNormal(float x,float z) 
+const vector3df& CTerrainLibMiniSceneNode::getNormal(f32 x, f32 z)
 { 
-    vector3df n(0,1,0); 
+    static vector3df n; 
+	n.set(0,1,0);
     if (m_Stub) 
     { 
         f32 nx,ny,nz; 

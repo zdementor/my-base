@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/17/16 11:21:08.
+** Generated automatically by tolua++-1.0.92 on 09/23/16 14:57:59.
 */
 
 #ifndef __cplusplus
@@ -33278,13 +33278,13 @@ static int tolua_MyLuaBind_scn_ITerrainSceneNode_getCellPosition00(lua_State* to
 #endif
  {
   scn::ITerrainSceneNode* self = (scn::ITerrainSceneNode*)  tolua_tousertype(tolua_S,1,0);
-  int cell_x = ((int)  tolua_tonumber(tolua_S,2,0));
-  int cell_y = ((int)  tolua_tonumber(tolua_S,3,0));
+  unsigned i = ((unsigned)  tolua_tonumber(tolua_S,2,0));
+  unsigned j = ((unsigned)  tolua_tonumber(tolua_S,3,0));
 #ifndef TOLUA_RELEASE
  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getCellPosition'",NULL);
 #endif
  {
-  const core::vector3df& tolua_ret = (const core::vector3df&)  self->getCellPosition(cell_x,cell_y);
+  const core::vector3df& tolua_ret = (const core::vector3df&)  self->getCellPosition(i,j);
  tolua_pushusertype(tolua_S,(void*)&tolua_ret,"const core::vector3df");
  }
  }
@@ -33314,13 +33314,13 @@ static int tolua_MyLuaBind_scn_ITerrainSceneNode_getCellHeight00(lua_State* tolu
 #endif
  {
   scn::ITerrainSceneNode* self = (scn::ITerrainSceneNode*)  tolua_tousertype(tolua_S,1,0);
-  int cell_x = ((int)  tolua_tonumber(tolua_S,2,0));
-  int cell_y = ((int)  tolua_tonumber(tolua_S,3,0));
+  unsigned i = ((unsigned)  tolua_tonumber(tolua_S,2,0));
+  unsigned j = ((unsigned)  tolua_tonumber(tolua_S,3,0));
 #ifndef TOLUA_RELEASE
  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getCellHeight'",NULL);
 #endif
  {
-  float tolua_ret = (float)  self->getCellHeight(cell_x,cell_y);
+  float tolua_ret = (float)  self->getCellHeight(i,j);
  tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
  }
  }
@@ -33328,6 +33328,78 @@ static int tolua_MyLuaBind_scn_ITerrainSceneNode_getCellHeight00(lua_State* tolu
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'getCellHeight'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getHeight of class  scn::ITerrainSceneNode */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_scn_ITerrainSceneNode_getHeight00
+static int tolua_MyLuaBind_scn_ITerrainSceneNode_getHeight00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"scn::ITerrainSceneNode",0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,4,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  scn::ITerrainSceneNode* self = (scn::ITerrainSceneNode*)  tolua_tousertype(tolua_S,1,0);
+  float x = ((float)  tolua_tonumber(tolua_S,2,0));
+  float z = ((float)  tolua_tonumber(tolua_S,3,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getHeight'",NULL);
+#endif
+ {
+  float tolua_ret = (float)  self->getHeight(x,z);
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getHeight'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getNormal of class  scn::ITerrainSceneNode */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_scn_ITerrainSceneNode_getNormal00
+static int tolua_MyLuaBind_scn_ITerrainSceneNode_getNormal00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"scn::ITerrainSceneNode",0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,4,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  scn::ITerrainSceneNode* self = (scn::ITerrainSceneNode*)  tolua_tousertype(tolua_S,1,0);
+  float x = ((float)  tolua_tonumber(tolua_S,2,0));
+  float z = ((float)  tolua_tonumber(tolua_S,3,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getNormal'",NULL);
+#endif
+ {
+  const core::vector3df& tolua_ret = (const core::vector3df&)  self->getNormal(x,z);
+ tolua_pushusertype(tolua_S,(void*)&tolua_ret,"const core::vector3df");
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getNormal'.",&tolua_err);
  return 0;
 #endif
 }
@@ -60873,6 +60945,8 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
    tolua_function(tolua_S,"getHeightFieldSize",tolua_MyLuaBind_scn_ITerrainSceneNode_getHeightFieldSize00);
    tolua_function(tolua_S,"getCellPosition",tolua_MyLuaBind_scn_ITerrainSceneNode_getCellPosition00);
    tolua_function(tolua_S,"getCellHeight",tolua_MyLuaBind_scn_ITerrainSceneNode_getCellHeight00);
+   tolua_function(tolua_S,"getHeight",tolua_MyLuaBind_scn_ITerrainSceneNode_getHeight00);
+   tolua_function(tolua_S,"getNormal",tolua_MyLuaBind_scn_ITerrainSceneNode_getNormal00);
    tolua_function(tolua_S,"setTileRepeatNumber",tolua_MyLuaBind_scn_ITerrainSceneNode_setTileRepeatNumber00);
    tolua_function(tolua_S,"getTileRepeatNumber",tolua_MyLuaBind_scn_ITerrainSceneNode_getTileRepeatNumber00);
    tolua_function(tolua_S,"getHeightMapTexture",tolua_MyLuaBind_scn_ITerrainSceneNode_getHeightMapTexture00);

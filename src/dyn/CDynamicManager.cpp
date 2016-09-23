@@ -43,22 +43,155 @@ int collide_heightfield_ray(dxGeom *o1, dxGeom *rayGeom, int flags, dContactGeom
 	assert( o1->type == dHeightfieldClass );
 	assert((flags & NUMC_MASK) >= 1);
 
-	int numMaxTerrainContacts = (flags & NUMC_MASK);
+	const int numMaxTerrainContacts = (flags & NUMC_MASK);
 	int numTerrainContacts = 0;
-	const dReal rLen = 1000000.f;
-	dVector3 rOrig, rDir;
-
-	dGeomRayGet(rayGeom, rOrig, rDir);
-
-	core::line3df ray(rOrig[0], rOrig[1], rOrig[2],
-		rOrig[0] + rDir[0] * rLen, rOrig[1] + rDir[1], rOrig[2] + rDir[2] * rLen);
 
 	dxHeightfield *hf = (dxHeightfield*)o1;
 	dxHeightfieldData *hfdata = hf->m_p_data;
 	scn::ITerrainSceneNode *terrain = (scn::ITerrainSceneNode *)hfdata->m_pUserData;
 
-	f32 h0 = terrain->getCellHeight(0, 0);
-	(void)h0;
+	const f32 hScale = terrain->getHeightScale();
+	const f32 cellSpace = terrain->getGridPointSpacing();
+	const s32 hfsize = terrain->getHeightFieldSize();
+	const s32 hfsize_1 = hfsize - 1;
+
+	const core::matrix4 hftransf = terrain->getAbsoluteTransformation();
+	core::matrix4 hftransf_inv = hftransf;
+	hftransf_inv.makeInversed();
+
+	dReal rLen = 0.f;
+	dVector3 rOrig, rDir;
+	dGeomRayGet(rayGeom, rOrig, rDir);
+	rLen = dGeomRayGetLength(rayGeom);
+	core::line3df ray(rOrig[0], rOrig[1], rOrig[2],
+		rOrig[0] + rDir[0] * rLen,
+			rOrig[1] + rDir[1] * rLen,
+				rOrig[2] + rDir[2] * rLen);
+	hftransf_inv.transformVect(ray.start);
+	hftransf_inv.transformVect(ray.end);
+	f32 rDXPow2 = (ray.end.X - ray.start.X); rDXPow2 *= rDXPow2;
+	f32 rDZPow2 = (ray.end.Z - ray.start.Z); rDZPow2 *= rDZPow2;
+	f64 rDHPow2 = (ray.end.Y - ray.start.Y); rDHPow2 *= rDHPow2;
+
+	const core::vector3df p0 = terrain->getCellPosition(0, hfsize_1);
+	const core::vector3df pn = terrain->getCellPosition(hfsize_1, 0);
+
+	const core::rectf rct(p0.X, p0.Z, pn.X, pn.Z);
+	const f32 rctWidth = rct.getWidth();
+	const f32 rctHeight = rct.getHeight();
+
+	const core::line2df rayxz(ray.start.X, ray.start.Z, ray.end.X, ray.end.Z);
+	const core::line2df line01(rct.Left,  rct.Top,    rct.Right, rct.Top);
+	const core::line2df line12(rct.Right, rct.Top,    rct.Right, rct.Bottom);
+	const core::line2df line23(rct.Right, rct.Bottom, rct.Left,  rct.Bottom);
+	const core::line2df line30(rct.Left,  rct.Bottom, rct.Left,  rct.Top);
+
+	u32 intersects = 0;
+	core::vector2df rIntersects[2];
+
+	if (rayxz.start.X >= rct.Left && rayxz.start.X <= rct.Right
+			&& rayxz.start.Y >= rct.Top && rayxz.start.Y <= rct.Bottom)
+		rIntersects[intersects++] = rayxz.start;
+	if (rayxz.end.X >= rct.Left && rayxz.end.X <= rct.Right
+			&& rayxz.end.Y >= rct.Top && rayxz.end.Y <= rct.Bottom)
+		rIntersects[intersects++] = rayxz.end;
+	if (intersects < 2 && line01.intersectWith(rayxz, rIntersects[intersects]))
+		intersects++;
+	if (intersects < 2 && line12.intersectWith(rayxz, rIntersects[intersects]))
+		intersects++;
+	if (intersects < 2 && line23.intersectWith(rayxz, rIntersects[intersects]))
+		intersects++;
+	if (intersects < 2 && line30.intersectWith(rayxz, rIntersects[intersects]))
+		intersects++;
+
+	if (intersects == 2
+			&& !core::math::Equals(rIntersects[0].X, rIntersects[1].X)
+			&& !core::math::Equals(rIntersects[0].Y, rIntersects[1].Y))
+	{
+		const core::vector2di rayCells[2] =
+		{
+			core::vector2di(
+				(f32)hfsize_1 * (rayxz.start.X - rct.Left) / rctWidth + 0.5f,
+				(f32)hfsize_1 * (rayxz.start.Y - rct.Top) / rctHeight + 0.5f),
+			core::vector2di(
+				(f32)hfsize_1 * (rayxz.end.X - rct.Left) / rctWidth + 0.5f,
+				(f32)hfsize_1 * (rayxz.end.Y - rct.Top) / rctHeight + 0.5f),
+		};
+		const core::vector2di rIntersectCells[2] =
+		{
+			core::vector2di(
+				(f32)hfsize_1 * (rIntersects[0].X - rct.Left) / rctWidth + 0.5f,
+				(f32)hfsize_1 * (rIntersects[0].Y - rct.Top) / rctHeight + 0.5f),
+			core::vector2di(
+				(f32)hfsize_1 * (rIntersects[1].X - rct.Left) / rctWidth + 0.5f,
+				(f32)hfsize_1 * (rIntersects[1].Y - rct.Top) / rctHeight + 0.5f),
+		};
+
+		const f64 dX0 = cellSpace * (rIntersectCells[0].X - rayCells[0].X);
+		const f64 dZ0 = cellSpace * (rIntersectCells[0].Y - rayCells[0].Y);
+		const f64 dX1 = cellSpace * (rIntersectCells[1].X - rayCells[0].X);
+		const f64 dZ1 = cellSpace * (rIntersectCells[1].Y - rayCells[0].Y);
+		const f64 dLen0Pow2 = dX0 * dX0 + dZ0 * dZ0;
+		const f64 dLen1Pow2 = dX1 * dX1 + dZ1 * dZ1;
+		const f64 rDLenPow2 = rDXPow2 + rDZPow2;
+
+		f64 riH0 = ray.start.Y;
+		if (!!dLen0Pow2)
+			riH0 = riH0 + core::math::Sqrt(rDHPow2 * (dLen0Pow2 / rDLenPow2));
+		f64 riH1 = riH0 + core::math::Sqrt(rDHPow2 * (dLen1Pow2 / rDLenPow2));
+
+		static core::array <core::vector2di> trace_way;
+		core::math::draw_line(
+			rIntersectCells[0].X, rIntersectCells[0].Y,
+			rIntersectCells[1].X, rIntersectCells[1].Y,
+			trace_way);
+		const u32 sz = trace_way.size();
+		const f32 riDHPerCell = sz ? ((riH1-riH0)/sz) : 0.;
+
+		f32 riH = riH0;
+		for (u32 i = 0;
+				i < sz - 1 && numTerrainContacts < numMaxTerrainContacts;
+				i++, riH += riDHPerCell)
+		{
+			s32 x = trace_way[i].X;
+			s32 z = trace_way[i].Y;
+
+			s32 xNext = trace_way[i + 1].X;
+			s32 zNext = trace_way[i + 1].Y;
+			f32 riHNext = riH + riDHPerCell;
+
+			core::vector3df pCell = terrain->getCellPosition(x, hfsize_1 - z);
+			core::vector3df pCellNext = terrain->getCellPosition(xNext, hfsize_1 - zNext);
+
+			if ((pCell.Y > riH) != (pCellNext.Y > riHNext))
+			{
+				core::vector3df orig(0.f, 0.f, 0.f);
+
+				// XXX - lazy collision detection.
+				// TODO - make it more accurate.
+				core::vector3df intersect = (pCell + pCellNext) / 2.f;
+
+				core::vector3df normal = terrain->getNormal(intersect.X, intersect.Z);
+
+				// back to the outer space
+				hftransf.transformVect(intersect);
+				hftransf.transformVect(normal);
+				hftransf.transformVect(orig);
+				normal = normal - orig;
+
+				dContactGeom &c = contact[numTerrainContacts++];
+				c.pos[0] = intersect.X;
+				c.pos[1] = intersect.Y;
+				c.pos[2] = intersect.Z;
+				c.depth = 0.f;
+				c.normal[0] = normal.X;
+				c.normal[1] = normal.Y;
+				c.normal[2] = normal.Z;
+				c.g1 = o1;
+				c.g2 = rayGeom;
+			}
+		}
+	}
 
 	// Return contact count.
 	return numTerrainContacts;

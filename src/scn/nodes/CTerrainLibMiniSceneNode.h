@@ -42,13 +42,12 @@ public:
 	virtual f32 getCellHeight(u32 cell_x, u32 cell_y);
 
 	virtual void OnCheckCulling();
-    virtual void OnPreRender(u32 timeMs); 
+    virtual void OnPreRender(u32 timeMs);
 
-    virtual void OnPostRender(u32 timeMs); 
+    virtual void OnPostRender(u32 timeMs);
 
-	core::vector3df getNormal(float x,float z); 
-
-    f32 getHeight(float x,float z); 
+	virtual f32 getHeight(f32 x, f32 z);
+	virtual const core::vector3df& getNormal(f32 x, f32 z);
 
 private: 
 

@@ -635,7 +635,7 @@ CLightShadowVolume* CShadowVolume::_createShadowVolume(
 		down_dir -= orig;
 		f32 angle_rad = down_dir.getAngleRad(ldir);
 		f32 cos_angle = core::math::Cos(angle_rad);
-		cos_angle = (cos_angle != 0.0f) ? cos_angle : core::ROUNDING_ERROR_32;
+		cos_angle = (cos_angle != 0.0f) ? cos_angle : ROUNDING_ERROR_32;
 		f32 volume_len = 1.05f * (height / cos_angle);
 		if (volume_len == 0)
 			volume_len = 100.f;

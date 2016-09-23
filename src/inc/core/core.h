@@ -19,8 +19,8 @@ namespace core {
 
 //! Rounding error constant often used when comparing f32 values.
 
-const f32 ROUNDING_ERROR_32	= 0.000001f;
-const f64 ROUNDING_ERROR_64	= 0.00000001f; 
+#define ROUNDING_ERROR_32 0.000001f
+#define ROUNDING_ERROR_64 0.00000001
 
 //! Constant for PI.
 const f32 PI                = 3.14159f;

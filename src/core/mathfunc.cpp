@@ -291,13 +291,6 @@ MY_FORCEINLINE f32 math::Sqr(const f32& fValue)
 	return fValue*fValue;
 }
 
-//----------------------------------------------------------------------------
-
-MY_FORCEINLINE f32 math::Sqrt(const f32& fValue)
-{
-	return f32(sqrt(fValue));
-}
-
 //----------------------------------------------------------------------------   
    
 //  Inverse square root i.e. 1 / Sqrt(x), good for vector
@@ -320,16 +313,15 @@ MY_FORCEINLINE f32 math::Tan (const f32& fValue, const bool& useTables)
 //----------------------------------------------------------------------------
 
 //! draw line from (x1,y1) to (x2,y2) into pixels array
-MY_FORCEINLINE void math::draw_line(
-	s32 x1, s32 y1, s32 x2, s32 y2, core::list<core::vector2di> &pixels
-	) 
+void math::draw_line(
+	s32 x1, s32 y1, s32 x2, s32 y2, core::array<core::vector2di> &pixels) 
 {
 	s32 Dx = (x2 - x1);
 	s32 Dy = (y2 - y1);
 	f32 k;
 
-	pixels.clear();
-	
+	pixels.set_used(0);
+
 	s32 x, y;
 	if (core::math::IAbs(Dx) > core::math::IAbs(Dy))
 	{
