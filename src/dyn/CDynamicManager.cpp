@@ -53,6 +53,7 @@ int collide_heightfield_ray(
 
 	const f32 hScale = terrain->getHeightScale();
 	const f32 cellSpace = terrain->getGridPointSpacing();
+	const f32 cellSpaceDiv2 = cellSpace / 2.f;
 	const s32 hfsize = terrain->getHeightFieldSize();
 	const s32 hfsize_1 = hfsize - 1;
 
@@ -87,25 +88,25 @@ int collide_heightfield_ray(
 	const core::line2df line23(rct.Right, rct.Bottom, rct.Left,  rct.Bottom);
 	const core::line2df line30(rct.Left,  rct.Bottom, rct.Left,  rct.Top);
 
-	u32 intersects = 0;
+	u32 rIntersectsCnt = 0;
 	core::vector2df rIntersects[2];
 
 	if (rayxz.start.X >= rct.Left && rayxz.start.X <= rct.Right
 			&& rayxz.start.Y >= rct.Top && rayxz.start.Y <= rct.Bottom)
-		rIntersects[intersects++] = rayxz.start;
+		rIntersects[rIntersectsCnt++] = rayxz.start;
 	if (rayxz.end.X >= rct.Left && rayxz.end.X <= rct.Right
 			&& rayxz.end.Y >= rct.Top && rayxz.end.Y <= rct.Bottom)
-		rIntersects[intersects++] = rayxz.end;
-	if (intersects < 2 && line01.intersectWith(rayxz, rIntersects[intersects]))
-		intersects++;
-	if (intersects < 2 && line12.intersectWith(rayxz, rIntersects[intersects]))
-		intersects++;
-	if (intersects < 2 && line23.intersectWith(rayxz, rIntersects[intersects]))
-		intersects++;
-	if (intersects < 2 && line30.intersectWith(rayxz, rIntersects[intersects]))
-		intersects++;
+		rIntersects[rIntersectsCnt++] = rayxz.end;
+	if (rIntersectsCnt < 2 && line01.intersectWith(rayxz, rIntersects[rIntersectsCnt]))
+		rIntersectsCnt++;
+	if (rIntersectsCnt < 2 && line12.intersectWith(rayxz, rIntersects[rIntersectsCnt]))
+		rIntersectsCnt++;
+	if (rIntersectsCnt < 2 && line23.intersectWith(rayxz, rIntersects[rIntersectsCnt]))
+		rIntersectsCnt++;
+	if (rIntersectsCnt < 2 && line30.intersectWith(rayxz, rIntersects[rIntersectsCnt]))
+		rIntersectsCnt++;
 
-	if (intersects == 2
+	if (rIntersectsCnt == 2
 			&& !core::math::Equals(rIntersects[0].X, rIntersects[1].X)
 			&& !core::math::Equals(rIntersects[0].Y, rIntersects[1].Y))
 	{
@@ -154,44 +155,127 @@ int collide_heightfield_ray(
 		for (s32 t = 0; t < tCnt_1 && numContacts < maxContacts;
 				t++, riH += riDHPerCell)
 		{
-			s32 i = trace_way[t].X;
-			s32 j = hfsize_1 - trace_way[t].Y;
+			s32 iCur = trace_way[t].X;
+			s32 jCur = hfsize_1 - trace_way[t].Y;
 
 			s32 iNext = trace_way[t + 1].X;
 			s32 jNext = hfsize_1 - trace_way[t + 1].Y;
 
 			f32 riHNext = riH + riDHPerCell;
 
-			core::vector3df pCell     = terrain->getCellPosition(i, j);
-			core::vector3df pCellNext = terrain->getCellPosition(iNext, jNext);
+			core::vector3df cellPosCur = terrain->getCellPosition(iCur, jCur);
+			core::vector3df cellPosNext = terrain->getCellPosition(iNext, jNext);
 
-			if ((pCell.Y > riH) != (pCellNext.Y > riHNext))
+			bool cellHigherCur = ((cellPosCur.Y + cellSpaceDiv2) > riH);
+			bool cellHigherNext = ((cellPosNext.Y + cellSpaceDiv2) > riHNext);
+
+			if (cellHigherCur != cellHigherNext)
 			{
-				core::vector3df orig(0.f, 0.f, 0.f);
+				bool found = false;
+				core::vector3df intersect(0, 0, 0);
 
-				// XXX - lazy collision detection.
-				// TODO - make it more accurate.
-				core::vector3df intersect = pCell;
+				if (iCur > 1 && iCur < hfsize_1
+						&& jCur > 1 && jCur < hfsize_1
+						&& iNext > 1 && iNext < hfsize_1
+						&& jNext > 1 && jNext < hfsize_1)
+				{
+					core::vector3df cellPosCurL  = terrain->getCellPosition(iCur-1, jCur  );
+					core::vector3df cellPosCurLT = terrain->getCellPosition(iCur-1, jCur+1);
+					core::vector3df cellPosCurT  = terrain->getCellPosition(iCur,   jCur+1);
+					core::vector3df cellPosCurRT = terrain->getCellPosition(iCur+1, jCur+1);
+					core::vector3df cellPosCurR  = terrain->getCellPosition(iCur+1, jCur  );
+					core::vector3df cellPosCurRB = terrain->getCellPosition(iCur+1, jCur-1);
+					core::vector3df cellPosCurB  = terrain->getCellPosition(iCur,   jCur-1);
+					core::vector3df cellPosCurLB = terrain->getCellPosition(iCur-1, jCur-1);
 
-				core::vector3df normal = terrain->getNormal(intersect.X, intersect.Z);
-				normal *= -1.f; // must invert normal here, ode will onvert back it later
+					core::vector3df cellPosNextL  = terrain->getCellPosition(iNext-1, jNext  );
+					core::vector3df cellPosNextLT = terrain->getCellPosition(iNext-1, jNext+1);
+					core::vector3df cellPosNextT  = terrain->getCellPosition(iNext,   jNext+1);
+					core::vector3df cellPosNextRT = terrain->getCellPosition(iNext+1, jNext+1);
+					core::vector3df cellPosNextR  = terrain->getCellPosition(iNext+1, jNext  );
+					core::vector3df cellPosNextRB = terrain->getCellPosition(iNext+1, jNext-1);
+					core::vector3df cellPosNextB  = terrain->getCellPosition(iNext,   jNext-1);
+					core::vector3df cellPosNextLB = terrain->getCellPosition(iNext-1, jNext-1);
 
-				// back to the outer space
-				hftransf.transformVect(intersect);
-				hftransf.transformVect(normal);
-				hftransf.transformVect(orig);
-				normal = normal - orig;
+					core::triangle3df triCollid[] =
+					{
+						core::triangle3df(cellPosCur, cellPosCurL,  cellPosCurLB),
+						core::triangle3df(cellPosCur, cellPosCurLB, cellPosCurB ),
+						core::triangle3df(cellPosCur, cellPosCurB,  cellPosCurRB),
+						core::triangle3df(cellPosCur, cellPosCurRB, cellPosCurR ),
+						core::triangle3df(cellPosCur, cellPosCurR,  cellPosCurRT),
+						core::triangle3df(cellPosCur, cellPosCurRT, cellPosCurT ),
+						core::triangle3df(cellPosCur, cellPosCurT,  cellPosCurLT),
+						core::triangle3df(cellPosCur, cellPosCurLT, cellPosCurL ),
 
-				dContactGeom &c = contact[numContacts++];
-				c.pos[0] = intersect.X;
-				c.pos[1] = intersect.Y;
-				c.pos[2] = intersect.Z;
-				c.depth = 0.f;
-				c.normal[0] = normal.X;
-				c.normal[1] = normal.Y;
-				c.normal[2] = normal.Z;
-				c.g1 = o1;
-				c.g2 = rayGeom;
+						core::triangle3df(cellPosNext, cellPosNextL,  cellPosNextLB),
+						core::triangle3df(cellPosNext, cellPosNextLB, cellPosNextB ),
+						core::triangle3df(cellPosNext, cellPosNextB,  cellPosNextRB),
+						core::triangle3df(cellPosNext, cellPosNextRB, cellPosNextR ),
+						core::triangle3df(cellPosNext, cellPosNextR,  cellPosNextRT),
+						core::triangle3df(cellPosNext, cellPosNextRT, cellPosNextT ),
+						core::triangle3df(cellPosNext, cellPosNextT,  cellPosNextLT),
+						core::triangle3df(cellPosNext, cellPosNextLT, cellPosNextL ),
+					};
+					u32 intersectsCnt = 0;
+					core::vector3df intersects[sizeof(triCollid) / sizeof(*triCollid)];
+
+					for (u32 ti = 0; intersectsCnt < sizeof(triCollid) / sizeof(*triCollid)
+							&& ti < sizeof(triCollid) / sizeof(*triCollid); ti++)
+					{
+						if (triCollid[ti].getIntersectionWithLimitedLine(ray, intersects[intersectsCnt]))
+							intersectsCnt++;
+					}
+
+					if (intersectsCnt > 0)
+					{
+						found = true;
+
+						if (intersectsCnt == 1)
+							intersect.set(intersects[0]);
+						else
+						{
+							f32 lenSQMin = (intersects[0] - ray.start).getLengthSQ();
+							u32 idxMin = 0;
+
+							for (u32 i = 1; i < intersectsCnt; i++)
+							{
+								f32 lenSQ = (intersects[i] - ray.start).getLengthSQ();
+								if (lenSQ < lenSQMin)
+								{
+									lenSQMin = lenSQ;
+									idxMin = i;
+								}
+							}
+							intersect.set(intersects[idxMin]);
+						}
+					}					
+				}
+
+				if (found)
+				{
+					core::vector3df orig(0.f, 0.f, 0.f);
+
+					core::vector3df normal = terrain->getNormal(intersect.X, intersect.Z);
+					normal *= -1.f; // must invert normal here, ode will onvert back it later
+
+					// back to the outer space
+					hftransf.transformVect(intersect);
+					hftransf.transformVect(normal);
+					hftransf.transformVect(orig);
+					normal = normal - orig;
+
+					dContactGeom &c = contact[numContacts++];
+					c.pos[0] = intersect.X;
+					c.pos[1] = intersect.Y;
+					c.pos[2] = intersect.Z;
+					c.depth = 0.f;
+					c.normal[0] = normal.X;
+					c.normal[1] = normal.Y;
+					c.normal[2] = normal.Z;
+					c.g1 = o1;
+					c.g2 = rayGeom;
+				}
 			}
 		}
 	}

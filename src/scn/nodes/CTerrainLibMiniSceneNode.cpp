@@ -18,6 +18,7 @@
 #include <scn/ICullingSystem.h>
 #include <scn/ISceneManager.h>
 #include <img/IImageLibrary.h>
+#include <dev/IDevice.h>
 
 //-----------------------------------------------------------------------
 namespace my { 
@@ -106,6 +107,11 @@ CTerrainLibMiniSceneNode::CTerrainLibMiniSceneNode(ISceneNode* parent, s32 id)
 	m_RenderVertices.set_used(4092);
 	m_RenderIndices.set_used(1024);
 
+	if (DEVICE.getDeviceFlagValue(dev::EDCF_HI_MAPS_DETAIL))
+		m_Resolution = 100000.0f;
+	else
+		m_Resolution = 1000.0f;
+
 	setMaps(NULL, NULL, 128.f);
 } 
 
@@ -161,8 +167,6 @@ bool CTerrainLibMiniSceneNode::setMaps(
 
 	SAFE_DELETE(m_Stub); 
 	
-	m_Resolution = 1000000.0f;
-
 	const float lambda=0.15f;
 	const float displace=1.0f;
 	const float emission=0.01f;
@@ -475,7 +479,8 @@ void CTerrainLibMiniSceneNode::OnPreRender(u32 timeMs)
 		m_VideoDriver.register3DBoxForRendering(
 			vid::ERP_3D_SOLID_PASS,
 			getAbsoluteTransformation(),
-			getBoundingBox(), img::SColor(0xffffffff));
+			getBoundingBox(),
+			0xffffffff, true);
     }
 
 	if (drawNormals)
@@ -485,7 +490,8 @@ void CTerrainLibMiniSceneNode::OnPreRender(u32 timeMs)
 			vid::S3DVertex2TCoords &v = m_RenderVertices[i];
 			m_VideoDriver.register3DLineForRendering(
 				vid::ERP_3D_SOLID_PASS,
-				AbsoluteTransformation, v.Pos, v.Pos + v.Normal * 50.f);
+				AbsoluteTransformation, v.Pos, v.Pos + v.Normal * 50.f,
+				0xffffffff, true);
 		}
     }
 
