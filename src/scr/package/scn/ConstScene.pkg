@@ -5,8 +5,9 @@ namespace scn {
 enum E_SCENE_RENDER_FLAG
 {
 	ESRF_RENDER_SHADOW_DEBUG_DATA = (1 << 0),
-	ESRF_RENDER_LIGHTS = (1 << 1),
-	ESRF_RENDER_TERRAIN_NORMALS = (1 << 2),
+	ESRF_RENDER_LIGHTS            = (1 << 1),
+	ESRF_RENDER_TERRAIN_NORMALS   = (1 << 2),
+	ESRF_RENDER_COLLISION_POINTS  = (1 << 3),
 };
 
 //----------------------------------------------------------------------------

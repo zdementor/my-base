@@ -36,15 +36,16 @@ namespace dyn {
 
 #define NUMC_MASK (0xffff)
 
-int collide_heightfield_ray(dxGeom *o1, dxGeom *rayGeom, int flags, dContactGeom* contact, int skip )
+int collide_heightfield_ray(
+	dxGeom *o1, dxGeom *rayGeom, int flags, dContactGeom *contact, int skip)
 {
 	assert( skip >= (int)sizeof(dContactGeom) );
 	assert( rayGeom->type == dRayClass );
 	assert( o1->type == dHeightfieldClass );
 	assert((flags & NUMC_MASK) >= 1);
 
-	const int numMaxTerrainContacts = (flags & NUMC_MASK);
-	int numTerrainContacts = 0;
+	const int maxContacts = (flags & NUMC_MASK);
+	int numContacts = 0;
 
 	dxHeightfield *hf = (dxHeightfield*)o1;
 	dxHeightfieldData *hfdata = hf->m_p_data;
@@ -145,23 +146,24 @@ int collide_heightfield_ray(dxGeom *o1, dxGeom *rayGeom, int flags, dContactGeom
 			rIntersectCells[0].X, rIntersectCells[0].Y,
 			rIntersectCells[1].X, rIntersectCells[1].Y,
 			trace_way);
-		const u32 sz = trace_way.size();
-		const f32 riDHPerCell = sz ? ((riH1-riH0)/sz) : 0.;
+		const s32 tCnt = trace_way.size();
+		const s32 tCnt_1 = tCnt - 1;
+		const f32 riDHPerCell = (tCnt>0) ? ((riH1-riH0)/tCnt) : 0.;
 
 		f32 riH = riH0;
-		for (u32 i = 0;
-				i < sz - 1 && numTerrainContacts < numMaxTerrainContacts;
-				i++, riH += riDHPerCell)
+		for (s32 t = 0; t < tCnt_1 && numContacts < maxContacts;
+				t++, riH += riDHPerCell)
 		{
-			s32 x = trace_way[i].X;
-			s32 z = trace_way[i].Y;
+			s32 i = trace_way[t].X;
+			s32 j = hfsize_1 - trace_way[t].Y;
 
-			s32 xNext = trace_way[i + 1].X;
-			s32 zNext = trace_way[i + 1].Y;
+			s32 iNext = trace_way[t + 1].X;
+			s32 jNext = hfsize_1 - trace_way[t + 1].Y;
+
 			f32 riHNext = riH + riDHPerCell;
 
-			core::vector3df pCell = terrain->getCellPosition(x, hfsize_1 - z);
-			core::vector3df pCellNext = terrain->getCellPosition(xNext, hfsize_1 - zNext);
+			core::vector3df pCell     = terrain->getCellPosition(i, j);
+			core::vector3df pCellNext = terrain->getCellPosition(iNext, jNext);
 
 			if ((pCell.Y > riH) != (pCellNext.Y > riHNext))
 			{
@@ -169,9 +171,10 @@ int collide_heightfield_ray(dxGeom *o1, dxGeom *rayGeom, int flags, dContactGeom
 
 				// XXX - lazy collision detection.
 				// TODO - make it more accurate.
-				core::vector3df intersect = (pCell + pCellNext) / 2.f;
+				core::vector3df intersect = pCell;
 
 				core::vector3df normal = terrain->getNormal(intersect.X, intersect.Z);
+				normal *= -1.f; // must invert normal here, ode will onvert back it later
 
 				// back to the outer space
 				hftransf.transformVect(intersect);
@@ -179,7 +182,7 @@ int collide_heightfield_ray(dxGeom *o1, dxGeom *rayGeom, int flags, dContactGeom
 				hftransf.transformVect(orig);
 				normal = normal - orig;
 
-				dContactGeom &c = contact[numTerrainContacts++];
+				dContactGeom &c = contact[numContacts++];
 				c.pos[0] = intersect.X;
 				c.pos[1] = intersect.Y;
 				c.pos[2] = intersect.Z;
@@ -193,15 +196,13 @@ int collide_heightfield_ray(dxGeom *o1, dxGeom *rayGeom, int flags, dContactGeom
 		}
 	}
 
-	// Return contact count.
-	return numTerrainContacts;
+	return numContacts;
 }
 
 //---------------------------------------------------------------------
 
 CDynamicManager::CDynamicManager() 
-	: 
-theWorld(0),theSpace(0), theJointGroup(0), StoppingCalcDynamic(false), 
+	: theWorld(0),theSpace(0), theJointGroup(0), StoppingCalcDynamic(false), 
 EnabledBodies(0), m_DynamicDeltaTimeSec(0)
 {	
 #if MY_DEBUG_MODE  
@@ -263,16 +264,12 @@ s32 CDynamicManager::getDynamicObjectsCount()
 
 //---------------------------------------------------------------------
 
-// функция, вызывается ODE, когда он решит, что между обьектами
-// скоро произойдет столкновение
 void CDynamicManager::nearCollisionCallback(
-	void* data, // указатель на менеджера динамики
-    dGeomID o1, // первый обьект, учавствующий в столкновении 
-    dGeomID o2  // второй обьект, учавствующий в столкновении
-    )
+	void *data, dGeomID o1, dGeomID o2)
 {  
-    //менеджер ODE
     CDynamicManager* odeMngr = (CDynamicManager*)data;  
+
+	SCollisionPoints &colid_out = odeMngr->m_DynamicCollisionPoints;
 
 	// ODE bodies
     dBodyID b1=dGeomGetBody(o1);
@@ -364,21 +361,22 @@ void CDynamicManager::nearCollisionCallback(
 		}
 
 		if (obj1_par.Type == EDOT_SENSELESS || obj2_par.Type == EDOT_SENSELESS)
-		{
 			return;
-		} 
-
-        // так как есть точки контакта, то мы уже не падаем
 
 		obj1->getIsFalling() = false;
 		obj2->getIsFalling() = false;    
 
-        // создаем связи
         for(s32 i=0;i<numc;i++)
         {   
+			dContactGeom & geom = contact[i].geom;
+
+			colid_out.add(SCollisionPoint(
+				geom.pos[0], geom.pos[1], geom.pos[2],
+				geom.normal[0], geom.normal[1], geom.normal[2],
+				obj1, obj2));
+
             dJointID joint = dJointCreateContact(
-                odeMngr->theWorld, odeMngr->theJointGroup, &contact[i]
-				);
+                odeMngr->theWorld, odeMngr->theJointGroup, &contact[i]);
             dJointAttach(joint, b1, b2);
         }   
     }
@@ -451,17 +449,21 @@ bool CDynamicManager::findCollisionsWithRay(
         
 				// store collision points
 
+				SCollisionPoints &colid_out = m_CustomCollisionPoints;
 				static core::vector3df collisionPoint, collisionNormal;
 				
-				for (s32 c=0; c<numc; c++)
+				for (s32 c = 0; c < numc; c++)
 				{
-					collisionPoint.set(
-						contact[c].geom.pos[0], contact[c].geom.pos[1], contact[c].geom.pos[2]
-						);
-					collisionNormal.set(
-						contact[c].geom.normal[0], contact[c].geom.normal[1], contact[c].geom.normal[2]
-						); 
+					dContactGeom &geom = contact[c].geom;
+
+					collisionPoint.set(geom.pos[0], geom.pos[1], geom.pos[2]);
+					collisionNormal.set(geom.normal[0], geom.normal[1], geom.normal[2]); 
 					collisions.add(SCollisionPoint(collisionPoint, collisionNormal, dobj));
+
+					colid_out.add(SCollisionPoint(
+						geom.pos[0], geom.pos[1], geom.pos[2],
+						geom.normal[0], geom.normal[1], geom.normal[2],
+						dobj, NULL));
 				}
 			}		
 		}
@@ -477,7 +479,6 @@ bool CDynamicManager::findCollisionsWithRay(IDynamicObject *obj,
 {	
 	bool collided = false; 	
 
-	IDynamicObject  *o   = obj;   
 	scn::ISceneNode *node= NULL;
 
 	f32 length = ray.getLength();
@@ -485,7 +486,7 @@ bool CDynamicManager::findCollisionsWithRay(IDynamicObject *obj,
 	if (length <= 0.f)
 		return collided;
 
-    if (!o || !(node=o->getSceneNode()) || !node->isVisible()) 
+    if (!obj || !(node = obj->getSceneNode()) || !node->isVisible()) 
 		return collided;
 
     // Set the length of the given ray. 
@@ -494,38 +495,41 @@ bool CDynamicManager::findCollisionsWithRay(IDynamicObject *obj,
     // Set the starting position and direction of the given ray.
     core::vector3df dir = ray.getVector();
     dir.normalize();
-    dGeomRaySet( 
-        ray_geom, 
+    dGeomRaySet(ray_geom, 
         (dReal)ray.start.X, (dReal)ray.start.Y, (dReal)ray.start.Z, 
-        (dReal)dir.X, (dReal)dir.Y, (dReal)dir.Z
-        );   
-	
+        (dReal)dir.X, (dReal)dir.Y, (dReal)dir.Z);   
+
 	collisions.clear();
    
-	dGeomID g = (dGeomID)o->getGeomID();
+	dGeomID g = (dGeomID)obj->getGeomID();
        
 	const s32 MAX_CONTACTS = 16; 
 
 	static dContact contact[MAX_CONTACTS];    
 
-    // находим точки столкновения
 	int numc = dCollide(ray_geom, g, MAX_CONTACTS, &contact[0].geom, sizeof(dContact));       
 
-    if (numc>0) 
+    if (numc > 0) 
     {
 		collided = true;            
-        
-        // storing collision points
+
+        // store collision points
+
+		SCollisionPoints &colid_out = m_CustomCollisionPoints;
         core::vector3df collisionPoint, collisionNormal;
-        for (s32 c=0; c<numc; c++)
+
+        for (s32 c = 0; c<numc; c++)
         {
-			collisionPoint = core::vector3df(
-				contact[c].geom.pos[0], contact[c].geom.pos[1], contact[c].geom.pos[2]
-                );
-			collisionNormal = core::vector3df(
-				contact[c].geom.normal[0], contact[c].geom.normal[1], contact[c].geom.normal[2]
-				); 
-            collisions.add(SCollisionPoint(collisionPoint, collisionNormal, o));
+			dContactGeom &geom = contact[c].geom;
+
+			collisionPoint.set(geom.pos[0], geom.pos[1], geom.pos[2]);
+			collisionNormal.set(geom.normal[0], geom.normal[1], geom.normal[2]); 
+            collisions.add(SCollisionPoint(collisionPoint, collisionNormal, obj));
+
+			colid_out.add(SCollisionPoint(
+				geom.pos[0], geom.pos[1], geom.pos[2],
+				geom.normal[0], geom.normal[1], geom.normal[2],
+				obj, NULL));
         }		
     } 
         
@@ -571,7 +575,6 @@ bool CDynamicManager::checkIntersectionWithRay(
 
 		for	(; iter!=CDynamicObject::DynamicObjectsByType[dtype].end(); ++iter)
 		{
-			
 			IDynamicObject  *dobj  = *iter;   
 			scn::ISceneNode *snode = NULL;	
 			game::IGameNode *gnode = NULL;
@@ -593,10 +596,18 @@ bool CDynamicManager::checkIntersectionWithRay(
 			const int MAX_CONTACTS = 1; 
 			static dContact contact[MAX_CONTACTS];    
 
-			int numc=dCollide( ray_geom, g, MAX_CONTACTS, &contact[0].geom, sizeof(dContact) );
+			int numc = dCollide( ray_geom, g, MAX_CONTACTS, &contact[0].geom, sizeof(dContact) );
 
 			if (numc>0) 
 			{
+				SCollisionPoints &colid_out = m_CustomCollisionPoints;
+				dContactGeom &geom = contact[0].geom;
+
+				colid_out.add(SCollisionPoint(
+					geom.pos[0], geom.pos[1], geom.pos[2],
+					geom.normal[0], geom.normal[1], geom.normal[2],
+					dobj, NULL));
+
 				return true;
 			}
 		}
@@ -716,7 +727,6 @@ void CDynamicManager::translateObjectThroughTheWorld(
 
 //---------------------------------------------------------------------------
 
-//! pre dynamic call
 void CDynamicManager::preDynamic()
 {
 	if (StoppingCalcDynamic) 
@@ -737,6 +747,8 @@ void CDynamicManager::preDynamic()
 
 	static bool falling_before;
 	static bool falling_after;
+
+	m_DynamicCollisionPoints.clear();
 
 	const E_DYNAMIC_OBJECT_TYPE dtypearr[] = { EDOT_DYNAMIC, EDOT_PSEUDO_DYNAMIC };
 	const s32 dtypecnt = sizeof(dtypearr)/sizeof(E_DYNAMIC_OBJECT_TYPE);
@@ -885,7 +897,6 @@ void CDynamicManager::calcDynamic(f64 delta_time_sec)
 
 //---------------------------------------------------------------------------
 
-//! post dynamic call
 void CDynamicManager::postDynamic()
 {
 	if (StoppingCalcDynamic) 
@@ -1035,8 +1046,19 @@ void CDynamicManager::postDynamic()
 
 //---------------------------------------------------------------------------
 
-// let all bouncables have the new position and rotation after 
-// physics have been applied    
+void CDynamicManager::preRenderFrame()
+{
+	m_CustomCollisionPoints.clear();
+}
+
+//---------------------------------------------------------------------------
+
+void CDynamicManager::postRenderFrame()
+{
+}
+
+//---------------------------------------------------------------------------
+
 void CDynamicManager::updateGeometryFromDynamic()
 {	
 	if (StoppingCalcDynamic) 
@@ -1144,10 +1166,8 @@ void CDynamicManager::updateGeometryFromDynamic()
 
 //---------------------------------------------------------------------------
 
-// add ODE object
 IDynamicObject* CDynamicManager::addObjectForSceneNode(
-	scn::ISceneNode* n, SDynamicObjectParams &params
-    )
+	scn::ISceneNode* n, SDynamicObjectParams &params)
 {
 	if (params.Type==EDOT_NONE)
 	{
@@ -1161,7 +1181,6 @@ IDynamicObject* CDynamicManager::addObjectForSceneNode(
 
 //---------------------------------------------------------------------------
 
-//! destroy ODE object
 bool CDynamicManager::removeObjectForSceneNode(scn::ISceneNode *n)
 {
 	bool res = false;
@@ -1177,14 +1196,11 @@ bool CDynamicManager::removeObjectForSceneNode(scn::ISceneNode *n)
 
 //---------------------------------------------------------------------------
 
-//! destroy all ODE objects
 void CDynamicManager::removeAllObjects()
 {
-	core::stringc msg;
-
 	if (CDynamicObject::DynamicObjects.size() != 0)
 	{
-		LOGGER.log("Not all Dynamic Objects deleted!", io::ELL_ERROR);
+		LOGGER.logErr("Not all Dynamic Objects deleted!");
 	}
 	
     core::list<IDynamicObject*>::iterator iter = CDynamicObject::DynamicObjects.begin();
@@ -1196,8 +1212,7 @@ void CDynamicManager::removeAllObjects()
 
 		if (!obj->drop())
 		{			
-			msg. sprintf("Can't drop CDynamicObject %d", obj);
-			LOGGER.log(msg, io::ELL_ERROR);
+			LOGGER.logErr("Can't drop CDynamicObject %d", obj);
 
 			++iter;	
 		}
@@ -1208,7 +1223,6 @@ void CDynamicManager::removeAllObjects()
 
 //----------------------------------------------------------------------------
 
-// set ODE World Params
 void CDynamicManager::setParams(SDynamicWorldParams &params)
 {   
     Parameters.set(params);
@@ -1255,7 +1269,6 @@ void CDynamicManager::setParams(SDynamicWorldParams &params)
 
 //----------------------------------------------------------------------------
 
-//! getting dynamic world gravity
 core::vector3df CDynamicManager::getGravity()
 {
 	return Parameters.Gravity;
@@ -1263,7 +1276,6 @@ core::vector3df CDynamicManager::getGravity()
 
 //----------------------------------------------------------------------------
 
-//! setting dynamic world gravity
 void CDynamicManager::setGravity(core::vector3df grav)
 {
 	Parameters.Gravity = grav;
@@ -1273,7 +1285,6 @@ void CDynamicManager::setGravity(core::vector3df grav)
 
 //----------------------------------------------------------------------------
 
-//! stopping calculating dynamic
 void CDynamicManager::stopCalcDynamic()
 {
 	StoppingCalcDynamic = true;
@@ -1281,7 +1292,6 @@ void CDynamicManager::stopCalcDynamic()
 
 //----------------------------------------------------------------------------
 
-//! resuming calculating dynamic
 void CDynamicManager::resumeCalcDynamic()
 {
 	core::list<IDynamicObject*>::iterator iter=NULL;
@@ -1306,7 +1316,6 @@ void CDynamicManager::resumeCalcDynamic()
 
 //----------------------------------------------------------------------------
 
-//! is calculating dynamic or not
 bool CDynamicManager::isCalcDynamic()
 {
 	return !StoppingCalcDynamic;
@@ -1314,7 +1323,6 @@ bool CDynamicManager::isCalcDynamic()
 
 //---------------------------------------------------------------------------
 
-// moving dynamic object
 void CDynamicManager::setDynamicObjectPosition(
     IDynamicObject* dynobj, const core::vector3df &pos, bool controlled_by_ai
     )

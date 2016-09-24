@@ -99,6 +99,12 @@ public:
     //! post dynamic call
     virtual void postDynamic() = 0;
 
+	//! called each time before render frame
+	virtual void preRenderFrame() = 0;
+
+	//! called each time after render frame
+	virtual void postRenderFrame() = 0;
+
     //! let all bouncables have the new position and rotation after 
     // physics have been applied    
     virtual void updateGeometryFromDynamic() = 0;   
@@ -173,6 +179,12 @@ public:
 	virtual void storeSecondObjectsTransformationsForInterpolation() = 0;
 	virtual void restoreSecondObjectsTransformationsForInterpolation() = 0;
 	virtual void interpolateObjectsTransformations(f32 factor) = 0;
+
+	virtual const SCollisionPoints& getCustomCollisionPoints() = 0;
+	virtual u32 getCustomCollisionPointsCount() = 0;
+
+	virtual const SCollisionPoints& getDynamicCollisionPoints() = 0;
+	virtual u32 getDynamicCollisionPointsCount() = 0;
 
 	//!	Return singleton object
 	static IDynamicManager& getSingleton();

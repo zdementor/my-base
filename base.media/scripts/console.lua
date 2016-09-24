@@ -534,11 +534,12 @@ local function _ConsoleRegisterForRendering()
 		local dobj          = MyDynMgr:getDynamicObjectsCount()
 		local act_game_nodes= MyGameMgr:getActiveGameNodesCount()
 		local game_nodes    = MyGameMgr:getGameNodesCount()
+		local collisions    = MyDynMgr:getCustomCollisionPointsCount() + MyDynMgr:getDynamicCollisionPointsCount()
 
 		posy = posy + height2
 		
-		_Text = string.format("%#3d (%#3d) scene nodes, %#3d (%#3d) dyn objects, %#3d (%#3d) game nodes",
-			visnodes, nodes, enabled_dobj, dobj, act_game_nodes, game_nodes)
+		_Text = string.format("%#3d (%#3d) scn.nodes, %#3d (%#3d) dyn.obj., %#3d (%#3d) game nodes, %#5d collisions",
+			visnodes, nodes, enabled_dobj, dobj, act_game_nodes, game_nodes, collisions)
 		_ConsoleFontRegisterForRendering(_Text, posx, posy, scrWidth, posy + height1)
 
 		local script_memory      = MyScript:getScriptMemoryKBytes() / 1024.0
@@ -554,11 +555,12 @@ local function _ConsoleRegisterForRendering()
 			script_memory, alloc_mbytes)
 		_ConsoleFontRegisterForRendering(_Text, posx, posy, scrWidth, posy + height1)
 
-		posy = posy + height1
-
-		_Text = string.format("dynamic alloc./dealloc. %.3fKb(%d)/%.3fKb(%d) per sec.",
-			alloc_kbytes_sec, alloc_sec, dealloc_kbytes_sec, dealloc_sec)
-		_ConsoleFontRegisterForRendering(_Text, posx, posy, scrWidth, posy + height1)
+		if alloc_kbytes_sec > 0 or alloc_sec > 0 or dealloc_kbytes_sec > 0 or dealloc_sec > 0 then
+			posy = posy + height1
+			_Text = string.format("dynamic alloc./dealloc. %.3fKb(%d)/%.3fKb(%d) per sec.",
+				alloc_kbytes_sec, alloc_sec, dealloc_kbytes_sec, dealloc_sec)
+			_ConsoleFontRegisterForRendering(_Text, posx, posy, scrWidth, posy + height1)
+		end
 
 		local player_gnode = MyGameMgr:getMainPlayerGameNode()
 		local player = nil

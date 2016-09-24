@@ -29,13 +29,13 @@ class CDynamicObject : public IDynamicObject
 private:
 
     // ODE stuff
-    dWorldID World;   // the world to which the object will belong to
-    dSpaceID Space;   // the objects space
-    dBodyID  Body;    // body data of the object
-	core::array<dGeomID> Geometry;
-    dMass    Mass;    // mass of the object	
+    dWorldID m_World;   // the world to which the object will belong to
+    dSpaceID m_Space;   // the objects space
+    dBodyID  m_Body;    // body data of the object
+	dGeomID  m_Geom;    // geometry of the object	
+    dMass    m_Mass;    // mass of the object	
 
-	dTriMeshDataID m_TriMeshData;
+	dTriMeshDataID     m_TriMeshData;
 	dHeightfieldDataID m_HeightfieldData;
 
 	dVector3 *vertices; // vertex array for trimesh geom
@@ -44,7 +44,7 @@ private:
 	int indexcount ;    // number of indices in the index array
 
     // Irrlicht stuff
-	scn::ISceneNode* Node;  // visualizing node
+	scn::ISceneNode *m_Node;  // visualizing node
 
 	// displace and turnoff between ode-object and irr-node    
     core::vector3df ODETurnoff;    

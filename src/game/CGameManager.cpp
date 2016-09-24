@@ -1448,6 +1448,8 @@ void CGameManager::preRenderFrame()
 {
 	m_Profiler.startProfiling(m_ProfileIds[EGPT_WHOLE_GAME]);
 
+	DYNAMIC_MANAGER.preRenderFrame();
+
 	m_DoGameCompleted = false;
 }
 
@@ -1464,6 +1466,8 @@ void CGameManager::postRenderFrame()
 		gtmgr.performGameTasks(true);  
 		gtmgr.removeCompletedTasks();
 	}
+
+	DYNAMIC_MANAGER.postRenderFrame();
 
 	m_Profiler.stopProfiling(m_ProfileIds[EGPT_WHOLE_GAME]);
 }

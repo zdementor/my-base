@@ -36,15 +36,15 @@ core::list<IDynamicObject*> CDynamicObject::DynamicObjectsByType[E_DYNAMIC_OBJEC
 
 //---------------------------------------------------------------------------
 
-CDynamicObject::CDynamicObject(
-    dWorldID w, dSpaceID s, scn::ISceneNode* n, SDynamicObjectParams &params 
-    ) : 
-World(w), Space(s), Node(n), isFalling(false), isFallingOnLastCalc(false), 
-Body(NULL), m_TriMeshData(NULL), m_HeightfieldData(NULL),
-DynVelocity(core::vector3df(0,0,0)), MovingForce(core::vector3df(0,0,0)), 
+CDynamicObject::CDynamicObject(dWorldID w, dSpaceID s,
+	scn::ISceneNode *n, SDynamicObjectParams &params)
+	: m_World(w), m_Space(s), m_Body(0), m_Geom(0),m_Node(n),
+isFalling(false), isFallingOnLastCalc(false), 
+m_TriMeshData(NULL), m_HeightfieldData(NULL),
+DynVelocity(0,0,0), MovingForce(0,0,0), 
 vertices(0), indices(0), vertexcount(0), indexcount(0),
 HeightOverGround(0), AutoUpdateGeomParams(false), Moved(true),
-ODETurnoff(core::vector3df(0,0,0))
+ODETurnoff(0,0,0)
 {
 #if MY_DEBUG_MODE  
 	setClassName("CDynamicObject");
@@ -61,9 +61,9 @@ ODETurnoff(core::vector3df(0,0,0))
 
 	State = EDOS_UNKNOWN;
     
-    if(Node)
+    if(m_Node)
     {
-        Node->DynObject=this;
+        m_Node->DynObject=this;
 
 		updateGeomData();
     }
@@ -82,27 +82,23 @@ CDynamicObject::~CDynamicObject()
 {
 	freeGeomData();
 
-	if(Node) 
+	if(m_Node) 
 	{ 
-		Node->DynObject=NULL; 
-		Node=NULL; 
+		m_Node->DynObject=NULL; 
+		m_Node=NULL; 
 	}
 }
 
 //---------------------------------------------------------------------------
 
-// frees all geom data 
 void CDynamicObject::freeGeomData()
 {
 	// free ode data
-
-	// destroy ode bodies
-	if (Body) 
+	if (m_Body) 
 	{ 
-		dBodyDestroy(Body); 
-		Body=0; 
+		dBodyDestroy(m_Body); 
+		m_Body=0; 
 	}
-
 	if (m_TriMeshData) 
 	{ 
 		dGeomTriMeshDataDestroy(m_TriMeshData); 
@@ -113,18 +109,12 @@ void CDynamicObject::freeGeomData()
 		dGeomHeightfieldDataDestroy(m_HeightfieldData);
 		m_HeightfieldData = 0; 
 	}
-
-	// destroy ode geoms
-	for (u32 i=0; i<Geometry.size(); i++)
+	if (m_Geom)
 	{
-		if (Geometry[i])
-		{
-			dGeomDestroy(Geometry[i]); Geometry[i]=0;
-		}
+		dGeomDestroy(m_Geom);
+		m_Geom = 0;
 	}
 
-	Geometry.clear();
-    
 	// free geometry
 
 	SAFE_DELETE_ARRAY(indices);
@@ -148,7 +138,7 @@ dReal heightfield_callback( void* pUserData, int x, int z )
 // Set ODE geometry data using the mesh structure   
 void CDynamicObject::updateGeomData() 
 {	
-    if(Node==NULL) return;  	
+    if(m_Node==NULL) return;  	
 
 	freeGeomData();
 
@@ -156,7 +146,7 @@ void CDynamicObject::updateGeomData()
 
 	scn::IMesh *Mesh = 0;
 
-	scn::IAnimatedMesh *phys_mesh = Node->getPhysicalMesh();
+	scn::IAnimatedMesh *phys_mesh = m_Node->getPhysicalMesh();
 	if (phys_mesh)
 	{
 		Mesh = phys_mesh->getMesh(0);
@@ -164,16 +154,16 @@ void CDynamicObject::updateGeomData()
 	if (!Mesh)
 	{
 		scn::IAnimatedMeshSceneNode *animated_mesh_scene_node =
-			SAFE_CAST_TO_ANIMATED_MESH_SCENE_NODE(Node);
+			SAFE_CAST_TO_ANIMATED_MESH_SCENE_NODE(m_Node);
 		if (animated_mesh_scene_node)
 			Mesh = animated_mesh_scene_node->getMesh(0);
 	}
 
-    core::vector3df pos    = Node->getPosition();
-    core::vector3df rot    = Node->getRotation();
-    core::vector3df scl    = Node->getScale();
+    core::vector3df pos    = m_Node->getPosition();
+    core::vector3df rot    = m_Node->getRotation();
+    core::vector3df scl    = m_Node->getScale();
 
-    core::aabbox3d<f32> box = Node->getBoundingBox();
+    core::aabbox3d<f32> box = m_Node->getBoundingBox();
 	core::vector3df extend  = box.getExtend();
 	core::vector3df center  = box.getCenter(); 
 
@@ -192,15 +182,15 @@ void CDynamicObject::updateGeomData()
 			Parameters.Type == EDOT_SENSELESS)  
     {   
 		// monolith object has no body
-        Body=0;
+        m_Body=0;
     }
     else
     {   
 		// create a body for this object
-        Body = dBodyCreate (World); 		
+        m_Body = dBodyCreate (m_World); 		
 
         // устанавливаем данные для тела
-        dBodySetData(Body,(void*)this);
+        dBodySetData(m_Body,(void*)this);
 
         // set mass shape
         if (gf==EDOGF_XCCYLINDER || gf==EDOGF_YCCYLINDER || 
@@ -228,40 +218,39 @@ void CDynamicObject::updateGeomData()
             length -=2*radius;
 
             // создаем массу цилиндра
-            dMassSetCappedCylinder (&Mass, DENSITY,3,radius,length>0?length:0.000001f);
+            dMassSetCappedCylinder (&m_Mass, DENSITY,3,radius,length>0?length:0.000001f);
         }
 		else 
 		if (gf == EDOGF_SPHERE)
         {   // сфера
             dMassSetSphere (
-				&Mass, DENSITY, 
+				&m_Mass, DENSITY, 
 				(dReal)core::math::Max( extend.X*scl.X, extend.Y*scl.Y, extend.Z*scl.Z )*0.5f
 				);
         }
 		else
-        {   // кубик
+        {   // Cube
             dMassSetBox (
-				&Mass, DENSITY,
+				&m_Mass, DENSITY,
 				(dReal)extend.X*scl.X, (dReal)extend.Y*scl.Y, (dReal)extend.Z*scl.Z
 				);
         }
         
         // adjust mass weight
-        dMassAdjust(&Mass, (dReal)Parameters.MassValue);             
+        dMassAdjust(&m_Mass, (dReal)Parameters.MassValue);             
     }	
-    
-    if ((Mesh || Node->getSceneNodeType() == scn::ESNT_TERRAIN_SCENE_NODE) && gf==EDOGF_MESH)
+
+	dGeomID geom = 0;
+
+    if ((Mesh || m_Node->getSceneNodeType() == scn::ESNT_TERRAIN_SCENE_NODE)
+			&& gf==EDOGF_MESH)
     // creating treemesh data for ode
     {
 		vertexcount = 0;
 		indexcount  = 0;
 
-		scn::ITerrainSceneNode* terrain = NULL;
-
-		if (Node->getSceneNodeType() == scn::ESNT_TERRAIN_SCENE_NODE)
-		{
-			terrain = static_cast<scn::ITerrainSceneNode*>(Node);
-		}
+		scn::ITerrainSceneNode* terrain = 
+			SAFE_CAST_TO_TERRAIN_SCENE_NODE(m_Node);	
 
 		if (terrain)
 		{
@@ -366,120 +355,77 @@ void CDynamicObject::updateGeomData()
         m_TriMeshData = dGeomTriMeshDataCreate();
         
 		// build the trimesh data
-        dGeomTriMeshDataBuildSimple(
-			m_TriMeshData, (dReal*)vertices, vertexcount, (unsigned int*)indices, indexcount
-			);  		
+        dGeomTriMeshDataBuildSimple(m_TriMeshData,
+			(dReal*)vertices, vertexcount, (unsigned int*)indices, indexcount);  		
        
-        // creating transform geometry
-		Geometry.push_back(dCreateGeomTransform(Space));
-		dGeomTransformSetCleanup(Geometry[Geometry.size()-1],1);   
-
-		// attaching simple geometry to the trasform geometry
-		dGeomTransformSetGeom(
-			Geometry[Geometry.size()-1], 
-			dCreateTriMesh(
-				0, m_TriMeshData, 0, 0, 0
-				)
-			);  
+		// creating simple geometry
+		geom = dCreateTriMesh(0, m_TriMeshData, 0, 0, 0);
     }
 	else if (gf == EDOGF_HEIGHTMAP)
 	// creating geometry, based on heightmaps array
 	{		
 		scn::ITerrainSceneNode* terrain = 
-			SAFE_CAST_TO_TERRAIN_SCENE_NODE(Node);	
+			SAFE_CAST_TO_TERRAIN_SCENE_NODE(m_Node);	
 
 		if (terrain)
 		{
 			// our heightfield floor
-			dHeightfieldDataID heightid = m_HeightfieldData = dGeomHeightfieldDataCreate();
+			dHeightfieldDataID heightid =
+				m_HeightfieldData = dGeomHeightfieldDataCreate();
 
 			// Create heightfield.
-
 			dGeomHeightfieldDataBuildCallback( 
 				heightid, terrain, heightfield_callback,
 				box.getExtend().X, box.getExtend().Z,
 				terrain->getHeightFieldSize(), terrain->getHeightFieldSize(),
-				REAL( 1.0 ), REAL( 0.0 ), REAL( 0.0 ), 0 
-				);
+				REAL( 1.0 ), REAL( 0.0 ), REAL( 0.0 ), 0);
 
 			// Give some very bounds which, while conservative,
 			// makes AABB computation more accurate than +/-INF.
-			dGeomHeightfieldDataSetBounds( 
-				heightid, box.MinEdge.Y, box.MaxEdge.Y 
-				);
+			dGeomHeightfieldDataSetBounds(
+				heightid, box.MinEdge.Y, box.MaxEdge.Y);
 
-			// creating transform geometry
-			Geometry.push_back(dCreateGeomTransform(Space));
-			dGeomTransformSetCleanup(Geometry[Geometry.size()-1],1);   
-
-			// attaching simple geometry to the transform geometry
-			dGeomTransformSetGeom(
-				Geometry[Geometry.size()-1], 
-				dCreateHeightfield ( 0, heightid, 1 )
-				);
+			// creating simple geometry
+			geom = dCreateHeightfield(0, heightid, 1);
 		}
 	}
-	else if (
-		gf==EDOGF_XCCYLINDER || gf==EDOGF_YCCYLINDER || gf==EDOGF_ZCCYLINDER 
-        )
+	else if (gf == EDOGF_XCCYLINDER
+				|| gf == EDOGF_YCCYLINDER
+				|| gf == EDOGF_ZCCYLINDER)
     // creating capped cylinder  geometry (along axis X,Y or Z)
     {		
-		dGeomID geom, geomtr;
-		
-		// creating transform geometry
-
-		geomtr = dCreateGeomTransform(Space);		
-		dGeomTransformSetCleanup(geomtr,1);  
-
-		Geometry.push_back(geomtr);	
-
 		// creating simple geometry
-		geom = dCreateCapsule ( 0, 1, 1);
-
-		// attaching simple geometry to the transform geometry
-		dGeomTransformSetGeom( geomtr, geom ); 	
+		geom = dCreateCapsule(0, 1, 1);
     }
 	else if (gf == EDOGF_SPHERE)
     // creating sphere geometry
     {
-		// creating transform geometry
-		Geometry.push_back(dCreateGeomTransform(Space));
-		dGeomTransformSetCleanup(Geometry[Geometry.size()-1],1);   
-
-		// attaching simple geometry to the transform geometry
-		dGeomTransformSetGeom(
-			Geometry[Geometry.size()-1], 
-			dCreateSphere ( 0, 1 )
-			);  
+		// creating simple geometry
+		geom = dCreateSphere(0, 1);
     }
 	else
     // creating cube geometry
     {
-		// creating transform geometry
-		Geometry.push_back(dCreateGeomTransform(Space));
-		dGeomTransformSetCleanup(Geometry[Geometry.size()-1],1);   
-
-		// attaching simple geometry to the transform geometry
-		dGeomTransformSetGeom(
-			Geometry[Geometry.size()-1], 
-			dCreateBox( 
-				0, 1, 1, 1 
-				)
-			);  
+		// creating simple geometry
+		geom = dCreateBox(0, 1, 1, 1);
     } 
 
-	for (i=0; i<(s32)Geometry.size(); i++)
-	{
-		// lets have a pointer to our bounceable, 
-		dGeomSetData(Geometry[i], (void*)this);
+	// creating transform geometry
+	m_Geom = dCreateGeomTransform(m_Space);		
+	dGeomTransformSetCleanup(m_Geom,1);  
 
-		// attach the body to the geometry
-		if (Body) 
-			dGeomSetBody(Geometry[i],Body);  
-	}
+	// attaching simple geometry to the trasform geometry
+	dGeomTransformSetGeom(m_Geom, geom);
+
+	// lets have a pointer to our bounceable, 
+	dGeomSetData(m_Geom, (void*)this);
+
+	// attach the body to the geometry
+	if (m_Body) 
+		dGeomSetBody(m_Geom, m_Body);  
 
     // make the body have a mass
-    if (Body) dBodySetMass(Body,&Mass);  
+    if (m_Body) dBodySetMass(m_Body, &m_Mass);  
 
 	updateGeomParams();	
 
@@ -489,18 +435,17 @@ void CDynamicObject::updateGeomData()
 
 //---------------------------------------------------------------------------
 
-//! update geometry params for the current geometry data
 void CDynamicObject::updateGeomParams()
 {
-    if(Node==NULL) return;  	
+    if(m_Node==NULL) return;  	
 
 	E_DYN_OBJ_GEOM_FORM &gf = Parameters.GeomForm;
 
-    core::vector3df pos    = Node->getPosition();
-    core::vector3df rot    = Node->getRotation();
-    core::vector3df scl    = Node->getScale();
+    core::vector3df pos    = m_Node->getPosition();
+    core::vector3df rot    = m_Node->getRotation();
+    core::vector3df scl    = m_Node->getScale();
 
-    core::aabbox3d<f32> box = Node->getBoundingBox();
+    core::aabbox3d<f32> box = m_Node->getBoundingBox();
 	core::vector3df extend  = box.getExtend();
 	core::vector3df center  = box.getCenter(); 
 
@@ -520,9 +465,7 @@ void CDynamicObject::updateGeomParams()
 	{
 		// nothing to do		
 	}
-	else if (
-		gf==EDOGF_XCCYLINDER || gf==EDOGF_YCCYLINDER || gf==EDOGF_ZCCYLINDER 
-        )
+	else if (gf == EDOGF_XCCYLINDER || gf == EDOGF_YCCYLINDER || gf == EDOGF_ZCCYLINDER)
 	// updating capped cylinder geometry params
     {
 		dReal radius,length;
@@ -545,35 +488,25 @@ void CDynamicObject::updateGeomParams()
             length   = (dReal)extend.Z*scl.Z;
 			ODETurnoff.set(0.0f,0.0f,0.0f);
         }
-
         length -=2*radius;    
 		
-		for (s32 g=0; g<(s32)Geometry.size(); g++)
-		{
-			dGeomID ccylinder = dGeomTransformGetGeom(Geometry[g]);
-			
-			dGeomCCylinderSetParams(ccylinder, radius, length>0?length:0.000001f);
-		}		
+		dGeomID ccylinder = dGeomTransformGetGeom(m_Geom);
+		dGeomCCylinderSetParams(ccylinder,
+			radius, length>0 ? length : 0.000001f);
     }
 	else if (gf == EDOGF_SPHERE)
 	// updating sphere geometry params
     {
-		for (s32 g=0; g<(s32)Geometry.size(); g++)
-		{
-			dGeomID sphere = dGeomTransformGetGeom(Geometry[g]);
-
-			dGeomSphereSetRadius (sphere, (dReal)core::math::Max( extend.X*scl.X, extend.Y*scl.Y, extend.Z*scl.Z )*0.5f);
-		}
+		dGeomID sphere = dGeomTransformGetGeom(m_Geom);
+		dGeomSphereSetRadius(sphere,
+			(dReal)core::math::Max(extend.X*scl.X, extend.Y*scl.Y, extend.Z*scl.Z )*0.5f);
     }
 	else
     // updating cube geometry params
     {
-		for (s32 g=0; g<(s32)Geometry.size(); g++)
-		{
-			dGeomID box = dGeomTransformGetGeom(Geometry[g]);
-
-			dGeomBoxSetLengths (box, (dReal)extend.X*scl.X, (dReal)extend.Y*scl.Y, (dReal)extend.Z*scl.Z );
-		}
+			dGeomID box = dGeomTransformGetGeom(m_Geom);
+			dGeomBoxSetLengths(box,
+				(dReal)extend.X*scl.X, (dReal)extend.Y*scl.Y, (dReal)extend.Z*scl.Z );
     } 		
 
     // transforming ode object	
@@ -627,30 +560,25 @@ void CDynamicObject::createDynObjectEntries()
 
 scn::ISceneNode* CDynamicObject::getSceneNode()
 {
-	return Node;
+	return m_Node;
 }
 
 //---------------------------------------------------------------------------
 
 void* CDynamicObject::getBodyID()
 {
-	return (void*)Body;
+	return (void*)m_Body;
 }
 
 //---------------------------------------------------------------------------
 
-//! возвращает идентификатор геометрии этого ODE обьекта
 void* CDynamicObject::getGeomID()
 {
-	if (Geometry.size() > 0)
-		return (void*)Geometry[0];
-	else
-		return (void*)0;
+	return (void*)m_Geom;
 }
 
 //---------------------------------------------------------------------------
 
-//! return bounding box
 core::aabbox3d<f32> CDynamicObject::getMyBoundingBox()
 {   
 	return MyInitialBoundingBox;
@@ -658,21 +586,19 @@ core::aabbox3d<f32> CDynamicObject::getMyBoundingBox()
 
 //---------------------------------------------------------------------------
 
-//! return bounding box
 core::aabbox3d<f32> CDynamicObject::getDynBoundingBox()
 {   
 	core::aabbox3d<f32> ode_box;
 
 	dReal aabb[6];    
 
-	dGeomGetAABB ( (dGeomID)getGeomID(), aabb );      
+	dGeomGetAABB(m_Geom, aabb );      
 
 	return core::aabbox3d<f32>(aabb[0],aabb[2],aabb[4],aabb[1],aabb[3],aabb[5]);;
 }
 
 //---------------------------------------------------------------------------
 
-//! return My last position
 core::vector3df& CDynamicObject::getMyLastPos()
 {   	
 	return LastMyPos;
@@ -713,10 +639,10 @@ core::vector3df CDynamicObject::getDynDisplace()
     {
 		ODEDisplace = MyInitialBoundingBoxCenter;
 
-		core::vector3df abs_pos = Node->getAbsolutePosition();
-		core::vector3df parent_offset = abs_pos-Node->getPosition();
+		core::vector3df abs_pos = m_Node->getAbsolutePosition();
+		core::vector3df parent_offset = abs_pos-m_Node->getPosition();
 	        
-		Node->getAbsoluteTransformation().transformVect(ODEDisplace);
+		m_Node->getAbsoluteTransformation().transformVect(ODEDisplace);
 	        
 		ODEDisplace = ODEDisplace - abs_pos + parent_offset;
 	}
@@ -848,12 +774,12 @@ bool& CDynamicObject::getAutoUpdateGeomParams()
 
 void CDynamicObject::storeFirstDynTransformationForInterpolation()
 {
-	if (!Body || !Node)
+	if (!m_Body || !m_Node)
 		return;	
 
 	// get the position of the ODE body
 
-	dReal* pos = (dReal*)dBodyGetPosition(Body);
+	dReal* pos = (dReal*)dBodyGetPosition(m_Body);
 
 	FirstDynPositionForInterpolation[0] = pos[0];
 	FirstDynPositionForInterpolation[1] = pos[1];
@@ -861,44 +787,44 @@ void CDynamicObject::storeFirstDynTransformationForInterpolation()
 
 	// get the rotation of the ODE body    
 
-	dReal* rot = (dReal*)dBodyGetQuaternion(Body);
+	dReal* rot = (dReal*)dBodyGetQuaternion(m_Body);
 
 	FirstDynRotationForInterpolation[0] = rot[0];
 	FirstDynRotationForInterpolation[1] = rot[1];
 	FirstDynRotationForInterpolation[2] = rot[2];
 	FirstDynRotationForInterpolation[3] = rot[3];
 
-	FirstPositionForInterpolation = Node->RelativeTranslation;
-	FirstRotationForInterpolation = Node->RelativeRotation;
+	FirstPositionForInterpolation = m_Node->RelativeTranslation;
+	FirstRotationForInterpolation = m_Node->RelativeRotation;
 }
 
 //---------------------------------------------------------------------------
 
 void CDynamicObject::restoreFirstDynTransformationForInterpolation()
 {
-	if (!Body || !Node)
+	if (!m_Body || !m_Node)
 		return;
 
 	dBodySetPosition(
-		Body, 
+		m_Body, 
 		FirstDynPositionForInterpolation[0], 
 		FirstDynPositionForInterpolation[1], 
 		FirstDynPositionForInterpolation[2]
 		);
 
-	dBodySetQuaternion(Body, FirstDynRotationForInterpolation);	
+	dBodySetQuaternion(m_Body, FirstDynRotationForInterpolation);	
 }
 
 //---------------------------------------------------------------------------
 
 void CDynamicObject::storeSecondDynTransformationForInterpolation()
 {
-	if (!Body || !Node)
+	if (!m_Body || !m_Node)
 		return;
 
 	// get the position of the ODE body
 
-	dReal* pos = (dReal*)dBodyGetPosition(Body);
+	dReal* pos = (dReal*)dBodyGetPosition(m_Body);
 
 	SecondDynPositionForInterpolation[0] = pos[0];
 	SecondDynPositionForInterpolation[1] = pos[1];
@@ -906,32 +832,32 @@ void CDynamicObject::storeSecondDynTransformationForInterpolation()
 
 	// get the rotation of the ODE body    
 
-	dReal* rot = (dReal*)dBodyGetQuaternion(Body);
+	dReal* rot = (dReal*)dBodyGetQuaternion(m_Body);
 
 	SecondDynRotationForInterpolation[0] = rot[0];
 	SecondDynRotationForInterpolation[1] = rot[1];
 	SecondDynRotationForInterpolation[2] = rot[2];
 	SecondDynRotationForInterpolation[3] = rot[3];
 
-	SecondPositionForInterpolation = Node->RelativeTranslation;
-	SecondRotationForInterpolation = Node->RelativeRotation;
+	SecondPositionForInterpolation = m_Node->RelativeTranslation;
+	SecondRotationForInterpolation = m_Node->RelativeRotation;
 }
 
 //---------------------------------------------------------------------------
 
 void CDynamicObject::restoreSecondDynTransformationForInterpolation()
 {
-	if (!Body || !Node)
+	if (!m_Body || !m_Node)
 		return;
 
 	dBodySetPosition(
-		Body, 
+		m_Body, 
 		SecondDynPositionForInterpolation[0], 
 		SecondDynPositionForInterpolation[1], 
 		SecondDynPositionForInterpolation[2]
 		);
 
-	dBodySetQuaternion(Body, SecondDynRotationForInterpolation);
+	dBodySetQuaternion(m_Body, SecondDynRotationForInterpolation);
 }
 
 //---------------------------------------------------------------------------
@@ -949,10 +875,10 @@ void CDynamicObject::interpolateDynTransformation(f32 factor)
     ode::ODEQuaternionSlerp(FirstDynRotationForInterpolation, SecondDynRotationForInterpolation, interp_dyn_rot, factor);
 
 	dBodySetPosition(
-		Body, 
+		m_Body, 
 		interp_dyn_pos[0], interp_dyn_pos[1], interp_dyn_pos[2]
 		); 
-	dBodySetQuaternion(Body, interp_dyn_rot);
+	dBodySetQuaternion(m_Body, interp_dyn_rot);
 
 	core::vector3df  irr_pos;
 	core::vector3df  irr_rot;
@@ -977,11 +903,11 @@ void CDynamicObject::interpolateDynTransformation(f32 factor)
 	} 
 
 	// set the node rotation 
-	Node->RelativeRotation  = next_rot; 			
+	m_Node->RelativeRotation  = next_rot; 			
 	getMyLastRot()          = next_rot;
 
 	// set the position at the scenenode
-	Node->RelativeTranslation = next_pos;
+	m_Node->RelativeTranslation = next_pos;
 	getMyLastPos()            = next_pos;
 
 	getDynLastPos().X = interp_dyn_pos[0];
@@ -993,8 +919,8 @@ void CDynamicObject::interpolateDynTransformation(f32 factor)
 	getDynLastRot().Y = interp_dyn_rot[2];
 	getDynLastRot().Z = interp_dyn_rot[3];
 
-	Node->m_TransformationChanged = true;
-	Node->updateAbsoluteTransformation();
+	m_Node->m_TransformationChanged = true;
+	m_Node->updateAbsoluteTransformation();
 }
 
 //---------------------------------------------------------------------------
@@ -1010,27 +936,27 @@ void CDynamicObject::setMoved(bool value)
 {
 	Moved = value;
 
-	if (!Body)
+	if (!m_Body)
 		return;	
 
-	dBodyEnable(Body);
+	dBodyEnable(m_Body);
 }
 
 //---------------------------------------------------------------------------
 
 void CDynamicObject::addForce(const core::vector3df& force)
 {
-	if (!Body||force.getLength() <=0.0f)
+	if (!m_Body||force.getLength() <=0.0f)
 		return;	
 	
-	dBodyAddForce(Body, force.X, force.Y, force.Z);
+	dBodyAddForce(m_Body, force.X, force.Y, force.Z);
 	MovingForce = force;	
 
 	setMoved(true);
 
 	// to start up moving
 
-	dReal* lin_vel = (dReal*)dBodyGetLinearVel(Body);
+	dReal* lin_vel = (dReal*)dBodyGetLinearVel(m_Body);
 
 	if (core::math::IsZero(lin_vel[0]) &&
 		core::math::IsZero(lin_vel[1]) &&
@@ -1041,7 +967,7 @@ void CDynamicObject::addForce(const core::vector3df& force)
 		add_vel.normalize();
 		add_vel*=10.0f;
 		
-		dBodySetLinearVel(Body, lin_vel[0]+add_vel.X, lin_vel[1]+add_vel.Y, lin_vel[2]+add_vel.Z);					
+		dBodySetLinearVel(m_Body, lin_vel[0]+add_vel.X, lin_vel[1]+add_vel.Y, lin_vel[2]+add_vel.Z);					
 	}		
 }
 

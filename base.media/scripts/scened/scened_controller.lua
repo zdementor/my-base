@@ -64,6 +64,8 @@ local SCENED_MENU_NAME_SHOW_LIGHTS = "Show lights"
 local SCENED_MENU_NAME_HIDE_LIGHTS = "Hide lights"
 local SCENED_MENU_NAME_SHOW_TERRAIN_NORMALS = "Show terrain normals"
 local SCENED_MENU_NAME_HIDE_TERRAIN_NORMALS = "Hide terrain normals"
+local SCENED_MENU_NAME_SHOW_COLLISION_POINTS = "Show collision points"
+local SCENED_MENU_NAME_HIDE_COLLISION_POINTS = "Hide collision points"
 
 function _ScenedInitImpl()
 
@@ -262,7 +264,6 @@ function _ScenedInitImpl()
 	menuItem:setPopupMenu(popupMenu1)
 	popupMenu:addChildWindow(menuItem)
 	
-	
 	-- Options->View
 
 	popupMenu1 = tolua.cast(
@@ -287,6 +288,13 @@ function _ScenedInitImpl()
 		CEGUIWinMgr:createWindow("MyScened/MenuItem", "Scened.Menu.Options.View.RenderTerrainNormals"),
 		"CEGUI::MenuItem")
 	_Ctrls.MenuItems.RenderTerrainNormals = menuItem
+	menuItem:subscribeEvent("Clicked", "_ScenedWidgetClicked")
+	popupMenu1:addChildWindow(menuItem)
+
+	menuItem = tolua.cast(
+		CEGUIWinMgr:createWindow("MyScened/MenuItem", "Scened.Menu.Options.View.RenderCollisionPoints"),
+		"CEGUI::MenuItem")
+	_Ctrls.MenuItems.RenderCollisionPoints = menuItem
 	menuItem:subscribeEvent("Clicked", "_ScenedWidgetClicked")
 	popupMenu1:addChildWindow(menuItem)
 
@@ -629,6 +637,13 @@ function _ScenedUpdateControlsImpl()
 	else
 		menuItem:setText(SCENED_MENU_NAME_HIDE_TERRAIN_NORMALS)
 	end
+
+	menuItem = _Ctrls.MenuItems.RenderCollisionPoints
+	if not MyScnMgr:getSceneRenderFlag(scn.ESRF_RENDER_COLLISION_POINTS) then
+		menuItem:setText(SCENED_MENU_NAME_SHOW_COLLISION_POINTS)
+	else
+		menuItem:setText(SCENED_MENU_NAME_HIDE_COLLISION_POINTS)
+	end
 	
 	_ScenedUpdatePolygonModeMenuItems()
 	
@@ -868,6 +883,14 @@ function _ScenedWidgetClicked(args)
 		else
 			MyScnMgr:setSceneRenderFlag(scn.ESRF_RENDER_TERRAIN_NORMALS, false)
 			_Ctrls.MenuItems.RenderTerrainNormals:setText(SCENED_MENU_NAME_SHOW_TERRAIN_NORMALS)
+		end
+	elseif name == _Ctrls.MenuItems.RenderCollisionPoints:getName() then
+		if not MyScnMgr:getSceneRenderFlag(scn.ESRF_RENDER_COLLISION_POINTS) then
+			MyScnMgr:setSceneRenderFlag(scn.ESRF_RENDER_COLLISION_POINTS, true)
+			_Ctrls.MenuItems.RenderCollisionPoints:setText(SCENED_MENU_NAME_HIDE_COLLISION_POINTS)
+		else
+			MyScnMgr:setSceneRenderFlag(scn.ESRF_RENDER_COLLISION_POINTS, false)
+			_Ctrls.MenuItems.RenderCollisionPoints:setText(SCENED_MENU_NAME_SHOW_COLLISION_POINTS)
 		end
 	elseif name == _Ctrls.MenuItems.PolygonModeSolid:getName() then
 		MyDriver:setPolygonFillMode(vid.EPFM_SOLID)

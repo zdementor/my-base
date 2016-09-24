@@ -57,6 +57,8 @@ private:
 
 	core::math::li2df m_ForceInterolator;
 
+	SCollisionPoints m_CustomCollisionPoints, m_DynamicCollisionPoints;
+
 public:
 
     //! constructor
@@ -81,14 +83,12 @@ public:
     //! destroy all ODE objects
     virtual void removeAllObjects();
 
-    //! pre dynamic call
     virtual void preDynamic();
-
-	//! dynamic calculation
     virtual void calcDynamic(f64 delta_time_sec);
-
-    //! post dynamic call
     virtual void postDynamic();
+
+	virtual void preRenderFrame();
+	virtual void postRenderFrame();
 
     // let all bouncables have the new position and rotation after 
     // physics have been applied    
@@ -167,6 +167,18 @@ public:
 	virtual void storeSecondObjectsTransformationsForInterpolation();
 	virtual void restoreSecondObjectsTransformationsForInterpolation();
 	virtual void interpolateObjectsTransformations(f32 factor);		
+
+	virtual const SCollisionPoints& getCustomCollisionPoints()
+	{ return m_CustomCollisionPoints; }
+
+	virtual u32 getCustomCollisionPointsCount()
+	{ return m_CustomCollisionPoints.getPoints().size(); }
+
+	virtual const SCollisionPoints& getDynamicCollisionPoints()
+	{ return m_DynamicCollisionPoints; }
+
+	virtual u32 getDynamicCollisionPointsCount()
+	{ return m_DynamicCollisionPoints.getPoints().size(); }
 };
 
 //---------------------------------------------------------------------------

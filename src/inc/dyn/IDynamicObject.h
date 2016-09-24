@@ -100,15 +100,23 @@ struct __MY_DYN_LIB_API__ SDynamicObjectParams
 
 struct __MY_DYN_LIB_API__ SCollisionPoint
 {
-	SCollisionPoint() : Pos(0,0,0), Normal(0,0,0), DynObj(0) {}
-
-	SCollisionPoint(
-		const core::vector3df &pos, const core::vector3df &normal, IDynamicObject* dobj
-		) : Pos(pos), Normal(normal), DynObj(dobj) {}
+	SCollisionPoint()
+		: Pos(0,0,0), Normal(0,0,0), DynObj(0), DynObj2(0) {}
+	SCollisionPoint(const core::vector3df &pos,
+		const core::vector3df &normal,
+		IDynamicObject *dobj, IDynamicObject *dobj2 = NULL)
+		: Pos(pos), Normal(normal),
+	DynObj(dobj), DynObj2(dobj2) {}
+	SCollisionPoint(f32 posX, f32 posY, f32 posZ,
+		f32 nrmX, f32 nrmY, f32 nrmZ,
+		IDynamicObject *dobj, IDynamicObject *dobj2 = NULL)
+		: Pos(posX, posY, posZ), Normal(nrmX, nrmY, nrmZ),
+		DynObj(dobj), DynObj2(dobj2) {}
 
 	core::vector3df Pos;
 	core::vector3df Normal;
     IDynamicObject* DynObj;
+	IDynamicObject* DynObj2;
 };
 
 //----------------------------------------------------------------------------

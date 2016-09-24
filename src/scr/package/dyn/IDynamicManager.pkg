@@ -9,6 +9,9 @@ class IDynamicManager
 	int getEnabledDynamicObjectsCount();
 
 	int getDynamicObjectsCount();
+
+	unsigned getCustomCollisionPointsCount();
+	unsigned getDynamicCollisionPointsCount();
 };
 
 //-----------------------------------------------------------------

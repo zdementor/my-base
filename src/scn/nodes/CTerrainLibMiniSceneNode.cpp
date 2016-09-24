@@ -510,14 +510,9 @@ f32 CTerrainLibMiniSceneNode::getHeight(f32 x, f32 z)
 
 const vector3df& CTerrainLibMiniSceneNode::getNormal(f32 x, f32 z)
 { 
-    static vector3df n; 
-	n.set(0,1,0);
+    static vector3df n(0, 0, 0); 
     if (m_Stub) 
-    { 
-        f32 nx,ny,nz; 
-        m_Stub->getnormal(x,z,&nx,&ny,&nz); 
-        n.set(nx,ny,nz); 
-    } 
+        m_Stub->getnormal(x, z, &n.X, &n.Y, &n.Z); 
     return n; 
 } 
 

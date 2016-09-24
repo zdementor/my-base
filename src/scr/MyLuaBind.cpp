@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/23/16 14:57:59.
+** Generated automatically by tolua++-1.0.92 on 09/23/16 22:00:37.
 */
 
 #ifndef __cplusplus
@@ -58576,6 +58576,70 @@ static int tolua_MyLuaBind_dyn_IDynamicManager_getDynamicObjectsCount00(lua_Stat
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: getCustomCollisionPointsCount of class  dyn::IDynamicManager */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_dyn_IDynamicManager_getCustomCollisionPointsCount00
+static int tolua_MyLuaBind_dyn_IDynamicManager_getCustomCollisionPointsCount00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"dyn::IDynamicManager",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  dyn::IDynamicManager* self = (dyn::IDynamicManager*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getCustomCollisionPointsCount'",NULL);
+#endif
+ {
+  unsigned tolua_ret = (unsigned)  self->getCustomCollisionPointsCount();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getCustomCollisionPointsCount'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getDynamicCollisionPointsCount of class  dyn::IDynamicManager */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_dyn_IDynamicManager_getDynamicCollisionPointsCount00
+static int tolua_MyLuaBind_dyn_IDynamicManager_getDynamicCollisionPointsCount00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"dyn::IDynamicManager",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  dyn::IDynamicManager* self = (dyn::IDynamicManager*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getDynamicCollisionPointsCount'",NULL);
+#endif
+ {
+  unsigned tolua_ret = (unsigned)  self->getDynamicCollisionPointsCount();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getDynamicCollisionPointsCount'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* Open function */
 int tolua_MyLuaBind_open (lua_State* tolua_S)
 {
@@ -58832,6 +58896,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"ESRF_RENDER_SHADOW_DEBUG_DATA",scn::ESRF_RENDER_SHADOW_DEBUG_DATA);
   tolua_constant(tolua_S,"ESRF_RENDER_LIGHTS",scn::ESRF_RENDER_LIGHTS);
   tolua_constant(tolua_S,"ESRF_RENDER_TERRAIN_NORMALS",scn::ESRF_RENDER_TERRAIN_NORMALS);
+  tolua_constant(tolua_S,"ESRF_RENDER_COLLISION_POINTS",scn::ESRF_RENDER_COLLISION_POINTS);
   tolua_constant(tolua_S,"ESHT_SHADOW_FAKE",scn::ESHT_SHADOW_FAKE);
   tolua_constant(tolua_S,"ESHT_SHADOW_VOLUME",scn::ESHT_SHADOW_VOLUME);
   tolua_constant(tolua_S,"E_SHADOW_TYPE_COUNT",scn::E_SHADOW_TYPE_COUNT);
@@ -62098,6 +62163,8 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
    tolua_function(tolua_S,"getSingleton",tolua_MyLuaBind_dyn_IDynamicManager_getSingleton00);
    tolua_function(tolua_S,"getEnabledDynamicObjectsCount",tolua_MyLuaBind_dyn_IDynamicManager_getEnabledDynamicObjectsCount00);
    tolua_function(tolua_S,"getDynamicObjectsCount",tolua_MyLuaBind_dyn_IDynamicManager_getDynamicObjectsCount00);
+   tolua_function(tolua_S,"getCustomCollisionPointsCount",tolua_MyLuaBind_dyn_IDynamicManager_getCustomCollisionPointsCount00);
+   tolua_function(tolua_S,"getDynamicCollisionPointsCount",tolua_MyLuaBind_dyn_IDynamicManager_getDynamicCollisionPointsCount00);
   tolua_endmodule(tolua_S);
  tolua_endmodule(tolua_S);
  tolua_endmodule(tolua_S);

@@ -1244,6 +1244,48 @@ void CSceneManager::preRenderScene()
 		}
 	}
 
+	bool collis_debug = getSceneRenderFlag(scn::ESRF_RENDER_COLLISION_POINTS);
+
+	if (collis_debug)
+	{
+		const core::array<dyn::SCollisionPoint> *collisions[] =
+		{
+			&DYNAMIC_MANAGER.getCustomCollisionPoints().getPoints(),
+			&DYNAMIC_MANAGER.getDynamicCollisionPoints().getPoints(),
+		};
+		u32 cols[sizeof(collisions)/sizeof(*collisions)] =
+		{
+			0xff0000ff,
+			0xffff0000
+		};
+		f32 pSizeDiv2 = 1.5f;
+		core::matrix4 matr;
+
+		for (u32 i = 0; i < sizeof(collisions)/sizeof(*collisions); i++)
+		{
+			u32 color = cols[i];
+			const core::array<dyn::SCollisionPoint> *collidArr = collisions[i];
+
+			u32 colCnt = collidArr->size();
+			for (u32 j = 0; j < colCnt; j++)
+			{
+				const dyn::SCollisionPoint &collision = collidArr->operator[](j);
+				core::aabbox3df box(
+					collision.Pos.X - pSizeDiv2,
+					collision.Pos.Y - pSizeDiv2,
+					collision.Pos.Z - pSizeDiv2,
+					collision.Pos.X + pSizeDiv2,
+					collision.Pos.Y + pSizeDiv2,
+					collision.Pos.Z + pSizeDiv2);
+				m_Driver.register3DBoxForRendering(matr,
+					box, color);
+				m_Driver.register3DLineForRendering(matr,
+					collision.Pos, collision.Pos + collision.Normal * 10.f,
+					0xffffffff);
+			}
+		}
+	}
+
 	m_Profiler.stopProfiling(m_ProfilePreRenderSceneNodesId);
 	m_Profiler.stopProfiling(m_ProfilePreRenderId);
 }
