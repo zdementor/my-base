@@ -125,12 +125,15 @@ void CDynamicObject::freeGeomData()
 
 //---------------------------------------------------------------------------
 
-dReal heightfield_callback( void* pUserData, int x, int z )
+dReal heightfield_callback(void *pUserData, int i, int j)
 {
 	scn::ITerrainSceneNode* terrain = 
 		reinterpret_cast<scn::ITerrainSceneNode*>(pUserData);
 
-	return terrain->getCellHeight(x, z);
+	const s32 hfsize = terrain->getHeightFieldSize();
+	const s32 hfsize_1 = hfsize - 1;
+
+	return terrain->getCellHeight(i, hfsize_1 - j);
 }
 
 //---------------------------------------------------------------------------
