@@ -133,16 +133,19 @@ void CParticleSystemSceneNode::OnPreRender(u32 timeMs)
 			core::vector3df dir_1;
 			getAbsoluteTransformation().transformVect(dir_0);
 			dir_1 = dir_0 + emitter->getDirection() * 300.0f;
-			driver.register3DBoxForRendering(getAbsoluteTransformation(),
+			driver.register3DBoxForRendering(
+				vid::ERP_3D_SOLID_PASS, getAbsoluteTransformation(),
 				emitter->getAppearVolume(), 0xffffff00);
-			driver.register3DLineForRendering(core::matrix4(),
+			driver.register3DLineForRendering(
+				vid::ERP_3D_SOLID_PASS, core::matrix4(),
 				dir_0, dir_1, 0xff00ff00);
 		}
 	}
 
 	if (dbg_vis)
 	{
-		driver.register3DBoxForRendering(getAbsoluteTransformation(),
+		driver.register3DBoxForRendering(
+			vid::ERP_3D_SOLID_PASS, getAbsoluteTransformation(),
 			getBoundingBox(), 0xffffffff);
 	}
 

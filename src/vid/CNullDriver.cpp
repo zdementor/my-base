@@ -2060,6 +2060,7 @@ void CNullDriver::_registerImageForRendering(
 //--------------------------------------------------------------------------
 
 void CNullDriver::register3DLineForRendering(
+	E_RENDER_PASS pass,
 	const core::matrix4 &transf,
 	const core::vector3df &start, const core::vector3df &end,
     const img::SColor &color,
@@ -2077,16 +2078,22 @@ void CNullDriver::register3DLineForRendering(
 	static bool init_done = false;
 	if (!init_done)
 	{
-		pass0.setFlag(EMF_ZWRITE_ENABLE, true);
 		pass0.setLightingMode(vid::ELM_NONE);
 		pass0.setFlag(EMF_GOURAUD_SHADING, false);
 		pass0.setFlag(EMF_MIP_MAP_OFF, true);
 		init_done = true;
 	}
 
-	E_RENDER_PASS pass = ERP_3D_SOLID_PASS;
-
-	pass0.setDepthTest(ECT_LESS);//depth_test ? ECT_LESS : ECT_ALWAYS);
+	if (depth_test)
+	{
+		pass0.setFlag(EMF_ZWRITE_ENABLE, true);
+		pass0.setDepthTest(ECT_LESS);
+	}
+	else
+	{
+		pass0.setFlag(EMF_ZWRITE_ENABLE, false);
+		pass0.setDepthTest(ECT_ALWAYS);
+	}
 
 	if (useAlphaBlending)
 	{
@@ -2133,6 +2140,7 @@ void CNullDriver::register3DLineForRendering(
 //---------------------------------------------------------------------------
 
 void CNullDriver::register3DBoxForRendering(
+	E_RENDER_PASS pass,
 	const core::matrix4 &transf,
 	const core::aabbox3df &box, const img::SColor &color,
 	bool depth_test,
@@ -2143,18 +2151,18 @@ void CNullDriver::register3DBoxForRendering(
     box.getEdges(edges);
     
     // TODO: optimize into one big call.
-    register3DLineForRendering(transf, edges[5], edges[1], color, depth_test, useAlphaBlending, useColorBlending, mode);
-    register3DLineForRendering(transf, edges[1], edges[3], color, depth_test, useAlphaBlending, useColorBlending, mode);
-    register3DLineForRendering(transf, edges[3], edges[7], color, depth_test, useAlphaBlending, useColorBlending, mode);
-    register3DLineForRendering(transf, edges[7], edges[5], color, depth_test, useAlphaBlending, useColorBlending, mode);
-    register3DLineForRendering(transf, edges[0], edges[2], color, depth_test, useAlphaBlending, useColorBlending, mode);
-    register3DLineForRendering(transf, edges[2], edges[6], color, depth_test, useAlphaBlending, useColorBlending, mode);
-    register3DLineForRendering(transf, edges[6], edges[4], color, depth_test, useAlphaBlending, useColorBlending, mode);
-    register3DLineForRendering(transf, edges[4], edges[0], color, depth_test, useAlphaBlending, useColorBlending, mode);
-    register3DLineForRendering(transf, edges[1], edges[0], color, depth_test, useAlphaBlending, useColorBlending, mode);
-    register3DLineForRendering(transf, edges[3], edges[2], color, depth_test, useAlphaBlending, useColorBlending, mode);
-    register3DLineForRendering(transf, edges[7], edges[6], color, depth_test, useAlphaBlending, useColorBlending, mode);
-    register3DLineForRendering(transf, edges[5], edges[4], color, depth_test, useAlphaBlending, useColorBlending, mode);
+    register3DLineForRendering(pass, transf, edges[5], edges[1], color, depth_test, useAlphaBlending, useColorBlending, mode);
+    register3DLineForRendering(pass, transf, edges[1], edges[3], color, depth_test, useAlphaBlending, useColorBlending, mode);
+    register3DLineForRendering(pass, transf, edges[3], edges[7], color, depth_test, useAlphaBlending, useColorBlending, mode);
+    register3DLineForRendering(pass, transf, edges[7], edges[5], color, depth_test, useAlphaBlending, useColorBlending, mode);
+    register3DLineForRendering(pass, transf, edges[0], edges[2], color, depth_test, useAlphaBlending, useColorBlending, mode);
+    register3DLineForRendering(pass, transf, edges[2], edges[6], color, depth_test, useAlphaBlending, useColorBlending, mode);
+    register3DLineForRendering(pass, transf, edges[6], edges[4], color, depth_test, useAlphaBlending, useColorBlending, mode);
+    register3DLineForRendering(pass, transf, edges[4], edges[0], color, depth_test, useAlphaBlending, useColorBlending, mode);
+    register3DLineForRendering(pass, transf, edges[1], edges[0], color, depth_test, useAlphaBlending, useColorBlending, mode);
+    register3DLineForRendering(pass, transf, edges[3], edges[2], color, depth_test, useAlphaBlending, useColorBlending, mode);
+    register3DLineForRendering(pass, transf, edges[7], edges[6], color, depth_test, useAlphaBlending, useColorBlending, mode);
+    register3DLineForRendering(pass, transf, edges[5], edges[4], color, depth_test, useAlphaBlending, useColorBlending, mode);
 }
 
 #include <limits.h>

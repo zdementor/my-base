@@ -376,8 +376,9 @@ void CShadowFake::_registerGeometryFromLight(
 	{
 		for (u32 i = 0; i < 4; i++)
 			m_Driver.register3DLineForRendering(
-				core::matrix4(), vertices[i].Pos,
-				vertices[(i + 1) % 4].Pos, 0xff005500);
+				vid::ERP_3D_SOLID_PASS, core::matrix4(),
+				vertices[i].Pos, vertices[(i + 1) % 4].Pos,
+				0xff005500);
 	}
 
 	if (m_GroundPlaneValid)
@@ -414,11 +415,17 @@ void CShadowFake::_registerGeometryFromLight(
 	{
 		for (u32 i = 0; i < 4; i++)
 			m_Driver.register3DLineForRendering(
-				core::matrix4(), vertices[i].Pos, vertices[(i + 1) % 4].Pos, 0xff005500);
+				vid::ERP_3D_SOLID_PASS, core::matrix4(),
+				vertices[i].Pos, vertices[(i + 1) % 4].Pos,
+				0xff005500);
 		m_Driver.register3DBoxForRendering(
-			core::matrix4(), svp->TransformedBoundingBox, 0xffffff00);
+			vid::ERP_3D_SOLID_PASS, core::matrix4(),
+			svp->TransformedBoundingBox,
+			0xffffff00);
 		m_Driver.register3DLineForRendering(
-			core::matrix4(), node_pos, lposabs, 0xff00ff00);
+			vid::ERP_3D_SOLID_PASS, core::matrix4(),
+			node_pos, lposabs,
+			0xff00ff00);
 	}
 }
 

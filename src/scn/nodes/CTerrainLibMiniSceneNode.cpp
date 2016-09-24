@@ -473,6 +473,7 @@ void CTerrainLibMiniSceneNode::OnPreRender(u32 timeMs)
 	if (drawDebug)
     {
 		m_VideoDriver.register3DBoxForRendering(
+			vid::ERP_3D_SOLID_PASS,
 			getAbsoluteTransformation(),
 			getBoundingBox(), img::SColor(0xffffffff));
     }
@@ -482,7 +483,9 @@ void CTerrainLibMiniSceneNode::OnPreRender(u32 timeMs)
 		for (u32 i = 0; i < m_VerticesToRender; i++)
 		{
 			vid::S3DVertex2TCoords &v = m_RenderVertices[i];
-			m_VideoDriver.register3DLineForRendering(AbsoluteTransformation, v.Pos, v.Pos + v.Normal * 50.f);
+			m_VideoDriver.register3DLineForRendering(
+				vid::ERP_3D_SOLID_PASS,
+				AbsoluteTransformation, v.Pos, v.Pos + v.Normal * 50.f);
 		}
     }
 

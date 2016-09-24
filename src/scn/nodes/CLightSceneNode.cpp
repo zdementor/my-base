@@ -106,10 +106,12 @@ void CLightSceneNode::OnPreRender(u32 timeMs)
 	{
 		if (drawDebug)
 		{
-			driver.register3DBoxForRendering(getAbsoluteTransformation(),
+			driver.register3DBoxForRendering(
+				vid::ERP_3D_SOLID_PASS, getAbsoluteTransformation(),
 				getBoundingBox(), img::SColor(0xffffffff));
 
-			driver.register3DBoxForRendering(core::matrix4(),
+			driver.register3DBoxForRendering(
+				vid::ERP_3D_SOLID_PASS, core::matrix4(),
 				LightData.LightedVolume, img::SColor(0xffffff00));	
 		}
 

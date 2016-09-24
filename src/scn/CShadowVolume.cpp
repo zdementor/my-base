@@ -698,8 +698,8 @@ CLightShadowVolume* CShadowVolume::_createShadowVolume(
 	if (render_debug)
 	{
 		m_Driver.register3DBoxForRendering(
-			core::matrix4(), svp->TransformedBoundingBox,
-			0xffffff00);
+			vid::ERP_3D_SOLID_PASS, core::matrix4(),
+			svp->TransformedBoundingBox, 0xffffff00);
 	}
 
 	return svp;

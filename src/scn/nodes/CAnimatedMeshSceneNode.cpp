@@ -231,7 +231,7 @@ void CAnimatedMeshSceneNode::OnPreRender(u32 timeMs)
 	if (debug)
 	{
 		m_VideoDriver.register3DBoxForRendering(
-			getAbsoluteTransformation(),
+			vid::ERP_3D_SOLID_PASS, getAbsoluteTransformation(),
 			getBoundingBox(), img::SColor(0xffffffff));
 	}
 

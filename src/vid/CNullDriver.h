@@ -403,6 +403,7 @@ public:
 		E_RENDER_MODE mode = ERM_RENDER_STANDARD);
 
 	virtual void register3DLineForRendering(
+		E_RENDER_PASS pass,
 		const core::matrix4 &transf,
 		const core::vector3df &start, const core::vector3df &end,
 		const img::SColor &color,
@@ -411,6 +412,7 @@ public:
 		E_RENDER_MODE mode);
 
 	virtual void register3DBoxForRendering(
+		E_RENDER_PASS pass,
 		const core::matrix4 &transf,
 		const core::aabbox3df &box, const img::SColor &color,
 		bool depth_test,

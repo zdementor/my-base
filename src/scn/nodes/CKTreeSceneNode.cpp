@@ -334,7 +334,7 @@ void CKTreeSceneNode::OnPreRender(u32 timeMs)
 	if (isDebugDataVisible())
 	{
 		driver.register3DBoxForRendering(
-			getAbsoluteTransformation(),
+			vid::ERP_3D_SOLID_PASS, getAbsoluteTransformation(),
 			getBoundingBox(), img::SColor(0xffffffff));
 	}
 

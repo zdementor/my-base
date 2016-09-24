@@ -1207,10 +1207,14 @@ void CSceneManager::preRenderScene()
 
 					if (shadow_debug)
 					{
-						m_Driver.register3DLineForRendering(core::matrix4(), vertices[0].Pos, vertices[1].Pos);
-						m_Driver.register3DLineForRendering(core::matrix4(), vertices[1].Pos, vertices[2].Pos);
-						m_Driver.register3DLineForRendering(core::matrix4(), vertices[2].Pos, vertices[3].Pos);
-						m_Driver.register3DLineForRendering(core::matrix4(), vertices[3].Pos, vertices[0].Pos);
+						m_Driver.register3DLineForRendering(vid::ERP_3D_SOLID_PASS, core::matrix4(),
+							vertices[0].Pos, vertices[1].Pos);
+						m_Driver.register3DLineForRendering(vid::ERP_3D_SOLID_PASS, core::matrix4(),
+							vertices[1].Pos, vertices[2].Pos);
+						m_Driver.register3DLineForRendering(vid::ERP_3D_SOLID_PASS, core::matrix4(),
+							vertices[2].Pos, vertices[3].Pos);
+						m_Driver.register3DLineForRendering(vid::ERP_3D_SOLID_PASS, core::matrix4(),
+							vertices[3].Pos, vertices[0].Pos);
 					}
 
 				}
@@ -1277,10 +1281,10 @@ void CSceneManager::preRenderScene()
 					collision.Pos.X + pSizeDiv2,
 					collision.Pos.Y + pSizeDiv2,
 					collision.Pos.Z + pSizeDiv2);
-				m_Driver.register3DBoxForRendering(matr,
+				m_Driver.register3DBoxForRendering(vid::ERP_3D_TRANSP_1ST_PASS, matr,
 					box, color);
-				m_Driver.register3DLineForRendering(matr,
-					collision.Pos, collision.Pos + collision.Normal * 10.f,
+				m_Driver.register3DLineForRendering(vid::ERP_3D_TRANSP_1ST_PASS, matr,
+					collision.Pos, collision.Pos + collision.Normal * 25.f,
 					0xffffffff);
 			}
 		}
