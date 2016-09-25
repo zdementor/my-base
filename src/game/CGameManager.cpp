@@ -1156,7 +1156,7 @@ void CGameManager::_doGame ()
     core::list<IGameNode*> active_game_nodes;
 
 	static f32 ElapsedTimeSec = 0;
-	const  f32 DYNAMIC_STEP_SEC = 0.05f;
+	const  f32 DYNAMIC_STEP_SEC = 0.025f;
 	static f32 OveralDynamicStep = 0.001f;
 
 	//-----------------------
