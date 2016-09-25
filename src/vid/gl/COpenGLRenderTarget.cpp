@@ -27,6 +27,16 @@ m_FBO(0)
 
 //----------------------------------------------------------------------------
 
+COpenGLRenderTarget::COpenGLRenderTarget(
+	ITexture *colorTexture, ITexture *depthTexture)
+	: CNullRenderTarget(colorTexture, depthTexture),
+m_FBO(0)
+{
+	_rebuild();
+}
+
+//----------------------------------------------------------------------------
+
 COpenGLRenderTarget::~COpenGLRenderTarget()
 {
 #if GL_ARB_framebuffer_object
@@ -74,6 +84,8 @@ bool COpenGLRenderTarget::_rebuild()
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
+	else
+		LOGGER.logErr("Can not create OGL render target");
 #endif
 	return m_OK;
 }

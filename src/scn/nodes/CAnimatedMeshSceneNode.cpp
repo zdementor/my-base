@@ -1027,7 +1027,17 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 
 		LOGGER.logInfo("Choosed Render Target size={%dx%d}",
 			imp_tex_res, imp_tex_res);
-
+#if 0
+		vid::ITexture *colorRT = m_VideoDriver.createRenderTargetTexture(
+			core::dimension2di(imp_tex_res, imp_tex_res), img::ECF_A8R8G8B8);
+		vid::ITexture *depthRT = m_VideoDriver.createRenderTargetTexture(
+			core::dimension2di(imp_tex_res, imp_tex_res), img::ECF_DEPTH24_STENCIL8);
+		vid::IRenderTarget *renderTarget = m_VideoDriver.addRenderTarget(colorRT, depthRT);
+		SAFE_DROP(colorRT);
+		SAFE_DROP(depthRT);
+		if (renderTarget)
+			m_VideoDriver.removeRenderTarget(renderTarget);
+#endif
 		scn::SBillboardParams billparams;
 		billparams.Size.set(
 			w * imp_size_scale.X * imp_cam_view_scale.X,

@@ -27,6 +27,7 @@ public:
 
 	CNullRenderTarget(const core::dimension2di &size,
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat);
+	CNullRenderTarget(ITexture *colorTexture, ITexture *depthTexture);
 	virtual ~CNullRenderTarget();
 
 	virtual ITexture* getColorTexture()
@@ -37,6 +38,8 @@ public:
 
 	virtual bool bind();
 	virtual bool unbind();
+
+	bool isOK() { return m_OK; }
 
 protected:
 

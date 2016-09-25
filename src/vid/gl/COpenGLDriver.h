@@ -88,6 +88,8 @@ public:
 
 	virtual IRenderTarget* addRenderTarget(const core::dimension2di &size,
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat);
+	virtual IRenderTarget* addRenderTarget(
+		ITexture *colorTexture, ITexture *depthTexture);
         
 	virtual const core::vector3df& get3DPositionFromScreenCoordinates(
 		const core::position2di &scr_pos) const;

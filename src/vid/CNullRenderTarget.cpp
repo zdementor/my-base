@@ -32,6 +32,34 @@ m_Size(size), m_ColorFormat(colorFormat), m_DepthFormat(depthFormat)
 
 //----------------------------------------------------------------------------
 
+CNullRenderTarget::CNullRenderTarget(ITexture *colorTexture, ITexture *depthTexture)
+	: m_OK(false), m_Driver(VIDEO_DRIVER), m_RTEntry(0),
+m_ColorTexture(NULL), m_DepthTexture(NULL),
+m_Size(0, 0), m_ColorFormat(img::ECF_NONE), m_DepthFormat(img::ECF_NONE)
+{
+	if (colorTexture && colorTexture->isRenderTarget())
+	{
+		colorTexture->grab();
+		m_ColorFormat = colorTexture->getColorFormat();
+		m_Size = colorTexture->getSize();
+		m_ColorTexture = colorTexture;
+	}
+
+	if (depthTexture
+			&& m_Driver.queryFeature(vid::EVDF_DEPTH_STENCIL_TEXTURES)
+			&& depthTexture->getColorFormat() == img::ECF_DEPTH24_STENCIL8
+			&& depthTexture->isRenderTarget())
+	{
+		depthTexture->grab();
+		m_DepthFormat = img::ECF_DEPTH24_STENCIL8;
+		if (!m_ColorTexture)
+			m_Size = depthTexture->getSize();
+		m_DepthTexture = depthTexture;
+	}
+}
+
+//----------------------------------------------------------------------------
+
 CNullRenderTarget::~CNullRenderTarget()
 {
 	SAFE_DROP(m_ColorTexture);

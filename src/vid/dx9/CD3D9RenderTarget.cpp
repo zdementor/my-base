@@ -29,6 +29,17 @@ m_D3DRenderTargetSurface(0), m_D3DDepthStencilSurface(0)
 
 //----------------------------------------------------------------------------
 
+CD3D9RenderTarget::CD3D9RenderTarget(
+	ITexture *colorTexture, ITexture *depthTexture)
+	: CNullRenderTarget(colorTexture, depthTexture),
+m_D3DDriver((CD3D9Driver*)VIDEO_DRIVER_PTR),
+m_D3DRenderTargetSurface(0), m_D3DDepthStencilSurface(0)
+{
+	_rebuild();
+}
+
+//----------------------------------------------------------------------------
+
 CD3D9RenderTarget::~CD3D9RenderTarget()
 {
 	SAFE_RELEASE(m_D3DRenderTargetSurface);
@@ -46,7 +57,7 @@ bool CD3D9RenderTarget::_rebuild()
 	SAFE_RELEASE(m_D3DRenderTargetSurface);
 	SAFE_RELEASE(m_D3DDepthStencilSurface);
 
-	if (m_ColorTexture->isRenderTarget())
+	if (m_ColorTexture && m_ColorTexture->isRenderTarget())
 	{
 		m_D3DRenderTargetSurface =
 			((CD3D9RenderTargetTexture *)m_ColorTexture)->getRenderTargetSurface();
@@ -55,6 +66,8 @@ bool CD3D9RenderTarget::_rebuild()
 		else
 			m_OK = false;
 	}
+	else
+		m_OK = false;
 
 	if (m_OK)
 	{
@@ -90,6 +103,9 @@ bool CD3D9RenderTarget::_rebuild()
 			}
 		}
 	}
+
+	if (!m_OK)
+		LOGGER.logErr("Can not create D3D9 render target");
 
 	return m_OK;
 }

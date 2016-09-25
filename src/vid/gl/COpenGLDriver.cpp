@@ -1886,6 +1886,28 @@ IRenderTarget* COpenGLDriver::addRenderTarget(const core::dimension2di &size,
 {
 	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
 		new COpenGLRenderTarget(size, colorFormat, depthFormat) : NULL;
+	if (rt && !rt->isOK())
+	{
+		rt->drop();
+		rt = NULL;
+	}
+	if (rt)
+		_addRenderTarget(rt);
+	return rt;
+}
+
+//---------------------------------------------------------------------------
+
+IRenderTarget* COpenGLDriver::addRenderTarget(
+	ITexture *colorTexture, ITexture *depthTexture)
+{
+	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+		new COpenGLRenderTarget(colorTexture, depthTexture) : NULL;
+	if (rt && !rt->isOK())
+	{
+		rt->drop();
+		rt = NULL;
+	}
 	if (rt)
 		_addRenderTarget(rt);
 	return rt;

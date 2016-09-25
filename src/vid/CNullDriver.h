@@ -131,6 +131,9 @@ public:
     virtual IRenderTarget* addRenderTarget(const core::dimension2di &size,
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
 	{ return 0; }
+	virtual IRenderTarget* addRenderTarget(
+		ITexture *colorTexture, ITexture *depthTexture)
+	{ return 0; }
 	virtual bool removeRenderTarget(IRenderTarget *rt);
 
 	virtual bool setColorRenderTarget(ITexture* rtt,
