@@ -828,7 +828,7 @@ function _ScenedWidgetClicked(args)
 			end
 		end
 		MyScnMgr:clearSelectionList()
-		for k, v in scene_nodes_new do
+		for k, v in pairs(scene_nodes_new) do
 			MyScnMgr:addSceneNodeToSelectionList(v)
 		end
 	elseif name == "Scened.EditNodeButton" then

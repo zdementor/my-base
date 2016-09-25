@@ -211,7 +211,8 @@ void CLensFlareSceneNode::OnPreRender(u32 timeMs)
 	{
 		driver.register3DBoxForRendering(
 			vid::ERP_3D_SOLID_PASS, getAbsoluteTransformation(),
-			getBoundingBox(), img::SColor(0xffffffff));
+			getBoundingBox(), 0xffffffff,
+			true);
 	}
 
 	ISceneNode::OnPreRender(timeMs);

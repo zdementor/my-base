@@ -108,11 +108,11 @@ void CLightSceneNode::OnPreRender(u32 timeMs)
 		{
 			driver.register3DBoxForRendering(
 				vid::ERP_3D_SOLID_PASS, getAbsoluteTransformation(),
-				getBoundingBox(), img::SColor(0xffffffff));
+				getBoundingBox(), 0xffffffff, true);
 
 			driver.register3DBoxForRendering(
 				vid::ERP_3D_SOLID_PASS, core::matrix4(),
-				LightData.LightedVolume, img::SColor(0xffffff00));	
+				LightData.LightedVolume, 0xffffff00, true);
 		}
 
 		if (LightSphereMesh)
