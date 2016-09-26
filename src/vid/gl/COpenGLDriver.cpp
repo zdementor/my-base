@@ -414,10 +414,10 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 
 //---------------------------------------------------------------------------
 
-//! win32 destructor
 COpenGLDriver::~COpenGLDriver()
 {
 	free();
+
 	SAFE_DROP(m_OpenGLHardwareOcclusionQuery);
     glDeleteTextures(1,&StencilFogTexture);
 
@@ -488,7 +488,7 @@ ITexture* COpenGLDriver::makeScreenShot()
     c8 name[64];
     screenshot_counter++;
     sprintf(name,"screen_%d",screenshot_counter);
-    ITexture* texture=addTexture(m_ScreenSize,name);
+	ITexture* texture = addTexture(name, m_ScreenSize, img::ECF_A8R8G8B8);
     makeScreenShot(texture);
     return texture;
 }

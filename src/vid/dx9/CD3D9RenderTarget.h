@@ -31,8 +31,10 @@ public:
 	virtual bool bind();
 	virtual bool unbind();
 
+protected:
+	virtual bool _rebuild();
+
 private:
-	bool _rebuild();
 	void _bindMainRT();
 
 	CD3D9Driver *m_D3DDriver;

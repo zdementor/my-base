@@ -37,25 +37,8 @@ CNullRenderTarget::CNullRenderTarget(ITexture *colorTexture, ITexture *depthText
 m_ColorTexture(NULL), m_DepthTexture(NULL),
 m_Size(0, 0), m_ColorFormat(img::ECF_NONE), m_DepthFormat(img::ECF_NONE)
 {
-	if (colorTexture && colorTexture->isRenderTarget())
-	{
-		colorTexture->grab();
-		m_ColorFormat = colorTexture->getColorFormat();
-		m_Size = colorTexture->getSize();
-		m_ColorTexture = colorTexture;
-	}
-
-	if (depthTexture
-			&& m_Driver.queryFeature(vid::EVDF_DEPTH_STENCIL_TEXTURES)
-			&& depthTexture->getColorFormat() == img::ECF_DEPTH24_STENCIL8
-			&& depthTexture->isRenderTarget())
-	{
-		depthTexture->grab();
-		m_DepthFormat = img::ECF_DEPTH24_STENCIL8;
-		if (!m_ColorTexture)
-			m_Size = depthTexture->getSize();
-		m_DepthTexture = depthTexture;
-	}
+	bindColorTexture(colorTexture, false);
+	bindDepthTexture(depthTexture, false);
 }
 
 //----------------------------------------------------------------------------
@@ -64,6 +47,56 @@ CNullRenderTarget::~CNullRenderTarget()
 {
 	SAFE_DROP(m_ColorTexture);
 	SAFE_DROP(m_DepthTexture);
+}
+
+//----------------------------------------------------------------------------
+
+bool CNullRenderTarget::bindColorTexture(ITexture *colorTexture, bool doRebuild)
+{
+	bool ret = true;
+
+	if (colorTexture && colorTexture->isRenderTarget())
+	{
+		SAFE_DROP(m_ColorTexture);
+		colorTexture->grab();
+		m_ColorFormat = colorTexture->getColorFormat();
+		m_Size = colorTexture->getSize();
+		m_ColorTexture = colorTexture;
+	}
+	else
+		ret = false;
+
+	if (ret && doRebuild)
+		ret = _rebuild();
+
+	return ret;
+}
+
+//----------------------------------------------------------------------------
+
+bool CNullRenderTarget::bindDepthTexture(ITexture *depthTexture, bool doRebuild)
+{
+	bool ret = true;
+
+	if (depthTexture
+			&& m_Driver.queryFeature(vid::EVDF_DEPTH_STENCIL_TEXTURES)
+			&& depthTexture->getColorFormat() == img::ECF_DEPTH24_STENCIL8
+			&& depthTexture->isRenderTarget())
+	{
+		SAFE_DROP(m_DepthTexture);
+		depthTexture->grab();
+		m_DepthFormat = img::ECF_DEPTH24_STENCIL8;
+		if (!m_ColorTexture)
+			m_Size = depthTexture->getSize();
+		m_DepthTexture = depthTexture;
+	}
+	else
+		ret = false;
+
+	if (ret && doRebuild)
+		ret = _rebuild();
+
+	return ret;
 }
 
 //----------------------------------------------------------------------------

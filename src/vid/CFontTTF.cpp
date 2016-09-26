@@ -118,7 +118,7 @@ void CGlyphTTF::cache(u32 idx)
 			}
 			*/
 
-			_tex = driver.addTexture(ttftex.getTexDim(), name, img::ECF_A8R8G8B8);  
+			_tex = driver.addTexture(name, ttftex.getTexDim(), img::ECF_A8R8G8B8);  
 			ttftex.Textures.push_back(_tex);
 			SAFE_GRAB(_tex);
 								

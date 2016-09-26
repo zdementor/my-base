@@ -58,7 +58,7 @@ MyCEGUITexture::MyCEGUITexture(MyCEGUIRenderer &r, const Size& tex_sz)
 	const my::c8 *texname = _GetUniqueName();
 
 	m_Texture = m_Driver.addTexture(
-		size, texname, img::ECF_A8R8G8B8);
+		texname, size, img::ECF_A8R8G8B8);
 	m_Texture->grab();
 
 	m_Size = CEGUI::Size(
@@ -211,7 +211,7 @@ void MyCEGUITexture::loadFromMemory(
 	
 	if (!m_Texture)
 	{
-		m_Texture = m_Driver.addTexture(dim, texname,
+		m_Texture = m_Driver.addTexture(texname, dim,
 			(pf == CEGUI::Texture::PF_RGBA) ? my::img::ECF_A8R8G8B8 : my::img::ECF_R8G8B8);
 		m_Texture->grab();
 	}

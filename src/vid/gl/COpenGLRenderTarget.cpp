@@ -32,7 +32,10 @@ COpenGLRenderTarget::COpenGLRenderTarget(
 	: CNullRenderTarget(colorTexture, depthTexture),
 m_FBO(0)
 {
-	_rebuild();
+	if (colorTexture)
+		_rebuild();
+	else
+		m_OK = true;
 }
 
 //----------------------------------------------------------------------------

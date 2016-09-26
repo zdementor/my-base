@@ -30,8 +30,9 @@ public:
 
 	virtual bool bind();
 	virtual bool unbind();
+protected:
+	virtual bool _rebuild();
 private:
-	bool _rebuild();
 
 	GLuint m_FBO;
 };

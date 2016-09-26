@@ -30,6 +30,7 @@
 #include <img/IImageLibrary.h>
 #include <io/IXMLWriter.h>
 #include <dev/IProfiler.h>
+#include <vid/IRenderTarget.h>
 
 //---------------------------------------------------------------------------
 namespace my {
@@ -1027,12 +1028,18 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 
 		LOGGER.logInfo("Choosed Render Target size={%dx%d}",
 			imp_tex_res, imp_tex_res);
-#if 0
+#if 1
 		vid::ITexture *colorRT = m_VideoDriver.createRenderTargetTexture(
 			core::dimension2di(imp_tex_res, imp_tex_res), img::ECF_A8R8G8B8);
 		vid::ITexture *depthRT = m_VideoDriver.createRenderTargetTexture(
 			core::dimension2di(imp_tex_res, imp_tex_res), img::ECF_DEPTH24_STENCIL8);
-		vid::IRenderTarget *renderTarget = m_VideoDriver.addRenderTarget(colorRT, depthRT);
+		vid::IRenderTarget *renderTarget = m_VideoDriver.addRenderTarget(NULL, NULL);
+		if (renderTarget)
+		{
+			renderTarget->bindColorTexture(colorRT, false);
+			renderTarget->bindDepthTexture(depthRT, false);
+			renderTarget->rebuild();
+		}
 		SAFE_DROP(colorRT);
 		SAFE_DROP(depthRT);
 		if (renderTarget)

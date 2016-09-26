@@ -8,6 +8,11 @@ class IRenderTarget
 {
 public:
 
+	bool bindColorTexture(ITexture *colorTexture, bool doRebuild);
+	bool bindDepthTexture(ITexture *depthTexture, bool doRebuild);
+
+	bool rebuild();
+
 	ITexture* getColorTexture();
 	ITexture* getDepthTexture();
 };

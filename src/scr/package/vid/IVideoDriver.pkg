@@ -115,17 +115,21 @@ class IVideoDriver
 	
 	//! Returns a pointer to a texture. Loads the texture if it is not
     //! already loaded, and generates mipmap levels if wished.
-    ITexture* getTexture(const char* filename);
+    ITexture* getTexture(const char* name);
 
 	//! Creates a texture from a loaded IImage.
-	ITexture* addTexture(const char* name, img::IImage* image);
+	ITexture* addTexture(const char *name, img::IImage* image);
+
+    //! Creates an empty Texture of specified size.
+	ITexture* addTexture(const char *name,
+		const core::dimension2di &size, img::E_COLOR_FORMAT format);
+ 
+    //! Creates an empty Render Target Texture of specified size and format.
+	ITexture* addRenderTargetTexture(const char *name,
+		const core::dimension2di &size, img::E_COLOR_FORMAT format);
 
     //! Removes a texture from the texture cache and deletes it, freeing lot of
-    //! memory. Please note that after calling this, the pointer to the ITexture
-    //! may not be longer valid, if it was not grabbed before by other parts of 
-    //! the engine for storing it longer. So it would be a good idea to set all
-    //! materials which are using this texture to null or another texture first.
-    //! \param texture: Texture to delete from the engines cache.
+    //! memory.
 	bool removeTexture(ITexture* texture);
 
  	//! Returns pointer to the font with the specified file name. Loads the font if 
@@ -286,6 +290,8 @@ class IVideoDriver
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat);
 	IRenderTarget* addRenderTarget(const core::dimension2di &size,
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat);
+	IRenderTarget* addRenderTarget(
+		ITexture *colorTexture, ITexture *depthTexture);
 	bool removeRenderTarget(IRenderTarget *renderTarget);
 
 	//! Set/Get a render target for the whole rendering.

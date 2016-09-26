@@ -30,6 +30,11 @@ public:
 	CNullRenderTarget(ITexture *colorTexture, ITexture *depthTexture);
 	virtual ~CNullRenderTarget();
 
+	virtual bool bindColorTexture(ITexture *colorTexture, bool doRebuild);
+	virtual bool bindDepthTexture(ITexture *depthTexture, bool doRebuild);
+
+	virtual bool rebuild() { return _rebuild(); }
+
 	virtual ITexture* getColorTexture()
 	{ return m_ColorTexture; }
 
@@ -42,6 +47,8 @@ public:
 	bool isOK() { return m_OK; }
 
 protected:
+
+	virtual bool _rebuild() { return false; }
 
 	bool m_OK;
 

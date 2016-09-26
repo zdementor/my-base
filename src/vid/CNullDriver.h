@@ -110,12 +110,16 @@ public:
 		
     virtual const SLight& getGlobalLightParams();
 
-    virtual ITexture* getTexture(const c8* filename);
+    virtual ITexture* getTexture(const c8 *name);
 	virtual ITexture* getTexture(io::IReadFile* file);
     virtual vid::ITexture* findTexture(const c8 *name);
-    virtual ITexture* addTexture(const core::dimension2di &size,
-		const c8 *name, img::E_COLOR_FORMAT format = img::ECF_A8R8G8B8);
-    virtual ITexture* addTexture(const c8 *name, img::IImage *image);
+    virtual ITexture* addTexture(const c8 *name,
+		const core::dimension2di &size, img::E_COLOR_FORMAT format);
+    virtual ITexture* addTexture(const c8 *name,
+		img::IImage *image);
+	virtual ITexture* addRenderTargetTexture(const c8 *name,
+		const core::dimension2di &size, img::E_COLOR_FORMAT format);
+
 	virtual ITextureAnim* addTextureAnim( 
 		core::array<ITexture*> &frames, SAnimatedTextureParams &params);
     virtual ITexture* createTexture(img::IImage* image);

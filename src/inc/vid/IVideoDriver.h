@@ -86,11 +86,11 @@ public:
     //! For loading JPG-Files the JPEG LIB 6b, written by 
     //! The Independent JPEG Group is used by the engine. Thanx for such a great
     //! library!
-    //! \param filename: Filename of the texture to be loaded.
+    //! \param name: Name/Filename of the texture to be loaded.
     //! \return Returns a pointer to the texture and NULL if the texture
     //! could not be loaded. 
     //! This pointer should not be dropped. See IUnknown::drop() for more information.
-    virtual ITexture* getTexture(const c8* filename) = 0;
+    virtual ITexture* getTexture(const c8* name) = 0;
 
     //! Returns a pointer to a texture. Loads the texture if it is not
     //! already loaded, and generates mipmap levels if wished.
@@ -118,10 +118,9 @@ public:
     //! This pointer should not be dropped. See IUnknown::drop() for more information.
     //! The format of the new texture will be chosen by the driver, and will in most 
     //! cases have the ECF_A1R5G5B5 or ECF_A8R8G8B8 format.
-    virtual ITexture* addTexture(
-		const core::dimension2di &size, const c8 *name,
-		img::E_COLOR_FORMAT format = img::ECF_A8R8G8B8) = 0;
-
+    virtual ITexture* addTexture(const c8 *name,
+		const core::dimension2di &size, img::E_COLOR_FORMAT format = img::ECF_A8R8G8B8) = 0;
+ 
     //! Creates a texture from a loaded IImage.
     //! \param name: A name for the texture. Later calls of getTexture() with this name
     //! will return this texture
@@ -130,12 +129,20 @@ public:
     //! This pointer should not be dropped. See IUnknown::drop() for more information.
     //! The format of the new texture will be chosen by the driver, and will in most 
     //! cases have the ECF_A1R5G5B5 or ECF_A8R8G8B8 format.
-    virtual ITexture* addTexture(const c8* name, img::IImage* image) = 0;
+    virtual ITexture* addTexture(const c8 *name,
+		img::IImage *image) = 0;
 
 	//! Creates an Animatred Texture of and adds it to textures cache
 	virtual ITextureAnim* addTextureAnim( 
-		core::array<ITexture*> &frames, SAnimatedTextureParams &params
-		) = 0;
+		core::array<ITexture*> &frames, SAnimatedTextureParams &params) = 0;
+
+    //! Creates an empty Render Target Texture of specified size and format.
+    //! \param size: Size of the texture.
+    //! \param name: A name for the texture. Later calls of getTexture() with this name
+    //! will return this texture
+    //! \param format: Desired color format of the texture.
+	virtual ITexture* addRenderTargetTexture(const c8 *name,
+		const core::dimension2di &size, img::E_COLOR_FORMAT format = img::ECF_A8R8G8B8) = 0;
 
 	//! Creates a texture.
     virtual ITexture* createTexture(img::IImage* image) = 0;
@@ -152,7 +159,7 @@ public:
     //! be created. If you no longer need the image, you should call ITexture::drop().
     //! See IUnknown::drop() for more information. */
     virtual ITexture* createRenderTargetTexture(
-		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat) = 0;
+		const core::dimension2di &size, img::E_COLOR_FORMAT format = img::ECF_A8R8G8B8) = 0;
 
     //! Removes a texture from the texture cache and deletes it, freeing lot of
     //! memory. Please note that after calling this, the pointer to the ITexture

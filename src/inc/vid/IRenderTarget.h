@@ -26,6 +26,11 @@ class __MY_VID_LIB_API__ IRenderTarget : public IUnknown
 {
 public:
 
+	virtual bool bindColorTexture(ITexture *colorTexture, bool doRebuild = true) = 0;
+	virtual bool bindDepthTexture(ITexture *depthTexture, bool doRebuild = true) = 0;
+
+	virtual bool rebuild() = 0;
+
 	virtual ITexture* getColorTexture() = 0;
 	virtual ITexture* getDepthTexture() = 0;
 

@@ -168,18 +168,19 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 
 CNullDriver::~CNullDriver()
 {
-	if (m_CurrentColorRenderTarget)
+	if (getDriverType() == EDT_NULL)
 	{
-		m_CurrentColorRenderTarget->drop();
-		m_CurrentColorRenderTarget = 0;
+		free();
+		LOGGER.log("NULL graphic deactivated");
 	}
+}
 
-	if (m_CurrentRenderTarget)
-	{
-		m_CurrentRenderTarget->unbind();
-		m_CurrentRenderTarget->drop();
-		m_CurrentRenderTarget = NULL;
-	}
+//---------------------------------------------------------------------------
+
+void CNullDriver::free()
+{
+	setColorRenderTarget(NULL, false, false, 0x0);
+	setRenderTarget(NULL);
 
 	core::list<CNullRenderTarget *>::iterator it = m_RTs.begin();
 	for (; it != m_RTs.end(); ++it)
@@ -192,17 +193,6 @@ CNullDriver::~CNullDriver()
 		rt->drop();
 	}
 
-	if (getDriverType() == EDT_NULL)
-	{
-		free();
-		LOGGER.log("NULL graphic deactivated");
-	}
-}
-
-//---------------------------------------------------------------------------
-
-void CNullDriver::free()
-{
 	// dropping used singletons
 	m_Profiler.drop();
     IMAGE_LIBRARY.drop();
@@ -559,8 +549,8 @@ ITexture* CNullDriver::addTexture(const c8 *name, img::IImage *image)
 
 //---------------------------------------------------------------------------
 
-ITexture* CNullDriver::addTexture(
-	const core::dimension2di &size, const c8 *name, img::E_COLOR_FORMAT format)
+ITexture* CNullDriver::addTexture(const c8 *name,
+	const core::dimension2di &size, img::E_COLOR_FORMAT format)
 {
 	if (!name)
 		return 0;
@@ -571,6 +561,27 @@ ITexture* CNullDriver::addTexture(
 	image->drop();
 	_addTexture(t, name);
 
+	if (t)
+		t->drop();
+
+	return t;
+}
+
+//---------------------------------------------------------------------------
+
+ITexture* CNullDriver::addRenderTargetTexture(const c8 *name,
+	const core::dimension2di &size, img::E_COLOR_FORMAT format)
+{
+	c8 rttname[255];
+
+	ITexture *t = createRenderTargetTexture(size, format);
+	if (!name)
+	{
+		sprintf(rttname, "RenderTargetTexture.%dx%d.%s.%p",
+			img::getColorFormatName(format), size.Width, size.Height, t);
+		name = rttname;
+	}
+	_addTexture(t, name);
 	if (t)
 		t->drop();
 
@@ -813,19 +824,33 @@ bool CNullDriver::setRenderTarget(IRenderTarget *rt)
 	if (rt == m_CurrentRenderTarget)
 		return ret;
 
-	if (m_CurrentRenderTarget)
-	{
-		m_CurrentRenderTarget->unbind();
-		m_CurrentRenderTarget->drop();
-	}
+	IRenderTarget *prevRT = m_CurrentRenderTarget;
+	if (prevRT)
+		prevRT->unbind();
+
 	m_CurrentRenderTarget = rt;
 
-	if (m_CurrentRenderTarget)
+	if (rt)
 	{
-		m_CurrentRenderTarget->grab();
-		ret = m_CurrentRenderTarget->bind();
+		rt->grab();
+		ret = rt->bind();
+	}
+
+	if (ret)
+	{
+		if (prevRT)
+			prevRT->drop();
 	}
 	else
+	{
+		m_CurrentRenderTarget = prevRT;
+		if (prevRT)
+			prevRT->bind();
+		if (rt)
+			rt->drop();
+	}
+
+	if (!m_CurrentRenderTarget)
 	{
 		const core::dimension2di &scrSize = getScreenSize();
 		setViewPort(0, 0, scrSize.Width, scrSize.Height);
@@ -1089,7 +1114,7 @@ ITexture* CNullDriver::makeScreenShot(void)
     while(TextureDim.Width<m_ScreenSize.Width) TextureDim.Width<<=1;
     while(TextureDim.Height<m_ScreenSize.Height) TextureDim.Height<<=1;
 
-    ITexture* texture=addTexture(TextureDim,name);
+	ITexture* texture = addTexture(name, TextureDim, img::ECF_A8R8G8B8);
     makeScreenShot(texture);
 
     return texture;

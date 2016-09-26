@@ -35,7 +35,10 @@ CD3D9RenderTarget::CD3D9RenderTarget(
 m_D3DDriver((CD3D9Driver*)VIDEO_DRIVER_PTR),
 m_D3DRenderTargetSurface(0), m_D3DDepthStencilSurface(0)
 {
-	_rebuild();
+	if (colorTexture)
+		_rebuild();
+	else
+		m_OK = true;
 }
 
 //----------------------------------------------------------------------------

@@ -617,8 +617,9 @@ vid::ITexture* CTerrainSceneNode::getHeightMapTexture()
 	vid::ITexture *tex = m_VideoDriver.findTexture(m_HeightMapTextureName.c_str());
 	if (!tex)
 	{
-		tex = m_VideoDriver.addTexture(core::dimension2di(m_HeightFieldSizeValue, m_HeightFieldSizeValue),
-			m_HeightMapTextureName.c_str(), img::ECF_LUMINANCE16);
+		tex = m_VideoDriver.addTexture(m_HeightMapTextureName.c_str(),
+			core::dimension2di(m_HeightFieldSizeValue, m_HeightFieldSizeValue),
+			img::ECF_LUMINANCE16);
 
 		if (tex)
 		{
