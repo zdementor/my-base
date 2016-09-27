@@ -79,28 +79,6 @@ InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 )
 
 InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
-	"MyVideoGL12", "c++", "dll", "",
-	{"MyCore", },
-		{ FTYPE_DEP, },
-			{ GL_DEPS },
-	{"__MY_BUILD_VID_LIB__", "__MY_BUILD_VID_GL12_LIB__", "GLEW_STATIC"}, {}, {},
-	{
-		SRC_DIR.."/inc/*.h",
-		SRC_DIR.."/inc/vid/*.h",
-		SRC_DIR.."/MyDllEntry.cpp",
-		SRC_DIR.."/MySingletons.cpp",
-		SRC_DIR.."/vid/*.cpp",
-		SRC_DIR.."/vid/*.h",
-		SRC_DIR.."/vid/gl/**.cpp",
-		SRC_DIR.."/vid/gl/**.h",
-		SRC_DIR.."/vid/gl/glew.c",
-	},
-		{},
-	{ BASE_INC_DIR, FTYPE_INC_DIR },
-		{ BASE_LIB_DIR }
-)
-
-InitPackage(MY_PRJ_NAME, MY_PRJ_DIR,
 	"MyVideoGL11", "c++", "dll", "",
 	{"MyCore", },
 		{ FTYPE_DEP,},
@@ -148,7 +126,7 @@ if os.is("windows") then
 	)
 end
 
-local MY_ENGINE_PRJDEPS = { "MyCore", "MyVideoGL11", "MyVideoGL12", "MyVideoGL21", }
+local MY_ENGINE_PRJDEPS = { "MyCore", "MyVideoGL11", "MyVideoGL21", }
 local MY_ENGINE_DEPS    = { VORB_DEP, OGG_DEP, CAL3D_DEP, MINI_DEP, ODE_DEP, LUA_DLL_DEP, TOLUA_DLL_DEP, }
 local MY_ENGINE_SYSDEPS = {}
 

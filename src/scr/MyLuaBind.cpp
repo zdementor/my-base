@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/27/16 12:47:15.
+** Generated automatically by tolua++-1.0.92 on 09/27/16 13:09:51.
 */
 
 #ifndef __cplusplus
@@ -59410,7 +59410,6 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"EDT_NULL",vid::EDT_NULL);
   tolua_constant(tolua_S,"EDT_DIRECTX9",vid::EDT_DIRECTX9);
   tolua_constant(tolua_S,"EDT_OPENGL11",vid::EDT_OPENGL11);
-  tolua_constant(tolua_S,"EDT_OPENGL12",vid::EDT_OPENGL12);
   tolua_constant(tolua_S,"EDT_OPENGL21",vid::EDT_OPENGL21);
   tolua_constant(tolua_S,"EDT_OPENGL32",vid::EDT_OPENGL32);
   tolua_constant(tolua_S,"E_DRIVER_TYPE_COUNT",vid::E_DRIVER_TYPE_COUNT);

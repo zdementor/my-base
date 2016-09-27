@@ -99,37 +99,6 @@
 
 #endif
 
-#if defined(__MY_BUILD_VID_GL12_LIB__)
-
-#define GL_VERSION_1_2 1
-
-#define GL_ARB_multitexture 1
-#define GL_TEXTURE0				GL_TEXTURE0_ARB
-#define GL_TEXTURE1				GL_TEXTURE1_ARB
-#define GL_TEXTURE2				GL_TEXTURE2_ARB
-#define GL_TEXTURE3				GL_TEXTURE3_ARB
-#define GL_MAX_TEXTURE_UNITS	GL_MAX_TEXTURE_UNITS_ARB
-#define glClientActiveTexture	glClientActiveTextureARB
-#define glActiveTexture			glActiveTextureARB
-
-#define GL_ARB_texture_border_clamp 1
-#define GL_CLAMP_TO_BORDER		GL_CLAMP_TO_BORDER_ARB
-
-#define GL_ARB_texture_env_combine 1
-#define GL_COMBINE GL_COMBINE_ARB
-#define GL_COMBINE_RGB GL_COMBINE_RGB_ARB
-#define GL_SOURCE0_RGB GL_SOURCE0_RGB_ARB
-#define GL_SOURCE1_RGB GL_SOURCE1_RGB_ARB
-#define GL_OPERAND0_RGB GL_OPERAND0_RGB_ARB
-#define GL_OPERAND1_RGB GL_OPERAND1_RGB_ARB
-#define GL_PREVIOUS GL_PREVIOUS_ARB
-#define GL_RGB_SCALE GL_RGB_SCALE_ARB
-
-#define GL_ARB_texture_mirrored_repeat 1
-#define GL_MIRRORED_REPEAT GL_MIRRORED_REPEAT_ARB
-
-#endif
-
 #ifdef __MY_BUILD_VID_GL21_LIB__
 #define GL_VERSION_1_4 1
 #define GL_ARB_imaging 1

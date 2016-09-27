@@ -40,9 +40,8 @@ enum E_DRIVER_FAMILY
 #define MY_DRIVER_TYPE_NULL		0
 #define MY_DRIVER_TYPE_DIRECTX9	1
 #define MY_DRIVER_TYPE_OPENGL11	2
-#define MY_DRIVER_TYPE_OPENGL12	3
-#define MY_DRIVER_TYPE_OPENGL21	4
-#define MY_DRIVER_TYPE_OPENGL32	5
+#define MY_DRIVER_TYPE_OPENGL21	3
+#define MY_DRIVER_TYPE_OPENGL32	4
 
 //! An enum for all types of drivers the Irrlicht Engine supports.
 enum E_DRIVER_TYPE
@@ -55,7 +54,6 @@ enum E_DRIVER_TYPE
     EDT_DIRECTX9	= MY_DRIVER_TYPE_DIRECTX9,
     //! OpenGL device, available on all Windows platforms and on Linux.
 	EDT_OPENGL11	= MY_DRIVER_TYPE_OPENGL11,
-	EDT_OPENGL12	= MY_DRIVER_TYPE_OPENGL12,
 	EDT_OPENGL21	= MY_DRIVER_TYPE_OPENGL21,
 	EDT_OPENGL32	= MY_DRIVER_TYPE_OPENGL32,
 
@@ -71,7 +69,6 @@ static const c8* DriverTypeName[E_DRIVER_TYPE_COUNT] =
 	"EDT_NULL", 
 	"EDT_DIRECTX9",
 	"EDT_OPENGL11",
-	"EDT_OPENGL12",
 	"EDT_OPENGL21",
 	"EDT_OPENGL32",	
 };
@@ -83,7 +80,6 @@ static const c8* DriverTypeReadableName[E_DRIVER_TYPE_COUNT] =
 	"NULL", 
 	"Direct3D9.0c", 
 	"OpenGL1.1",
-	"OpenGL1.2",
 	"OpenGL2.1",
 	"OpenGL3.2",	
 };

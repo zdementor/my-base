@@ -20,8 +20,6 @@ typedef char GLchar;
 
 #if defined __MY_BUILD_VID_GL11_LIB__
 #	define __MY_BUILD_GL_VER__ MY_DRIVER_TYPE_OPENGL11
-#elif defined __MY_BUILD_VID_GL12_LIB__
-#	define __MY_BUILD_GL_VER__ MY_DRIVER_TYPE_OPENGL12
 #elif defined __MY_BUILD_VID_GL21_LIB__
 #	define __MY_BUILD_GL_VER__ MY_DRIVER_TYPE_OPENGL21
 #elif defined __MY_BUILD_VID_GL32_LIB__

@@ -2140,9 +2140,6 @@ IHardwareOcclusionQuery& COpenGLDriver::getHardwareOcclusionQuery()
 #ifdef __MY_BUILD_VID_GL11_LIB__
 __MY_EXPORT__ IVideoDriver* createOpenGL11Driver(
 #endif
-#ifdef __MY_BUILD_VID_GL12_LIB__
-__MY_EXPORT__ IVideoDriver* createOpenGL12Driver(
-#endif
 #ifdef __MY_BUILD_VID_GL21_LIB__
 __MY_EXPORT__ IVideoDriver* createOpenGL21Driver(
 #endif

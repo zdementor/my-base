@@ -89,7 +89,7 @@
                     <Property Name="ReadOnly" Value="True" />
                     <Property Name="AlwaysOnTop" Value="True" />
                     <Property Name="ClippedByParent" Value="False" />
-                    <Property Name="UnifiedAreaRect" Value="{{0.2699,0},{0.062419,0},{0.629607,0},{1.4,0}}" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.2699,0},{0.062419,0},{0.629607,0},{1.15,0}}" />
                     <Property Name="MaxEditTextLength" Value="1073741823" />
                 </Window>
             </Window>

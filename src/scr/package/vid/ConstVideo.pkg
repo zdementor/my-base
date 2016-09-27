@@ -35,7 +35,6 @@ enum E_DRIVER_TYPE
     EDT_DIRECTX9,
     //! OpenGL device, available on all Windows platforms and on Linux.
 	EDT_OPENGL11,
-	EDT_OPENGL12,
 	EDT_OPENGL21,
 	EDT_OPENGL32,
 

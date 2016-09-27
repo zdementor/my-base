@@ -75,15 +75,11 @@ StartupDriverIndex = 1
 SETUP_SETTINGS = {}
 
 local SETUP_DRIVER_DIRECTX9	= 1
-local SETUP_DRIVER_OPENGL12	= 2
-local SETUP_DRIVER_OPENGL21	= 3
+local SETUP_DRIVER_OPENGL21	= 2
 local SETUP_DRIVER_TYPE = {
 	[SETUP_DRIVER_DIRECTX9]	= {
 		name	= vid.getDriverTypeReadableName(vid.EDT_DIRECTX9),
 		id		= vid.EDT_DIRECTX9},
-	[SETUP_DRIVER_OPENGL12] = {
-		name	= vid.getDriverTypeReadableName(vid.EDT_OPENGL12),
-		id		= vid.EDT_OPENGL12},
 	[SETUP_DRIVER_OPENGL21] = {
 		name	= vid.getDriverTypeReadableName(vid.EDT_OPENGL21),
 		id		= vid.EDT_OPENGL21},}
@@ -91,8 +87,8 @@ local SETUP_DRIVER_TYPE = {
 local SETUP_RENDER_USE_FFP		= 1
 local SETUP_RENDER_USE_SHADERS	= 2
 local SETUP_RENDER_PATH = {
-	[SETUP_RENDER_USE_FFP]		= {name = "Fixed pipeline",	id = true	},
-	[SETUP_RENDER_USE_SHADERS]	= {name = "Shaders",id = false	}}
+	[SETUP_RENDER_USE_FFP]		= {name = "Fixed pipeline",	id = true },
+	[SETUP_RENDER_USE_SHADERS]	= {name = "Shaders",        id = true }}
 
 local SETUP_TEX_NONE		= 1
 local SETUP_TEX_BILINEAR	= 2
@@ -329,8 +325,8 @@ end
 
 function UpdateLightingModes()
 	ComboLighting:resetList()
-	for k, v in pairs(SETUP_LIGHTING_QUALITY) do
-		AddListboxItem(ComboLighting, v.name, v.id)
+	for i = 1, table.getn(SETUP_LIGHTING_QUALITY) do
+		AddListboxItem(ComboLighting, SETUP_LIGHTING_QUALITY[i].name, SETUP_LIGHTING_QUALITY[i].id)
 	end
 end
 
@@ -338,8 +334,8 @@ function UpdateShadersQuality()
 	ComboShaders:hide()
 	LabelShadersQuality:hide()
 	ComboShaders:resetList()
-	for k, v in pairs(SETUP_SHADERS_QUALITY) do
-		AddListboxItem(ComboShaders, v.name, v.id)
+	for i = 1, table.getn(SETUP_SHADERS_QUALITY) do
+		AddListboxItem(ComboShaders, SETUP_SHADERS_QUALITY[i].name, SETUP_SHADERS_QUALITY[i].id)
 	end
 	if SETUP_SETTINGS[StartupDriverIndex].Shaders ~= 0 then
 		ComboShaders:show()
@@ -350,19 +346,17 @@ end
 function UpdateTexFilter()
 	local idx = StartupDriverIndex
 	ComboTexFilter:resetList()
-	for k, v in pairs(SETUP_TEX_FILTER) do
-		if idx ~= SETUP_DRIVER_OPENGL12 or v.id ~= vid.ETF_ANISOTROPIC then
-			AddListboxItem(ComboTexFilter, v.name, v.id)
-		end
+	for i = 1, table.getn(SETUP_TEX_FILTER) do
+		AddListboxItem(ComboTexFilter, SETUP_TEX_FILTER[i].name, SETUP_TEX_FILTER[i].id)
 	end
 end
 
 function UpdateRenderPath()
 	local idx = StartupDriverIndex
 	ComboRenderPath:resetList()
-	for k, v in pairs(SETUP_RENDER_PATH) do
-		if idx ~= SETUP_DRIVER_OPENGL12 or v.id == true then
-			AddListboxItem(ComboRenderPath, v.name, v.id)
+	for i = 1, table.getn(SETUP_RENDER_PATH) do
+		if SETUP_RENDER_PATH[i].id == true then
+			AddListboxItem(ComboRenderPath, SETUP_RENDER_PATH[i].name, SETUP_RENDER_PATH[i].id)
 		end
 	end
 end
@@ -394,11 +388,7 @@ function SetGraphicLevel(level)
 		SETUP_SETTINGS[idx].DirtOnLevel			= 1
 		SETUP_SETTINGS[idx].ShadersHighQuality	= 1
 	elseif level == SETUP_GRAPHIC_HIGHEST then
-		if idx == SETUP_DRIVER_OPENGL12 then
-			SETUP_SETTINGS[idx].TexFilter			= SETUP_TEX_TRILINEAR
-		else
-			SETUP_SETTINGS[idx].TexFilter			= SETUP_TEX_ANISOTROPIC
-		end		
+		SETUP_SETTINGS[idx].TexFilter			= SETUP_TEX_ANISOTROPIC
 		SETUP_SETTINGS[idx].Shadows				= 1
 		SETUP_SETTINGS[idx].DynamicLighting		= SETUP_LIGHTING_HIGH
 		SETUP_SETTINGS[idx].HiMapsDetail		= 1
@@ -435,11 +425,7 @@ function GetGraphicLevel()
 		then
 		level = SETUP_GRAPHIC_MEDIUM
 	elseif
-		(	(	idx == SETUP_DRIVER_OPENGL12 and
-				SETUP_SETTINGS[idx].TexFilter == SETUP_TEX_TRILINEAR
-			) or
-			(SETUP_SETTINGS[idx].TexFilter == SETUP_TEX_ANISOTROPIC)
-		)
+		SETUP_SETTINGS[idx].TexFilter == SETUP_TEX_ANISOTROPIC
 		and SETUP_SETTINGS[idx].Shadows				== 1
 		and SETUP_SETTINGS[idx].DynamicLighting		== SETUP_LIGHTING_HIGH
 		and SETUP_SETTINGS[idx].HiMapsDetail		== 1

@@ -4366,8 +4366,6 @@ __MY_IMPORT__ IVideoDriver* createDirectX9Driver(
 	SExposedVideoData &out_video_data, E_TEXTURE_FILTER textureFilter);
 __MY_IMPORT__ IVideoDriver* createOpenGL11Driver(
 	SExposedVideoData &out_video_data, E_TEXTURE_FILTER textureFilter);
-__MY_IMPORT__ IVideoDriver* createOpenGL12Driver(
-	SExposedVideoData &out_video_data, E_TEXTURE_FILTER textureFilter);
 __MY_IMPORT__ IVideoDriver* createOpenGL21Driver(
 	SExposedVideoData &out_video_data, E_TEXTURE_FILTER textureFilter);
 
@@ -4377,8 +4375,6 @@ __MY_EXPORT__ IVideoDriver* createVideoDriver(
 {
 	switch (out_video_data.DriverType)
 	{
-	case EDT_OPENGL12:
-		return createOpenGL12Driver(out_video_data, textureFilter);
 	case EDT_OPENGL11:
 		return createOpenGL11Driver(out_video_data, textureFilter);
 	case EDT_OPENGL21:
