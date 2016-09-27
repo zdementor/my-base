@@ -123,10 +123,14 @@ class IVideoDriver
     //! Creates an empty Texture of specified size.
 	ITexture* addTexture(const char *name,
 		const core::dimension2di &size, img::E_COLOR_FORMAT format);
+	ITexture* addTexture(const char *name,
+		unsigned width, unsigned height, img::E_COLOR_FORMAT format);
  
     //! Creates an empty Render Target Texture of specified size and format.
 	ITexture* addRenderTargetTexture(const char *name,
 		const core::dimension2di &size, img::E_COLOR_FORMAT format);
+	ITexture* addRenderTargetTexture(const char *name,
+		unsigned width, unsigned height, img::E_COLOR_FORMAT format);
 
     //! Removes a texture from the texture cache and deletes it, freeing lot of
     //! memory.

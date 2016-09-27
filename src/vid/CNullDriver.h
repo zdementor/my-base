@@ -113,12 +113,19 @@ public:
     virtual ITexture* getTexture(const c8 *name);
 	virtual ITexture* getTexture(io::IReadFile* file);
     virtual vid::ITexture* findTexture(const c8 *name);
+
     virtual ITexture* addTexture(const c8 *name,
 		const core::dimension2di &size, img::E_COLOR_FORMAT format);
+    virtual ITexture* addTexture(const c8 *name,
+		u32 width, u32 height, img::E_COLOR_FORMAT format)
+	{ return addTexture(name, core::dimension2di(width, height), format); }
     virtual ITexture* addTexture(const c8 *name,
 		img::IImage *image);
 	virtual ITexture* addRenderTargetTexture(const c8 *name,
 		const core::dimension2di &size, img::E_COLOR_FORMAT format);
+	virtual ITexture* addRenderTargetTexture(const c8 *name,
+		u32 width, u32 height, img::E_COLOR_FORMAT format)
+	{ return addRenderTargetTexture(name, core::dimension2di(width, height), format); }
 
 	virtual ITextureAnim* addTextureAnim( 
 		core::array<ITexture*> &frames, SAnimatedTextureParams &params);

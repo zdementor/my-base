@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/26/16 21:35:42.
+** Generated automatically by tolua++-1.0.92 on 09/27/16 12:47:15.
 */
 
 #ifndef __cplusplus
@@ -48019,6 +48019,41 @@ tolua_lerror:
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: addTexture of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_addTexture02
+static int tolua_MyLuaBind_vid_IVideoDriver_addTexture02(lua_State* tolua_S)
+{
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isstring(tolua_S,2,0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,4,0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,5,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,6,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+  const char* name = ((const char*)  tolua_tostring(tolua_S,2,0));
+  unsigned width = ((unsigned)  tolua_tonumber(tolua_S,3,0));
+  unsigned height = ((unsigned)  tolua_tonumber(tolua_S,4,0));
+  img::E_COLOR_FORMAT format = ((img::E_COLOR_FORMAT) (int)  tolua_tonumber(tolua_S,5,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'addTexture'",NULL);
+#endif
+ {
+  vid::ITexture* tolua_ret = (vid::ITexture*)  self->addTexture(name,width,height,format);
+ tolua_pushusertype(tolua_S,(void*)tolua_ret,"vid::ITexture");
+ }
+ }
+ return 1;
+tolua_lerror:
+ return tolua_MyLuaBind_vid_IVideoDriver_addTexture01(tolua_S);
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: addRenderTargetTexture of class  vid::IVideoDriver */
 #ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_addRenderTargetTexture00
 static int tolua_MyLuaBind_vid_IVideoDriver_addRenderTargetTexture00(lua_State* tolua_S)
@@ -48054,6 +48089,41 @@ static int tolua_MyLuaBind_vid_IVideoDriver_addRenderTargetTexture00(lua_State* 
  tolua_error(tolua_S,"#ferror in function 'addRenderTargetTexture'.",&tolua_err);
  return 0;
 #endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: addRenderTargetTexture of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_addRenderTargetTexture01
+static int tolua_MyLuaBind_vid_IVideoDriver_addRenderTargetTexture01(lua_State* tolua_S)
+{
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isstring(tolua_S,2,0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,4,0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,5,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,6,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+  const char* name = ((const char*)  tolua_tostring(tolua_S,2,0));
+  unsigned width = ((unsigned)  tolua_tonumber(tolua_S,3,0));
+  unsigned height = ((unsigned)  tolua_tonumber(tolua_S,4,0));
+  img::E_COLOR_FORMAT format = ((img::E_COLOR_FORMAT) (int)  tolua_tonumber(tolua_S,5,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'addRenderTargetTexture'",NULL);
+#endif
+ {
+  vid::ITexture* tolua_ret = (vid::ITexture*)  self->addRenderTargetTexture(name,width,height,format);
+ tolua_pushusertype(tolua_S,(void*)tolua_ret,"vid::ITexture");
+ }
+ }
+ return 1;
+tolua_lerror:
+ return tolua_MyLuaBind_vid_IVideoDriver_addRenderTargetTexture00(tolua_S);
 }
 #endif //#ifndef TOLUA_DISABLE
 
@@ -61887,7 +61957,9 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
    tolua_function(tolua_S,"getTexture",tolua_MyLuaBind_vid_IVideoDriver_getTexture00);
    tolua_function(tolua_S,"addTexture",tolua_MyLuaBind_vid_IVideoDriver_addTexture00);
    tolua_function(tolua_S,"addTexture",tolua_MyLuaBind_vid_IVideoDriver_addTexture01);
+   tolua_function(tolua_S,"addTexture",tolua_MyLuaBind_vid_IVideoDriver_addTexture02);
    tolua_function(tolua_S,"addRenderTargetTexture",tolua_MyLuaBind_vid_IVideoDriver_addRenderTargetTexture00);
+   tolua_function(tolua_S,"addRenderTargetTexture",tolua_MyLuaBind_vid_IVideoDriver_addRenderTargetTexture01);
    tolua_function(tolua_S,"removeTexture",tolua_MyLuaBind_vid_IVideoDriver_removeTexture00);
    tolua_function(tolua_S,"getFont",tolua_MyLuaBind_vid_IVideoDriver_getFont00);
    tolua_function(tolua_S,"getBuiltInFont",tolua_MyLuaBind_vid_IVideoDriver_getBuiltInFont00);

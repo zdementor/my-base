@@ -26,6 +26,8 @@ MyGameAI	= nil
 MyTimer		= nil
 MyMemStat	= nil
 
+MyRT = nil
+
 CEGUISystem		= nil
 CEGUIRenderer	= nil
 CEGUISchemeMgr	= nil
@@ -33,6 +35,9 @@ CEGUIImgsetMgr	= nil
 CEGUIWinMgr		= nil
 CEGUICursor		= nil
 CEGUIFontMgr	= nil
+
+MAIN_COLOR_RTT_NAME = "MainColorRenderTargetTexture"
+MAIN_DEPTH_RTT_NAME = "MainDepthRenderTargetTexture"
 
 function LOG_INFO(msg)
 	io.ILogger:getSingleton():logInfo("<Lua> "..msg)
@@ -114,6 +119,16 @@ function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 		os.exit(1)
 	end	
 	RereadSingletons()
+	if MyDriver:queryFeature(vid.EVDF_RENDER_TO_TARGET) then
+		local colorRT = MyDriver:addRenderTargetTexture(MAIN_COLOR_RTT_NAME,
+			winWidth, winHeight, img.ECF_A8R8G8B8)
+		local depthRT = MyDriver:addRenderTargetTexture(MAIN_DEPTH_RTT_NAME,
+			winWidth, winHeight, img.ECF_DEPTH24_STENCIL8)
+		MyRT = MyDriver:addRenderTarget(nil, nil)
+		MyRT:bindColorTexture(colorRT, false)
+		MyRT:bindDepthTexture(depthRT, false)
+		MyRT:rebuild()
+	end
 	SetupResources()
 	MyLogger:setLogLevel(OPTIONS.LogLevel) 
 	MyDevice:setWindowIcon(
@@ -128,6 +143,7 @@ function DestroyDevice()
 		MyScript:setScriptCallback(i, nil)
 	end
 	MyCEGUI.destroy()
+	MyRT = nil -- will be destroyed by device
 	dev.destroyDevice()
 end
 

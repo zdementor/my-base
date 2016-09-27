@@ -120,6 +120,8 @@ public:
     //! cases have the ECF_A1R5G5B5 or ECF_A8R8G8B8 format.
     virtual ITexture* addTexture(const c8 *name,
 		const core::dimension2di &size, img::E_COLOR_FORMAT format = img::ECF_A8R8G8B8) = 0;
+    virtual ITexture* addTexture(const c8 *name,
+		u32 width, u32 height, img::E_COLOR_FORMAT format = img::ECF_A8R8G8B8) = 0;
  
     //! Creates a texture from a loaded IImage.
     //! \param name: A name for the texture. Later calls of getTexture() with this name
@@ -143,6 +145,8 @@ public:
     //! \param format: Desired color format of the texture.
 	virtual ITexture* addRenderTargetTexture(const c8 *name,
 		const core::dimension2di &size, img::E_COLOR_FORMAT format = img::ECF_A8R8G8B8) = 0;
+	virtual ITexture* addRenderTargetTexture(const c8 *name,
+		u32 width, u32 height, img::E_COLOR_FORMAT format = img::ECF_A8R8G8B8) = 0;
 
 	//! Creates a texture.
     virtual ITexture* createTexture(img::IImage* image) = 0;
