@@ -635,7 +635,7 @@ protected:
 	ITexture* CurrentTexture[MY_MATERIAL_MAX_LAYERS];
 
 	core::matrix4 Matrices[E_TRANSFORMATION_STATE_COUNT];
-	core::matrix4 m_ModelViewProjMatrix, m_ModelViewMatrix;
+	core::matrix4 m_HWProjMatrix, m_HWModelViewProjMatrix, m_ModelViewMatrix;
 	core::matrix4 m_ModelInvMatrix, m_ViewInvMatrix, m_ModelViewInvMatrix;
 
 	bool Transformation3DChanged;

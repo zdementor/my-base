@@ -402,14 +402,14 @@ void CNullDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matrix4
 
 	m_ModelViewMatrix = Matrices[ETS_VIEW] * Matrices[ETS_MODEL];
 
-	m_ModelViewProjMatrix = Matrices[ETS_PROJ];
+	m_HWProjMatrix = Matrices[ETS_PROJ];
 	if (m_YInverted)
 	{
-		f32 *p = (f32 *)m_ModelViewProjMatrix.pointer();
+		f32 *p = (f32 *)m_HWProjMatrix.pointer();
 		// Verticaly invert our picture, if needed.
 		p[5]*= -1.0f;
 	}
-	m_ModelViewProjMatrix = m_ModelViewProjMatrix * m_ModelViewMatrix;
+	m_HWModelViewProjMatrix = m_HWProjMatrix * m_ModelViewMatrix;
 
 	m_ModelViewInvMatrix = m_ModelViewMatrix;
 	m_ModelViewInvMatrix.makeInversed();
@@ -3993,7 +3993,7 @@ bool CNullDriver::_bindGPUProgram(IGPUProgram* gpu_prog)
 	if (mask & EUF_MODEL_VIEW_PROJ_MATRIX)
 	{
 		res = gpu_prog->setUniformfv(EUT_MODEL_VIEW_PROJ_MATRIX,
-			m_ModelViewProjMatrix.pointer(), 16 * sizeof(f32)) && res;
+			m_HWModelViewProjMatrix.pointer(), 16 * sizeof(f32)) && res;
 	}
 	if (mask & EUF_MODEL_VIEW_MATRIX)
 	{

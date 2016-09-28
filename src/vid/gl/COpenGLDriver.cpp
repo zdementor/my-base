@@ -1473,19 +1473,11 @@ void COpenGLDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matri
         glLoadMatrixf(m_ModelViewMatrix.pointer());
         break;
     case ETS_PROJ:
-        {
-			core::matrix4 matProg(mat);
-            GLfloat *glmat = (GLfloat*)matProg.pointer();
-			if (m_YInverted)
-			{
-				// For the Render Target rendering, we must verticaly invert our picture,
-				// because OpenGL FBO contain inverted picture.
-				glmat[5]*= -1.0f;
-			}
-            glMatrixMode(GL_PROJECTION);
-            glLoadMatrixf(glmat);
-        }
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(m_HWProjMatrix.pointer());
         break;
+	default:
+		break;
     }	
 }
 
