@@ -448,28 +448,21 @@ COpenGLDriver::~COpenGLDriver()
 
 //---------------------------------------------------------------------------
 
-bool COpenGLDriver::_makeScreenShot(ITexture* texture)
+bool COpenGLDriver::_makeScreenShot(img::IImage *image)
 {
-	const core::dimension2di &texSize = texture->getSize();
+	c8 *p = (c8 *)image->getData();
+	u32 pitch = image->getBytesPerPixel() * image->getDimension().Width;
 
-	img::IImage* image = texture->lock();
-	if (image)
+	glReadBuffer(GL_BACK);
+
+	// reading in verticaly reversed order
+	for (s32 i=0; i < m_ScreenSize.Height; i++)
 	{
-		u32 *texture_buffer = (u32*)image->getData();
-		u32  texture_row    = texture->getPitch()/sizeof(u32);
-
-		glReadBuffer(GL_BACK);
-
-		// reading in verticaly reversed order
-		for (s32 i=0; i < m_ScreenSize.Height; i++)
-		{
-			glReadPixels(0, m_ScreenSize.Height - 1 - i,
-				m_ScreenSize.Width, 1, GL_BGRA, GL_UNSIGNED_BYTE, texture_buffer);
-			texture_buffer += texture_row;
-		}
-
-		texture->unlock();
+		glReadPixels(0, m_ScreenSize.Height - 1 - i,
+			m_ScreenSize.Width, 1, GL_BGRA, GL_UNSIGNED_BYTE, p);
+		p += pitch;
 	}
+
 	return true;
 }
 

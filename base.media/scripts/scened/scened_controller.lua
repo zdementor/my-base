@@ -213,7 +213,7 @@ function _ScenedInitImpl()
 	menuItem = tolua.cast(
 		CEGUIWinMgr:createWindow("MyScened/MenuItem", "Scened.Menu.Tools.MakeSreenShot"),
 		"CEGUI::MenuItem")
-	menuItem:setText("Make sreenshot...")
+	menuItem:setText("Make sreenshot (F8)...")
 	menuItem:subscribeEvent("Clicked", "_ScenedWidgetClicked")
 	popupMenu:addChildWindow(menuItem)
 
@@ -775,17 +775,7 @@ function _ScenedWidgetClicked(args)
 	elseif name == "Scened.Menu.Tools.NormalMapConverter" then
 		Helper.GUI.Scened.NormalMapConverterDialog.show()
 	elseif name == "Scened.Menu.Tools.MakeSreenShot" then
-		LOG_INFO("Make screenshot...")
-		local scrTex = MyDriver:makeScreenShotTexture()
-		if scrTex ~= nil then
-			local scrImg = scrTex:lock()
-			if scrImg ~= nil then
-				local texPath = MyResMgr:getMediaDirFull(res.EMT_TEXTURES)
-				MyImgLib:saveImageToFile(scrImg, texPath.."Screenshot.tga")
-				scrTex:unlock()
-			end
-			MyDriver:removeTexture(scrTex)
-		end
+		Scened.makeScreenShot()
 	elseif name == "Scened.Menu.Tools.ImageViewer" then
 		local file_name = nil
 		Helper.GUI.ImageEditor.show(0,

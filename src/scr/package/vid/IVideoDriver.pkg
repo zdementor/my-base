@@ -43,6 +43,9 @@ class IVideoDriver
     //! Makes a screenshot and stores it into a newly created texture
 	ITexture* makeScreenShotTexture();
 
+    //! Makes a screenshot and stores it into a newly created image
+	img::IImage* makeScreenShotImage();
+
 	//! Manages rendering pipeline
 	bool beginRendering();
 	void renderAll();

@@ -171,6 +171,7 @@ public:
 	{ return vid::getDriverFamily(m_DriverType); }
   
     virtual ITexture* makeScreenShotTexture();
+	virtual img::IImage* makeScreenShotImage();
 
     void maxIndexWarning(u8 idxSize);
 
@@ -517,7 +518,7 @@ public:
 
 	virtual bool _initDriver(SExposedVideoData &out_video_data);
 
-	virtual bool _makeScreenShot(ITexture *texture) { return false; }
+	virtual bool _makeScreenShot(img::IImage *image) { return false; }
 
 protected:
 

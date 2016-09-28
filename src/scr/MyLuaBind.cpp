@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/28/16 16:52:41.
+** Generated automatically by tolua++-1.0.92 on 09/28/16 23:34:10.
 */
 
 #ifndef __cplusplus
@@ -47216,6 +47216,38 @@ static int tolua_MyLuaBind_vid_IVideoDriver_makeScreenShotTexture00(lua_State* t
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: makeScreenShotImage of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_makeScreenShotImage00
+static int tolua_MyLuaBind_vid_IVideoDriver_makeScreenShotImage00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'makeScreenShotImage'",NULL);
+#endif
+ {
+  img::IImage* tolua_ret = (img::IImage*)  self->makeScreenShotImage();
+ tolua_pushusertype(tolua_S,(void*)tolua_ret,"img::IImage");
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'makeScreenShotImage'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: beginRendering of class  vid::IVideoDriver */
 #ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_beginRendering00
 static int tolua_MyLuaBind_vid_IVideoDriver_beginRendering00(lua_State* tolua_S)
@@ -61965,6 +61997,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
    tolua_function(tolua_S,"getBackgroundColor",tolua_MyLuaBind_vid_IVideoDriver_getBackgroundColor00);
    tolua_function(tolua_S,"render2DRect",tolua_MyLuaBind_vid_IVideoDriver_render2DRect00);
    tolua_function(tolua_S,"makeScreenShotTexture",tolua_MyLuaBind_vid_IVideoDriver_makeScreenShotTexture00);
+   tolua_function(tolua_S,"makeScreenShotImage",tolua_MyLuaBind_vid_IVideoDriver_makeScreenShotImage00);
    tolua_function(tolua_S,"beginRendering",tolua_MyLuaBind_vid_IVideoDriver_beginRendering00);
    tolua_function(tolua_S,"renderAll",tolua_MyLuaBind_vid_IVideoDriver_renderAll00);
    tolua_function(tolua_S,"renderPass",tolua_MyLuaBind_vid_IVideoDriver_renderPass00);

@@ -338,6 +338,11 @@ public:
     //! \return ITexture* pointer to the new texture
     virtual ITexture* makeScreenShotTexture() = 0;
 
+    //! Makes a screenshot and stores it into a newly created image
+    //! \param void
+    //! \return IImage* pointer to the new imae
+	virtual img::IImage* makeScreenShotImage() = 0;
+
 	//! clear unused VRAM
     virtual void clearUnusedVideoCache() = 0;
 

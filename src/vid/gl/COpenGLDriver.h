@@ -131,7 +131,7 @@ public:
 
 	virtual bool _initDriver(SExposedVideoData &out_video_data);
 
-	virtual bool _makeScreenShot(ITexture *texture);
+	virtual bool _makeScreenShot(img::IImage *image);
 
 private:
 

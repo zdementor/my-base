@@ -1434,15 +1434,16 @@ void CD3D9Driver::setGammaRamp(f32 gamma, f32 contrast, f32 brightness)
 
 //---------------------------------------------------------------------------
 
-bool CD3D9Driver::_makeScreenShot(ITexture* texture)
+bool CD3D9Driver::_makeScreenShot(img::IImage *image)
 {
-	const core::dimension2di &texSize = texture->getSize();
-
 	IDirect3DSurface9 *pSurface = NULL;
 	ID3DXBuffer *pBuffer = NULL;
 	HRESULT hr;
 
-	hr = m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pSurface);
+	bool ret = true;
+
+	hr = m_D3DDevice->GetBackBuffer(
+		0, 0, D3DBACKBUFFER_TYPE_MONO, &pSurface);
 	if (SUCCEEDED(hr))
 		hr = D3DXSaveSurfaceToFileInMemory(
 			&pBuffer, D3DXIFF_BMP, pSurface, NULL, NULL);
@@ -1450,29 +1451,30 @@ bool CD3D9Driver::_makeScreenShot(ITexture* texture)
 	
 	if (SUCCEEDED(hr))
 	{
-		io::IReadFile * file = FILE_SYSTEM.createMemoryReadFile(
-			pBuffer->GetBufferPointer(), pBuffer->GetBufferSize(), "#MemoryFile.bmp", false);
-		img::IImage *scrImg = NULL;
+		io::IReadFile *file = FILE_SYSTEM.createMemoryReadFile(
+			pBuffer->GetBufferPointer(), pBuffer->GetBufferSize(),
+			"#MemoryFile.bmp", false);
 		if (file)
 		{
-			scrImg = IMAGE_LIBRARY.createImageFromFile(file);
-			img::IImage *dstImg = texture->lock();
-			if (dstImg)
+			img::IImage *scrImg = IMAGE_LIBRARY.createImageFromFile(file);
+			if (scrImg && scrImg->getDataSizeBytes() == image->getDataSizeBytes())
 			{
-				u32 *pdst = (u32 *)dstImg->getData();
+				u32 *pdst = (u32 *)image->getData();
 				u32 *psrc = (u32 *)scrImg->getData();
 
-				memcpy(pdst, psrc, texSize.Width * texSize.Height * sizeof(u32));
-
-				texture->unlock();
+				memcpy(pdst, psrc, scrImg->getDataSizeBytes());
 			}
+			else
+				ret = false;
+			SAFE_DROP(scrImg);
+			file ->drop();
 		}
-		SAFE_DROP(scrImg);
-		SAFE_DROP(file);
+		else
+			ret = false;
 	}
 	SAFE_RELEASE(pBuffer);
 
-	return SUCCEEDED(hr);
+	return ret && SUCCEEDED(hr);
 }
 
 //----------------------------------------------------------------------------

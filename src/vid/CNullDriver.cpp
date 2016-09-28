@@ -1070,8 +1070,9 @@ void CNullDriver::OnResize(const core::dimension2di &size)
 
 ITexture* CNullDriver::makeScreenShotTexture()
 {
-    c8 name[256];
-	sprintf(name, "ScreenShot.%s.%dx%d",
+	bool ret = false;
+	c8 name[256];
+	sprintf(name, "ScreenShotTexture.%s.%dx%d",
 		img::getColorFormatName(img::ECF_A8R8G8B8),
 		m_ScreenSize.Width, m_ScreenSize.Height);
 
@@ -1079,18 +1080,50 @@ ITexture* CNullDriver::makeScreenShotTexture()
 	if (!texture)
 		texture = addTexture(name, m_ScreenSize, img::ECF_A8R8G8B8);
 
+	img::IImage *image = texture ? texture->lock() : NULL;
+	if (image
+			&& image->getDimension() == m_ScreenSize
+			&& image->getColorFormat() == img::ECF_A8R8G8B8)
+	{
+		IRenderTarget *rt = getRenderTarget();
+		setRenderTarget(NULL);
+
+		ret = _makeScreenShot(image);
+		texture->unlock();
+
+		setRenderTarget(rt);
+	}
+	if (!ret)
+		LOGGER.logWarn("Screenshot created with errors!");
+
+    return texture;
+}
+
+//---------------------------------------------------------------------------
+
+img::IImage* CNullDriver::makeScreenShotImage()
+{
+	c8 name[256];
+	sprintf(name, "ScreenShotImage.%s.%dx%d",
+		img::getColorFormatName(img::ECF_A8R8G8B8),
+		m_ScreenSize.Width, m_ScreenSize.Height);
+
+	img::IImage *image = IMAGE_LIBRARY.findImage(name);
+	if (!image)
+		image = IMAGE_LIBRARY.addImage(name, m_ScreenSize, img::ECF_A8R8G8B8);
+
 	IRenderTarget *rt = getRenderTarget();
 	setRenderTarget(NULL);
 
-	if (!texture 
-			|| texture->getSize() != m_ScreenSize
-			|| texture->getColorFormat() != img::ECF_A8R8G8B8
-			|| !_makeScreenShot(texture))
+	if (!image 
+			|| image->getDimension() != m_ScreenSize
+			|| image->getColorFormat() != img::ECF_A8R8G8B8
+			|| !_makeScreenShot(image))
 		LOGGER.logWarn("Screenshot created with errors!");
 
 	setRenderTarget(rt);
 
-    return texture;
+    return image;
 }
 
 //---------------------------------------------------------------------------
