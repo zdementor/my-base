@@ -987,10 +987,28 @@ void COpenGLDriver::_setBasicRenderStates()
 			glDisable(GL_CULL_FACE);
 
 		// face culling order
-		if (m_CurrentRenderPass.getFlag(EMF_FRONT_FACE_CCW))
-			glFrontFace(GL_CW);
+		bool frontCCW;
+		if (!m_YInverted)
+		{
+			// Reversed culling to correctly cull scene defined in Direct3D
+			// left handed coordiname system (OpenGL have right handed system).
+			//  ^ Y
+			//  |    ^ Z
+			//  |   /
+			//  |  /
+			//  | /
+			//  o-------> X
+			//
+			frontCCW = !m_CurrentRenderPass.getFlag(EMF_FRONT_FACE_CCW);
+		}
 		else
-			glFrontFace(GL_CCW );
+		{
+			// Due to OpenGL FBO vertical inversion, must invert culling order.
+			// So we gain double inversion (Direct3D inversion and OpenGL FBO inversion).
+			// which results in the normal culling order.
+			frontCCW = m_CurrentRenderPass.getFlag(EMF_FRONT_FACE_CCW);
+		}
+		glFrontFace(frontCCW ? GL_CCW : GL_CW);
 
 		// blending
 		if (m_CurrentRenderPass.getFlag(EMF_BLENDING))
@@ -1401,9 +1419,6 @@ void COpenGLDriver::deleteAllDynamicLights()
 
 //---------------------------------------------------------------------------
 
-//! Sets the dynamic ambient light color. The default color is
-//! (0,0,0,0) which means it is dark.
-//! \param color: New color of the ambient light.
 void COpenGLDriver::setGlobalAmbientColor(const img::SColorf& color)
 {
 	CNullDriver::setGlobalAmbientColor(color);
@@ -1414,8 +1429,6 @@ void COpenGLDriver::setGlobalAmbientColor(const img::SColorf& color)
 
 //---------------------------------------------------------------------------
 
-// this code was sent in by Oliver Klems, thank you! (I modified the glVieport
-// method just a bit.
 void COpenGLDriver::setViewPort(const core::rect<s32>& area)
 {
     core::rect<s32> vp = area;
@@ -1443,7 +1456,6 @@ void COpenGLDriver::_setVertexType(E_VERTEX_TYPE newType)
 
 //---------------------------------------------------------------------------
 
-//! sets transformation
 void COpenGLDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matrix4& mat)
 {
 	CNullDriver::setTransform(state, mat);
@@ -1458,16 +1470,18 @@ void COpenGLDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matri
         // OpenGL only has a modelview matrix, view and world is not existent. 
 		// so lets fake these two.
         glMatrixMode(GL_MODELVIEW);
-        glLoadMatrixf(
-			core::matrix4(Matrices[ETS_VIEW] * Matrices[ETS_MODEL]).pointer());
+        glLoadMatrixf(m_ModelViewMatrix.pointer());
         break;
     case ETS_PROJ:
         {
-            GLfloat *glmat = (GLfloat*)mat.pointer();
-
-            // flip z to compensate OpenGL right-hand coordinate system
-            glmat[12]*= -1.0f;
-
+			core::matrix4 matProg(mat);
+            GLfloat *glmat = (GLfloat*)matProg.pointer();
+			if (m_YInverted)
+			{
+				// For the Render Target rendering, we must verticaly invert our picture,
+				// because OpenGL FBO contain inverted picture.
+				glmat[5]*= -1.0f;
+			}
             glMatrixMode(GL_PROJECTION);
             glLoadMatrixf(glmat);
         }
@@ -1477,7 +1491,6 @@ void COpenGLDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matri
 
 //---------------------------------------------------------------------------
 
-//! Sets the fog mode.
 void COpenGLDriver::setFog(const SFog &fog)
 {
     CNullDriver::setFog(fog);
@@ -1501,8 +1514,6 @@ void COpenGLDriver::setFog(const SFog &fog)
 
 //---------------------------------------------------------------------------
 
-//! Only used by the internal engine. Used to notify the driver that
-//! the window was resized.
 void COpenGLDriver::OnResize(const core::dimension2d<s32>& size)
 {
 	if (m_ScreenSize == size)
@@ -1513,7 +1524,6 @@ void COpenGLDriver::OnResize(const core::dimension2d<s32>& size)
 
 //---------------------------------------------------------------------------
 
-// Create An Empty Texture
 GLuint COpenGLDriver::createEmptyOGLTexture(s32 w, s32 h)                                           
 {
     GLuint txtnumber;    // Texture ID
@@ -1542,7 +1552,6 @@ GLuint COpenGLDriver::createEmptyOGLTexture(s32 w, s32 h)
 
 //---------------------------------------------------------------------------
 
-//! Setting polygon fill mode
 void COpenGLDriver::setPolygonFillMode(E_POLYGON_FILL_MODE mode)
 {
 	CNullDriver::setPolygonFillMode(mode);	
@@ -1565,7 +1574,6 @@ void COpenGLDriver::setPolygonFillMode(E_POLYGON_FILL_MODE mode)
 
 //----------------------------------------------------------------------------
 
-//! Reseting all texture units
 void COpenGLDriver::resetTextureUnits()
 {
 	static u32 max_units_cnt_1 = getMaximalTextureUnitsAmount() - 1;
@@ -1587,7 +1595,7 @@ void COpenGLDriver::resetTextureUnits()
 
 //----------------------------------------------------------------------------
 
-IRenderBuffer * COpenGLDriver::createRenderBuffer(
+IRenderBuffer* COpenGLDriver::createRenderBuffer(
 	E_RENDER_BUFFER_TYPE rbt,
 	E_VERTEX_TYPE vtype, u32 vert_size,
 	E_INDEX_TYPE itype, u32 ind_size,
@@ -1772,7 +1780,25 @@ void COpenGLDriver::_enableScissor()
 
 void COpenGLDriver::_setupScissor(s32 left, s32 top, u32 width, u32 height)
 {
-	s32 bottom = m_ScreenSize.Height - (top + height);
+	s32 bottom;
+	// Scissor defining in the Screen Coordinate system
+	//
+	//       Y ^-------o (Width, Height)
+	//         |       |
+	//         |       |
+	//  (0, 0) o-------> X 
+	//
+	if (m_YInverted)
+	{
+		// Verticaly reversed Scissor for the Y-inversed FBO rendering
+		bottom = top;
+	}
+	else
+	{
+		// Normal Scissor Coordinate system
+		bottom = m_ScreenSize.Height - (top + height);
+	}
+
 	glScissor(left, bottom, width, height);
 }
 
@@ -1790,7 +1816,6 @@ void COpenGLDriver::_renderScreenRect(const img::SColor &color)
 
 //---------------------------------------------------------------------------
 
-//! sets texture filtering mode
 void COpenGLDriver::setTextureFilter(E_TEXTURE_FILTER textureFilter)
 {
 	CNullDriver::setTextureFilter(textureFilter);
@@ -1800,74 +1825,6 @@ void COpenGLDriver::setTextureFilter(E_TEXTURE_FILTER textureFilter)
 		m_TextureFilter = ETF_BILINEAR;
 		LOGGER.logWarn("OpenGL has no anisotropic filtering. Fall back to bilinear.");
 	}
-}
-
-//---------------------------------------------------------------------------
-
-bool COpenGLDriver::setColorRenderTarget(ITexture* texture,
-	bool clearBackBuffer, bool clearZBuffer, img::SColor color)
-{
-	ITexture *prevRTT = getColorRenderTarget();
-
-	if (texture == prevRTT)
-		return true;
-
-	if (!CNullDriver::setColorRenderTarget(texture, clearBackBuffer, clearZBuffer, color))
-		return false;
-
-	COpenGLRenderTargetTexture *rtt = (COpenGLRenderTargetTexture*)texture;
-
-    // check if we should set the previous RT back
-
-    bool ret = true;
-
-	if (prevRTT && rtt != prevRTT)
-    {
-		// flush old render target
-		_setTexture(0, prevRTT);
-
-		const core::dimension2di &rtsize = prevRTT->getSize();
-
-		// Reading GL texture data in inversed order,
-		// because frame buffer have Y-inversed pixel data
-		u32 hsrc = 0, hdst = rtsize.Height - 1;
-		for (; hsrc < (u32)rtsize.Height; hsrc ++, hdst--)
-			glCopyTexSubImage2D(GL_TEXTURE_2D, 0,
-				0, hdst, 0, hsrc, rtsize.Width, 1);
-    }
-
-    if (rtt == 0)
-    {
-		glViewport(0, 0, m_ScreenSize.Width,m_ScreenSize.Height);		
-    }
-    else
-    {
-        // we want to set a new target. so do this.
-		const core::dimension2di &rtsize = rtt->getSize();
-        glViewport(0, 0, rtsize.Width, rtsize.Height);
- 	}
-
-	_setTexture(0, rtt);
-
-	if (clearBackBuffer || clearZBuffer)
-	{
-		GLbitfield mask = 0;
-		if (clearBackBuffer)
-		{
-			glClearColor(
-				color.getRed() * inv_color, color.getGreen() * inv_color,
-				color.getBlue() * inv_color, color.getAlpha() * inv_color);
-			mask |= GL_COLOR_BUFFER_BIT;
-		}
-		if (clearZBuffer)
-		{
-			glDepthMask(GL_TRUE);
-			mask |= GL_DEPTH_BUFFER_BIT;
-		}
-		glClear(mask);
-	}
-
-    return ret; 
 }
 
 //---------------------------------------------------------------------------
@@ -1911,6 +1868,24 @@ IRenderTarget* COpenGLDriver::addRenderTarget(
 	if (rt)
 		_addRenderTarget(rt);
 	return rt;
+}
+
+//---------------------------------------------------------------------------
+
+bool COpenGLDriver::setRenderTarget(IRenderTarget *rt)
+{
+	bool ret = CNullDriver::setRenderTarget(rt);
+	if (m_CurrentRenderTarget != NULL)
+	{
+		// Must setup Y-inversed rendering,
+		// to compensate OpenGL FBO vertical picture inversion.
+		m_YInverted = true;
+	}
+	else
+	{
+		m_YInverted = false;
+	}
+	return ret;
 }
 
 //---------------------------------------------------------------------------
@@ -1961,6 +1936,7 @@ void COpenGLDriver::render2DRect(const SMaterial &material,
 	f32 drawTop    =(drawRect.UpperLeftCorner.Y * 2.f - 1.f) * (-1);
 	f32 drawRight  = drawRect.LowerRightCorner.X * 2.f - 1.f;
 	f32 drawBottom =(drawRect.LowerRightCorner.Y * 2.f - 1.f) * (-1);
+
 	vid::S3DVertex1TCoords vertices[] =
 	{
 		S3DVertex1TCoords(drawLeft,  drawTop,    0, 0, 0, 0, texRect.Left,  texRect.Top),
@@ -1968,6 +1944,12 @@ void COpenGLDriver::render2DRect(const SMaterial &material,
 		S3DVertex1TCoords(drawRight, drawBottom, 0, 0, 0, 0, texRect.Right,	texRect.Bottom),
 		S3DVertex1TCoords(drawLeft,  drawBottom, 0, 0, 0, 0, texRect.Left,  texRect.Bottom),
 	};
+
+	if (getRenderTarget())
+	{
+		vertices[1] = S3DVertex1TCoords(drawLeft,  drawBottom, 0, 0, 0, 0, texRect.Left,  texRect.Bottom);
+		vertices[3] = S3DVertex1TCoords(drawRight, drawTop,    0, 0, 0, 0, texRect.Right,	texRect.Top);
+	}
 
 	// store initial render states
 	bool stencil = _isStencilEnabled();

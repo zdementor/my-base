@@ -40,9 +40,6 @@ public:
 
     virtual void setTransform(E_TRANSFORMATION_STATE state, const core::matrix4& mat);
 
-    virtual bool setColorRenderTarget(ITexture* texture,
-		bool clearBackBuffer, bool clearZBuffer,  img::SColor color);
-
     virtual void setViewPort(const core::rect<s32>& area);
 
     virtual void deleteAllDynamicLights();

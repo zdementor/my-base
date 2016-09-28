@@ -660,7 +660,11 @@ function RunGeneralEngine()
 		flags = bit.bor(flags, dev.EDCF_CACHE_SHADERS)
 	end
 	CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
-	require "main"
+	if MyDriver:queryFeature(vid.EVDF_RENDER_TO_TARGET) then
+		require "main"
+	else
+		LOG_ERR("Your hardware not supports required features (EVDF_RENDER_TO_TARGET). Will exit now.")
+	end
 	DestroyDevice()
 end
 

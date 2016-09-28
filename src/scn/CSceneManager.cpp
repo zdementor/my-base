@@ -1144,6 +1144,8 @@ void CSceneManager::preRenderScene()
 		sg_mat.setFlag(vid::EMF_BLENDING,true);
 		sg_mat.setFlag(vid::EMF_GOURAUD_SHADING, true);
 		sg_mat.setLightingMode(vid::ELM_NONE);
+		sg_mat.setFlag(vid::EMF_BACK_FACE_CULLING, true);
+		sg_mat.setFlag(vid::EMF_FRONT_FACE_CCW, true);
 
 		sg_mat.getPass(0).setBlendFuncs(
 			vid::ESBF_SRC_ALPHA, vid::EDBF_ONE_MINUS_SRC_ALPHA);

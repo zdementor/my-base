@@ -937,6 +937,12 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 
 	LOGGER.logInfo("Binding imposter for this scene node . . .");	
 	
+	if (!m_VideoDriver.queryFeature(vid::EVDF_RENDER_TO_TARGET))
+	{
+		LOGGER.logErr("Video Driver not support required features! Unable to create imposter!");
+		return 0;
+	}
+
 	core::stringc fname = "", xml_fname = "";
 	const c8 *tmppath = m_ResourceManager.getMediaDirFull(res::EMT_TEMP_DATA);
 
@@ -1028,23 +1034,21 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 
 		LOGGER.logInfo("Choosed Render Target size={%dx%d}",
 			imp_tex_res, imp_tex_res);
-#if 1
-		vid::ITexture *colorRT = m_VideoDriver.createRenderTargetTexture(
-			core::dimension2di(imp_tex_res, imp_tex_res), img::ECF_A8R8G8B8);
+
+		vid::IRenderTarget *renderTarget = m_VideoDriver.addRenderTarget(NULL, NULL);
+		if (!renderTarget)
+		{
+			LOGGER.logErr("Can not create Render Target! Unable to create imposter!");
+			return 0;
+		}
+
 		vid::ITexture *depthRT = m_VideoDriver.createRenderTargetTexture(
 			core::dimension2di(imp_tex_res, imp_tex_res), img::ECF_DEPTH24_STENCIL8);
-		vid::IRenderTarget *renderTarget = m_VideoDriver.addRenderTarget(NULL, NULL);
-		if (renderTarget)
-		{
-			renderTarget->bindColorTexture(colorRT, false);
-			renderTarget->bindDepthTexture(depthRT, false);
-			renderTarget->rebuild();
-		}
-		SAFE_DROP(colorRT);
-		SAFE_DROP(depthRT);
-		if (renderTarget)
-			m_VideoDriver.removeRenderTarget(renderTarget);
-#endif
+		renderTarget->bindDepthTexture(depthRT, false);
+
+		vid::IRenderTarget *oldRTT = m_VideoDriver.getRenderTarget();
+		img::SColor clearColor = m_VideoDriver.getBackgroundColor();
+
 		scn::SBillboardParams billparams;
 		billparams.Size.set(
 			w * imp_size_scale.X * imp_cam_view_scale.X,
@@ -1179,7 +1183,7 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 						imp_tex_tcwidth	= imp_tex_tcwidth_arr	[imp_tex_size_idx];									
 
 						rtt_name.sprintf("%simposter_%s_%03d_%03d.tga",
-							tmppath, fname.c_str(), v, a);
+							tmppath, fname.c_str(), a, v);
 
 						rtt = m_VideoDriver.findTexture(rtt_name.c_str());
 
@@ -1192,11 +1196,18 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 						else
 						{
 							rtt_loaded = false;
+
 							rtt = m_VideoDriver.createRenderTargetTexture(
-								core::dimension2di(imp_tex_res, imp_tex_res),
-								m_VideoDriver.getBackColorFormat());	
-							m_VideoDriver.setColorRenderTarget(NULL);
-							m_VideoDriver.setColorRenderTarget(rtt, true, true, imp_bk_color);
+								core::dimension2di(imp_tex_res, imp_tex_res), img::ECF_A8R8G8B8);
+
+							renderTarget->bindColorTexture(rtt, false);
+							renderTarget->rebuild();
+
+							m_VideoDriver.setRenderTarget(NULL);
+							m_VideoDriver.setRenderTarget(renderTarget);
+							m_VideoDriver.clearColor(0x00000000);
+							m_VideoDriver.clearDepth();
+							m_VideoDriver.clearStencil();
 						}
 						imp_tex_cnt++;
 
@@ -1210,22 +1221,10 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 					core::recti frrect(0,0,imp_tex_res_frame-1, imp_tex_res_frame-1);
 					core::recti frrect_rend = frrect;
 
-					if (m_VideoDriver.getDriverFamily() == vid::EDF_OPENGL)
-					// This vertical inversion is needed due to special order of pixel data in
-					// OpenGL frame buffer we reading from
-					{
-						frrect += core::position2di(imp_tex_res_frame*col,
-							imp_tex_res - imp_tex_res_frame*(row+1));
-						tcrect += core::position2df(imp_tex_tcwidth*col,
-							1.0f - imp_tex_tcwidth*(row+1));
-					}
-					else
-					{
-						frrect += core::position2di(imp_tex_res_frame*col,
-							imp_tex_res_frame*row);
-						tcrect += core::position2df(imp_tex_tcwidth*col,
-							imp_tex_tcwidth*row   );
-					}
+					frrect += core::position2di(imp_tex_res_frame*col,
+						imp_tex_res_frame*row);
+					tcrect += core::position2df(imp_tex_tcwidth*col,
+						imp_tex_tcwidth*row);
 
 					frrect_rend += core::position2di(imp_tex_res_frame*col,
 						imp_tex_res_frame*row);
@@ -1291,7 +1290,7 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 				}
 			}
 		}
-		m_VideoDriver.setColorRenderTarget(NULL);
+		m_VideoDriver.setRenderTarget(oldRTT);
 
 		u32 tcnt = bill_textures.size();
 		for (u32 t = 0; t < tcnt; t++)
@@ -1469,6 +1468,9 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 			bill_textures_compr.size(), imp_frames_cnt, imp_views_cnt);
 
 		m_SceneManager.saveSceneNode(xml_fname.c_str(), imposter);
+
+		SAFE_DROP(depthRT);
+		m_VideoDriver.removeRenderTarget(renderTarget);
 	}
 
 	imposter_params.ShiftBBCenter = bb_center;

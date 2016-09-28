@@ -173,7 +173,7 @@ public:
     //! \param texture: Texture to delete from the engines cache.
     virtual bool removeTexture(ITexture* texture) = 0;
 
-	//! Add/remove a render target object.
+	//! Add/remove a Render Target object.
     virtual IRenderTarget* addRenderTarget(u32 width, u32 height,
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat) = 0;
     virtual IRenderTarget* addRenderTarget(const core::dimension2di &size,
@@ -182,16 +182,7 @@ public:
 		ITexture *colorTexture, ITexture *depthTexture) = 0;
 	virtual bool removeRenderTarget(IRenderTarget *renderTarget) = 0;
 
-	//! Set/Get a new render target for the color buffer. 
-    //! This will only work if the driver
-    //! supports the EVDF_RENDER_TO_TARGET feature, which can be 
-    //! queried with queryFeature().
-    virtual bool setColorRenderTarget(ITexture* rtt,
-        bool clearBackBuffer=true, bool clearZBuffer=true, 
-		img::SColor color = img::SColor(0,0,0,0)) = 0;
-	virtual ITexture* getColorRenderTarget() = 0;
-
-	//! Set/Get a render target for the whole rendering.
+	//! Set/Get a Render Target for the whole rendering.
     virtual bool setRenderTarget(IRenderTarget *rt) = 0;
 	virtual IRenderTarget* getRenderTarget() = 0;
 

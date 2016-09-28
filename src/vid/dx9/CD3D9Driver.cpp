@@ -761,60 +761,6 @@ void CD3D9Driver::setTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag, bool enab
 
 //----------------------------------------------------------------------------
 
-bool CD3D9Driver::setColorRenderTarget(ITexture* texture,		
-	bool clearBackBuffer, bool clearZBuffer, img::SColor color)
-{
-	ITexture *prevRTT = getColorRenderTarget();
-
-	if (texture == prevRTT)
-		return true;
-
-	if (!CNullDriver::setColorRenderTarget(texture, clearBackBuffer, clearZBuffer, color))
-		return false;
-
-    CD3D9RenderTargetTexture *rtt = (CD3D9RenderTargetTexture*)texture;
-
-    // check if we should set the previous RT back
-
-    bool ret = true;
-
-    if (rtt == 0)
-    {
-		if (FAILED(m_D3DDevice->SetRenderTarget(0, m_D3DMainRenderTargetSurface)))
-        {
-			LOGGER.logErr("Could not set back to previous render target.");
-			ret = false;
-		}
-    }
-    else
-    {
-        // set new render target
-        if (FAILED(m_D3DDevice->SetRenderTarget(0, rtt->getRenderTargetSurface())))
-        {
-            LOGGER.logErr("Could not set render target.");
-            return false;
-        }
-    }
-
-    if (clearBackBuffer || clearZBuffer)
-    {
-        DWORD flags = 0;
-
-        if (clearBackBuffer)
-            flags |= D3DCLEAR_TARGET;
-
-        if (clearZBuffer)
-            flags |= D3DCLEAR_ZBUFFER;
-
-        m_D3DDevice->Clear(0, NULL, flags, color.color, 1.0f, 0);
-    }
-
-    return ret;
-}
-
-//----------------------------------------------------------------------------
-
-//! sets a viewport
 void CD3D9Driver::setViewPort(const core::rect<s32>& area)
 {
     core::rect<s32> vp = area;

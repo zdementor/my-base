@@ -104,7 +104,8 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 	m_ColorMask(ECM_RED | ECM_GREEN | ECM_BLUE | ECM_ALPHA),
 	m_CurrentRenderPassType(ERP_3D_SOLID_PASS), m_GenShaderMaxLights(-1),
 	m_BackColorFormat((img::E_COLOR_FORMAT)-1),
-	m_CurrentColorRenderTarget(NULL), m_CurrentRenderTarget(NULL)
+	m_CurrentRenderTarget(NULL),
+	m_YInverted(false)
 {
 #if MY_DEBUG_MODE 
 	IUnknown::setClassName("CNullDriver");
@@ -179,7 +180,6 @@ CNullDriver::~CNullDriver()
 
 void CNullDriver::free()
 {
-	setColorRenderTarget(NULL, false, false, 0x0);
 	setRenderTarget(NULL);
 
 	core::list<CNullRenderTarget *>::iterator it = m_RTs.begin();
@@ -401,8 +401,16 @@ void CNullDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matrix4
 	Matrices[state] = mat;
 
 	m_ModelViewMatrix = Matrices[ETS_VIEW] * Matrices[ETS_MODEL];
-	m_ModelViewProjMatrix = Matrices[ETS_PROJ] * m_ModelViewMatrix;
-	m_ViewProjMatrix = Matrices[ETS_PROJ] * Matrices[ETS_VIEW];
+
+	m_ModelViewProjMatrix = Matrices[ETS_PROJ];
+	if (m_YInverted)
+	{
+		f32 *p = (f32 *)m_ModelViewProjMatrix.pointer();
+		// Verticaly invert our picture, if needed.
+		p[5]*= -1.0f;
+	}
+	m_ModelViewProjMatrix = m_ModelViewProjMatrix * m_ModelViewMatrix;
+
 	m_ModelViewInvMatrix = m_ModelViewMatrix;
 	m_ModelViewInvMatrix.makeInversed();
 	m_ModelInvMatrix = Matrices[ETS_MODEL];
@@ -413,7 +421,6 @@ void CNullDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matrix4
 
 //---------------------------------------------------------------------------
 
-//! Returns the transformation set by setTransform
 const core::matrix4& CNullDriver::getTransform(E_TRANSFORMATION_STATE state)
 {
     return Matrices[state];
@@ -864,44 +871,6 @@ bool CNullDriver::setRenderTarget(IRenderTarget *rt)
 IRenderTarget* CNullDriver::getRenderTarget()
 {
 	return m_CurrentRenderTarget;
-}
-
-//---------------------------------------------------------------------------
-
-bool CNullDriver::setColorRenderTarget(ITexture* rtt,		
-	bool clearBackBuffer, bool clearZBuffer, img::SColor color)
-{
-	if (rtt == m_CurrentColorRenderTarget)
-		return true;
-
-	if (rtt && !rtt->isRenderTarget())
-	{
-		LOGGER.logErr("Tried to set a non render target texture as render target.");
-		return false;
-	}
-
-	if (rtt && (rtt->getSize().Width > m_ScreenSize.Width || 
-			rtt->getSize().Height > m_ScreenSize.Height ))
-    {
-        LOGGER.logErr("Tried to set a render target texture which is bigger than the screen.");
-        return false;
-    }
-
-	if (m_CurrentColorRenderTarget)
-		m_CurrentColorRenderTarget->drop();
-	m_CurrentColorRenderTarget = rtt;
-
-	if (m_CurrentColorRenderTarget)
-		m_CurrentColorRenderTarget->grab();
-
-	return true;
-}
-
-//---------------------------------------------------------------------------
-
-ITexture* CNullDriver::getColorRenderTarget()
-{
-	return m_CurrentColorRenderTarget;
 }
 
 //---------------------------------------------------------------------------
@@ -2010,7 +1979,25 @@ void CNullDriver::_registerImageForRendering(
 	vertices[2].TCoords.set(texRect.LowerRightCorner.X,	texRect.LowerRightCorner.Y);
 	vertices[3].TCoords.set(texRect.UpperLeftCorner.X,	texRect.LowerRightCorner.Y);
 
-	static u16 indices[6] = {0, 1, 2, 0, 2, 3};
+	u16 indices[6];
+	if (m_YInverted)
+	{
+		indices[0] = 0;
+		indices[1] = 2;
+		indices[2] = 1;
+		indices[3] = 0;
+		indices[4] = 3;
+		indices[5] = 2;
+	}
+	else
+	{
+		indices[0] = 0;
+		indices[1] = 1;
+		indices[2] = 2;
+		indices[3] = 0;
+		indices[4] = 2;
+		indices[5] = 3;
+	}
 
 	registerGeometryForRendering(
 		pass, core::matrix4(), NULL, NULL,
@@ -2075,7 +2062,25 @@ void CNullDriver::_registerImageForRendering(
 	vertices[2].TCoords.set(texRect.LowerRightCorner.X,	texRect.LowerRightCorner.Y);
 	vertices[3].TCoords.set(texRect.UpperLeftCorner.X,	texRect.LowerRightCorner.Y);
 
-	static u16 indices[6] = {0, 1, 2, 0, 2, 3};
+	u16 indices[6];
+	if (m_YInverted)
+	{
+		indices[0] = 0;
+		indices[1] = 2;
+		indices[2] = 1;
+		indices[3] = 0;
+		indices[4] = 3;
+		indices[5] = 2;
+	}
+	else
+	{
+		indices[0] = 0;
+		indices[1] = 1;
+		indices[2] = 2;
+		indices[3] = 0;
+		indices[4] = 2;
+		indices[5] = 3;
+	}
 
 	registerGeometryForRendering(
 		pass, core::matrix4(), NULL, NULL,

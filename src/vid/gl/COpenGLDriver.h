@@ -78,9 +78,6 @@ public:
 
 	virtual void setTextureFilter(E_TEXTURE_FILTER textureFilter);
 
-	virtual bool setColorRenderTarget(ITexture* texture,
-		bool clearBackBuffer, bool clearZBuffer, img::SColor color);
-
 	virtual ITexture* createRenderTargetTexture(
 		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat);
 
@@ -89,6 +86,8 @@ public:
 	virtual IRenderTarget* addRenderTarget(
 		ITexture *colorTexture, ITexture *depthTexture);
         
+	virtual bool setRenderTarget(IRenderTarget *rt);
+
 	virtual const core::vector3df& get3DPositionFromScreenCoordinates(
 		const core::position2di &scr_pos) const;
 

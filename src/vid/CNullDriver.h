@@ -147,10 +147,6 @@ public:
 	{ return 0; }
 	virtual bool removeRenderTarget(IRenderTarget *rt);
 
-	virtual bool setColorRenderTarget(ITexture* rtt,
-		bool clearBackBuffer, bool clearZBuffer, img::SColor color);
-	virtual ITexture* getColorRenderTarget();
-
 	virtual bool setRenderTarget(IRenderTarget *rt);
 	virtual IRenderTarget* getRenderTarget();
 
@@ -639,7 +635,7 @@ protected:
 	ITexture* CurrentTexture[MY_MATERIAL_MAX_LAYERS];
 
 	core::matrix4 Matrices[E_TRANSFORMATION_STATE_COUNT];
-	core::matrix4 m_ModelViewProjMatrix, m_ModelViewMatrix, m_ViewProjMatrix;
+	core::matrix4 m_ModelViewProjMatrix, m_ModelViewMatrix;
 	core::matrix4 m_ModelInvMatrix, m_ViewInvMatrix, m_ModelViewInvMatrix;
 
 	bool Transformation3DChanged;
@@ -800,8 +796,9 @@ protected:
 
 	img::E_COLOR_FORMAT m_BackColorFormat;
 
-	ITexture* m_CurrentColorRenderTarget;
 	IRenderTarget* m_CurrentRenderTarget;
+
+	bool m_YInverted;
 };
 
 //---------------------------------------------------------------------------
