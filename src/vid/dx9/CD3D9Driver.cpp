@@ -340,14 +340,15 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
         m_StencilBuffer = false;
     }
 	
-	if ((m_D3DCaps.StencilCaps & D3DSTENCILCAPS_TWOSIDED ) != 0)
-	{
-		m_TwoSidedStencil = true;
-	}
+	if ((m_D3DCaps.TextureCaps & D3DPTEXTURECAPS_POW2) || (m_D3DCaps.TextureCaps & D3DPTEXTURECAPS_SQUAREONLY))
+		m_TexturesNonPowerOfTwo = false;
 	else
-	{
+		m_TexturesNonPowerOfTwo = true;
+
+	if ((m_D3DCaps.StencilCaps & D3DSTENCILCAPS_TWOSIDED ) != 0)
+		m_TwoSidedStencil = true;
+	else
 		m_TwoSidedStencil = false;
-	}
 
 	// initializes occlusion querry
 
@@ -423,6 +424,8 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 		queryFeature(EVDF_COMPRESSED_TEXTURES) ? "OK" : "None");
 	LOGGER.logInfo("  Depth Stencil tex.: %s",
 		queryFeature(vid::EVDF_DEPTH_STENCIL_TEXTURES) ? "OK" : "None");
+	LOGGER.logInfo("  Non power ot two  : %s",
+		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) ? "OK" : "None");
 
 	//antialiasing ON! 
 	if (m_Antialiasing)
@@ -467,6 +470,9 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 		LOGGER.logWarn("Can't allocate a Hardware event query. "
 			"This video card doesn't supports it, sorry.");
 	}
+
+	setTextureCreationFlag(ETCF_CREATE_POWER_OF_TWO,
+		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) == false);
 
 	// setting texture filter
 	setTextureFilter(m_TextureFilter);
@@ -655,6 +661,8 @@ bool CD3D9Driver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 		return true;
 	case EVDF_DEPTH_STENCIL_TEXTURES:
 		return m_DepthStencilTexturesSupport;
+	case EVDF_NON_POWER_OF_TWO_TEXTURES:
+		return m_TexturesNonPowerOfTwo;
     };
 
     return false;
@@ -1426,27 +1434,45 @@ void CD3D9Driver::setGammaRamp(f32 gamma, f32 contrast, f32 brightness)
 
 //---------------------------------------------------------------------------
 
-//! \brief Makes a screenshot and stores it into the given texture
-//! \param texture, the texture we use for storing the screenshot
-//! \return void
-//! \note users must make sure the texture size is bigger or equal 
-//! in dimensions as the current sceen dimensions
-// added by zola, code by REAPER
-void CD3D9Driver::makeScreenShot(ITexture* texture)
+bool CD3D9Driver::_makeScreenShot(ITexture* texture)
 {
-    /*
-	// make screenshoot code sample
-	IDirect3DSurface9 * pSurface = getRenderTargetSurface();;
-	HRESULT hr  = Device->CreateOffscreenPlainSurface(getSize().Width, getSize().Height,
-		D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH, &pSurface, );
+	const core::dimension2di &texSize = texture->getSize();
+
+	IDirect3DSurface9 *pSurface = NULL;
+	ID3DXBuffer *pBuffer = NULL;
+	HRESULT hr;
+
+	hr = m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pSurface);
+	if (SUCCEEDED(hr))
+		hr = D3DXSaveSurfaceToFileInMemory(
+			&pBuffer, D3DXIFF_BMP, pSurface, NULL, NULL);
+	SAFE_RELEASE(pSurface);
+	
 	if (SUCCEEDED(hr))
 	{
-		Device->GetFrontBufferData(0, pSurface);
-		D3DXSaveSurfaceToFile(fname, D3DXIFF_BMP, pSurface, NULL, NULL);
+		io::IReadFile * file = FILE_SYSTEM.createMemoryReadFile(
+			pBuffer->GetBufferPointer(), pBuffer->GetBufferSize(), "#MemoryFile.bmp", false);
+		img::IImage *scrImg = NULL;
+		if (file)
+		{
+			scrImg = IMAGE_LIBRARY.createImageFromFile(file);
+			img::IImage *dstImg = texture->lock();
+			if (dstImg)
+			{
+				u32 *pdst = (u32 *)dstImg->getData();
+				u32 *psrc = (u32 *)scrImg->getData();
+
+				memcpy(pdst, psrc, texSize.Width * texSize.Height * sizeof(u32));
+
+				texture->unlock();
+			}
+		}
+		SAFE_DROP(scrImg);
+		SAFE_DROP(file);
 	}
-	else
-		LOGGER.log("Could not make D3D screenshoot.", io::ELL_WARNING);
-	*/
+	SAFE_RELEASE(pBuffer);
+
+	return SUCCEEDED(hr);
 }
 
 //----------------------------------------------------------------------------

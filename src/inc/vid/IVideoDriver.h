@@ -333,11 +333,10 @@ public:
 	//! retrun maximal anisotropy texture filter level, supported by hardware
 	virtual u32 getMaxAnisotropyLevel() = 0;
 
-    //! \brief Makes a screenshot and stores it into a newly created texture
+    //! Makes a screenshot and stores it into a newly created texture
     //! \param void
     //! \return ITexture* pointer to the new texture
-    // added by zola
-    virtual ITexture* makeScreenShot(void) = 0;
+    virtual ITexture* makeScreenShotTexture() = 0;
 
 	//! clear unused VRAM
     virtual void clearUnusedVideoCache() = 0;

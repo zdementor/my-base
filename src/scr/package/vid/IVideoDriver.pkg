@@ -40,6 +40,9 @@ class IVideoDriver
 	void render2DRect(const SMaterial &material,
 		const core::rectf &drawRect, const core::rectf &texRect);
 
+    //! Makes a screenshot and stores it into a newly created texture
+	ITexture* makeScreenShotTexture();
+
 	//! Manages rendering pipeline
 	bool beginRendering();
 	void renderAll();

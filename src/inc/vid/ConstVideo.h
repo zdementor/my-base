@@ -118,6 +118,9 @@ enum E_TEXTURE_CREATION_FLAG
 	//! Automaticaly creates a normal map textures.
     ETCF_CREATE_NORMAL_MAP = 0x00000004,
 
+		//! Automaticaly creates a power of two textures.
+	ETCF_CREATE_POWER_OF_TWO = 0x00000008,
+
     //! This flag is never used, it only forces the compiler to 
     //! compile these enumeration values to 32 bit.
     E_TEXTURE_CREATION_FLAG_FORCE_32_BIT = 0xffffffff
@@ -818,6 +821,9 @@ enum E_VIDEO_DRIVER_FEATURE
 
 	//! Is Depth Stencil textures supported by video hardware?
 	EVDF_DEPTH_STENCIL_TEXTURES,
+
+	//! Is non power of two textures supported by video hardware?
+	EVDF_NON_POWER_OF_TWO_TEXTURES,
 
 	E_VIDEO_DRIVER_FEATURE_COUNT,
 

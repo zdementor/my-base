@@ -72,10 +72,6 @@ public:
 
     virtual void OnResize(const core::dimension2d<s32>& size);
 
-    virtual void makeScreenShot(ITexture* texture);
-
-    virtual ITexture* makeScreenShot(void);
-
 	virtual void setTextureFilter(E_TEXTURE_FILTER textureFilter);
 
 	virtual ITexture* createRenderTargetTexture(
@@ -134,6 +130,8 @@ public:
 	virtual void _setTexture(s32 stage, ITexture* texture);
 
 	virtual bool _initDriver(SExposedVideoData &out_video_data);
+
+	virtual bool _makeScreenShot(ITexture *texture);
 
 private:
 
@@ -246,13 +244,6 @@ private:
     //! Stencil Fog Texture
     GLuint StencilFogTexture;  
     
-    // added by zola
-    //! buffer for screendata
-    u32* screenshot;
-
-    //! counter to build texture names
-    u32 screenshot_counter;
-
     //! returns a device dependent texture from a software surface (IImage)
     //! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
     virtual ITexture* _createDeviceDependentTexture(img::IImage* surface);

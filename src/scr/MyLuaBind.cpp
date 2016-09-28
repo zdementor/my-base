@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/27/16 13:09:51.
+** Generated automatically by tolua++-1.0.92 on 09/28/16 16:52:41.
 */
 
 #ifndef __cplusplus
@@ -47184,6 +47184,38 @@ static int tolua_MyLuaBind_vid_IVideoDriver_render2DRect00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: makeScreenShotTexture of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_makeScreenShotTexture00
+static int tolua_MyLuaBind_vid_IVideoDriver_makeScreenShotTexture00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'makeScreenShotTexture'",NULL);
+#endif
+ {
+  vid::ITexture* tolua_ret = (vid::ITexture*)  self->makeScreenShotTexture();
+ tolua_pushusertype(tolua_S,(void*)tolua_ret,"vid::ITexture");
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'makeScreenShotTexture'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: beginRendering of class  vid::IVideoDriver */
 #ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_beginRendering00
 static int tolua_MyLuaBind_vid_IVideoDriver_beginRendering00(lua_State* tolua_S)
@@ -59418,6 +59450,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"ETCF_AUTOGEN_MIP_MAPS",vid::ETCF_AUTOGEN_MIP_MAPS);
   tolua_constant(tolua_S,"ETCF_CREATE_COLOR_KEY",vid::ETCF_CREATE_COLOR_KEY);
   tolua_constant(tolua_S,"ETCF_CREATE_NORMAL_MAP",vid::ETCF_CREATE_NORMAL_MAP);
+  tolua_constant(tolua_S,"ETCF_CREATE_POWER_OF_TWO",vid::ETCF_CREATE_POWER_OF_TWO);
   tolua_constant(tolua_S,"ETT_COLOR_MAP",vid::ETT_COLOR_MAP);
   tolua_constant(tolua_S,"ETT_ANIMATED",vid::ETT_ANIMATED);
   tolua_constant(tolua_S,"E_TEXTURE_TYPE_COUNT",vid::E_TEXTURE_TYPE_COUNT);
@@ -59559,6 +59592,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"EVDF_OCCLUSION_QUERY",vid::EVDF_OCCLUSION_QUERY);
   tolua_constant(tolua_S,"EVDF_COMPRESSED_TEXTURES",vid::EVDF_COMPRESSED_TEXTURES);
   tolua_constant(tolua_S,"EVDF_DEPTH_STENCIL_TEXTURES",vid::EVDF_DEPTH_STENCIL_TEXTURES);
+  tolua_constant(tolua_S,"EVDF_NON_POWER_OF_TWO_TEXTURES",vid::EVDF_NON_POWER_OF_TWO_TEXTURES);
   tolua_constant(tolua_S,"E_VIDEO_DRIVER_FEATURE_COUNT",vid::E_VIDEO_DRIVER_FEATURE_COUNT);
   tolua_constant(tolua_S,"ETS_VIEW",vid::ETS_VIEW);
   tolua_constant(tolua_S,"ETS_MODEL",vid::ETS_MODEL);
@@ -61930,6 +61964,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
    tolua_function(tolua_S,"setBackgroundColor",tolua_MyLuaBind_vid_IVideoDriver_setBackgroundColor00);
    tolua_function(tolua_S,"getBackgroundColor",tolua_MyLuaBind_vid_IVideoDriver_getBackgroundColor00);
    tolua_function(tolua_S,"render2DRect",tolua_MyLuaBind_vid_IVideoDriver_render2DRect00);
+   tolua_function(tolua_S,"makeScreenShotTexture",tolua_MyLuaBind_vid_IVideoDriver_makeScreenShotTexture00);
    tolua_function(tolua_S,"beginRendering",tolua_MyLuaBind_vid_IVideoDriver_beginRendering00);
    tolua_function(tolua_S,"renderAll",tolua_MyLuaBind_vid_IVideoDriver_renderAll00);
    tolua_function(tolua_S,"renderPass",tolua_MyLuaBind_vid_IVideoDriver_renderPass00);

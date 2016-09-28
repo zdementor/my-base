@@ -39,7 +39,7 @@ const f32 inv_color = 1.0f / 255.0f;
 COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize) 
 	: CNullDriver(screenSize),
 HWnd(0), HDc(0), m_RenderContext(0),
-screenshot(0), screenshot_counter(0), StencilFogTexture(0),
+ StencilFogTexture(0),
 m_OpenGLHardwareOcclusionQuery(0)
 {
 #if MY_DEBUG_MODE 
@@ -332,6 +332,8 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 		queryFeature(EVDF_COMPRESSED_TEXTURES) ? "OK" : "None");
 	LOGGER.logInfo("  Depth Stencil tex.: %s",
 		queryFeature(EVDF_DEPTH_STENCIL_TEXTURES) ? "OK" : "None");
+	LOGGER.logInfo("  Non power ot two  : %s",
+		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) ? "OK" : "None");
 
 	// OpenGL driver constants
 
@@ -404,6 +406,9 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 	else
 		LOGGER.logInfo(" Can't on/off Vertical Sync ");
 
+	setTextureCreationFlag(ETCF_CREATE_POWER_OF_TWO,
+		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) == false);
+
 	// setting texture filter
 	setTextureFilter(m_TextureFilter);
 
@@ -443,54 +448,29 @@ COpenGLDriver::~COpenGLDriver()
 
 //---------------------------------------------------------------------------
 
-// added by zola
-void COpenGLDriver::makeScreenShot(ITexture* texture)
+bool COpenGLDriver::_makeScreenShot(ITexture* texture)
 {
-    if (texture==NULL) return;
+	const core::dimension2di &texSize = texture->getSize();
 
-    core::dimension2d<s32> TextureSize=texture->getSize();
+	img::IImage* image = texture->lock();
+	if (image)
+	{
+		u32 *texture_buffer = (u32*)image->getData();
+		u32  texture_row    = texture->getPitch()/sizeof(u32);
 
-    if (TextureSize.Width<m_ScreenSize.Width ||
-		TextureSize.Height<m_ScreenSize.Height ||
-		texture->getColorFormat()!=img::ECF_A8R8G8B8) return;
+		glReadBuffer(GL_BACK);
 
-    if(screenshot==NULL)
-        screenshot=new u32[m_ScreenSize.Width*(m_ScreenSize.Height+1)];
+		// reading in verticaly reversed order
+		for (s32 i=0; i < m_ScreenSize.Height; i++)
+		{
+			glReadPixels(0, m_ScreenSize.Height - 1 - i,
+				m_ScreenSize.Width, 1, GL_BGRA, GL_UNSIGNED_BYTE, texture_buffer);
+			texture_buffer += texture_row;
+		}
 
-    glReadBuffer(GL_BACK);
-    glReadPixels(0,0,
-		m_ScreenSize.Width,m_ScreenSize.Height, GL_BGRA, GL_UNSIGNED_BYTE, screenshot);
-
-    // screen shot is upside down because glReadPixels 0,0 denotes the lower-left corner ot the image!
-    // the following code make the procedure slow!!
-
-    u32* texture_buffer = (u32*)texture->lock();
-    u32  texture_row    = texture->getPitch()/sizeof(u32);
-
-    u32* screen_buffer  = screenshot+(m_ScreenSize.Height)*m_ScreenSize.Width;
-    u32  screen_row     = m_ScreenSize.Width;
-    u32  screen_pitch   = sizeof(u32)*m_ScreenSize.Width; 
-
-    for(int i=0; i<m_ScreenSize.Height; i++)
-    {
-        memcpy(texture_buffer,screen_buffer,screen_pitch);
-        texture_buffer  += texture_row;
-        screen_buffer   -= screen_row;
-    }
-
-    texture->unlock();
-}
-
-//---------------------------------------------------------------------------
-
-ITexture* COpenGLDriver::makeScreenShot()
-{
-    c8 name[64];
-    screenshot_counter++;
-    sprintf(name,"screen_%d",screenshot_counter);
-	ITexture* texture = addTexture(name, m_ScreenSize, img::ECF_A8R8G8B8);
-    makeScreenShot(texture);
-    return texture;
+		texture->unlock();
+	}
+	return true;
 }
 
 //----------------------------------------------------------------------------
@@ -812,6 +792,12 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 #else
 		return false;
 #endif
+	case EVDF_NON_POWER_OF_TWO_TEXTURES:
+#if defined(GL_ARB_texture_non_power_of_two)
+		return !!GLEW_ARB_texture_non_power_of_two;
+#else
+		return false;
+#endif
 	default:
 		break;
     };
@@ -873,7 +859,8 @@ ITexture* COpenGLDriver::_createDeviceDependentTexture(img::IImage* surface)
 
 //---------------------------------------------------------------------------
 
-vid::ITexture* COpenGLDriver::_createDeviceDependentTexture(core::dimension2di &size, img::E_COLOR_FORMAT format)
+vid::ITexture* COpenGLDriver::_createDeviceDependentTexture(
+	core::dimension2di &size, img::E_COLOR_FORMAT format)
 {
 	 return new COpenGLTexture(size, format, TextureCreationFlags);
 }

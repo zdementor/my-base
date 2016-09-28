@@ -54,8 +54,6 @@ public:
 
     virtual void OnResize(const core::dimension2d<s32>& size);
 
-    virtual void makeScreenShot(ITexture* texture);
-
 	virtual ITexture* createRenderTargetTexture(
 		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat);
 
@@ -109,6 +107,8 @@ public:
 	{ return m_D3DMainDepthStencilSurface; }
 
 	virtual bool _initDriver(SExposedVideoData &out_video_data);
+
+    virtual bool _makeScreenShot(ITexture *texture);
 
 private:
 

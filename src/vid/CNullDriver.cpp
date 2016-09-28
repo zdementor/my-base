@@ -98,7 +98,8 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 	m_MinimalMeshBufferSizeForVBORendering(0), m_ResetRenderStates(true), m_RenderPoolsCacheIndex(0),
 	m_StencilEnabled(false), m_ScissorEnabled(false), m_ShadowColor(100,0,0,0),
 	m_Fullscreen(false), m_Antialiasing(false), m_VerticalSync(false), m_Shadows(false),
-	m_StencilBuffer(false), m_TwoSidedStencil(false), m_CurrentVertexType((E_VERTEX_TYPE)-1), 
+	m_StencilBuffer(false), m_TwoSidedStencil(false), m_TexturesNonPowerOfTwo(false),
+	m_CurrentVertexType((E_VERTEX_TYPE)-1), 
 	m_DriverType(EDT_NULL), m_Profiler(PROFILER),
 	m_DirtyTexUnit(-1), m_CurrentGPUProgram(NULL),
 	m_ColorMask(ECM_RED | ECM_GREEN | ECM_BLUE | ECM_ALPHA),
@@ -163,6 +164,8 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 	m_ShadersHighQuality	= DEVICE.getDeviceFlagValue(dev::EDCF_SHADERS_HIGH_QUALITY);
 	m_CacheShaders			= DEVICE.getDeviceFlagValue(dev::EDCF_CACHE_SHADERS);
 	m_UseFFP				= DEVICE.getDeviceFlagValue(dev::EDCF_USE_FFP);
+
+	setTextureCreationFlag(ETCF_CREATE_POWER_OF_TWO, true); // by default
 }
 
 //---------------------------------------------------------------------------
@@ -585,7 +588,7 @@ ITexture* CNullDriver::addRenderTargetTexture(const c8 *name,
 	if (!name)
 	{
 		sprintf(rttname, "RenderTargetTexture.%dx%d.%s.%p",
-			img::getColorFormatName(format), size.Width, size.Height, t);
+			size.Width, size.Height, img::getColorFormatName(format), t);
 		name = rttname;
 	}
 	_addTexture(t, name);
@@ -1058,40 +1061,40 @@ img::SColor CNullDriver::getGroundFogColor()
 
 //---------------------------------------------------------------------------
 
-//! Only used by the internal engine. Used to notify the driver that
-//! the window was resized.
-void CNullDriver::OnResize(const core::dimension2d<s32>& size)
+void CNullDriver::OnResize(const core::dimension2di &size)
 {
     m_ScreenSize = size;
 }
 
 //---------------------------------------------------------------------------
 
-//added by zola
-//\brief Makes a screenshot and stores it into a newly created texture
-//\param void
-//\return ITexture* pointer to the new texture
-ITexture* CNullDriver::makeScreenShot(void)
+ITexture* CNullDriver::makeScreenShotTexture()
 {
-    c8 name[64];
+    c8 name[256];
+	sprintf(name, "ScreenShot.%s.%dx%d",
+		img::getColorFormatName(img::ECF_A8R8G8B8),
+		m_ScreenSize.Width, m_ScreenSize.Height);
 
-    core::dimension2d<s32> TextureDim(0x01,0x01);
-    screenshot_counter++;
-    
-	sprintf(name,"screen_%d",screenshot_counter);
+	ITexture *texture = findTexture(name);
+	if (!texture)
+		texture = addTexture(name, m_ScreenSize, img::ECF_A8R8G8B8);
 
-    while(TextureDim.Width<m_ScreenSize.Width) TextureDim.Width<<=1;
-    while(TextureDim.Height<m_ScreenSize.Height) TextureDim.Height<<=1;
+	IRenderTarget *rt = getRenderTarget();
+	setRenderTarget(NULL);
 
-	ITexture* texture = addTexture(name, TextureDim, img::ECF_A8R8G8B8);
-    makeScreenShot(texture);
+	if (!texture 
+			|| texture->getSize() != m_ScreenSize
+			|| texture->getColorFormat() != img::ECF_A8R8G8B8
+			|| !_makeScreenShot(texture))
+		LOGGER.logWarn("Screenshot created with errors!");
+
+	setRenderTarget(rt);
 
     return texture;
 }
 
 //---------------------------------------------------------------------------
 
-//! print a warning if trying to draw more primitives than possible with one call
 void CNullDriver::maxIndexWarning(u8 idxSize)
 {	
 	char tmp[1024];

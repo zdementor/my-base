@@ -170,9 +170,7 @@ public:
     virtual E_DRIVER_FAMILY getDriverFamily()
 	{ return vid::getDriverFamily(m_DriverType); }
   
-    virtual void makeScreenShot(ITexture* texture) {}
-
-    virtual ITexture* makeScreenShot(void);
+    virtual ITexture* makeScreenShotTexture();
 
     void maxIndexWarning(u8 idxSize);
 
@@ -519,6 +517,8 @@ public:
 
 	virtual bool _initDriver(SExposedVideoData &out_video_data);
 
+	virtual bool _makeScreenShot(ITexture *texture) { return false; }
+
 protected:
 
 	//! enabling stencil
@@ -640,9 +640,6 @@ protected:
 
 	bool Transformation3DChanged;
 
-    //! for automated screenshot texture naming
-    u32 screenshot_counter;
-
     vid::ITexture* _loadTextureFromFile(io::IReadFile* file, core::stringc& desired_texname);
 
     void _addTexture(vid::ITexture* surface, const c8* filename);
@@ -754,6 +751,7 @@ protected:
 	bool m_Shadows;
 
 	bool m_StencilBuffer;
+	bool m_TexturesNonPowerOfTwo;
 	bool m_TwoSidedStencil;
 	bool m_UseShaders, m_CacheShaders, m_UseFFP;
 	bool m_LightingMediumQuality, m_LightingHighQuality, m_ShadersHighQuality;

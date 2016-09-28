@@ -84,18 +84,19 @@ bool CNullHardwareTexture::createEmptyTexture(
 		return false;
 	}
 
+	m_TextureSize = m_ImageSize = size;
+
 	if (!renderTarget)
 	{
-		m_ImageSize = size;
-		m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(m_ImageSize.Width);
-		m_TextureSize.Height = core::math::GetNearestPowerOfTwo(m_ImageSize.Height);
-
+		if ((m_CreationFlags & ETCF_CREATE_POWER_OF_TWO))
+		{
+			m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(m_ImageSize.Width);
+			m_TextureSize.Height = core::math::GetNearestPowerOfTwo(m_ImageSize.Height);
+		}
 		m_AutogenMipMaps = (m_CreationFlags & ETCF_AUTOGEN_MIP_MAPS)!=0;
 	}
 	else
 	{
-		m_TextureSize = m_ImageSize = size;
-
 		m_AutogenMipMaps = false;
 	}
 
@@ -155,10 +156,13 @@ bool CNullHardwareTexture::createTextureFrom(img::IImage *image)
 		return false;
 	}
 
-	m_ImageSize = image->getDimension();
+	m_TextureSize = m_ImageSize = image->getDimension();
 
-	m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(m_ImageSize.Width);
-	m_TextureSize.Height = core::math::GetNearestPowerOfTwo(m_ImageSize.Height);
+	if ((m_CreationFlags & ETCF_CREATE_POWER_OF_TWO))
+	{
+		m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(m_ImageSize.Width);
+		m_TextureSize.Height = core::math::GetNearestPowerOfTwo(m_ImageSize.Height);
+	}
 
 	m_AutogenMipMaps = (m_CreationFlags & ETCF_AUTOGEN_MIP_MAPS)!=0;
 	m_MaxMipMapLevels = 1;
