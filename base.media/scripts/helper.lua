@@ -215,6 +215,8 @@ Helper =
 	--   scene_node   - node XML text returns for
 	--   scene_only   - true if want scene tags only
 	getSceneNodeFileText,
+
+	makeScreenShot,
 }
 
 FILE_DIALOG_MODE =

@@ -21,7 +21,6 @@ Scened =
 	suspendTimer,
 	resumeTimer,
 	reloadMaterials,
-	makeScreenShot,
 	setStartStopCallback,
 	getWorkCamera,
 }
@@ -370,34 +369,6 @@ function _ScenedReloadMaterials()
 	MyMatMgr:loadMaterialsFromDir(mat_dir, true, true)
 end
 Scened.reloadMaterials = _ScenedReloadMaterials
-
-local function _ScenedMakeScreenShot()
-	LOG_INFO("Make screenshot...")
-	local image = MyDriver:makeScreenShotImage()
-	if image ~= nil then
-		local scrPath = MyResMgr:getMediaDirFull(res.EMT_TEMP_DATA).."screenshots/"
-		if not os.isdir(scrPath) then
-			os.mkdir(scrPath)
-		end
-		local scrName = nil
-		local maxScr = 1000
-		for i = 0, maxScr-1 do
-			local fname = scrPath..string.format("screenshot_%03d.jpg", i)
-			if not os.isfile(fname) then
-				scrName = fname
-				break
-			end
-		end
-		if scrName ~= nil then
-			MyImgLib:saveImageToFile(image, scrName)
-		else
-			LOG_WARN("Can not save screenshot to "
-				..scrPath.." (directory full, max screenshots count is "..maxScr..").")
-		end
-		MyImgLib:removeImage(image)
-	end
-end
-Scened.makeScreenShot = _ScenedMakeScreenShot
 
 function _ScenedSetStartStopCallback(callback)
 	_ScenedStartStopCallback = callback

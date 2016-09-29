@@ -199,3 +199,31 @@ local function _HelperGetSceneNodeFileText(scene_node, scene_only)
 	return text
 end
 Helper.getSceneNodeFileText = _HelperGetSceneNodeFileText
+
+local function _HelperMakeScreenShot()
+	LOG_INFO("Make screenshot...")
+	local image = MyDriver:makeScreenShotImage()
+	if image ~= nil then
+		local scrPath = MyResMgr:getMediaDirFull(res.EMT_TEMP_DATA).."screenshots/"
+		if not os.isdir(scrPath) then
+			os.mkdir(scrPath)
+		end
+		local scrName = nil
+		local maxScr = 1000
+		for i = 0, maxScr-1 do
+			local fname = scrPath..string.format("screenshot_%03d.jpg", i)
+			if not os.isfile(fname) then
+				scrName = fname
+				break
+			end
+		end
+		if scrName ~= nil then
+			MyImgLib:saveImageToFile(image, scrName)
+		else
+			LOG_WARN("Can not save screenshot to "
+				..scrPath.." (directory full, max screenshots count is "..maxScr..").")
+		end
+		MyImgLib:removeImage(image)
+	end
+end
+Helper.makeScreenShot = _HelperMakeScreenShot

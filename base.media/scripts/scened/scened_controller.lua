@@ -775,7 +775,7 @@ function _ScenedWidgetClicked(args)
 	elseif name == "Scened.Menu.Tools.NormalMapConverter" then
 		Helper.GUI.Scened.NormalMapConverterDialog.show()
 	elseif name == "Scened.Menu.Tools.MakeSreenShot" then
-		Scened.makeScreenShot()
+		Helper.makeScreenShot()
 	elseif name == "Scened.Menu.Tools.ImageViewer" then
 		local file_name = nil
 		Helper.GUI.ImageEditor.show(0,
