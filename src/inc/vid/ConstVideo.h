@@ -118,8 +118,11 @@ enum E_TEXTURE_CREATION_FLAG
 	//! Automaticaly creates a normal map textures.
     ETCF_CREATE_NORMAL_MAP = 0x00000004,
 
-		//! Automaticaly creates a power of two textures.
+	//! Automaticaly creates a power of two textures.
 	ETCF_CREATE_POWER_OF_TWO = 0x00000008,
+
+	//! Automaticaly creates a divisible by four textures.
+	ETCF_CREATE_DIVISIBLE_BY_FOUR = 0x00000010,
 
     //! This flag is never used, it only forces the compiler to 
     //! compile these enumeration values to 32 bit.

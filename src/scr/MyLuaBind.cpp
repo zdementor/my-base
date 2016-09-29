@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/28/16 23:34:10.
+** Generated automatically by tolua++-1.0.92 on 09/29/16 21:48:05.
 */
 
 #ifndef __cplusplus
@@ -59483,6 +59483,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"ETCF_CREATE_COLOR_KEY",vid::ETCF_CREATE_COLOR_KEY);
   tolua_constant(tolua_S,"ETCF_CREATE_NORMAL_MAP",vid::ETCF_CREATE_NORMAL_MAP);
   tolua_constant(tolua_S,"ETCF_CREATE_POWER_OF_TWO",vid::ETCF_CREATE_POWER_OF_TWO);
+  tolua_constant(tolua_S,"ETCF_CREATE_DIVISIBLE_BY_FOUR",vid::ETCF_CREATE_DIVISIBLE_BY_FOUR);
   tolua_constant(tolua_S,"ETT_COLOR_MAP",vid::ETT_COLOR_MAP);
   tolua_constant(tolua_S,"ETT_ANIMATED",vid::ETT_ANIMATED);
   tolua_constant(tolua_S,"E_TEXTURE_TYPE_COUNT",vid::E_TEXTURE_TYPE_COUNT);

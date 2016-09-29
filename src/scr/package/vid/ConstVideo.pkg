@@ -61,6 +61,9 @@ enum E_TEXTURE_CREATION_FLAG
 
 	//! Automaticaly creates a power of two textures.
 	ETCF_CREATE_POWER_OF_TWO,
+
+	//! Automaticaly creates a divisible by four textures.
+	ETCF_CREATE_DIVISIBLE_BY_FOUR,
 };
 
 //---------------------------------------------------------------------------

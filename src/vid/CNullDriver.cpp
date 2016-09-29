@@ -166,6 +166,7 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 	m_UseFFP				= DEVICE.getDeviceFlagValue(dev::EDCF_USE_FFP);
 
 	setTextureCreationFlag(ETCF_CREATE_POWER_OF_TWO, true); // by default
+	setTextureCreationFlag(ETCF_CREATE_DIVISIBLE_BY_FOUR, true);
 }
 
 //---------------------------------------------------------------------------

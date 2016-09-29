@@ -93,6 +93,11 @@ bool CNullHardwareTexture::createEmptyTexture(
 			m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(m_ImageSize.Width);
 			m_TextureSize.Height = core::math::GetNearestPowerOfTwo(m_ImageSize.Height);
 		}
+		if ((m_CreationFlags & ETCF_CREATE_DIVISIBLE_BY_FOUR))
+		{
+			m_TextureSize.Width += (m_TextureSize.Width % 4);
+			m_TextureSize.Height += (m_TextureSize.Height % 4);
+		}
 		m_AutogenMipMaps = (m_CreationFlags & ETCF_AUTOGEN_MIP_MAPS)!=0;
 	}
 	else
@@ -163,9 +168,15 @@ bool CNullHardwareTexture::createTextureFrom(img::IImage *image)
 		m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(m_ImageSize.Width);
 		m_TextureSize.Height = core::math::GetNearestPowerOfTwo(m_ImageSize.Height);
 	}
+	if ((m_CreationFlags & ETCF_CREATE_DIVISIBLE_BY_FOUR))
+	{
+		m_TextureSize.Width += (m_TextureSize.Width % 4);
+		m_TextureSize.Height += (m_TextureSize.Height % 4);
+	}
 
 	m_AutogenMipMaps = (m_CreationFlags & ETCF_AUTOGEN_MIP_MAPS)!=0;
 	m_MaxMipMapLevels = 1;
+
 	if (!m_AutogenMipMaps)
 	{
 		m_MaxMipMapLevels = image->getLevelCount();

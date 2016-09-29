@@ -1221,6 +1221,7 @@ bool CImage::resizeTo(const core::dimension2di &size)
 		m_OwnData = true;
 		m_Dim = size;
 		m_Data = data;
+		m_DataSize = m_Dim.Height * m_Dim.Width * getBytesPerPixel();
 	}
 	else
 		delete [](u8 *)data;
