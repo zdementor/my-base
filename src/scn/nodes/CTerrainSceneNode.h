@@ -133,6 +133,8 @@ protected:
 	f32 m_TerrainHalfWidth, m_TerrainHalfLength;
 
 	bool m_Reset;
+
+	img::IImage *m_Heightfield;
 };
 
 //---------------------------------------------------------------------------

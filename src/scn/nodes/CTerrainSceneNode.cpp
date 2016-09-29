@@ -21,7 +21,8 @@ namespace scn {
 
 CTerrainSceneNode::CTerrainSceneNode(ISceneNode* parent, s32 id)
 	: ITerrainSceneNode(ESNT_TERRAIN_SCENE_NODE, parent, id),
-	m_VideoDriver(VIDEO_DRIVER), m_EnabledLights(0), m_Reset(false)
+	m_VideoDriver(VIDEO_DRIVER), m_EnabledLights(0), m_Reset(false),
+	m_Heightfield(NULL)
 {
 	m_HeightFieldSize = m_HeightFieldSizeValue = 0; 
 	m_TerrainWidth = m_TerrainLength = m_TerrainHeight = 0.f;
@@ -54,6 +55,8 @@ CTerrainSceneNode::~CTerrainSceneNode()
 
 void CTerrainSceneNode::_clearMaps()
 {
+	SAFE_DROP(m_Heightfield);
+
 	m_HeightFieldSize = m_HeightFieldSizeValue = 0; 
 
 	m_HeightMapTextureName = "";
@@ -198,11 +201,12 @@ bool CTerrainSceneNode::_setMaps(
 	{
 		u16 *p = (u16 *)heightImage->getData();
 
-		for (s32 i = 0; i < m_HeightFieldSize; i++) 
+		for (s32 j = 0; j < m_HeightFieldSize; j++) 
 		{   
-			for (s32 j = 0; j < m_HeightFieldSize; j++) 
+			for (s32 i = 0; i < m_HeightFieldSize; i++) 
 			{   
-				p[i + j * m_HeightFieldSize] = (0x7fff * (heightmap->getPixel(i, m_HeightFieldSize - 1 - j).getRed() / 255.f));
+				p[i + j * m_HeightFieldSize] =
+					(0x7fff * (heightmap->getPixel(i, j).getRed() / 255.f));
 	            
 				if (m_HeightMin > p[i + j * m_HeightFieldSize]) 
 					m_HeightMin = p[i + j * m_HeightFieldSize]; 
@@ -611,41 +615,14 @@ u32 CTerrainSceneNode::getTileRepeatNumber()
 
 vid::ITexture* CTerrainSceneNode::getHeightMapTexture()
 {
-	if (m_HeightMapTextureName.size() == 0)
+	if (m_HeightMapTextureName.size() == 0 || !m_Heightfield)
 		return NULL;
 
 	vid::ITexture *tex = m_VideoDriver.findTexture(m_HeightMapTextureName.c_str());
 	if (!tex)
 	{
 		tex = m_VideoDriver.addTexture(m_HeightMapTextureName.c_str(),
-			core::dimension2di(m_HeightFieldSizeValue, m_HeightFieldSizeValue),
-			img::ECF_LUMINANCE16);
-
-		if (tex)
-		{
-			img::IImage *img = tex->lock();
-
-			f32 k = (f32)0xffff / (f32)0x7fff;
-
-			if (img && img->getBytesPerPixel() == sizeof(s16))
-			{
-				s32 iwidth = img->getDimension().Width;
-				s32 iheight = img->getDimension().Height;
-
-				s16 *p = (s16 *)img->getData();
-				for (s32 i = 0; i < iwidth; i++)
-				{
-					f32 ii = ((f32)i / (f32)(m_HeightFieldSizeValue-1)) * (f32)iwidth;
-					for (s32 j = 0; j < iheight; j++)
-					{
-						f32 jj = ((f32)j / (f32)(m_HeightFieldSizeValue-1)) * (f32)iheight;
-						p[(i) * m_HeightFieldSizeValue + j] = k * getCellHeight(ii, jj) / m_HeightScale;
-					}
-				}
-			}
-
-			tex->unlock();
-		}
+			m_Heightfield);
 	}
 
 	return tex;

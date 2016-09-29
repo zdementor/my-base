@@ -49,6 +49,8 @@ public:
 	virtual f32 getHeight(f32 x, f32 z);
 	virtual const core::vector3df& getNormal(f32 x, f32 z);
 
+	virtual vid::ITexture* getHeightMapTexture();
+
 private: 
 
     ////////////////////////////////////////////////////////////////// 
@@ -122,7 +124,7 @@ private:
 
 	f32 cam_height_over_terrain;
 	f32 fog_height_above_camera;
-	f32 fog_height_at_camera_pos; 
+	f32 fog_height_at_camera_pos;
 }; 
 
 //-----------------------------------------------------------------------

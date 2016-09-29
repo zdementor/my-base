@@ -119,7 +119,7 @@ CTerrainLibMiniSceneNode::CTerrainLibMiniSceneNode(ISceneNode* parent, s32 id)
 
 CTerrainLibMiniSceneNode::~CTerrainLibMiniSceneNode() 
 {
-    SAFE_DELETE(m_Stub); 
+    SAFE_DELETE(m_Stub);
 } 
 
 //-----------------------------------------------------------------------
@@ -128,11 +128,29 @@ bool CTerrainLibMiniSceneNode::setMaps(
 	const c8* hmap_filename, const c8* fogmap_filename,
     f32 gridPointSpacing) 
 {
-	img::IImage *heightImage = NULL;
-
 	if (!_setMaps(hmap_filename, fogmap_filename,
-			gridPointSpacing, &heightImage))
+			gridPointSpacing, &m_Heightfield))
 		return false;
+
+	s32 hmapSize = m_HeightFieldSizeValue = m_HeightFieldSize =
+		getCompatibleHeightFieldSize(m_HeightFieldSizeValue);
+
+	m_Heightfield->resizeTo(core::dimension2di(hmapSize, hmapSize));
+
+	s16 *hmap = (s16 *)m_Heightfield->getData();
+
+	// flip x-y, to compensate LibMini internal x-y fliping
+	for (s32 j = 0; j < hmapSize; j++)
+	{
+		for (s32 i = j; i < hmapSize; i++)
+		{
+			s16 &v0 = hmap[j*hmapSize + i];
+			s16 &v1 = hmap[i*hmapSize + j];
+			s16 v = v0;
+			v0 = v1;
+			v1 = v;
+		}
+	}
 
 	detail_minus_2 = m_TileRepeatNumber-2.0f;
     size_minus_1 = m_HeightFieldSize-1; 
@@ -166,7 +184,7 @@ bool CTerrainLibMiniSceneNode::setMaps(
     deltaCoeff = 1.0f/((f32)SampleColorsNum-1);
 
 	SAFE_DELETE(m_Stub); 
-	
+
 	const float lambda=0.15f;
 	const float displace=1.0f;
 	const float emission=0.01f;
@@ -175,8 +193,6 @@ bool CTerrainLibMiniSceneNode::setMaps(
 	void (*prismedge)(float x,float y,float yf,float z)=0;
 
 	//prismedge = CTerrainLibMiniSceneNode::_PrismEdge;
-
-	s16 *hmap = (s16 *)heightImage->getData();
 
     m_Stub = new ministub(
 		hmap, &m_HeightFieldSize, // height map
@@ -187,8 +203,6 @@ bool CTerrainLibMiniSceneNode::setMaps(
 		NULL, 0, // fog map
 		lambda, displace, attenuation,
         prismedge);
-
-	heightImage->drop();
 
 	// must recalc here
 	m_TerrainHalfLength = m_TerrainHalfWidth =
@@ -586,6 +600,44 @@ u32 CTerrainLibMiniSceneNode::getCompatibleHeightFieldSize(u32 origSize)
 	for (size = 3; size < origSize; size = 2*size-1);
 
 	return size;
+}
+
+//-----------------------------------------------------------------------
+
+vid::ITexture* CTerrainLibMiniSceneNode::getHeightMapTexture()
+{
+	vid::ITexture *tex = m_VideoDriver.findTexture(m_HeightMapTextureName.c_str());
+	if (tex)
+		return tex;
+
+	tex = CTerrainSceneNode::getHeightMapTexture();
+
+	if (tex)
+	{
+		img::IImage *img = tex->lock();
+		if (img)
+		{
+			s16 *hmap = (s16 *)img->getData();
+			s32 hmapSize = img->getDimension().Width;
+			hmapSize = (hmapSize == img->getDimension().Height) ? hmapSize : 0;
+
+			// flip back x-y
+			for (s32 j = 0; j < hmapSize; j++)
+			{
+				for (s32 i = j; i < hmapSize; i++)
+				{
+					s16 &v0 = hmap[j*hmapSize + i];
+					s16 &v1 = hmap[i*hmapSize + j];
+					s16 v = v0;
+					v0 = v1;
+					v1 = v;
+				}
+			}
+			tex->unlock();
+		}
+	}
+
+	return tex;
 }
 
 //-----------------------------------------------------------------------
