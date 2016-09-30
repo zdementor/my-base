@@ -3,7 +3,7 @@ local _Ctrls =
 {
 	Root = {},
 	Frame = {},
-	Image = {},
+	Image = {Name="Helper.ImageEditor.Image"},
 	Buttons =
 	{
 		SaveButton			= {Name="Helper.ImageEditor.SaveButton", ImageName = "set:TangoGUIIcons image:actions.document-save"				},
@@ -21,6 +21,7 @@ local _Ctrls =
 	},
 	ScaleScroll = {Name="Helper.ImageEditor.ScaleScroll"},
 	AlphaCheckbox = {Name="Helper.ImageEditor.AlphaCheckbox"},
+	ScrollArea = {Name="Helper.ImageEditor.ScrollArea"}
 }
 
 local _Callbacks =
@@ -262,6 +263,120 @@ local function _ImageEditorSetState(state)
 	_ImageEditorState = state
 end
 
+local function _ImageEditorImageMouseEnter(args)
+	local we = CEGUI.toWindowEventArgs(args)
+	local name = we.window:getName()
+	if name == _Ctrls.Image.Ctrl:getName() then
+		local me = CEGUI.toMouseEventArgs(args)
+	end
+end
+
+local function _ImageEditorImageMouseLeave(args)
+	local we = CEGUI.toWindowEventArgs(args)
+	local name = we.window:getName()
+	if name == _Ctrls.Image.Ctrl:getName() then
+		local me = CEGUI.toMouseEventArgs(args)
+	end
+end
+
+local startDragPosX = -1
+local startDragPosY = -1
+
+local function _ImageEditorImageMouseMove(args)
+	local we = CEGUI.toWindowEventArgs(args)
+	local name = we.window:getName()
+	if name == _Ctrls.Image.Ctrl:getName() then
+		local me = CEGUI.toMouseEventArgs(args)
+		if startDragPosX ~= -1 then
+			local vertScroll = _Ctrls.ScrollArea.Ctrl:getVertScrollbar()
+			if vertScroll:isVisible() then
+				local step = startDragPosY - me.position.y
+				local pos = vertScroll:getScrollPosition()
+				vertScroll:setScrollPosition(pos + step)
+			end
+			startDragPosY = me.position.y
+		end
+		if startDragPosY ~= -1 then
+			local horzScroll = _Ctrls.ScrollArea.Ctrl:getHorzScrollbar()
+			if horzScroll:isVisible() then
+				local step = startDragPosX - me.position.x
+				local pos = horzScroll:getScrollPosition()
+				horzScroll:setScrollPosition(pos + step)
+			end
+			startDragPosX = me.position.x
+		end
+	end
+end
+
+local function _ImageEditorImageMouseWhell(args)
+	local we = CEGUI.toWindowEventArgs(args)
+	local name = we.window:getName()
+	if name == _Ctrls.Image.Ctrl:getName() then
+		local me = CEGUI.toMouseEventArgs(args)
+		local win = we.window
+		local rect = win:getUnclippedOuterRect()
+		local rWidth  = rect:getWidth()
+		local rHeight = rect:getHeight()
+		local imgX = (me.position.x - rect.left) / rWidth
+		local imgY = (me.position.y - rect.top) / rHeight
+
+		local scaleScroll = _Ctrls.ScaleScroll.Ctrl
+		local scaleStep = scaleScroll:getStepSize()
+		local scalePos = scaleScroll:getScrollPosition()
+		scaleScroll:setScrollPosition(scalePos + me.wheelChange * scaleStep);
+
+		local vertScroll = _Ctrls.ScrollArea.Ctrl:getVertScrollbar()
+		if vertScroll:isVisible() then
+			local pos = (vertScroll:getDocumentSize() * imgY) - vertScroll:getPageSize() / 2.
+			vertScroll:setScrollPosition(pos)
+		end
+
+		local horzScroll = _Ctrls.ScrollArea.Ctrl:getHorzScrollbar()
+		if horzScroll:isVisible() then
+			local pos = (horzScroll:getDocumentSize() * imgX) - horzScroll:getPageSize() / 2.
+			horzScroll:setScrollPosition(pos)
+		end
+	end
+end
+
+local function _ImageEditorImageMouseButton(args)
+	local we = CEGUI.toWindowEventArgs(args)
+	local name = we.window:getName()
+	if name == _Ctrls.Image.Ctrl:getName() then
+		local me = CEGUI.toMouseEventArgs(args)
+		if me.button == CEGUI.LeftButton and me.sysKeys ~= 0 then
+			CEGUICursor:setImage(OPTIONS.ScenedGUI.SchemeName, "MouseMoveCursor")
+			startDragPosX = me.position.x
+			startDragPosY = me.position.y
+		else
+			CEGUICursor:setImage(OPTIONS.ScenedGUI.SchemeName, "MouseArrow")
+			startDragPosX = -1
+			startDragPosY = -1
+		end
+	end
+end
+
+local function _ImageEditorImageMouseClick(args)
+	local we = CEGUI.toWindowEventArgs(args)
+	local name = we.window:getName()
+	if name == _Ctrls.Image.Ctrl:getName() then
+		local me = CEGUI.toMouseEventArgs(args)
+		if me.button == CEGUI.LeftButton then
+			CEGUICursor:setImage(OPTIONS.ScenedGUI.SchemeName, "MouseArrow");
+			startDragPosX = -1
+			startDragPosY = -1
+		end
+	end
+end
+
+local function _ImageEditorImageMouseDoubleClick(args)
+	local we = CEGUI.toWindowEventArgs(args)
+	local name = we.window:getName()
+	if name == _Ctrls.Image.Ctrl:getName() then
+		local me = CEGUI.toMouseEventArgs(args)
+	end
+end
+
 local function _ImageEditorClick(args)
 	local we = CEGUI.toWindowEventArgs(args)
 	local name = we.window:getName()
@@ -367,8 +482,6 @@ function _ImageEditorInit()
 	_Ctrls.Frame.Ctrl = tolua.cast(
 		CEGUIWinMgr:getWindow("Helper.ImageEditor.Frame"), "CEGUI::FrameWindow")
 
-	_Ctrls.Image.Ctrl = CEGUIWinMgr:getWindow("Helper.ImageEditor.Image")
-
 	local cegui_tex = CEGUIRenderer:createTexture(CEGUI.Size(1, 1))
 	Helper.GUI.fillCEGUITextureWithColor(cegui_tex, img.SColor(255, 40, 40, 40))
 	_Resources.Textures.ImageEmpty = cegui_tex
@@ -383,9 +496,16 @@ function _ImageEditorInit()
 	imageset:defineImage("Image", CEGUI.Vector2(0,0), cegui_tex:getSize(), CEGUI.Vector2(0, 0));
 	_Resources.Imagesets.Image = imageset
 
+	_Ctrls.Image.Ctrl = CEGUIWinMgr:getWindow(_Ctrls.Image.Name)
 	_Ctrls.Image.Ctrl:setProperty("Image", "set:Helper.ImageEditor.ImageEmpty image:Image")
-
-	_Ctrls.Image.Ctrl:setMouseCursor(OPTIONS.ScenedGUI.SchemeName, "MouseMoveCursor")
+	_Ctrls.Image.Ctrl:subscribeEvent("MouseEnter",       _ImageEditorImageMouseEnter)
+	_Ctrls.Image.Ctrl:subscribeEvent("MouseLeave",       _ImageEditorImageMouseLeave)
+	_Ctrls.Image.Ctrl:subscribeEvent("MouseMove",        _ImageEditorImageMouseMove)
+	_Ctrls.Image.Ctrl:subscribeEvent("MouseWheel",       _ImageEditorImageMouseWhell)
+	_Ctrls.Image.Ctrl:subscribeEvent("MouseButtonDown",  _ImageEditorImageMouseButton)
+	_Ctrls.Image.Ctrl:subscribeEvent("MouseButtonUp",    _ImageEditorImageMouseButton)
+	_Ctrls.Image.Ctrl:subscribeEvent("MouseClick",       _ImageEditorImageMouseClick)
+	_Ctrls.Image.Ctrl:subscribeEvent("MouseDoubleClick", _ImageEditorImageMouseDoubleClick)
 	
 	Helper.GUI.initButtons("", _Ctrls.Buttons, _ImageEditorClick)
 
@@ -393,14 +513,14 @@ function _ImageEditorInit()
 
 	_Ctrls.ScaleScroll.Ctrl = tolua.cast(
 		CEGUIWinMgr:getWindow(_Ctrls.ScaleScroll.Name), "CEGUI::Scrollbar")
-
 	_Ctrls.ScaleScroll.Ctrl:setDocumentSize(IMAGE_EDITOR_VIEW_SCROLL_IDENT * 2. + 1.)
 	_Ctrls.ScaleScroll.Ctrl:setPageSize(IMAGE_EDITOR_VIEW_SCROLL_STEP)
 	_Ctrls.ScaleScroll.Ctrl:setStepSize(IMAGE_EDITOR_VIEW_SCROLL_STEP)
-
 	_Ctrls.ScaleScroll.Ctrl:subscribeEvent("ScrollPosChanged", _ImageEditorScrollPosChanged)
-
 	_Ctrls.ScaleScroll.Ctrl:setScrollPosition(IMAGE_EDITOR_VIEW_SCROLL_IDENT)
+
+	_Ctrls.ScrollArea.Ctrl = tolua.cast(
+		CEGUIWinMgr:getWindow(_Ctrls.ScrollArea.Name), "CEGUI::ScrollablePane")
 
 	_ImageEditorSetState(IMAGE_EDITOR_STATE_WINDOWED)
 	_Ctrls.Frame.Ctrl:setProperty("UnifiedMinSize", "{{0.0,600},{0.0,400}}")
