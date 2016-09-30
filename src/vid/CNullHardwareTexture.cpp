@@ -86,37 +86,37 @@ bool CNullHardwareTexture::createEmptyTexture(
 
 	m_TextureSize = m_ImageSize = size;
 
+	if ((m_CreationFlags & ETCF_CREATE_POWER_OF_TWO))
+	{
+		m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(m_TextureSize.Width);
+		m_TextureSize.Height = core::math::GetNearestPowerOfTwo(m_TextureSize.Height);
+	}
+	if ((m_CreationFlags & ETCF_CREATE_DIVISIBLE_BY_FOUR))
+	{
+		m_TextureSize.Width += (m_TextureSize.Width%4) ? (4 - (m_TextureSize.Width%4)) : 0;
+		m_TextureSize.Height += (m_TextureSize.Height%4) ? (4 - (m_TextureSize.Height%4)) : 0;
+	}
+
 	if (!renderTarget)
-	{
-		if ((m_CreationFlags & ETCF_CREATE_POWER_OF_TWO))
-		{
-			m_TextureSize.Width  = core::math::GetNearestPowerOfTwo(m_ImageSize.Width);
-			m_TextureSize.Height = core::math::GetNearestPowerOfTwo(m_ImageSize.Height);
-		}
-		if ((m_CreationFlags & ETCF_CREATE_DIVISIBLE_BY_FOUR))
-		{
-			m_TextureSize.Width += (m_TextureSize.Width % 4);
-			m_TextureSize.Height += (m_TextureSize.Height % 4);
-		}
 		m_AutogenMipMaps = (m_CreationFlags & ETCF_AUTOGEN_MIP_MAPS)!=0;
-	}
 	else
-	{
 		m_AutogenMipMaps = false;
-	}
 
 	m_ColorFormat = format;
 	m_IsCompressed = false;
 	m_MaxMipMapLevels = 1;
 	m_BytesPerPixel = img::getBitsPerPixelFromFormat(format) / 8;
-	if (m_ColorFormat == img::ECF_R8G8B8 && (
-			VIDEO_DRIVER.getDriverFamily() == EDF_DIRECTX ||
-			m_TextureSize != m_ImageSize))
+
+	if (m_ColorFormat == img::ECF_R8G8B8 &&
+			// R8G8B8 format not works in Direct3D
+			VIDEO_DRIVER.getDriverFamily() == EDF_DIRECTX)
 	{
 		m_ColorFormat = img::ECF_R5G6B5;
 		m_BytesPerPixel = 2;
 	}
+
 	m_Pitch = m_TextureSize.Width * m_BytesPerPixel;
+
 	for (u32 level = 0; level < getMaxMipMapLevels(); level++)
 		m_ImageDataSizeBytes[level] = (m_Pitch * m_TextureSize.Height);
 
@@ -170,8 +170,8 @@ bool CNullHardwareTexture::createTextureFrom(img::IImage *image)
 	}
 	if ((m_CreationFlags & ETCF_CREATE_DIVISIBLE_BY_FOUR))
 	{
-		m_TextureSize.Width += (m_TextureSize.Width % 4);
-		m_TextureSize.Height += (m_TextureSize.Height % 4);
+		m_TextureSize.Width += (m_TextureSize.Width%4) ? (4 - (m_TextureSize.Width%4)) : 0;
+		m_TextureSize.Height += (m_TextureSize.Height%4) ? (4 - (m_TextureSize.Height%4)) : 0;
 	}
 
 	m_AutogenMipMaps = (m_CreationFlags & ETCF_AUTOGEN_MIP_MAPS)!=0;
@@ -260,9 +260,9 @@ bool CNullHardwareTexture::createTextureFrom(img::IImage *image)
 	m_BytesPerPixel = image->getBytesPerPixel();
 	m_IsCompressed = image->isCompressed();
 
-	if (m_ColorFormat == img::ECF_R8G8B8 && (
-			VIDEO_DRIVER.getDriverFamily() == EDF_DIRECTX ||
-			m_TextureSize != m_ImageSize))
+	if (m_ColorFormat == img::ECF_R8G8B8 &&
+			// R8G8B8 format not works in Direct3D
+			VIDEO_DRIVER.getDriverFamily() == EDF_DIRECTX)
 	{
 		m_ColorFormat = img::ECF_R5G6B5;
 		m_BytesPerPixel = 2;
@@ -282,10 +282,13 @@ bool CNullHardwareTexture::createTextureFrom(img::IImage *image)
 
 	if (res)
 	{
-		if (m_TextureSize == image->getDimension())
+		if (m_TextureSize == image->getDimension()
+				&& m_ColorFormat == image->getColorFormat()
+				&& m_BytesPerPixel == image->getBytesPerPixel())
 		{
 			for (u32 level = 0; res && level < m_MaxMipMapLevels; level++)
-				res = createTextureLevel(level, image->getData(), image->getLevelDataSizeBytes(level), image->getColorFormat());
+				res = createTextureLevel(level, image->getData(),
+					image->getLevelDataSizeBytes(level), image->getColorFormat());
 		}
 		else
 			res = false;
@@ -298,7 +301,8 @@ bool CNullHardwareTexture::createTextureFrom(img::IImage *image)
 
 //----------------------------------------------------------------------------
 
-bool CNullHardwareTexture::createTextureLevel(u32 level, void *data, u32 dataSize, img::E_COLOR_FORMAT format)
+bool CNullHardwareTexture::createTextureLevel(
+	u32 level, void *data, u32 dataSize, img::E_COLOR_FORMAT format)
 {
 	if (!m_Driver->queryFeature(EVDF_COMPRESSED_TEXTURES) && (
 			format == img::ECF_DXT1 ||
