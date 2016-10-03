@@ -227,3 +227,23 @@ local function _HelperMakeScreenShot()
 	end
 end
 Helper.makeScreenShot = _HelperMakeScreenShot
+
+local function _HelperScrollbarSetProgress(scrollbar, progress)
+	if scrollbar:isVisible() then
+		local pos = (scrollbar:getDocumentSize()-scrollbar:getPageSize())*progress
+		if pos < 0 then
+			pos = 0
+		end
+		scrollbar:setScrollPosition(pos)
+	end
+end
+Helper.scrollbarSetProgress = _HelperScrollbarSetProgress
+
+local function _HelperScrollbarGetProgress(scrollbar)
+	local progress = 0
+	if scrollbar:isVisible() then
+		progress = (scrollbar:getScrollPosition()) / (scrollbar:getDocumentSize()-scrollbar:getPageSize())
+	end
+	return progress
+end
+Helper.scrollbarGetProgress = _HelperScrollbarGetProgress

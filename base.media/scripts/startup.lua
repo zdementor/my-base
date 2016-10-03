@@ -39,16 +39,16 @@ CEGUIFontMgr	= nil
 MAIN_COLOR_RTT_NAME = "MainColorRenderTargetTexture"
 MAIN_DEPTH_RTT_NAME = "MainDepthRenderTargetTexture"
 
-function LOG_INFO(msg)
-	io.ILogger:getSingleton():logInfo("<Lua> "..msg)
+function LOG_INFO(...)
+	io.ILogger:getSingleton():logInfo("<Lua> "..string.format(...))
 end
 
-function LOG_WARN(msg)
-	io.ILogger:getSingleton():logWarn("<Lua> "..msg)
+function LOG_WARN(...)
+	io.ILogger:getSingleton():logWarn("<Lua> "..string.format(...))
 end
 
-function LOG_ERR(msg)
-	io.ILogger:getSingleton():logErr("<Lua> "..msg)
+function LOG_ERR(...)
+	io.ILogger:getSingleton():logErr("<Lua> "..string.format(...))
 end
 
 function RereadSingletons()

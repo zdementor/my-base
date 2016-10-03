@@ -217,6 +217,9 @@ Helper =
 	getSceneNodeFileText,
 
 	makeScreenShot,
+
+	scrollbarSetProgress,
+	scrollbarGetProgress,
 }
 
 FILE_DIALOG_MODE =
