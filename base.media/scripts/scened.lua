@@ -270,7 +270,7 @@ function _ScenedOnEvent(event)
 			return true
 		elseif event.KeyInput.Key == io.EKC_F8 then
 			if event.KeyInput.Event == io.EKIE_KEY_PRESSED_UP then
-				Scened.makeScreenShot()
+				Helper.makeScreenShot()
 			end
 			return true
 		elseif event.KeyInput.Control and event.KeyInput.Key == io.EKC_BACKSPACE then
