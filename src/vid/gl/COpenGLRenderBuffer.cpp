@@ -16,6 +16,91 @@ namespace my {
 namespace vid {  
 //----------------------------------------------------------------------------
 
+static bool _EnabledTextureClientState[MY_MATERIAL_MAX_LAYERS] = { false, false, false, false };
+
+//----------------------------------------------------------------------------
+
+static MY_FORCEINLINE void _setTextureCoords(
+	const void *tc, const void *tc2,
+	const void *tangents, const void *binormals,
+	s32 tc_stride)
+{
+	static u32 max_units_cnt = VIDEO_DRIVER.getMaximalTextureUnitsAmount();
+	s32 active_state = 0;
+
+	for (s32 u = (max_units_cnt - 1); u >= 0; u--)
+	{
+		const void *tex_coord_ptr = 
+			(u == 1) ? tc2 : (u == 0 ? tc : NULL);
+		u32 tc_components = 2;
+		if (u == 3 && binormals)
+		{
+			tex_coord_ptr = binormals;
+			tc_components = 3;
+		}
+		else if (u == 2 && tangents)
+		{
+			tex_coord_ptr = tangents;
+			tc_components = 3;
+		}
+
+		if (tex_coord_ptr)
+		{
+#ifdef GL_VERSION_1_2
+			glClientActiveTexture(GL_TEXTURE0 + u);
+#endif
+			active_state = u;
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			glTexCoordPointer(tc_components, GL_FLOAT, tc_stride, tex_coord_ptr);
+			_EnabledTextureClientState[u] = true;
+		}
+		else if (_EnabledTextureClientState[u])
+		{
+#ifdef GL_VERSION_1_2
+			glClientActiveTexture(GL_TEXTURE0 + u);
+#endif
+			active_state = u;
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+			_EnabledTextureClientState[u] = false;
+		}
+	}
+	if (active_state != 0)
+	{
+#ifdef GL_VERSION_1_2
+		glClientActiveTexture(GL_TEXTURE0);
+#endif
+	}
+}
+
+//---------------------------------------------------------------------------
+
+static MY_FORCEINLINE void _unsetTextureCoords()
+{
+	static u32 max_units_cnt = VIDEO_DRIVER.getMaximalTextureUnitsAmount();
+	s32 active_state = 0;
+
+	for (s32 u = (max_units_cnt - 1); u >= 0; u--)
+	{
+		if (_EnabledTextureClientState[u])
+		{
+#ifdef GL_VERSION_1_2
+			glClientActiveTexture(GL_TEXTURE0 + u);
+#endif
+			active_state = u;
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+			_EnabledTextureClientState[u] = false;
+		}
+	}
+	if (active_state != 0)
+	{
+#ifdef GL_VERSION_1_2
+		glClientActiveTexture(GL_TEXTURE0);
+#endif
+	}
+}
+
+//----------------------------------------------------------------------------
+
 template <>
 void COpenGLVertexArray < S3DVertexSimple >::_setupOffsets() {}
 
@@ -81,7 +166,7 @@ void COpenGLVertexArray < S3DVertex1TCoords >::_setupOffsets()
 template <>
 void COpenGLVertexArray < S3DVertex1TCoords > ::setPointers()
 {
-	m_Driver->_setTextureCoords(
+	_setTextureCoords(
 		_getPointer(m_TCoordOffset),
 		NULL,
 		NULL,
@@ -103,7 +188,7 @@ void COpenGLVertexArray < S3DVertex1TCoords > ::unsetPointers()
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 
-	m_Driver->_unsetTextureCoords();
+	_unsetTextureCoords();
 }
 
 //----------------------------------------------------------------------------
@@ -122,7 +207,7 @@ void COpenGLVertexArray < S3DVertex1TCoordsColoured > ::_setupOffsets()
 template <>
 void COpenGLVertexArray < S3DVertex1TCoordsColoured > ::setPointers()
 {
-	m_Driver->_setTextureCoords(
+	_setTextureCoords(
 		_getPointer(m_TCoordOffset),
 		NULL,
 		NULL,
@@ -148,7 +233,7 @@ void COpenGLVertexArray < S3DVertex1TCoordsColoured > ::unsetPointers()
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 
-	m_Driver->_unsetTextureCoords();
+	_unsetTextureCoords();
 }
 
 //----------------------------------------------------------------------------
@@ -167,7 +252,7 @@ void COpenGLVertexArray < S3DVertex2TCoords > ::_setupOffsets()
 template <>
 void COpenGLVertexArray < S3DVertex2TCoords > ::setPointers()
 {
-	m_Driver->_setTextureCoords(
+	_setTextureCoords(
 		_getPointer(m_TCoordOffset),
 		_getPointer(m_TCoord2Offset),
 		NULL,
@@ -189,7 +274,7 @@ void COpenGLVertexArray < S3DVertex2TCoords > ::unsetPointers()
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 
-	m_Driver->_unsetTextureCoords();
+	_unsetTextureCoords();
 }
 
 //----------------------------------------------------------------------------
@@ -209,7 +294,7 @@ void COpenGLVertexArray < S3DVertex2TCoordsColoured > ::_setupOffsets()
 template <>
 void COpenGLVertexArray < S3DVertex2TCoordsColoured > ::setPointers()
 {
-	m_Driver->_setTextureCoords(
+	_setTextureCoords(
 		_getPointer(m_TCoordOffset),
 		_getPointer(m_TCoord2Offset),
 		NULL,
@@ -235,7 +320,7 @@ void COpenGLVertexArray < S3DVertex2TCoordsColoured > ::unsetPointers()
 	glDisableClientState(GL_NORMAL_ARRAY );
 	glDisableClientState(GL_VERTEX_ARRAY);
 
-	m_Driver->_unsetTextureCoords();
+	_unsetTextureCoords();
 }
 
 //----------------------------------------------------------------------------
@@ -255,7 +340,7 @@ void COpenGLVertexArray < S3DVertex1TCoordsTBN > ::_setupOffsets()
 template <>
 void COpenGLVertexArray < S3DVertex1TCoordsTBN > ::setPointers()
 {
-	m_Driver->_setTextureCoords(
+	_setTextureCoords(
 		_getPointer(m_TCoordOffset),
 		NULL,
 		_getPointer(m_TangentOffset),
@@ -277,7 +362,7 @@ void COpenGLVertexArray < S3DVertex1TCoordsTBN > ::unsetPointers()
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 
-	m_Driver->_unsetTextureCoords();
+	_unsetTextureCoords();
 }
 
 //----------------------------------------------------------------------------
@@ -298,7 +383,7 @@ void COpenGLVertexArray < S3DVertex1TCoordsTBNColoured > ::_setupOffsets()
 template <>
 void COpenGLVertexArray < S3DVertex1TCoordsTBNColoured > ::setPointers()
 {
-	m_Driver->_setTextureCoords(
+	_setTextureCoords(
 		_getPointer(m_TCoordOffset),
 		NULL,
 		_getPointer(m_TangentOffset),
@@ -324,7 +409,7 @@ void COpenGLVertexArray < S3DVertex1TCoordsTBNColoured > ::unsetPointers()
 	glDisableClientState(GL_NORMAL_ARRAY );
 	glDisableClientState(GL_VERTEX_ARRAY);
 
-	m_Driver->_unsetTextureCoords();
+	_unsetTextureCoords();
 }
 
 //----------------------------------------------------------------------------
@@ -345,7 +430,7 @@ void COpenGLVertexArray < S3DVertex2TCoordsTBN > ::_setupOffsets()
 template <>
 void COpenGLVertexArray < S3DVertex2TCoordsTBN > ::setPointers()
 {
-	m_Driver->_setTextureCoords(
+	_setTextureCoords(
 		_getPointer(m_TCoordOffset),
 		_getPointer(m_TCoord2Offset),
 		_getPointer(m_TangentOffset),
@@ -367,7 +452,7 @@ void COpenGLVertexArray < S3DVertex2TCoordsTBN > ::unsetPointers()
 	glDisableClientState(GL_NORMAL_ARRAY );
 	glDisableClientState(GL_VERTEX_ARRAY);
 
-	m_Driver->_unsetTextureCoords();
+	_unsetTextureCoords();
 }
 
 //----------------------------------------------------------------------------
@@ -389,7 +474,7 @@ void COpenGLVertexArray < S3DVertex2TCoordsTBNColoured > ::_setupOffsets()
 template <>
 void COpenGLVertexArray < S3DVertex2TCoordsTBNColoured > ::setPointers()
 {
-	m_Driver->_setTextureCoords(
+	_setTextureCoords(
 		_getPointer(m_TCoordOffset),
 		_getPointer(m_TCoord2Offset),
 		_getPointer(m_TangentOffset),
@@ -415,7 +500,7 @@ void COpenGLVertexArray < S3DVertex2TCoordsTBNColoured > ::unsetPointers()
 	glDisableClientState(GL_NORMAL_ARRAY );
 	glDisableClientState(GL_VERTEX_ARRAY);
 
-	m_Driver->_unsetTextureCoords();
+	_unsetTextureCoords();
 }
 
 //----------------------------------------------------------------------------
@@ -433,7 +518,7 @@ void COpenGLVertexArray < S3DVertex1TCoordsRHWColoured > ::_setupOffsets()
 template <>
 void COpenGLVertexArray < S3DVertex1TCoordsRHWColoured > ::setPointers()
 {
-	m_Driver->_setTextureCoords(
+	_setTextureCoords(
 		_getPointer(m_TCoordOffset),
 		NULL,
 		NULL,
@@ -455,7 +540,7 @@ void COpenGLVertexArray < S3DVertex1TCoordsRHWColoured > ::unsetPointers()
 	glDisableClientState(GL_COLOR_ARRAY);	
 	glDisableClientState(GL_VERTEX_ARRAY);
 
-	m_Driver->_unsetTextureCoords();
+	_unsetTextureCoords();
 }
 
 //----------------------------------------------------------------------------

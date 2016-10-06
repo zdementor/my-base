@@ -277,8 +277,6 @@ private:
     HGLRC m_RenderContext; // Rendering Context
 #endif
     
-	bool m_EnabledTextureClientState[MY_MATERIAL_MAX_LAYERS];
-
 	CNullHardwareOcclusionQuery *m_OpenGLHardwareOcclusionQuery;
 };
 

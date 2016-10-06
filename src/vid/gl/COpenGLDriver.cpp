@@ -45,9 +45,6 @@ m_OpenGLHardwareOcclusionQuery(0)
 #if MY_DEBUG_MODE 
 	IVideoDriver::setClassName("COpenGLDriver::IVideoDriver");
 #endif
-
-	memset(m_EnabledTextureClientState, 0, sizeof(m_EnabledTextureClientState));
-
 	m_DriverType = (E_DRIVER_TYPE)__MY_BUILD_GL_VER__;
 }
 
@@ -818,91 +815,6 @@ vid::ITexture* COpenGLDriver::_createDeviceDependentTexture(
 	core::dimension2di &size, img::E_COLOR_FORMAT format)
 {
 	 return new COpenGLTexture(size, format, TextureCreationFlags);
-}
-
-//---------------------------------------------------------------------------
-
-void COpenGLDriver::_setTextureCoords(const void* tc, const void* tc2,
-	const void* tangents, const void* binormals,
-	s32 tc_stride)
-{
-	const SRenderPass &m = getRenderPass();
-	static u32 max_units_cnt = getMaximalTextureUnitsAmount();
-	s32 active_state = 0;
-
-	bool unitsUsage[MY_MATERIAL_MAX_LAYERS] = {false, false, false, false};
-
-	for (u32 u = 0; u < max_units_cnt; u++)
-	{
-		if (m.Layers[u].getTexture())
-		{
-			s32 tchnl = m.Layers[u].getTexCoordChannel();
-			if (tchnl < MY_MATERIAL_MAX_LAYERS)
-				unitsUsage[tchnl] = true;
-		}
-	}
-
-	for (s32 u = (max_units_cnt - 1); u >= 0; u--)
-	{
-		const void *tex_coord_ptr = 
-			(u == 1) ? tc2 : (u == 0 ? tc : NULL);
-		u32 tc_components = 2;
-		if (u == 3 && binormals)
-		{
-			tex_coord_ptr = binormals;
-			tc_components = 3;
-		}
-		else if (u == 2 && tangents)
-		{
-			tex_coord_ptr = tangents;
-			tc_components = 3;
-		}
-		else if (!unitsUsage[u])
-			tex_coord_ptr = NULL;
-		if (tex_coord_ptr)
-		{
-#ifdef GL_VERSION_1_2
-			glClientActiveTexture(GL_TEXTURE0 + u);
-#endif
-			active_state = u;
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glTexCoordPointer(tc_components, GL_FLOAT, tc_stride, tex_coord_ptr);
-			m_EnabledTextureClientState[u] = true;
-		}
-	}
-	if (active_state != 0)
-	{
-#ifdef GL_VERSION_1_2
-		glClientActiveTexture(GL_TEXTURE0);
-#endif
-	}
-}
-
-//---------------------------------------------------------------------------
-
-void COpenGLDriver::_unsetTextureCoords()
-{
-	static u32 max_units_cnt = getMaximalTextureUnitsAmount();
-	s32 active_state = 0;
-
-	for (s32 u = (max_units_cnt - 1); u >= 0; u--)
-	{
-		if (m_EnabledTextureClientState[u])
-		{
-#ifdef GL_VERSION_1_2
-			glClientActiveTexture(GL_TEXTURE0 + u);
-#endif
-			active_state = u;
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-			m_EnabledTextureClientState[u] = false;
-		}
-	}
-	if (active_state != 0)
-	{
-#ifdef GL_VERSION_1_2
-		glClientActiveTexture(GL_TEXTURE0);
-#endif
-	}
 }
 
 //---------------------------------------------------------------------------
