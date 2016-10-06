@@ -30,7 +30,7 @@ COpenGLHardwareOcclusionQuery::COpenGLHardwareOcclusionQuery(COpenGLDriver* driv
 	// Check for hardware occlusion support
     if (driver->queryFeature(EVDF_OCCLUSION_QUERY))
 	{
-		glGenQueriesARB(1, &mQueryID );	
+		glGenQueries(1, &mQueryID );	
 		if (mQueryID)
 			m_IsOK = true;
 	}
@@ -42,28 +42,28 @@ COpenGLHardwareOcclusionQuery::COpenGLHardwareOcclusionQuery(COpenGLDriver* driv
 COpenGLHardwareOcclusionQuery::~COpenGLHardwareOcclusionQuery() 
 { 
 	if (mQueryID)
-		glDeleteQueriesARB(1, &mQueryID);  
+		glDeleteQueries(1, &mQueryID);  
 }
 
 //------------------------------------------------------------------
 
 void COpenGLHardwareOcclusionQuery::beginOcclusionQuery() 
 { 
-	glBeginQueryARB(GL_SAMPLES_PASSED_ARB, mQueryID);
+	glBeginQuery(GL_SAMPLES_PASSED, mQueryID);
 }
 
 //------------------------------------------------------------------
 
 void COpenGLHardwareOcclusionQuery::endOcclusionQuery() 
 { 
-    glEndQueryARB(GL_SAMPLES_PASSED_ARB);
+    glEndQuery(GL_SAMPLES_PASSED);
 }
 
 //------------------------------------------------------------------
 
 bool COpenGLHardwareOcclusionQuery::pullOcclusionQuery( u32* num_of_fragments ) 
 {
-	glGetQueryObjectuivARB(mQueryID, GL_QUERY_RESULT_ARB, (GLuint*)num_of_fragments);
+	glGetQueryObjectuiv(mQueryID, GL_QUERY_RESULT, (GLuint*)num_of_fragments);
 	
 	mPixelCount = *num_of_fragments;
 
@@ -76,7 +76,7 @@ bool COpenGLHardwareOcclusionQuery::isStillOutstanding(void)
 {    
 	GLuint available;
 
-    glGetQueryObjectuivARB(mQueryID, GL_QUERY_RESULT_AVAILABLE_ARB, &available);
+    glGetQueryObjectuiv(mQueryID, GL_QUERY_RESULT_AVAILABLE, &available);
       
 	return !(available == GL_TRUE);  
 } 

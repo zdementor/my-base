@@ -424,7 +424,7 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 		queryFeature(EVDF_COMPRESSED_TEXTURES) ? "OK" : "None");
 	LOGGER.logInfo("  Depth Stencil tex.: %s",
 		queryFeature(vid::EVDF_DEPTH_STENCIL_TEXTURES) ? "OK" : "None");
-	LOGGER.logInfo("  Non power ot two  : %s",
+	LOGGER.logInfo("  Non pwr. of 2 tex.: %s",
 		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) ? "OK" : "None");
 
 	//antialiasing ON! 

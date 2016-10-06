@@ -42,19 +42,18 @@ public:
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader);
 
-	void* _getProgramHandle() const { return m_Program.v; }
+	GLuint _getProgramHandle() const { return m_Program.u; }
 
 private:
 
 	virtual void _destroyProgram();
 
-	GLhandleARB _createShader(
+	GLuint _createShader(
 		GLenum shaderType, const c8 *shader, u32 *errors);
 
 	union UHandle
 	{
-		GLhandleARB	u;
-		void		*v;
+		GLuint	u;
 	}
 	m_Program, m_VertexShader, m_PixelShader;
 

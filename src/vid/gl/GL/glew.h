@@ -100,16 +100,10 @@
 #endif
 
 #ifdef __MY_BUILD_VID_GL21_LIB__
-#define GL_VERSION_1_4 1
+#define GL_VERSION_2_1 1
 #define GL_ARB_imaging 1
 #define GL_EXT_stencil_two_side 1
 #define GL_ATI_separate_stencil 1
-#define GL_ARB_vertex_shader 1
-#define GL_ARB_fragment_shader 1
-#define GL_ARB_shader_objects 1
-#define GL_ARB_shading_language_100 1
-#define GL_ARB_occlusion_query 1
-#define GL_ARB_vertex_buffer_object 1
 #define GL_EXT_texture_filter_anisotropic 1
 #define GL_EXT_stencil_wrap 1
 #define GL_EXT_texture_compression_s3tc 1

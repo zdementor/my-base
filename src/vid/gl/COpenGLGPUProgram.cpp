@@ -26,7 +26,7 @@ COpenGLGPUProgram::COpenGLGPUProgram(u32 uniforms, u32 lights_count,
 	setClassName("COpenGLGPUProgram");
 #endif
 
-	m_Program.v = m_VertexShader.v = m_PixelShader.v = NULL;
+	m_Program.u = m_VertexShader.u = m_PixelShader.u = 0;
 
 	do
 	{
@@ -54,20 +54,20 @@ COpenGLGPUProgram::~COpenGLGPUProgram()
 
 void COpenGLGPUProgram::_destroyProgram()
 {
-	if (m_VertexShader.v)
+	if (m_VertexShader.u)
 	{
-		glDeleteObjectARB(m_VertexShader.u);
-		m_VertexShader.v = 0;
+		glDeleteShader(m_VertexShader.u);
+		m_VertexShader.u = 0;
 	}
-	if (m_PixelShader.v)
+	if (m_PixelShader.u)
 	{
-		glDeleteObjectARB(m_PixelShader.u);
-		m_PixelShader.v = 0;
+		glDeleteShader(m_PixelShader.u);
+		m_PixelShader.u = 0;
 	}
-	if (m_Program.v)
+	if (m_Program.u)
 	{
-		glDeleteObjectARB(m_Program.u);
-		m_Program.v = 0;
+		glDeleteProgram(m_Program.u);
+		m_Program.u = 0;
 	}
 	CNullGPUProgram::_destroyProgram();
 }
@@ -82,13 +82,13 @@ bool COpenGLGPUProgram::recreate(u32 uniforms, u32 lights_count,
 
 	_destroyProgram();
 
-	m_Program.u = glCreateProgramObjectARB();
+	m_Program.u = glCreateProgram();
 
 	// compiling shaders
 	m_VertexShader.u = _createShader(
-		GL_VERTEX_SHADER_ARB, vertex_shader, &errors);
+		GL_VERTEX_SHADER, vertex_shader, &errors);
 	m_PixelShader.u = _createShader(
-		GL_FRAGMENT_SHADER_ARB, pixel_shader, &errors);
+		GL_FRAGMENT_SHADER, pixel_shader, &errors);
 	if (errors > 0)
 	{
 		_destroyProgram();
@@ -96,22 +96,20 @@ bool COpenGLGPUProgram::recreate(u32 uniforms, u32 lights_count,
 	}
 
 	// linking shaders into program
-	glAttachObjectARB(m_Program.u, m_VertexShader.u);
-	glAttachObjectARB(m_Program.u, m_PixelShader.u);
-	glLinkProgramARB(m_Program.u);
+	glAttachShader(m_Program.u, m_VertexShader.u);
+	glAttachShader(m_Program.u, m_PixelShader.u);
+	glLinkProgram(m_Program.u);
 
 	GLint status = 0;
-	glGetObjectParameterivARB(
-		m_Program.u, GL_OBJECT_LINK_STATUS_ARB, &status);
+	glGetProgramiv(m_Program.u, GL_LINK_STATUS, &status);
 	if (!status)
 	{
 		// check error message and log it
 		GLint maxLength=0;
 		GLsizei length;
-		glGetObjectParameterivARB(
-			m_Program.u, GL_OBJECT_INFO_LOG_LENGTH_ARB, &maxLength);
-		GLcharARB *infoLog = new GLcharARB[maxLength];
-		glGetInfoLogARB(m_Program.u, maxLength, &length, infoLog);
+		glGetProgramiv(m_Program.u, GL_INFO_LOG_LENGTH, &maxLength);
+		GLchar *infoLog = new GLchar[maxLength];
+		glGetProgramInfoLog(m_Program.u, maxLength, &length, infoLog);
 		LOGGER.logErr("GLSL program linking errors:\n%s",
 			(c8*)infoLog);
 		delete [] infoLog;
@@ -126,10 +124,8 @@ bool COpenGLGPUProgram::recreate(u32 uniforms, u32 lights_count,
 	// get uniforms information
 
 	GLint num = 0, maxlen = 0;;
-	glGetObjectParameterivARB(m_Program.u,
-		GL_OBJECT_ACTIVE_UNIFORMS_ARB, &num);
-	glGetObjectParameterivARB(m_Program.u,
-		GL_OBJECT_ACTIVE_UNIFORM_MAX_LENGTH_ARB, &maxlen);
+	glGetProgramiv(m_Program.u, GL_ACTIVE_UNIFORMS, &num);
+	glGetProgramiv(m_Program.u, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxlen);
 
 	// seems that some implementations use an extra null terminator
 	++maxlen;
@@ -140,14 +136,14 @@ bool COpenGLGPUProgram::recreate(u32 uniforms, u32 lights_count,
 		GLint size;
 		GLenum type;
 		memset(buf.pointer(), 0, maxlen);
-		glGetActiveUniformARB(
-			m_Program.u, i, maxlen, 0, &size, &type, (GLcharARB*)buf.pointer());
+		glGetActiveUniform(
+			m_Program.u, i, maxlen, 0, &size, &type, (GLchar*)buf.pointer());
 		if (buf[0] == 'g' && buf[1] == 'l' && buf[2] == '_')
 		{
 			// skip OpenGL build-in uniforms
 			continue;
 		}
-		GLint loc = glGetUniformLocationARB(m_Program.u, buf.pointer());
+		GLint loc = glGetUniformLocation(m_Program.u, buf.pointer());
 		if (size > 1)
 		{
 			s32 j = core::strlen(buf.pointer());
@@ -169,41 +165,39 @@ bool COpenGLGPUProgram::recreate(u32 uniforms, u32 lights_count,
 			{
 			case GL_FLOAT:
 				break;
-			case GL_FLOAT_VEC2_ARB:
+			case GL_FLOAT_VEC2:
 				size_bytes *= 2;
 				break;
-			case GL_FLOAT_VEC3_ARB:
+			case GL_FLOAT_VEC3:
 				size_bytes *= 3;
 				break;
-			case GL_FLOAT_VEC4_ARB:
+			case GL_FLOAT_VEC4:
 				size_bytes *= 4;
 				break;
-			case GL_FLOAT_MAT2_ARB:
+			case GL_FLOAT_MAT2:
 				size_bytes *= 4;
 				break;
-			case GL_FLOAT_MAT3_ARB:
+			case GL_FLOAT_MAT3:
 				size_bytes *= 9;
 				break;
-			case GL_FLOAT_MAT4_ARB:
+			case GL_FLOAT_MAT4:
 				size_bytes *= 16;
 				break;
 			case GL_INT:
-			case GL_SAMPLER_1D_ARB:
-			case GL_SAMPLER_2D_ARB:
-			case GL_SAMPLER_3D_ARB:
-			case GL_SAMPLER_CUBE_ARB:
-			case GL_SAMPLER_1D_SHADOW_ARB:
-			case GL_SAMPLER_2D_SHADOW_ARB:
-			case GL_SAMPLER_2D_RECT_ARB:
-			case GL_SAMPLER_2D_RECT_SHADOW_ARB:
+			case GL_SAMPLER_1D:
+			case GL_SAMPLER_2D:
+			case GL_SAMPLER_3D:
+			case GL_SAMPLER_CUBE:
+			case GL_SAMPLER_1D_SHADOW:
+			case GL_SAMPLER_2D_SHADOW:
 				break;
-			case GL_INT_VEC2_ARB:
+			case GL_INT_VEC2:
 				size_bytes *= 2;
 				break;
-			case GL_INT_VEC3_ARB:
+			case GL_INT_VEC3:
 				size_bytes *= 3;
 				break;
-			case GL_INT_VEC4_ARB:
+			case GL_INT_VEC4:
 				size_bytes *= 4;
 				break;
 			default:
@@ -258,28 +252,26 @@ bool COpenGLGPUProgram::recreate(u32 uniforms, u32 lights_count,
 
 //---------------------------------------------------------------------------
 
-GLhandleARB COpenGLGPUProgram::_createShader(
+GLuint COpenGLGPUProgram::_createShader(
 	GLenum shaderType, const c8* shader, u32 *errors)
 {
-	GLhandleARB shaderHandle = glCreateShaderObjectARB(shaderType);
+	GLuint shaderHandle = glCreateShader(shaderType);
 
-	glShaderSourceARB(shaderHandle, 1, &shader, NULL);
-	glCompileShaderARB(shaderHandle);
+	glShaderSource(shaderHandle, 1, &shader, NULL);
+	glCompileShader(shaderHandle);
 
 	GLint status = 0;
-	glGetObjectParameterivARB(
-		shaderHandle, GL_OBJECT_COMPILE_STATUS_ARB, &status);
+	glGetShaderiv(shaderHandle, GL_COMPILE_STATUS, &status);
 	if (!status)
 	{
 		// check error message and log it
 		GLint maxLength=0;
 		GLsizei length;
-		glGetObjectParameterivARB(shaderHandle,
-				GL_OBJECT_INFO_LOG_LENGTH_ARB, &maxLength);
-		GLcharARB *infoLog = new GLcharARB[maxLength];
-		glGetInfoLogARB(shaderHandle, maxLength, &length, infoLog);
+		glGetShaderiv(shaderHandle, GL_INFO_LOG_LENGTH, &maxLength);
+		GLchar *infoLog = new GLchar[maxLength];
+		glGetShaderInfoLog(shaderHandle, maxLength, &length, infoLog);
 		LOGGER.logErr("GLSL %s Shader compilation errors:\n%s",
-			(shaderType == GL_VERTEX_SHADER_ARB) ? "Vertex" : "Pixel",
+			(shaderType == GL_VERTEX_SHADER) ? "Vertex" : "Pixel",
 			(c8*)infoLog);
 		delete [] infoLog;
 		*errors = *errors + 1;
@@ -314,25 +306,25 @@ bool COpenGLGPUProgram::setUniformfv(
 	switch (type)
 	{
 	case GL_FLOAT:
-		glUniform1fvARB(loc, count, floats);
+		glUniform1fv(loc, count, floats);
 		break;
-	case GL_FLOAT_VEC2_ARB:
-		glUniform2fvARB(loc, count, floats);
+	case GL_FLOAT_VEC2:
+		glUniform2fv(loc, count, floats);
 		break;
-	case GL_FLOAT_VEC3_ARB:
-		glUniform3fvARB(loc, count, floats);
+	case GL_FLOAT_VEC3:
+		glUniform3fv(loc, count, floats);
 		break;
-	case GL_FLOAT_VEC4_ARB:
-		glUniform4fvARB(loc, count, floats);
+	case GL_FLOAT_VEC4:
+		glUniform4fv(loc, count, floats);
 		break;
-	case GL_FLOAT_MAT2_ARB:
-		glUniformMatrix2fvARB(loc, count, false, floats);
+	case GL_FLOAT_MAT2:
+		glUniformMatrix2fv(loc, count, false, floats);
 		break;
-	case GL_FLOAT_MAT3_ARB:
-		glUniformMatrix3fvARB(loc, count, false, floats);
+	case GL_FLOAT_MAT3:
+		glUniformMatrix3fv(loc, count, false, floats);
 		break;
-	case GL_FLOAT_MAT4_ARB:
-		glUniformMatrix4fvARB(loc, count, false, floats);
+	case GL_FLOAT_MAT4:
+		glUniformMatrix4fv(loc, count, false, floats);
 		break;
 	default:
 		LOGGER.logErr("Unknown OpenGL uniform float type %X",
@@ -369,24 +361,22 @@ bool COpenGLGPUProgram::setUniformiv(
 	switch (type)
 	{
 	case GL_INT:
-	case GL_SAMPLER_1D_ARB:
-	case GL_SAMPLER_2D_ARB:
-	case GL_SAMPLER_3D_ARB:
-	case GL_SAMPLER_CUBE_ARB:
-	case GL_SAMPLER_1D_SHADOW_ARB:
-	case GL_SAMPLER_2D_SHADOW_ARB:
-	case GL_SAMPLER_2D_RECT_ARB:
-	case GL_SAMPLER_2D_RECT_SHADOW_ARB:
-		glUniform1ivARB(loc, count, integers);
+	case GL_SAMPLER_1D:
+	case GL_SAMPLER_2D:
+	case GL_SAMPLER_3D:
+	case GL_SAMPLER_CUBE:
+	case GL_SAMPLER_1D_SHADOW:
+	case GL_SAMPLER_2D_SHADOW:
+		glUniform1iv(loc, count, integers);
 		break;
-	case GL_INT_VEC2_ARB:
-		glUniform2ivARB(loc, count, integers);
+	case GL_INT_VEC2:
+		glUniform2iv(loc, count, integers);
 		break;
-	case GL_INT_VEC3_ARB:
-		glUniform3ivARB(loc, count, integers);
+	case GL_INT_VEC3:
+		glUniform3iv(loc, count, integers);
 		break;
-	case GL_INT_VEC4_ARB:
-		glUniform4ivARB(loc, count, integers);
+	case GL_INT_VEC4:
+		glUniform4iv(loc, count, integers);
 		break;
 	default:
 		LOGGER.logErr("Unknown OpenGL uniform integer type %X",
@@ -420,7 +410,7 @@ bool COpenGLGPUProgram::setUniform1f(
 	switch (type)
 	{
 	case GL_FLOAT:
-		glUniform1fARB(loc, float_val);
+		glUniform1f(loc, float_val);
 		break;
 	default:
 		LOGGER.logErr("Unknown OpenGL uniform float type %X",
@@ -454,15 +444,13 @@ bool COpenGLGPUProgram::setUniform1i(
 	switch (type)
 	{
 	case GL_INT:
-	case GL_SAMPLER_1D_ARB:
-	case GL_SAMPLER_2D_ARB:
-	case GL_SAMPLER_3D_ARB:
-	case GL_SAMPLER_CUBE_ARB:
-	case GL_SAMPLER_1D_SHADOW_ARB:
-	case GL_SAMPLER_2D_SHADOW_ARB:
-	case GL_SAMPLER_2D_RECT_ARB:
-	case GL_SAMPLER_2D_RECT_SHADOW_ARB:
-		glUniform1iARB(loc, int_val);
+	case GL_SAMPLER_1D:
+	case GL_SAMPLER_2D:
+	case GL_SAMPLER_3D:
+	case GL_SAMPLER_CUBE:
+	case GL_SAMPLER_1D_SHADOW:
+	case GL_SAMPLER_2D_SHADOW:
+		glUniform1i(loc, int_val);
 		break;
 	default:
 		LOGGER.logErr("Unknown OpenGL uniform integer type %X",

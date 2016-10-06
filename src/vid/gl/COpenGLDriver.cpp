@@ -209,6 +209,8 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 
 	glewInit();
 
+	bool vboSupport = false;
+
 #if __MY_BUILD_GL_VER__ == MY_DRIVER_TYPE_OPENGL11
     if (!GLEW_VERSION_1_1)
 	{
@@ -219,37 +221,12 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 	{
         LOGGER.logWarn(" OpenGL driver is not supported GL_EXT_bgra extension.");
 	}
-#elif  __MY_BUILD_GL_VER__ == MY_DRIVER_TYPE_OPENGL12
-
-    if (!GLEW_VERSION_1_1 || !GLEW_VERSION_1_2)
-	{
-        LOGGER.logErr(" OpenGL driver version is not 1.2 or better.");
-		return false;
-	}
-	if (!GLEW_ARB_multitexture)
-	{
-        LOGGER.logErr(" OpenGL driver is not supported GL_ARB_multitexture extension.");
-		return false;
-	}
-	if (!GLEW_ARB_texture_border_clamp)
-	{
-        LOGGER.logErr(" OpenGL driver is not supported GL_ARB_texture_border_clamp extension.");
-		return false;
-	}
-	if (!GLEW_ARB_texture_env_combine)
-	{
-        LOGGER.logErr(" OpenGL driver is not supported GL_ARB_texture_env_combine extension.");
-		return false;
-	}
-	if (!GLEW_ARB_texture_mirrored_repeat)
-	{
-        LOGGER.logErr(" OpenGL driver is not supported GL_ARB_texture_mirrored_repeat extension.");
-		return false;
-	}
 #elif  __MY_BUILD_GL_VER__ == MY_DRIVER_TYPE_OPENGL21
-    if (!GLEW_VERSION_1_4 || !GLEW_VERSION_1_3 || !GLEW_VERSION_1_2 || !GLEW_VERSION_1_2)
+    if (!GLEW_VERSION_2_1 || !GLEW_VERSION_2_0
+			|| !GLEW_VERSION_1_5 || !GLEW_VERSION_1_4 || !GLEW_VERSION_1_3
+			|| !GLEW_VERSION_1_2 || !GLEW_VERSION_1_1)
 	{
-        LOGGER.logErr(" OpenGL driver version is not 1.4 or better.");
+        LOGGER.logErr(" OpenGL driver version is not 2.1 or better.");
 		return false;
 	}
 	if (!GLEW_ARB_imaging)
@@ -262,11 +239,7 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 		LOGGER.logWarn(" OpenGL driver is not supported EXT_texture_compression_s3tc extension,"
 			"be aware from using DXT textures.");
 	}
-#endif
-
-	bool vboSupport = false;
-#if defined GL_ARB_vertex_buffer_object
-	vboSupport = !!GLEW_ARB_vertex_buffer_object;
+	vboSupport = true;
 #endif
 
 	GLint temp;
@@ -317,10 +290,9 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 		WGLEW_EXT_swap_control ? "OK" : "None"); 
 	LOGGER.logInfo("  GLSL              : %s",
 		queryFeature(EVDF_SHADER_LANGUAGE) ? "OK" : "None");
-#ifdef GL_ARB_shading_language_100
-	if (!!GLEW_ARB_shading_language_100)
+#if __MY_BUILD_GL_VER__ >= MY_DRIVER_TYPE_OPENGL21
 		LOGGER.logInfo("   Vertex/Pixel shader v.%s",
-			glGetString(GL_SHADING_LANGUAGE_VERSION_ARB));
+			glGetString(GL_SHADING_LANGUAGE_VERSION));
 #endif
 	LOGGER.logInfo("  Two side stencil  : %s",
 		m_TwoSidedStencil ? "OK" : "None");
@@ -332,7 +304,7 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 		queryFeature(EVDF_COMPRESSED_TEXTURES) ? "OK" : "None");
 	LOGGER.logInfo("  Depth Stencil tex.: %s",
 		queryFeature(EVDF_DEPTH_STENCIL_TEXTURES) ? "OK" : "None");
-	LOGGER.logInfo("  Non power ot two  : %s",
+	LOGGER.logInfo("  Non pwr. of 2 tex.: %s",
 		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) ? "OK" : "None");
 
 	// OpenGL driver constants
@@ -685,14 +657,8 @@ bool COpenGLDriver::_bindGPUProgram(IGPUProgram* gpu_prog)
 #if __MY_BUILD_GL_VER__ >= MY_DRIVER_TYPE_OPENGL21
 	if (m_UseShaders)
 	{
-		union UHandle
-		{
-			GLhandleARB u;
-			void		*v;
-		}
-		handle;
-		handle.v = gpu_prog ? ((COpenGLGPUProgram*)gpu_prog)->_getProgramHandle() : 0;
-		glUseProgramObjectARB(handle.u);
+		GLuint prog = gpu_prog ? ((COpenGLGPUProgram*)gpu_prog)->_getProgramHandle() : 0;
+		glUseProgram(prog);
 	}
 #endif
 	return CNullDriver::_bindGPUProgram(gpu_prog);
@@ -768,8 +734,7 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
         return m_StencilBuffer;
 	case EVDF_SHADER_LANGUAGE:
 #if __MY_BUILD_GL_VER__ >= MY_DRIVER_TYPE_OPENGL21
-		return GLEW_ARB_vertex_shader && GLEW_ARB_fragment_shader &&
-			GLEW_ARB_shader_objects && GLEW_ARB_shading_language_100;
+		return true;
 #else
 		return false;
 #endif
@@ -1663,14 +1628,11 @@ inline IRenderBuffer * COpenGLDriver::createRenderBufferTemplate(
 	E_RENDER_BUFFER_TYPE rbt,
 	u32 vert_size, E_INDEX_TYPE itype, u32 ind_size, E_DRAW_PRIMITIVE_TYPE dpt)
 {
-#if __MY_BUILD_GL_VER__ >= MY_DRIVER_TYPE_OPENGL21
-	if (!GLEW_ARB_vertex_buffer_object)
+#if __MY_BUILD_GL_VER__ < MY_DRIVER_TYPE_OPENGL21
+	if (itype == EIT_32_BIT)
+		return new COpenGLRenderArray <TVert, u32> (this, vert_size, ind_size, dpt);
+	return new COpenGLRenderArray <TVert, u16> (this, vert_size, ind_size, dpt);
 #endif
-	{
-		if (itype == EIT_32_BIT)
-			return new COpenGLRenderArray <TVert, u32> (this, vert_size, ind_size, dpt);
-		return new COpenGLRenderArray <TVert, u16> (this, vert_size, ind_size, dpt);
-	}
 #if __MY_BUILD_GL_VER__ >= MY_DRIVER_TYPE_OPENGL21
 	if (itype == EIT_32_BIT)
 	 	return new COpenGLVertexBufferObject <TVert, u32> (

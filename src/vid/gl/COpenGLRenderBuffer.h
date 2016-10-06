@@ -187,10 +187,10 @@ public:
 		{
 			try
 			{
-				glGenBuffersARB(1, &m_Buffer);
+				glGenBuffers(1, &m_Buffer);
 				bind();
-				glBufferDataARB(GL_ARRAY_BUFFER_ARB, size*sizeof(T), NULL,
-					m_Dynamic ? GL_STREAM_DRAW_ARB : GL_STATIC_DRAW_ARB);
+				glBufferData(GL_ARRAY_BUFFER, size*sizeof(T), NULL,
+					m_Dynamic ? GL_STREAM_DRAW : GL_STATIC_DRAW);
 				unbind();
 			}			
 			catch(...)
@@ -203,7 +203,7 @@ public:
 	virtual ~COpenGLVertexBuffer()
 	{
 		if (m_Buffer)
-			glDeleteBuffersARB(1, &m_Buffer); 
+			glDeleteBuffers(1, &m_Buffer); 
 	}
 
 	virtual void* lock(E_RENDER_BUFFER_LOCK_MODE mode)
@@ -213,7 +213,7 @@ public:
 		if (!IVideoBuffer::lock(mode))
 			return NULL;
 		bind();
-		return glMapBufferARB(GL_ARRAY_BUFFER_ARB, convertToOGLLockMode(mode));
+		return glMapBuffer(GL_ARRAY_BUFFER, convertToOGLLockMode(mode));
 	}
 
 	virtual bool unlock()
@@ -223,24 +223,24 @@ public:
 			if (!COpenGLVertexArray<T>::unlock())
 				return false;
 			bind();
-			glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_Size * sizeof(T), m_Array,
-				m_Dynamic ? GL_STREAM_DRAW_ARB : GL_STATIC_DRAW_ARB);
+			glBufferData(GL_ARRAY_BUFFER, m_Size * sizeof(T), m_Array,
+				m_Dynamic ? GL_STREAM_DRAW : GL_STATIC_DRAW);
 			unbind();
 			return true;
 		}
 
 		if (!IVideoBuffer::unlock())
 			return false;
-		glUnmapBufferARB(GL_ARRAY_BUFFER_ARB);
+		glUnmapBuffer(GL_ARRAY_BUFFER);
 		unbind();
 		return true;
 	}
 
 	void bind()
-	{ glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_Buffer); }
+	{ glBindBuffer(GL_ARRAY_BUFFER, m_Buffer); }
 
 	void unbind()
-	{ glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0); }
+	{ glBindBuffer(GL_ARRAY_BUFFER, 0); }
 
 	virtual bool isOK()
 	{ return m_Buffer != 0; }
@@ -271,10 +271,10 @@ public:
 		{
 			try
 			{
-				glGenBuffersARB(1, &m_Buffer);
+				glGenBuffers(1, &m_Buffer);
 				bind();
-				glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, size*sizeof(T), NULL,
-					m_Dynamic ? GL_STREAM_DRAW_ARB : GL_STATIC_DRAW_ARB);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, size * sizeof(T), NULL,
+					m_Dynamic ? GL_STREAM_DRAW : GL_STATIC_DRAW);
 				unbind();
 			}
 			catch(...)
@@ -287,7 +287,7 @@ public:
 	virtual ~COpenGLIndexBuffer()
 	{
 		if (m_Buffer)
-			glDeleteBuffersARB(1, &m_Buffer); 
+			glDeleteBuffers(1, &m_Buffer); 
 	}
 
 	virtual void* lock(E_RENDER_BUFFER_LOCK_MODE mode)
@@ -298,7 +298,7 @@ public:
 		if (!IVideoBuffer::lock(mode))
 			return NULL;
 		bind();
-		return glMapBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, convertToOGLLockMode(mode));
+		return glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, convertToOGLLockMode(mode));
 	}
 
 	virtual bool unlock()
@@ -308,15 +308,15 @@ public:
 			if (!COpenGLIndexArray<T>::unlock())
 				return false;
 			bind();
-			glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_Size * sizeof(T), m_Array,
-				m_Dynamic ? GL_STREAM_DRAW_ARB : GL_STATIC_DRAW_ARB);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Size * sizeof(T), m_Array,
+				m_Dynamic ? GL_STREAM_DRAW : GL_STATIC_DRAW);
 			unbind();
 			return true;
 		}
 		
 		if (!IVideoBuffer::unlock())
 			return false;
-		glUnmapBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB);
+		glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
 		unbind();
 		return true;
 	}
@@ -325,10 +325,10 @@ public:
 	{ return m_Buffer != 0; }
 
 	void bind()
-	{ glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_Buffer); }
+	{ glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffer); }
 
 	void unbind()
-	{ glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0); }
+	{ glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); }
 
 private:
 
