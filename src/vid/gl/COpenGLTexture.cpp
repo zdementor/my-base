@@ -25,8 +25,8 @@ namespace vid {
 
 //----------------------------------------------------------------------------
 
-COpenGLTexture::COpenGLTexture() 
-	: CNullHardwareTexture(), m_Created(false)
+COpenGLTexture::COpenGLTexture(u32 flags) 
+	: CNullHardwareTexture(flags), m_Created(false)
 {
 #if MY_DEBUG_MODE 
 	IUnknown::setClassName("COpenGLTexture");

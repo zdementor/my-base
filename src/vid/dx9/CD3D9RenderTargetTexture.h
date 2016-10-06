@@ -26,7 +26,7 @@ class CD3D9RenderTargetTexture : public CD3D9Texture
 public:
 
     CD3D9RenderTargetTexture(
-		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat);
+		const core::dimension2di &size, img::E_COLOR_FORMAT format, u32 flags);
     virtual ~CD3D9RenderTargetTexture();
 
 	// interface CD3D9Texture

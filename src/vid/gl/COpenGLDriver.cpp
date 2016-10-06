@@ -1764,10 +1764,10 @@ void COpenGLDriver::setTextureFilter(E_TEXTURE_FILTER textureFilter)
 //---------------------------------------------------------------------------
 
 ITexture* COpenGLDriver::createRenderTargetTexture(
-	const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat)
+	const core::dimension2di &size, img::E_COLOR_FORMAT format)
 {
 	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
-		new COpenGLRenderTargetTexture(size, colorFormat) : NULL;
+		new COpenGLRenderTargetTexture(size, format, TextureCreationFlags) : NULL;
 }
 
 //---------------------------------------------------------------------------

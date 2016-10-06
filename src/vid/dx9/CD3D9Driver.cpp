@@ -1480,10 +1480,10 @@ bool CD3D9Driver::_makeScreenShot(img::IImage *image)
 //----------------------------------------------------------------------------
 
 ITexture* CD3D9Driver::createRenderTargetTexture(
-	const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat)
+	const core::dimension2di &size, img::E_COLOR_FORMAT format)
 {
     return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
-		new CD3D9RenderTargetTexture(size, colorFormat) : NULL;
+		new CD3D9RenderTargetTexture(size, format, TextureCreationFlags) : NULL;
 }
 
 //---------------------------------------------------------------------------

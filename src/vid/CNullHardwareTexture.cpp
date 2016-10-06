@@ -20,24 +20,6 @@ namespace my {
 namespace vid {
 //----------------------------------------------------------------------------
 
-CNullHardwareTexture::CNullHardwareTexture() 
-	: m_Driver((CNullDriver*)VIDEO_DRIVER_PTR),
-	m_TextureSize(0,0), m_ImageSize(0,0),
-	m_Pitch(0), m_ColorFormat(img::ECF_A8R8G8B8), m_MaxMipMapLevels(1),
-	m_AutogenMipMaps(false), m_IsCompressed(false),
-	m_BytesPerPixel(0), m_Type(ETT_COLOR_MAP), m_Format(ETF_TEXTURE_2D)
-{
-#if MY_DEBUG_MODE 
-	IUnknown::setClassName("CNullHardwareTexture"); 
-#endif
-	memset(m_LockImage,
-		0, MY_TEXTURE_MAX_MIP_LEVELS * sizeof(*m_LockImage));
-	memset(m_ImageDataSizeBytes,
-		0, MY_TEXTURE_MAX_MIP_LEVELS * sizeof(*m_ImageDataSizeBytes));
-}
-
-//----------------------------------------------------------------------------
-
 CNullHardwareTexture::CNullHardwareTexture(u32 flags)
 	: m_Driver((CNullDriver*)VIDEO_DRIVER_PTR),
 	m_CreationFlags(flags), m_TextureSize(0,0), m_ImageSize(0,0),

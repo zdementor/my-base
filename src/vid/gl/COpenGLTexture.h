@@ -42,7 +42,7 @@ public:
 
 protected:
 
-	COpenGLTexture();
+	COpenGLTexture(u32 flags);
 
 	virtual bool createHardwareTexture(bool renderTarget);
 

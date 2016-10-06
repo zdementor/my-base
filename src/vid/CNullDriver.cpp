@@ -1001,7 +1001,6 @@ bool CNullDriver::checkPrimitiveCount(s32 vtxCount)
 
 //---------------------------------------------------------------------------
 
-//! Enables or disables a texture creation flag.
 void CNullDriver::setTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag, bool enabled)
 {
 	if (enabled && (

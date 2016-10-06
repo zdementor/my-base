@@ -25,14 +25,14 @@ namespace vid {
 //----------------------------------------------------------------------------
 
 CD3D9RenderTargetTexture::CD3D9RenderTargetTexture(
-	const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat) 
-	: CD3D9Texture(), m_D3DSurface(0)
+	const core::dimension2di &size, img::E_COLOR_FORMAT format, u32 flags) 
+	: CD3D9Texture(flags), m_D3DSurface(0)
 {
 #if MY_DEBUG_MODE 
     IUnknown::setClassName("CD3D9RenderTargetTexture");
 #endif
 
-	bool ret = createEmptyTexture(size, colorFormat, true);
+	bool ret = createEmptyTexture(size, format, true);
 
 	if (ret)
 	{

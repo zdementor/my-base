@@ -28,7 +28,6 @@ class CNullHardwareTexture : public ITexture
 {
 public:
 
-	CNullHardwareTexture();
     CNullHardwareTexture(u32 flags);
     virtual ~CNullHardwareTexture();
 

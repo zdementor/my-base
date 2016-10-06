@@ -26,7 +26,7 @@ class COpenGLRenderTargetTexture : public COpenGLTexture
 public:
 
 	COpenGLRenderTargetTexture(
-		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat);
+		const core::dimension2di &size, img::E_COLOR_FORMAT format, u32 flags);
     virtual ~COpenGLRenderTargetTexture();
 
 	virtual bool isRenderTarget() { return true; }

@@ -44,7 +44,7 @@ public:
 
 protected:
 
-	CD3D9Texture();
+	CD3D9Texture(u32 flags);
 
 	virtual bool createHardwareTexture(bool renderTarget);
 

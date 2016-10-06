@@ -22,8 +22,8 @@ namespace vid {
 //----------------------------------------------------------------------------
 
 COpenGLRenderTargetTexture::COpenGLRenderTargetTexture(
-	const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat)
-	: COpenGLTexture()
+	const core::dimension2di &size, img::E_COLOR_FORMAT format, u32 flags)
+	: COpenGLTexture(flags)
 {
 #if MY_DEBUG_MODE 
 	IUnknown::setClassName("COpenGLRenderTargetTexture");    
@@ -31,7 +31,7 @@ COpenGLRenderTargetTexture::COpenGLRenderTargetTexture(
 	m_TextureName.v = NULL;
 	memset(m_ImageData, 0, MY_TEXTURE_MAX_MIP_LEVELS * sizeof(*m_ImageData));
 
-	bool ret = createEmptyTexture(size, colorFormat, true);
+	bool ret = createEmptyTexture(size, format, true);
 	if (ret)
 		createTextureLevel(0,  NULL, 0, m_ColorFormat);
 	m_Created = true;

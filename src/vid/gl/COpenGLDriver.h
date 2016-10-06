@@ -75,7 +75,7 @@ public:
 	virtual void setTextureFilter(E_TEXTURE_FILTER textureFilter);
 
 	virtual ITexture* createRenderTargetTexture(
-		const core::dimension2di &size, img::E_COLOR_FORMAT colorFormat);
+		const core::dimension2di &size, img::E_COLOR_FORMAT format);
 
 	virtual IRenderTarget* addRenderTarget(const core::dimension2di &size,
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat);

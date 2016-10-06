@@ -24,8 +24,8 @@ namespace my {
 namespace vid {
 //----------------------------------------------------------------------------
 
-CD3D9Texture::CD3D9Texture() 
-	: CNullHardwareTexture()
+CD3D9Texture::CD3D9Texture(u32 flags) 
+	: CNullHardwareTexture(flags)
 {
 #if MY_DEBUG_MODE 
 	IUnknown::setClassName("CD3D9Texture");    	
