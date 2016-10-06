@@ -461,8 +461,8 @@ public:
 	virtual const img::SColor& getShadowColor() const
 	{ return m_ShadowColor; }
 
-	virtual void draw(IRenderBuffer * rbuf)
-	{ _renderBuffer(rbuf); }
+	virtual void renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass);
+	virtual void renderBuffer(IRenderBuffer *rbuf, const SMaterial &mat);
 
 	virtual f64 getFrameCurrentRenderTimeSec();
 	virtual f64 getFrameFilteredRenderTimeSec();
@@ -559,9 +559,7 @@ protected:
 
 	void _renderLightedRenderPools(core::array <SRenderPool*> & rpools);
 
-	virtual void _renderBuffer(IRenderBuffer * rbuf);
-
-	virtual void _renderStencilVolume(IRenderBuffer * rbuf, bool zfail);
+	virtual void _renderStencilVolume(IRenderBuffer *rbuf, const SRenderPass &pass, bool zfail);
 
 	void _sort();
 	void _render();

@@ -2363,16 +2363,10 @@ void CNullDriver::_renderLightedRenderPools(
 					u32 rb_size = rpool.RenderBuffers->size();
 					for (u32 k = 0; k < rb_size; k++)
 					{
-						vid::IRenderBuffer * rb = (*rpool.RenderBuffers)[k];
-						const vid::SMaterial * mat = (*rpool.Materials)[k];
+						vid::IRenderBuffer *rb = (*rpool.RenderBuffers)[k];
+						const vid::SMaterial *mat = (*rpool.Materials)[k];
 
-						u32 passes_size = mat->getPassesCount();
-						for (u32 p = 0; p < passes_size; p++)
-						{					
-							const vid::SRenderPass &pass = mat->getPass(p);
-							setRenderPass(pass);
-							_renderBuffer(rb);
-						}
+						renderBuffer(rb, *mat);
 					}
 				}
 				break;
@@ -2412,10 +2406,10 @@ void CNullDriver::_renderLightedRenderPools(
 					u32 rb_size = rpool.RenderBuffers->size();
 					for (u32 k = 0; k < rb_size; k++)
 					{
-						vid::IRenderBuffer * rb = (*rpool.RenderBuffers)[k];
-						const vid::SMaterial * mat = (*rpool.Materials)[k];
-							setRenderPass(mat->getPass(0));
-						_renderStencilVolume(rb, zfail);
+						vid::IRenderBuffer *rb = (*rpool.RenderBuffers)[k];
+						const vid::SMaterial *mat = (*rpool.Materials)[k];
+
+						_renderStencilVolume(rb, mat->getPass(0), zfail);
 					}
 					//_setupStencil(ESO_KEEP, ESO_KEEP, ESO_KEEP, ECT_ALWAYS);
 					setColorMask(colmask);
@@ -2488,11 +2482,11 @@ void CNullDriver::_renderLightedRenderPools(
 								layer1.setTexture(m_LightSphereWhiteTexture, vid::ETLT_ATTENUATION_MAP);
 								pass.Layers[0] = layer1;
 								pass.setLightingMode(vid::ELM_NONE);
-								setRenderPass(pass);
+
+								renderBuffer(rb, pass);
 							}
 							else
-								setRenderPass(pass);
-							_renderBuffer(rb);
+								renderBuffer(rb, pass);
 						}
 					}
 					setColorMask(colmask);
@@ -2610,8 +2604,7 @@ void CNullDriver::_renderLightedRenderPools(
 							pass.setDepthTest(vid::ECT_EQUAL);
 							pass.setBlendFuncs(vid::ESBF_ONE_MINUS_DST_ALPHA, vid::EDBF_ONE);
 
-							setRenderPass(pass);
-							_renderBuffer(rb);
+							renderBuffer(rb, pass);
 						}
 					}
 				}
@@ -2643,11 +2636,12 @@ void CNullDriver::_renderLightedRenderPools(
 
 //---------------------------------------------------------------------------
 
-void CNullDriver::_renderBuffer(IRenderBuffer * rbuf)
+void CNullDriver::renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass)
 {
 	m_TrianglesDrawn += rbuf->getPrimitiveCount();
 	m_DIPsDrawn++;
 
+	setRenderPass(pass);
 	_setVertexType(rbuf->getVertices()->getType());
 	_setRenderStates();
 	
@@ -2736,10 +2730,27 @@ void CNullDriver::_renderBuffer(IRenderBuffer * rbuf)
 
 //---------------------------------------------------------------------------
 
-void CNullDriver::_renderStencilVolume(IRenderBuffer *rbuf, bool zfail)
+void CNullDriver::renderBuffer(IRenderBuffer *rbuf, const SMaterial &mat)
+{
+	u32 passes_size = mat.getPassesCount();
+	for (u32 p = 0; p < passes_size; p++)
+	{					
+		const vid::SRenderPass &pass = mat.getPass(p);
+
+		renderBuffer(rbuf, pass);
+	}
+}
+
+//---------------------------------------------------------------------------
+
+void CNullDriver::_renderStencilVolume(IRenderBuffer *rbuf, const SRenderPass &pass, bool zfail)
 {
 	m_TrianglesDrawn += (m_TwoSidedStencil ? 1 : 2) * rbuf->getPrimitiveCount();
 	m_DIPsDrawn += (m_TwoSidedStencil ? 1 : 2) ;
+
+	setRenderPass(pass);
+	_setVertexType(rbuf->getVertices()->getType());
+	_setRenderStates();
 }
 
 //---------------------------------------------------------------------------
@@ -2843,13 +2854,8 @@ void CNullDriver::renderPass(E_RENDER_PASS pass)
 						{
 							vid::IRenderBuffer *rb = (*rpool.RenderBuffers)[k];
 							const vid::SMaterial *mat = (*rpool.Materials)[k];
-							u32 passes_size = mat->getPassesCount();
-							for (u32 p = 0; p < passes_size; p++)
-							{					
-								const vid::SRenderPass &pass = mat->getPass(p);
-								setRenderPass(pass);
-								_renderBuffer(rb);
-							}
+
+							renderBuffer(rb, *mat);
 						}
 					}
 				}
@@ -2894,13 +2900,8 @@ void CNullDriver::renderPass(E_RENDER_PASS pass)
 						{
 							vid::IRenderBuffer *rb = (*rpool.RenderBuffers)[k];
 							const vid::SMaterial *mat = (*rpool.Materials)[k];
-							u32 passes_size = mat->getPassesCount();
-							for (u32 p = 0; p < passes_size; p++)
-							{					
-								const vid::SRenderPass &pass = mat->getPass(p);
-								setRenderPass(pass);
-								_renderBuffer(rb);
-							}
+	
+							renderBuffer(rb, *mat);
 						}
 					}
 				}

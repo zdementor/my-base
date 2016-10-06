@@ -440,15 +440,12 @@ bool COpenGLDriver::_makeScreenShot(img::IImage *image)
 
 //----------------------------------------------------------------------------
 
-void COpenGLDriver::_renderStencilVolume(IRenderBuffer * rbuf, bool zfail)
+void COpenGLDriver::_renderStencilVolume(IRenderBuffer * rbuf, const SRenderPass &pass, bool zfail)
 {
 	if (!m_StencilBuffer)  
         return;
 
-	CNullDriver::_renderStencilVolume(rbuf, zfail);
-
-	_setVertexType(rbuf->getVertices()->getType());
-	_setRenderStates();
+	CNullDriver::_renderStencilVolume(rbuf, pass, zfail);
 
 	glPushAttrib(GL_STENCIL_BUFFER_BIT);
 
@@ -501,7 +498,7 @@ void COpenGLDriver::_renderStencilVolume(IRenderBuffer * rbuf, bool zfail)
 				GL_KEEP,	// stencil test fail
 				GL_DECR,	// depth test fail
 				GL_KEEP);	// depth test pass
-			/// Draw front-side of shadow volume in stencil only
+			// Draw front-side of shadow volume in stencil only
 			glFrontFace( GL_CCW );
 			((CNullRenderBuffer*)rbuf)->draw();
 		}
@@ -1899,27 +1896,15 @@ void COpenGLDriver::render2DRect(const SMaterial &material,
 
 	// seet render states
 	_disableStencil();
-	_setVertexType(vertices->Type);
 
 	// draw
-	COpenGLRenderArray<vid::S3DVertex1TCoords, u16> arr(
+	COpenGLRenderArray<vid::S3DVertex1TCoords, u16> rbuf(
 		this,
 		vertices, sizeof(vertices) / sizeof(*vertices),
 		NULL, 0,
 		vid::EDPT_TRIANGLE_FAN,
 		false);
-	u32 passes_size = material.getPassesCount();
-	for (u32 p = 0; p < passes_size; p++)
-	{					
-		const vid::SRenderPass &pass = material.getPass(p);
-
-		setRenderPass(pass);
-		_setRenderStates();
-		arr.draw();
-
-		m_TrianglesDrawn += 2;
-		m_DIPsDrawn += 1;
-	}
+	renderBuffer(&rbuf, material);
 
 	// restore modified states
 	if (stencil)

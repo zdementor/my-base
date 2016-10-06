@@ -659,8 +659,9 @@ public:
     //! Returns the current color of shadows.
     virtual const img::SColor& getShadowColor() const = 0;
 
-	//! Immediately drawing render buffer
-	virtual void draw(IRenderBuffer * rbuf) = 0;
+	//! Immediately draw render buffer
+	virtual void renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass) = 0;
+	virtual void renderBuffer(IRenderBuffer *rbuf, const SMaterial &mat) = 0;
 
 	virtual f64 getFrameCurrentRenderTimeSec() = 0;
 	virtual f64 getFrameFilteredRenderTimeSec() = 0;

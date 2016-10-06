@@ -1265,8 +1265,7 @@ ISceneNode* CAnimatedMeshSceneNode::attachImposter(
 								pass.setDiffuseColor (creation_params.DiffuseColor);
 								pass.setSpecularColor(creation_params.SpecularColor);
 
-								m_VideoDriver.setRenderPass(pass);
-								m_VideoDriver.draw(rb);
+								m_VideoDriver.renderBuffer(rb, pass);
 							}
 						}			
 						LOGGER.logInfo(" Rendered %d frame [%d, %d] "

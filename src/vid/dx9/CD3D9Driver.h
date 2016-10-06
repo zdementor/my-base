@@ -127,7 +127,7 @@ private:
 	virtual void _setupScissor(s32 left, s32 top, u32 width, u32 height);
 	virtual void _disableScissor();
 
-	virtual void _renderStencilVolume(IRenderBuffer * rbuf, bool zfail);
+	virtual void _renderStencilVolume(IRenderBuffer *rbuf, const SRenderPass &pass, bool zfail);
 
 	virtual bool _beginRendering();
 	virtual bool _endRendering();

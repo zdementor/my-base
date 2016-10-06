@@ -152,7 +152,7 @@ private:
 
 	virtual void _renderScreenRect(const img::SColor &color);
 
-	virtual void _renderStencilVolume(IRenderBuffer *rbuf, bool zfail);
+	virtual void _renderStencilVolume(IRenderBuffer *rbuf, const SRenderPass &pass, bool zfail);
 
 	virtual bool _beginRendering();
 	virtual bool _endRendering();

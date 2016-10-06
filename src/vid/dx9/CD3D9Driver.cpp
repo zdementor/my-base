@@ -1599,18 +1599,15 @@ void CD3D9Driver::clearColor(u8 r, u8 g, u8 b, u8 a)
 
 	// set render states
 	_disableStencil();
-	_setVertexType(vtx->Type);
 
 	// draw
-	CD3D9RenderArray<S3DVertexSimpleColoured, u16> arr(
+	CD3D9RenderArray<S3DVertexSimpleColoured, u16> rbuf(
 		m_D3DDevice,
 		vtx, sizeof(vtx) / sizeof(*vtx),
 		NULL, 0,
 		vid::EDPT_TRIANGLE_STRIP,
 		false);
-	setRenderPass(pass);
-	_setRenderStates();
-	arr.draw();
+	renderBuffer(&rbuf, pass);
 
 	m_TrianglesDrawn += 2;
 	m_DIPsDrawn += 1;
@@ -1659,27 +1656,15 @@ void CD3D9Driver::render2DRect(const SMaterial &material,
 
 	// set render states
 	_disableStencil();
-	_setVertexType(vertices->Type);
 
 	// draw
-	CD3D9RenderArray<vid::S3DVertex1TCoords, u16> arr(
+	CD3D9RenderArray<vid::S3DVertex1TCoords, u16> rbuf(
 		m_D3DDevice,
 		vertices, sizeof(vertices) / sizeof(*vertices),
 		NULL, 0,
 		vid::EDPT_TRIANGLE_FAN,
 		false);
-	u32 passes_size = material.getPassesCount();
-	for (u32 p = 0; p < passes_size; p++)
-	{					
-		const vid::SRenderPass &pass = material.getPass(p);
-
-		setRenderPass(pass);
-		_setRenderStates();
-		arr.draw();
-
-		m_TrianglesDrawn += 2;
-		m_DIPsDrawn += 1;
-	}
+	renderBuffer(&rbuf, material);
 
 	// restore modified states
 	if (stencil)
@@ -1886,15 +1871,12 @@ inline IRenderBuffer * CD3D9Driver::createDynamicRenderBufferTemplate(
 
 //----------------------------------------------------------------------------
 
-void CD3D9Driver::_renderStencilVolume(IRenderBuffer * rbuf, bool zfail)
+void CD3D9Driver::_renderStencilVolume(IRenderBuffer *rbuf, const SRenderPass &pass, bool zfail)
 {
 	if (!m_StencilBuffer)  
         return;
 
-	CNullDriver::_renderStencilVolume(rbuf, zfail);
-
-	_setVertexType(rbuf->getVertices()->getType());
-	_setRenderStates();
+	CNullDriver::_renderStencilVolume(rbuf, pass, zfail);
 
 	if (zfail)
 	// ZFAIL Method
