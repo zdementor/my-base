@@ -1876,6 +1876,12 @@ void CD3D9Driver::_renderStencilVolume(IRenderBuffer *rbuf, const SRenderPass &p
 	if (!m_StencilBuffer)  
         return;
 
+	if (!((CNullRenderBuffer*)rbuf)->bind())
+	{
+		LOGGER.logErr(__FUNCTION__ ": Can not bind buffer to render!");
+		return;
+	}
+
 	CNullDriver::_renderStencilVolume(rbuf, pass, zfail);
 
 	if (zfail)
@@ -1887,7 +1893,7 @@ void CD3D9Driver::_renderStencilVolume(IRenderBuffer *rbuf, const SRenderPass &p
 		// Draw back-side of shadow volume in stencil only
 		m_D3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW );
 
-		((CNullRenderBuffer*)rbuf)->draw();     
+		((CNullRenderBuffer*)rbuf)->render();     
 	    
 		// Second Pass:
 		// If ztest fail decrement stencil buffer value
@@ -1895,7 +1901,7 @@ void CD3D9Driver::_renderStencilVolume(IRenderBuffer *rbuf, const SRenderPass &p
 		// Draw front-side of shadow volume in stencil only
 		m_D3DDevice->SetRenderState( D3DRS_CULLMODE,   D3DCULL_CCW );
 
-		((CNullRenderBuffer*)rbuf)->draw();
+		((CNullRenderBuffer*)rbuf)->render();
 	}
 	else
 	// ZPASS Method        
@@ -1917,7 +1923,7 @@ void CD3D9Driver::_renderStencilVolume(IRenderBuffer *rbuf, const SRenderPass &p
 			// turn off culling
 			m_D3DDevice->SetRenderState( D3DRS_CULLMODE,  D3DCULL_NONE );
 
-			((CNullRenderBuffer*)rbuf)->draw();
+			((CNullRenderBuffer*)rbuf)->render();
 
 			// turn off two sided stencil
 			m_D3DDevice->SetRenderState( D3DRS_TWOSIDEDSTENCILMODE, FALSE );
@@ -1930,7 +1936,7 @@ void CD3D9Driver::_renderStencilVolume(IRenderBuffer *rbuf, const SRenderPass &p
 			// Draw front-side of shadow volume in stencil only
 			m_D3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW );
 
-			((CNullRenderBuffer*)rbuf)->draw();   	
+			((CNullRenderBuffer*)rbuf)->render();   	
 
 			// Second Pass:
 			// Decrement stencil buffer value
@@ -1938,9 +1944,11 @@ void CD3D9Driver::_renderStencilVolume(IRenderBuffer *rbuf, const SRenderPass &p
 			// Draw back-side of shadow volume in stencil only
 			m_D3DDevice->SetRenderState( D3DRS_CULLMODE,   D3DCULL_CW );
 
-			((CNullRenderBuffer*)rbuf)->draw();
+			((CNullRenderBuffer*)rbuf)->render();
 		}
 	}
+
+	((CNullRenderBuffer*)rbuf)->unbind();
 
 	// restore modified states
 	if (m_CurrentRenderPass.getFlag(EMF_FRONT_FACE_CCW))

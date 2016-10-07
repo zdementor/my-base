@@ -2638,6 +2638,38 @@ void CNullDriver::_renderLightedRenderPools(
 
 void CNullDriver::renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass)
 {
+	if (!((CNullRenderBuffer*)rbuf)->bind())
+	{
+		LOGGER.logErr(__FUNCTION__ ": Can not bind buffer to render!");
+		return;
+	}
+
+	_renderBuffer(rbuf, pass);
+
+	((CNullRenderBuffer*)rbuf)->unbind();
+}
+
+//---------------------------------------------------------------------------
+
+void CNullDriver::renderBuffer(IRenderBuffer *rbuf, const SMaterial &mat)
+{
+	if (!((CNullRenderBuffer*)rbuf)->bind())
+	{
+		LOGGER.logErr(__FUNCTION__ ": Can not bind buffer to render!");
+		return;
+	}
+
+	u32 pCnt = mat.getPassesCount();
+	for (u32 p = 0; p < pCnt; p++)
+		_renderBuffer(rbuf, mat.getPass(p));
+
+	((CNullRenderBuffer*)rbuf)->unbind();
+}
+
+//---------------------------------------------------------------------------
+
+void CNullDriver::_renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass)
+{
 	m_TrianglesDrawn += rbuf->getPrimitiveCount();
 	m_DIPsDrawn++;
 
@@ -2706,7 +2738,7 @@ void CNullDriver::renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass)
 				m_DIPsDrawn++;
 				_setRenderStates();
 			}
-			((CNullRenderBuffer*)rbuf)->draw();
+			((CNullRenderBuffer*)rbuf)->render();
 
 			firstPass = false;
 		}
@@ -2724,20 +2756,7 @@ void CNullDriver::renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass)
 	}
 	else
 	{
-		((CNullRenderBuffer*)rbuf)->draw();
-	}
-}
-
-//---------------------------------------------------------------------------
-
-void CNullDriver::renderBuffer(IRenderBuffer *rbuf, const SMaterial &mat)
-{
-	u32 passes_size = mat.getPassesCount();
-	for (u32 p = 0; p < passes_size; p++)
-	{					
-		const vid::SRenderPass &pass = mat.getPass(p);
-
-		renderBuffer(rbuf, pass);
+		((CNullRenderBuffer*)rbuf)->render();
 	}
 }
 

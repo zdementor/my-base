@@ -111,6 +111,7 @@
 #define GL_ARB_texture_float 1
 #define GL_ARB_framebuffer_object 1
 #define GL_ARB_texture_non_power_of_two 1
+#define GL_ARB_vertex_array_object 1
 #endif
 
 #if defined(__gl_h_) || defined(__GL_H__) || defined(__X_GL_H)

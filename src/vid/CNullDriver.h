@@ -559,6 +559,8 @@ protected:
 
 	void _renderLightedRenderPools(core::array <SRenderPool*> & rpools);
 
+	void _renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass);
+
 	virtual void _renderStencilVolume(IRenderBuffer *rbuf, const SRenderPass &pass, bool zfail);
 
 	void _sort();

@@ -46,6 +46,8 @@ m_OpenGLHardwareOcclusionQuery(0)
 	IVideoDriver::setClassName("COpenGLDriver::IVideoDriver");
 #endif
 	m_DriverType = (E_DRIVER_TYPE)__MY_BUILD_GL_VER__;
+
+	memset(m_EnabledAttrib, 0, sizeof(m_EnabledAttrib));
 }
 
 //---------------------------------------------------------------------------
@@ -417,6 +419,138 @@ COpenGLDriver::~COpenGLDriver()
 
 //---------------------------------------------------------------------------
 
+void COpenGLDriver::renderPass(E_RENDER_PASS pass)
+{
+	CNullDriver::renderPass(pass);
+
+	_setupAttributes();
+
+#ifdef GL_VERSION_1_2
+	glClientActiveTexture(GL_TEXTURE0);
+#endif
+}
+
+//---------------------------------------------------------------------------
+
+#define MY_ENABLE_CLIENT_STATE(index, state, func) \
+	if (!m_EnabledAttrib[index]) \
+	{ \
+		func; \
+		glEnableClientState(state); \
+		m_EnabledAttrib[index] = true; \
+	}
+
+#define MY_DISABLE_CLIENT_STATE(index, state, func) \
+	if (m_EnabledAttrib[index]) \
+	{ \
+		func; \
+		glDisableClientState(state); \
+		m_EnabledAttrib[index] = false; \
+	}
+
+//---------------------------------------------------------------------------
+
+void COpenGLDriver::_setupAttributes(
+	GLenum type0, s32 size0, s32 stride0, const void *ptr0,
+	GLenum type1, s32 size1, s32 stride1, const void *ptr1,
+	GLenum type2, s32 size2, s32 stride2, const void *ptr2,
+	GLenum type3, s32 size3, s32 stride3, const void *ptr3,
+	GLenum type4, s32 size4, s32 stride4, const void *ptr4,
+	GLenum type5, s32 size5, s32 stride5, const void *ptr5,
+	GLenum type6, s32 size6, s32 stride6, const void *ptr6
+	)
+{
+	(void)size1; // normal
+
+	if (type0 != GL_NONE)
+	{
+		MY_ENABLE_CLIENT_STATE(0, GL_VERTEX_ARRAY, (void)0)
+		glVertexPointer(size0, type0, stride0, ptr0);
+	}
+	else
+	{
+		MY_DISABLE_CLIENT_STATE(0, GL_VERTEX_ARRAY, (void)0)
+	}
+
+	if (type1 != GL_NONE)
+	{
+		MY_ENABLE_CLIENT_STATE(1, GL_NORMAL_ARRAY, (void)0)
+		glNormalPointer(type1, stride1, ptr1);
+	}
+	else
+	{
+		MY_DISABLE_CLIENT_STATE(1, GL_NORMAL_ARRAY, (void)0)
+	}
+
+	if (type2 != GL_NONE)
+	{
+		MY_ENABLE_CLIENT_STATE(2, GL_COLOR_ARRAY, (void)0)
+		glColorPointer(size2, type2, stride2, ptr2);
+	}
+	else
+	{
+		MY_DISABLE_CLIENT_STATE(2, GL_COLOR_ARRAY, (void)0)
+	}
+
+#ifndef GL_VERSION_1_2
+	if (type3 != GL_NONE)
+	{
+		MY_ENABLE_CLIENT_STATE(3, GL_TEXTURE_COORD_ARRAY, (void)0)
+		glTexCoordPointer(size3, type3, stride3, ptr3);
+	}
+	else
+	{
+		MY_DISABLE_CLIENT_STATE(3, GL_TEXTURE_COORD_ARRAY, (void)0)
+	}
+#else
+	if (type3 != GL_NONE)
+	{
+		glClientActiveTexture(GL_TEXTURE0 + 0);
+		MY_ENABLE_CLIENT_STATE(3, GL_TEXTURE_COORD_ARRAY, (void)0)
+		glTexCoordPointer(size3, type3, stride3, ptr3);
+	}
+	else
+	{
+		MY_DISABLE_CLIENT_STATE(3, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE0 + 0))
+	}
+
+	if (type4 != GL_NONE)
+	{
+		glClientActiveTexture(GL_TEXTURE0 + 1);
+		MY_ENABLE_CLIENT_STATE(4, GL_TEXTURE_COORD_ARRAY, (void)0)
+		glTexCoordPointer(size4, type4, stride4, ptr4);
+	}
+	else
+	{
+		MY_DISABLE_CLIENT_STATE(4, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE0 + 1))
+	}
+
+	if (type5 != GL_NONE)
+	{
+		glClientActiveTexture(GL_TEXTURE0 + 2);
+		MY_ENABLE_CLIENT_STATE(5, GL_TEXTURE_COORD_ARRAY, (void)0)
+		glTexCoordPointer(size5, type5, stride5, ptr5);
+	}
+	else
+	{
+		MY_DISABLE_CLIENT_STATE(5, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE0 + 2))
+	}
+
+	if (type6 != GL_NONE)
+	{
+		glClientActiveTexture(GL_TEXTURE0 + 3);
+		MY_ENABLE_CLIENT_STATE(6, GL_TEXTURE_COORD_ARRAY, (void)0)
+		glTexCoordPointer(size6, type6, stride6, ptr6);
+	}
+	else
+	{
+		MY_DISABLE_CLIENT_STATE(6, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE0 + 3))
+	}
+#endif
+}
+
+//---------------------------------------------------------------------------
+
 bool COpenGLDriver::_makeScreenShot(img::IImage *image)
 {
 	c8 *p = (c8 *)image->getData();
@@ -441,6 +575,12 @@ void COpenGLDriver::_renderStencilVolume(IRenderBuffer * rbuf, const SRenderPass
 {
 	if (!m_StencilBuffer)  
         return;
+
+	if (!((CNullRenderBuffer*)rbuf)->bind())
+	{
+		LOGGER.logErr(__FUNCTION__ ": Can not bind buffer to render!");
+		return;
+	}
 
 	CNullDriver::_renderStencilVolume(rbuf, pass, zfail);
 
@@ -473,7 +613,7 @@ void COpenGLDriver::_renderStencilVolume(IRenderBuffer * rbuf, const SRenderPass
 				glStencilFuncSeparateATI(GL_ALWAYS, GL_ALWAYS, 1, 0xFFFFFFFFL);
 			}
 #endif
-			((CNullRenderBuffer*)rbuf)->draw();
+			((CNullRenderBuffer*)rbuf)->render();
 		}
 		else
 		{
@@ -487,7 +627,7 @@ void COpenGLDriver::_renderStencilVolume(IRenderBuffer * rbuf, const SRenderPass
 				GL_KEEP);	// depth test pass
 			// Draw back-side of shadow volume in stencil only
 			glFrontFace( GL_CW );
-			((CNullRenderBuffer*)rbuf)->draw();
+			((CNullRenderBuffer*)rbuf)->render();
 
 			// Second Pass:
 			// If ztest fail decrement stencil buffer value
@@ -497,7 +637,7 @@ void COpenGLDriver::_renderStencilVolume(IRenderBuffer * rbuf, const SRenderPass
 				GL_KEEP);	// depth test pass
 			// Draw front-side of shadow volume in stencil only
 			glFrontFace( GL_CCW );
-			((CNullRenderBuffer*)rbuf)->draw();
+			((CNullRenderBuffer*)rbuf)->render();
 		}
 	}
 	else
@@ -527,7 +667,7 @@ void COpenGLDriver::_renderStencilVolume(IRenderBuffer * rbuf, const SRenderPass
 				glStencilFuncSeparateATI(GL_ALWAYS, GL_ALWAYS, 1, 0xFFFFFFFFL);
 			}
 #endif
-			((CNullRenderBuffer*)rbuf)->draw();
+			((CNullRenderBuffer*)rbuf)->render();
 		}
 		else
 		{
@@ -541,7 +681,7 @@ void COpenGLDriver::_renderStencilVolume(IRenderBuffer * rbuf, const SRenderPass
 				GL_INCR);	// depth test pass
 			// Draw front-side of shadow volume in stencil only
 			glFrontFace( GL_CCW );
-			((CNullRenderBuffer*)rbuf)->draw();
+			((CNullRenderBuffer*)rbuf)->render();
 
 			// Second Pass:
 			// Decrement stencil buffer value
@@ -551,9 +691,11 @@ void COpenGLDriver::_renderStencilVolume(IRenderBuffer * rbuf, const SRenderPass
 				GL_DECR);	// depth test pass
 			// Draw back-side of shadow volume in stencil only
 			glFrontFace(GL_CW);
-			((CNullRenderBuffer*)rbuf)->draw();
+			((CNullRenderBuffer*)rbuf)->render();
 		}
 	}
+
+	((CNullRenderBuffer*)rbuf)->unbind();
 
 	// restore initial states
 	glPopAttrib();

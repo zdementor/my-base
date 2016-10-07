@@ -37,6 +37,8 @@ typedef char GLchar;
 #include <GL/glew.h>
 #include <GL/wglew.h>
 
+#define MY_VERTEX_MAX_ATTRIBS (MY_MATERIAL_MAX_LAYERS+3)
+
 //---------------------------------------------------------------------------
 namespace my {
 namespace vid {
@@ -120,12 +122,24 @@ public:
 	virtual bool setRenderContextCurrent();
 	virtual bool setNullContextCurrent();
 
+	virtual void renderPass(E_RENDER_PASS pass);
+
 	virtual bool _bindGPUProgram(IGPUProgram* gpu_prog);
 
-	void _setTextureCoords(const void* tc, const void* tc2,
-		const void* tangents, const void* binormals,
-		s32 tc_stride);
-	void _unsetTextureCoords();
+	void _setupTextureCoords(
+		const void* tc = 0, const void* tc2 = 0,
+		const void* tangents = 0, const void* binormals = 0,
+		s32 tc_stride = 0);
+
+	void _setupAttributes(
+		GLenum type0 = GL_NONE, s32 size0 = 0, s32 stride0 = 0, const void *ptr0 = 0,
+		GLenum type1 = GL_NONE, s32 size1 = 0, s32 stride1 = 0, const void *ptr1 = 0,
+		GLenum type2 = GL_NONE, s32 size2 = 0, s32 stride2 = 0, const void *ptr2 = 0,
+		GLenum type3 = GL_NONE, s32 size3 = 0, s32 stride3 = 0, const void *ptr3 = 0,
+		GLenum type4 = GL_NONE, s32 size4 = 0, s32 stride4 = 0, const void *ptr4 = 0,
+		GLenum type5 = GL_NONE, s32 size5 = 0, s32 stride5 = 0, const void *ptr5 = 0,
+		GLenum type6 = GL_NONE, s32 size6 = 0, s32 stride6 = 0, const void *ptr6 = 0
+		);
 
 	virtual void _setTexture(s32 stage, ITexture* texture);
 
@@ -278,6 +292,8 @@ private:
 #endif
     
 	CNullHardwareOcclusionQuery *m_OpenGLHardwareOcclusionQuery;
+
+	bool m_EnabledAttrib[MY_VERTEX_MAX_ATTRIBS];
 };
 
 //---------------------------------------------------------------------------

@@ -34,7 +34,9 @@ public:
 		m_Count--;
 	}
 
-	virtual void draw() = 0;
+	virtual bool bind() = 0;
+	virtual void render() = 0;
+	virtual bool unbind() = 0;
 
 	static s32 m_Count;
 };
