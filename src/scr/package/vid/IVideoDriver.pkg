@@ -51,6 +51,7 @@ class IVideoDriver
 	void renderAll();
 	void renderPass(E_RENDER_PASS pass);
 	void endRendering();
+	void swapBuffers();
 
 	//! Returns true if renering is still in progress, otherwise false
 	bool isRendering();

@@ -3054,6 +3054,13 @@ void CNullDriver::endRendering()
 		}
 	}
 
+	m_Rendering = false;
+}
+
+//---------------------------------------------------------------------------
+
+void CNullDriver::swapBuffers()
+{
 	m_Profiler.startProfiling(m_ProfileSwapBuffers);
 
 	_swapBuffers();
@@ -3073,8 +3080,6 @@ void CNullDriver::endRendering()
 	AverageFPS = avg;	
 
 	m_Profiler.stopProfiling(m_ProfileSwapBuffers);
-
-	m_Rendering = false;
 }
 
 //---------------------------------------------------------------------------

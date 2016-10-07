@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 09/29/16 21:48:05.
+** Generated automatically by tolua++-1.0.92 on 10/07/16 22:44:49.
 */
 
 #ifndef __cplusplus
@@ -47375,6 +47375,37 @@ static int tolua_MyLuaBind_vid_IVideoDriver_endRendering00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: swapBuffers of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_swapBuffers00
+static int tolua_MyLuaBind_vid_IVideoDriver_swapBuffers00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'swapBuffers'",NULL);
+#endif
+ {
+  self->swapBuffers();
+ }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'swapBuffers'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: isRendering of class  vid::IVideoDriver */
 #ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_isRendering00
 static int tolua_MyLuaBind_vid_IVideoDriver_isRendering00(lua_State* tolua_S)
@@ -62003,6 +62034,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
    tolua_function(tolua_S,"renderAll",tolua_MyLuaBind_vid_IVideoDriver_renderAll00);
    tolua_function(tolua_S,"renderPass",tolua_MyLuaBind_vid_IVideoDriver_renderPass00);
    tolua_function(tolua_S,"endRendering",tolua_MyLuaBind_vid_IVideoDriver_endRendering00);
+   tolua_function(tolua_S,"swapBuffers",tolua_MyLuaBind_vid_IVideoDriver_swapBuffers00);
    tolua_function(tolua_S,"isRendering",tolua_MyLuaBind_vid_IVideoDriver_isRendering00);
    tolua_function(tolua_S,"getDynamicLightsMaximalAmount",tolua_MyLuaBind_vid_IVideoDriver_getDynamicLightsMaximalAmount00);
    tolua_function(tolua_S,"getDynamicLightsCount",tolua_MyLuaBind_vid_IVideoDriver_getDynamicLightsCount00);

@@ -263,7 +263,7 @@ int main(int argc, char* argv[])
 	//-------------------------------------------------------------------------
    	
 	vid::E_DRIVER_TYPE driverType = vid::EDT_OPENGL21;
-	core::dimension2d<s32> resolution(640, 480);
+	core::dimension2d<s32> resolution(1024, 768);
 	s32 colorBit=32;
 	s32 Flags=0;
 	vid::E_TEXTURE_FILTER TexFilter = vid::ETF_NONE;
@@ -465,6 +465,7 @@ int main(int argc, char* argv[])
 		}
 		GAME_MANAGER.doGame();
 		SCENE_MANAGER.postRenderScene();
+		VIDEO_DRIVER.swapBuffers();
 		GAME_MANAGER.postRenderFrame();
 
 		u32 fps = VIDEO_DRIVER.getCurrentFPS();

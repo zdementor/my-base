@@ -438,6 +438,7 @@ public:
 	virtual void renderAll();
 	virtual void renderPass(E_RENDER_PASS pass);
 	virtual void endRendering();
+	virtual void swapBuffers();
 
 	virtual bool isRendering();
 

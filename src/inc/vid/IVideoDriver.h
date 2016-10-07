@@ -613,6 +613,7 @@ public:
 	virtual void renderAll() = 0;
 	virtual void renderPass(E_RENDER_PASS pass) = 0;
 	virtual void endRendering() = 0;
+	virtual void swapBuffers() = 0;
 
 	//! Returns true if renering is still in progress, otherwise false
 	virtual bool isRendering() = 0;
