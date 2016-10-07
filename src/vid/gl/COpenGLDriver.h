@@ -132,6 +132,7 @@ public:
 		s32 tc_stride = 0);
 
 	void _setupAttributes(
+		bool *enabledAttribs,
 		GLenum type0 = GL_NONE, s32 size0 = 0, s32 stride0 = 0, const void *ptr0 = 0,
 		GLenum type1 = GL_NONE, s32 size1 = 0, s32 stride1 = 0, const void *ptr1 = 0,
 		GLenum type2 = GL_NONE, s32 size2 = 0, s32 stride2 = 0, const void *ptr2 = 0,
@@ -292,8 +293,6 @@ private:
 #endif
     
 	CNullHardwareOcclusionQuery *m_OpenGLHardwareOcclusionQuery;
-
-	bool m_EnabledAttrib[MY_VERTEX_MAX_ATTRIBS];
 };
 
 //---------------------------------------------------------------------------

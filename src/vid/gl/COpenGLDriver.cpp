@@ -46,8 +46,6 @@ m_OpenGLHardwareOcclusionQuery(0)
 	IVideoDriver::setClassName("COpenGLDriver::IVideoDriver");
 #endif
 	m_DriverType = (E_DRIVER_TYPE)__MY_BUILD_GL_VER__;
-
-	memset(m_EnabledAttrib, 0, sizeof(m_EnabledAttrib));
 }
 
 //---------------------------------------------------------------------------
@@ -274,14 +272,25 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 #endif
 		m_TwoSidedStencil = false;
 
+#ifdef GL_ARB_vertex_array_object
+	if (GLEW_ARB_vertex_array_object)
+		COpenGLVertexArrayObject::ms_VAOSupport = true;
+	else
+#endif
+		COpenGLVertexArrayObject::ms_VAOSupport = false;
+
 	LOGGER.logInfo(" OpenGL driver features:");
 
 	LOGGER.logInfo("  Back Color Format : %s",
 		img::getColorFormatName(getBackColorFormat()));
 	LOGGER.logInfo("  Multitexturing    : %s",
 		queryFeature(EVDF_MULITEXTURE) ? "OK" : "None");
-	LOGGER.logInfo("  Vertex buffer     : %s", vboSupport ?
-		"OK" : "None (using vertex arrays instead)");
+	LOGGER.logInfo("  Vertex Buffer Obj.: %s",
+		vboSupport ?
+			"OK" : "None (using vertex arrays instead)");
+	LOGGER.logInfo("  Vertex Array Obj. : %s",
+		COpenGLVertexArrayObject::ms_VAOSupport ?
+			"OK" : "None");
 	LOGGER.logInfo("  Anisotropic filt. : %s (%d level)",
 		queryFeature(EVDF_ANISOTROPIC_FILTER) ?
 			"OK" : "None", MaxAnisotropyLevel);
@@ -423,7 +432,7 @@ void COpenGLDriver::renderPass(E_RENDER_PASS pass)
 {
 	CNullDriver::renderPass(pass);
 
-	_setupAttributes();
+	_setupAttributes(COpenGLRenderBuffer::ms_EnabledAttribs);
 
 #ifdef GL_VERSION_1_2
 	glClientActiveTexture(GL_TEXTURE0);
@@ -433,24 +442,25 @@ void COpenGLDriver::renderPass(E_RENDER_PASS pass)
 //---------------------------------------------------------------------------
 
 #define MY_ENABLE_CLIENT_STATE(index, state, func) \
-	if (!m_EnabledAttrib[index]) \
+	if (!enabledAttribs[index]) \
 	{ \
 		func; \
 		glEnableClientState(state); \
-		m_EnabledAttrib[index] = true; \
+		enabledAttribs[index] = true; \
 	}
 
 #define MY_DISABLE_CLIENT_STATE(index, state, func) \
-	if (m_EnabledAttrib[index]) \
+	if (enabledAttribs[index]) \
 	{ \
 		func; \
 		glDisableClientState(state); \
-		m_EnabledAttrib[index] = false; \
+		enabledAttribs[index] = false; \
 	}
 
 //---------------------------------------------------------------------------
 
 void COpenGLDriver::_setupAttributes(
+	bool *enabledAttribs,
 	GLenum type0, s32 size0, s32 stride0, const void *ptr0,
 	GLenum type1, s32 size1, s32 stride1, const void *ptr1,
 	GLenum type2, s32 size2, s32 stride2, const void *ptr2,

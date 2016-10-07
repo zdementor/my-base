@@ -16,15 +16,22 @@ namespace my {
 namespace vid {  
 //----------------------------------------------------------------------------
 
+bool COpenGLRenderBuffer::ms_EnabledAttribs[MY_VERTEX_MAX_ATTRIBS] = { 0, 0, 0, 0, 0, 0, 0 };
+
+bool COpenGLVertexArrayObject::ms_VAOSupport = false;
+
+//----------------------------------------------------------------------------
+
 template <>
 void COpenGLVertexArray < S3DVertexSimple >::_setupOffsets() {}
 
 //----------------------------------------------------------------------------
 
 template <>
-void COpenGLVertexArray < S3DVertexSimple > ::_setupPointers()
+void COpenGLVertexArray < S3DVertexSimple > ::_setupPointers(bool *enabledAttribs)
 {
 	m_Driver->_setupAttributes(
+		enabledAttribs,
 		GL_FLOAT, 3, m_DataStride, _getPointer(m_VertexOffset),
 		GL_NONE,  0, 0,            NULL,
 		GL_NONE,  0, 0,            NULL,
@@ -47,9 +54,10 @@ void COpenGLVertexArray < S3DVertexSimpleColoured > ::_setupOffsets()
 //----------------------------------------------------------------------------
 
 template <>
-void COpenGLVertexArray < S3DVertexSimpleColoured > ::_setupPointers()
+void COpenGLVertexArray < S3DVertexSimpleColoured > ::_setupPointers(bool *enabledAttribs)
 {
 	m_Driver->_setupAttributes(
+		enabledAttribs,
 		GL_FLOAT,         3, m_DataStride, _getPointer(m_VertexOffset),
 		GL_NONE,          0, 0,            NULL,
 		GL_UNSIGNED_BYTE, 4, m_DataStride, _getPointer(m_ColorOffset),
@@ -73,9 +81,10 @@ void COpenGLVertexArray < S3DVertex1TCoords >::_setupOffsets()
 //----------------------------------------------------------------------------
 
 template <>
-void COpenGLVertexArray < S3DVertex1TCoords > ::_setupPointers()
+void COpenGLVertexArray < S3DVertex1TCoords > ::_setupPointers(bool *enabledAttribs)
 {
 	m_Driver->_setupAttributes(
+		enabledAttribs,
 		GL_FLOAT, 3, m_DataStride, _getPointer(m_VertexOffset),
 		GL_FLOAT, 3, m_DataStride, _getPointer(m_NormalOffset),
 		GL_NONE,  0, 0,            NULL,
@@ -100,9 +109,10 @@ void COpenGLVertexArray < S3DVertex1TCoordsColoured > ::_setupOffsets()
 //----------------------------------------------------------------------------
 
 template <>
-void COpenGLVertexArray < S3DVertex1TCoordsColoured > ::_setupPointers()
+void COpenGLVertexArray < S3DVertex1TCoordsColoured > ::_setupPointers(bool *enabledAttribs)
 {
 	m_Driver->_setupAttributes(
+		enabledAttribs,
 		GL_FLOAT,         3, m_DataStride, _getPointer(m_VertexOffset),
 		GL_FLOAT,         3, m_DataStride, _getPointer(m_NormalOffset),
 		GL_UNSIGNED_BYTE, 4, m_DataStride, _getPointer(m_ColorOffset),
@@ -127,9 +137,10 @@ void COpenGLVertexArray < S3DVertex2TCoords > ::_setupOffsets()
 //----------------------------------------------------------------------------
 
 template <>
-void COpenGLVertexArray < S3DVertex2TCoords > ::_setupPointers()
+void COpenGLVertexArray < S3DVertex2TCoords > ::_setupPointers(bool *enabledAttribs)
 {
 	m_Driver->_setupAttributes(
+		enabledAttribs,
 		GL_FLOAT, 3, m_DataStride, _getPointer(m_VertexOffset),
 		GL_FLOAT, 3, m_DataStride, _getPointer(m_NormalOffset),
 		GL_NONE,  0, 0,            NULL,
@@ -155,9 +166,10 @@ void COpenGLVertexArray < S3DVertex2TCoordsColoured > ::_setupOffsets()
 //----------------------------------------------------------------------------
 
 template <>
-void COpenGLVertexArray < S3DVertex2TCoordsColoured > ::_setupPointers()
+void COpenGLVertexArray < S3DVertex2TCoordsColoured > ::_setupPointers(bool *enabledAttribs)
 {
 	m_Driver->_setupAttributes(
+		enabledAttribs,
 		GL_FLOAT,         3, m_DataStride, _getPointer(m_VertexOffset),
 		GL_FLOAT,         3, m_DataStride, _getPointer(m_NormalOffset),
 		GL_UNSIGNED_BYTE, 4, m_DataStride, _getPointer(m_ColorOffset),
@@ -183,9 +195,10 @@ void COpenGLVertexArray < S3DVertex1TCoordsTBN > ::_setupOffsets()
 //----------------------------------------------------------------------------
 
 template <>
-void COpenGLVertexArray < S3DVertex1TCoordsTBN > ::_setupPointers()
+void COpenGLVertexArray < S3DVertex1TCoordsTBN > ::_setupPointers(bool *enabledAttribs)
 {
 	m_Driver->_setupAttributes(
+		enabledAttribs,
 		GL_FLOAT, 3, m_DataStride, _getPointer(m_VertexOffset),
 		GL_FLOAT, 3, m_DataStride, _getPointer(m_NormalOffset),
 		GL_NONE,  0, 0,            NULL,
@@ -212,9 +225,10 @@ void COpenGLVertexArray < S3DVertex1TCoordsTBNColoured > ::_setupOffsets()
 //----------------------------------------------------------------------------
 
 template <>
-void COpenGLVertexArray < S3DVertex1TCoordsTBNColoured > ::_setupPointers()
+void COpenGLVertexArray < S3DVertex1TCoordsTBNColoured > ::_setupPointers(bool *enabledAttribs)
 {
 	m_Driver->_setupAttributes(
+		enabledAttribs,
 		GL_FLOAT,         3, m_DataStride, _getPointer(m_VertexOffset),
 		GL_FLOAT,         3, m_DataStride, _getPointer(m_NormalOffset),
 		GL_UNSIGNED_BYTE, 4, m_DataStride, _getPointer(m_ColorOffset),
@@ -241,9 +255,10 @@ void COpenGLVertexArray < S3DVertex2TCoordsTBN > ::_setupOffsets()
 //----------------------------------------------------------------------------
 
 template <>
-void COpenGLVertexArray < S3DVertex2TCoordsTBN > ::_setupPointers()
+void COpenGLVertexArray < S3DVertex2TCoordsTBN > ::_setupPointers(bool *enabledAttribs)
 {
 	m_Driver->_setupAttributes(
+		enabledAttribs,
 		GL_FLOAT, 3, m_DataStride, _getPointer(m_VertexOffset),
 		GL_FLOAT, 3, m_DataStride, _getPointer(m_NormalOffset),
 		GL_NONE,  0, 0,            NULL,
@@ -271,9 +286,10 @@ void COpenGLVertexArray < S3DVertex2TCoordsTBNColoured > ::_setupOffsets()
 //----------------------------------------------------------------------------
 
 template <>
-void COpenGLVertexArray < S3DVertex2TCoordsTBNColoured > ::_setupPointers()
+void COpenGLVertexArray < S3DVertex2TCoordsTBNColoured > ::_setupPointers(bool *enabledAttribs)
 {
 	m_Driver->_setupAttributes(
+		enabledAttribs,
 		GL_FLOAT,         3, m_DataStride, _getPointer(m_VertexOffset),
 		GL_FLOAT,         3, m_DataStride, _getPointer(m_NormalOffset),
 		GL_UNSIGNED_BYTE, 4, m_DataStride, _getPointer(m_ColorOffset),
@@ -297,9 +313,10 @@ void COpenGLVertexArray < S3DVertex1TCoordsRHWColoured > ::_setupOffsets()
 //----------------------------------------------------------------------------
 
 template <>
-void COpenGLVertexArray < S3DVertex1TCoordsRHWColoured > ::_setupPointers()
+void COpenGLVertexArray < S3DVertex1TCoordsRHWColoured > ::_setupPointers(bool *enabledAttribs)
 {
 	m_Driver->_setupAttributes(
+		enabledAttribs,
 		GL_FLOAT,         3, m_DataStride, _getPointer(m_VertexOffset),
 		GL_NONE,          0, 0,            NULL,
 		GL_UNSIGNED_BYTE, 4, m_DataStride, _getPointer(m_ColorOffset),
