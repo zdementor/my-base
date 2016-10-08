@@ -30,13 +30,21 @@ public:
 	CNullRenderTarget(ITexture *colorTexture, ITexture *depthTexture);
 	virtual ~CNullRenderTarget();
 
-	virtual bool bindColorTexture(ITexture *colorTexture, bool doRebuild);
+	virtual bool bindColorTexture(ITexture *colorTexture, bool doRebuild)
+	{ return bindColorTexture(0, colorTexture, doRebuild); }
+
+	virtual bool bindColorTexture(u32 no, ITexture *colorTexture, bool doRebuild);
+
 	virtual bool bindDepthTexture(ITexture *depthTexture, bool doRebuild);
 
 	virtual bool rebuild() { return _rebuild(); }
 
-	virtual ITexture* getColorTexture()
-	{ return m_ColorTexture; }
+	virtual ITexture* getColorTexture(u32 no)
+	{
+		if (no >= MY_MAX_COLOR_ATTACHMENTS)
+			return NULL;
+		return m_ColorTexture[no];
+	}
 
 	virtual ITexture* getDepthTexture()
 	{ return m_DepthTexture; }
@@ -56,10 +64,13 @@ protected:
 
 	core::list<CNullRenderTarget *>::iterator m_RTEntry;
 
-	ITexture *m_ColorTexture, *m_DepthTexture;
+	ITexture *m_ColorTexture[MY_MAX_COLOR_ATTACHMENTS];
+	ITexture *m_DepthTexture;
 
-	core::dimension2di m_Size;
-	img::E_COLOR_FORMAT m_ColorFormat, m_DepthFormat;
+	core::dimension2di m_Size[MY_MAX_COLOR_ATTACHMENTS];
+
+	img::E_COLOR_FORMAT m_ColorFormat[MY_MAX_COLOR_ATTACHMENTS];
+	img::E_COLOR_FORMAT m_DepthFormat;
 };
 
 //---------------------------------------------------------------------------

@@ -755,6 +755,8 @@ protected:
 	bool m_StencilBuffer;
 	bool m_TexturesNonPowerOfTwo;
 	bool m_TwoSidedStencil;
+	u32 m_MaxDrawBuffers;
+
 	bool m_UseShaders, m_CacheShaders, m_UseFFP;
 	bool m_LightingMediumQuality, m_LightingHighQuality, m_ShadersHighQuality;
 

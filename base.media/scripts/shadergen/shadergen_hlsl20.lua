@@ -58,7 +58,7 @@ function HLSL20GenPixelShader(vtype, pass, perpixel, lightcnt, uniforms)
 	text = text.."};\n\n"
 	text = text.."struct PS_OUTPUT\n"
 	text = text.."{\n"
-	text = text.."    VEC4 FragColor  : COLOR0;\n"
+	text = text.."    VEC4 FragData0 : COLOR0;\n"
 	text = text.."};\n\n"	
 	text = text.."PS_OUTPUT main(PS_INPUT input)\n"
 	text = text.."{\n"

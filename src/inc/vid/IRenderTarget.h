@@ -25,13 +25,15 @@ namespace vid {
 class __MY_VID_LIB_API__ IRenderTarget : public IUnknown
 {
 public:
-
 	virtual bool bindColorTexture(ITexture *colorTexture, bool doRebuild = true) = 0;
+	virtual bool bindColorTexture(u32 no, ITexture *colorTexture, bool doRebuild = true) = 0;
+
 	virtual bool bindDepthTexture(ITexture *depthTexture, bool doRebuild = true) = 0;
 
 	virtual bool rebuild() = 0;
 
-	virtual ITexture* getColorTexture() = 0;
+	virtual ITexture* getColorTexture(u32 no = 0) = 0;
+
 	virtual ITexture* getDepthTexture() = 0;
 
 	virtual bool bind() = 0;

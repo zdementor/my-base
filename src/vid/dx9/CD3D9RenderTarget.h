@@ -39,8 +39,8 @@ private:
 
 	CD3D9Driver *m_D3DDriver;
 
-	IDirect3DSurface9* m_D3DRenderTargetSurface;
-	IDirect3DSurface9* m_D3DDepthStencilSurface;
+	IDirect3DSurface9 *m_D3DRenderTargetSurface[MY_MAX_COLOR_ATTACHMENTS];
+	IDirect3DSurface9 *m_D3DDepthStencilSurface;
 };
 
 //---------------------------------------------------------------------------

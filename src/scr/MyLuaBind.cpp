@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 10/07/16 22:44:49.
+** Generated automatically by tolua++-1.0.92 on 10/08/16 14:27:35.
 */
 
 #ifndef __cplusplus
@@ -59498,7 +59498,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
  tolua_module(tolua_S,"vid",0);
  tolua_beginmodule(tolua_S,"vid");
   tolua_constant(tolua_S,"MY_MATERIAL_MAX_LAYERS",vid::MY_MATERIAL_MAX_LAYERS);
-  tolua_constant(tolua_S,"MY_MAX_COLOR_ATTACHEMENTS",vid::MY_MAX_COLOR_ATTACHEMENTS);
+  tolua_constant(tolua_S,"MY_MAX_COLOR_ATTACHMENTS",vid::MY_MAX_COLOR_ATTACHMENTS);
   tolua_constant(tolua_S,"EDF_NULL",vid::EDF_NULL);
   tolua_constant(tolua_S,"EDF_DIRECTX",vid::EDF_DIRECTX);
   tolua_constant(tolua_S,"EDF_OPENGL",vid::EDF_OPENGL);
@@ -59657,6 +59657,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"EVDF_COMPRESSED_TEXTURES",vid::EVDF_COMPRESSED_TEXTURES);
   tolua_constant(tolua_S,"EVDF_DEPTH_STENCIL_TEXTURES",vid::EVDF_DEPTH_STENCIL_TEXTURES);
   tolua_constant(tolua_S,"EVDF_NON_POWER_OF_TWO_TEXTURES",vid::EVDF_NON_POWER_OF_TWO_TEXTURES);
+  tolua_constant(tolua_S,"EVDF_MULTIPLE_RENDER_TARGETS",vid::EVDF_MULTIPLE_RENDER_TARGETS);
   tolua_constant(tolua_S,"E_VIDEO_DRIVER_FEATURE_COUNT",vid::E_VIDEO_DRIVER_FEATURE_COUNT);
   tolua_constant(tolua_S,"ETS_VIEW",vid::ETS_VIEW);
   tolua_constant(tolua_S,"ETS_MODEL",vid::ETS_MODEL);

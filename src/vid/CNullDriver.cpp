@@ -99,6 +99,7 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 	m_StencilEnabled(false), m_ScissorEnabled(false), m_ShadowColor(100,0,0,0),
 	m_Fullscreen(false), m_Antialiasing(false), m_VerticalSync(false), m_Shadows(false),
 	m_StencilBuffer(false), m_TwoSidedStencil(false), m_TexturesNonPowerOfTwo(false),
+	m_MaxDrawBuffers(1),
 	m_CurrentVertexType((E_VERTEX_TYPE)-1), 
 	m_DriverType(EDT_NULL), m_Profiler(PROFILER),
 	m_DirtyTexUnit(-1), m_CurrentGPUProgram(NULL),

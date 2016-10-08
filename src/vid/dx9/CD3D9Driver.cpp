@@ -376,6 +376,9 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 
 	m_MaxTextureSize = core::dimension2di(m_D3DCaps.MaxTextureWidth, m_D3DCaps.MaxTextureHeight);
 
+	m_MaxDrawBuffers = m_D3DCaps.NumSimultaneousRTs;
+	CHECK_RANGE(m_MaxDrawBuffers, 1, MY_MAX_COLOR_ATTACHMENTS);
+
     // set fog mode
     setFog(Fog);
 
@@ -426,6 +429,9 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 		queryFeature(vid::EVDF_DEPTH_STENCIL_TEXTURES) ? "OK" : "None");
 	LOGGER.logInfo("  Non pwr. of 2 tex.: %s",
 		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) ? "OK" : "None");
+	LOGGER.logInfo("  MRT               : %s (%d)",
+		queryFeature(EVDF_MULTIPLE_RENDER_TARGETS) ? "OK" : "None",
+		m_MaxDrawBuffers);
 
 	//antialiasing ON! 
 	if (m_Antialiasing)
@@ -663,6 +669,8 @@ bool CD3D9Driver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 		return m_DepthStencilTexturesSupport;
 	case EVDF_NON_POWER_OF_TWO_TEXTURES:
 		return m_TexturesNonPowerOfTwo;
+	case EVDF_MULTIPLE_RENDER_TARGETS:
+		return m_MaxDrawBuffers > 1;
     };
 
     return false;

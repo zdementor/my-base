@@ -19,7 +19,7 @@ namespace vid {
 enum
 {
 	MY_MATERIAL_MAX_LAYERS = 4,
-	MY_MAX_COLOR_ATTACHEMENTS = 4,
+	MY_MAX_COLOR_ATTACHMENTS = 4,
 };
 
 //----------------------------------------------------------------------------
@@ -827,6 +827,9 @@ enum E_VIDEO_DRIVER_FEATURE
 
 	//! Is non power of two textures supported by video hardware?
 	EVDF_NON_POWER_OF_TWO_TEXTURES,
+
+	//! Multiple render targets support
+	EVDF_MULTIPLE_RENDER_TARGETS,
 
 	E_VIDEO_DRIVER_FEATURE_COUNT,
 

@@ -106,7 +106,7 @@ function AppendDefines(vtype, pass, perpixel, lightcnt, uniforms)
 		text = text.."#define VS_IN(vvv) gl_##vvv\n"
 		text = text.."#define VS_OUT(vvv) vvv\n"
 		text = text.."#define PS_IN(vvv) vvv\n"
-		text = text.."#define PS_OUT(vvv) gl_##vvv\n"
+		text = text.."#define PS_OUT(vvv,nnn) gl_##vvv[nnn]\n"
 		text = text.."#define VARY varying\n"
 		text = text.."#define UNI uniform\n"
 		text = text.."#define MIX mix\n"
@@ -123,7 +123,7 @@ function AppendDefines(vtype, pass, perpixel, lightcnt, uniforms)
 		text = text.."#define VS_IN(vvv) input.vvv\n"
 		text = text.."#define VS_OUT(vvv) output.vvv\n"
 		text = text.."#define PS_IN(vvv) input.vvv\n"
-		text = text.."#define PS_OUT(vvv) output.vvv\n"
+		text = text.."#define PS_OUT(vvv,nnn) output.##vvv##nnn\n"
 		text = text.."#define VARY\n"
 		text = text.."#define UNI uniform\n"
 		text = text.."#define MIX lerp\n"
@@ -793,28 +793,28 @@ function AppendPixelShaderBody(vtype, pass, perpixel, lightcnt)
 
 	if hasDiffMap or hasLightMap or hasAttenMap then
 		if hasAttenMap then
-			text = text.."    PS_OUT(FragColor) = tatten;\n"
+			text = text.."    PS_OUT(FragData,0) = tatten;\n"
 		end
 		if hasDiffMap or hasLightMap then
 			if hasAttenMap == false then
-				text = text.."    PS_OUT(FragColor) = tcol;\n"
+				text = text.."    PS_OUT(FragData,0) = tcol;\n"
 			else
-				text = text.."    PS_OUT(FragColor) *= tcol;\n"
+				text = text.."    PS_OUT(FragData,0) *= tcol;\n"
 			end
 		end
 		if vcolor or mcolor or (light and vnormal and perpixel == false) then
-			text = text.."    PS_OUT(FragColor) *= PS_IN(Color);\n"
+			text = text.."    PS_OUT(FragData,0) *= PS_IN(Color);\n"
 		end
 	elseif vcolor or mcolor then
-		text = text.."    PS_OUT(FragColor) = PS_IN(Color);\n"
+		text = text.."    PS_OUT(FragData,0) = PS_IN(Color);\n"
 	else
-  		text = text.."    PS_OUT(FragColor) = VEC4(1.0,1.0,1.0,1.0);\n"
+  		text = text.."    PS_OUT(FragData,0) = VEC4(1.0,1.0,1.0,1.0);\n"
 	end
 	if light and vnormal and perpixel then
-		text = text.."    PS_OUT(FragColor) *= color;\n"
+		text = text.."    PS_OUT(FragData,0) *= color;\n"
 	end
 	if light and vnormal then
-		text = text.."    PS_OUT(FragColor).rgb += specular;\n"
+		text = text.."    PS_OUT(FragData,0).rgb += specular;\n"
 	end
 
 	if fogging then
@@ -824,7 +824,7 @@ function AppendPixelShaderBody(vtype, pass, perpixel, lightcnt)
 		text = text.."    FLOAT fstart = FOG_START("..Uniforms.FogParams..");\n"
 		text = text.."    FLOAT fend = FOG_END("..Uniforms.FogParams..");\n"
 		text = text.."    FLOAT fog = clamp((fend - fdepth) / (fend - fstart), 0., 1.);\n"
-		text = text.."    PS_OUT(FragColor).rgb = MIX("..Uniforms.FogColor.."*PS_OUT(FragColor).a, PS_OUT(FragColor).rgb, fog);\n"
+		text = text.."    PS_OUT(FragData,0).rgb = MIX("..Uniforms.FogColor.."*PS_OUT(FragData,0).a, PS_OUT(FragData,0).rgb, fog);\n"
 	end
 	
 	return text

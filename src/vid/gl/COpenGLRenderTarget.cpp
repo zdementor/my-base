@@ -63,7 +63,7 @@ bool COpenGLRenderTarget::_rebuild()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
-		ITexture *colAttach = m_ColorTexture;
+		ITexture *colAttach = m_ColorTexture[0];
 		ITexture *depAttach = m_DepthTexture;
 
 		if (colAttach)

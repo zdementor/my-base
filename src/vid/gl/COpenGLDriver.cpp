@@ -279,6 +279,19 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 #endif
 		COpenGLVertexArrayObject::ms_VAOSupport = false;
 
+#if defined(GL_ARB_texture_non_power_of_two)
+	m_TexturesNonPowerOfTwo = !!GLEW_ARB_texture_non_power_of_two;
+#else
+	m_TexturesNonPowerOfTwo = false;
+#endif
+
+#if  __MY_BUILD_GL_VER__ >= MY_DRIVER_TYPE_OPENGL21
+	glGetIntegerv(GL_MAX_DRAW_BUFFERS, (GLint*)&m_MaxDrawBuffers);
+	CHECK_RANGE(m_MaxDrawBuffers, 1, MY_MAX_COLOR_ATTACHMENTS);
+#else
+	m_MaxDrawBuffers = 1;
+#endif
+
 	LOGGER.logInfo(" OpenGL driver features:");
 
 	LOGGER.logInfo("  Back Color Format : %s",
@@ -314,6 +327,9 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 		queryFeature(EVDF_DEPTH_STENCIL_TEXTURES) ? "OK" : "None");
 	LOGGER.logInfo("  Non pwr. of 2 tex.: %s",
 		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) ? "OK" : "None");
+	LOGGER.logInfo("  MRT               : %s (%d)",
+		queryFeature(EVDF_MULTIPLE_RENDER_TARGETS) ? "OK" : "None",
+		m_MaxDrawBuffers);
 
 	// OpenGL driver constants
 
@@ -875,14 +891,9 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
     case EVDF_STENCIL_BUFFER:
         return m_StencilBuffer;
 	case EVDF_SHADER_LANGUAGE:
+	case EVDF_OCCLUSION_QUERY:
 #if __MY_BUILD_GL_VER__ >= MY_DRIVER_TYPE_OPENGL21
 		return true;
-#else
-		return false;
-#endif
-	case EVDF_OCCLUSION_QUERY:
-#if defined(GL_ARB_occlusion_query)
-		return !!GLEW_ARB_occlusion_query;
 #else
 		return false;
 #endif
@@ -893,11 +904,9 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 		return false;
 #endif
 	case EVDF_NON_POWER_OF_TWO_TEXTURES:
-#if defined(GL_ARB_texture_non_power_of_two)
-		return !!GLEW_ARB_texture_non_power_of_two;
-#else
-		return false;
-#endif
+		return m_TexturesNonPowerOfTwo;
+	case EVDF_MULTIPLE_RENDER_TARGETS:
+		return m_MaxDrawBuffers > 1;
 	default:
 		break;
     };
