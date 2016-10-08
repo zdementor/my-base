@@ -572,24 +572,18 @@ public:
 		{
 #if GL_ARB_vertex_array_object
 			glBindVertexArray(m_VAO);
-			if (!m_VAOCompleted)
-			{
-				m_VAOCompleted = true;
-				if (vsize)
-					m_VertexBuffer.bind();
-				m_VertexBuffer._setupPointers(m_EnabledAttribs);
-				if (isize)
-					m_IndexBuffer.bind();
-			}
 #endif
 		}
-		else
+		if (!m_VAOCompleted)
 		{
 			if (vsize)
 				m_VertexBuffer.bind();
-			m_VertexBuffer._setupPointers(ms_EnabledAttribs);
+			m_VertexBuffer._setupPointers(
+				m_VAO ? m_EnabledAttribs : ms_EnabledAttribs);
 			if (isize)
 				m_IndexBuffer.bind();
+			if (m_VAO)
+				m_VAOCompleted = true;
 		}
 
 		return true;
@@ -603,15 +597,11 @@ public:
 		if (vsize)
 		{
 			if (isize)
-			{
 				glDrawElements(
 					m_GLDrawPrimitiveType, isize, m_GLIndicesType, 0);
-			}
 			else
-			{
 				glDrawArrays(
 					m_GLDrawPrimitiveType, 0, vsize);
-			}
 		}
 	}
 

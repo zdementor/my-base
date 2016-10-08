@@ -441,18 +441,18 @@ void COpenGLDriver::renderPass(E_RENDER_PASS pass)
 
 //---------------------------------------------------------------------------
 
-#define MY_ENABLE_CLIENT_STATE(index, state, func) \
+#define MY_ENABLE_CLIENT_STATE(index, state, preFunc) \
 	if (!enabledAttribs[index]) \
 	{ \
-		func; \
+		preFunc; \
 		glEnableClientState(state); \
 		enabledAttribs[index] = true; \
 	}
 
-#define MY_DISABLE_CLIENT_STATE(index, state, func) \
+#define MY_DISABLE_CLIENT_STATE(index, state, preFunc) \
 	if (enabledAttribs[index]) \
 	{ \
-		func; \
+		preFunc; \
 		glDisableClientState(state); \
 		enabledAttribs[index] = false; \
 	}
@@ -502,59 +502,55 @@ void COpenGLDriver::_setupAttributes(
 		MY_DISABLE_CLIENT_STATE(2, GL_COLOR_ARRAY, (void)0)
 	}
 
-#ifndef GL_VERSION_1_2
 	if (type3 != GL_NONE)
 	{
+#ifdef GL_VERSION_1_2
+		glClientActiveTexture(GL_TEXTURE0);
+#endif
 		MY_ENABLE_CLIENT_STATE(3, GL_TEXTURE_COORD_ARRAY, (void)0)
 		glTexCoordPointer(size3, type3, stride3, ptr3);
 	}
 	else
 	{
-		MY_DISABLE_CLIENT_STATE(3, GL_TEXTURE_COORD_ARRAY, (void)0)
-	}
+#ifdef GL_VERSION_1_2
+		MY_DISABLE_CLIENT_STATE(3, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE0))
 #else
-	if (type3 != GL_NONE)
-	{
-		glClientActiveTexture(GL_TEXTURE0 + 0);
-		MY_ENABLE_CLIENT_STATE(3, GL_TEXTURE_COORD_ARRAY, (void)0)
-		glTexCoordPointer(size3, type3, stride3, ptr3);
-	}
-	else
-	{
-		MY_DISABLE_CLIENT_STATE(3, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE0 + 0))
+		MY_DISABLE_CLIENT_STATE(3, GL_TEXTURE_COORD_ARRAY, (void)0)
+#endif
 	}
 
+#ifdef GL_VERSION_1_2
 	if (type4 != GL_NONE)
 	{
-		glClientActiveTexture(GL_TEXTURE0 + 1);
+		glClientActiveTexture(GL_TEXTURE1);
 		MY_ENABLE_CLIENT_STATE(4, GL_TEXTURE_COORD_ARRAY, (void)0)
 		glTexCoordPointer(size4, type4, stride4, ptr4);
 	}
 	else
 	{
-		MY_DISABLE_CLIENT_STATE(4, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE0 + 1))
+		MY_DISABLE_CLIENT_STATE(4, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE1))
 	}
 
 	if (type5 != GL_NONE)
 	{
-		glClientActiveTexture(GL_TEXTURE0 + 2);
+		glClientActiveTexture(GL_TEXTURE2);
 		MY_ENABLE_CLIENT_STATE(5, GL_TEXTURE_COORD_ARRAY, (void)0)
 		glTexCoordPointer(size5, type5, stride5, ptr5);
 	}
 	else
 	{
-		MY_DISABLE_CLIENT_STATE(5, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE0 + 2))
+		MY_DISABLE_CLIENT_STATE(5, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE2))
 	}
 
 	if (type6 != GL_NONE)
 	{
-		glClientActiveTexture(GL_TEXTURE0 + 3);
+		glClientActiveTexture(GL_TEXTURE3);
 		MY_ENABLE_CLIENT_STATE(6, GL_TEXTURE_COORD_ARRAY, (void)0)
 		glTexCoordPointer(size6, type6, stride6, ptr6);
 	}
 	else
 	{
-		MY_DISABLE_CLIENT_STATE(6, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE0 + 3))
+		MY_DISABLE_CLIENT_STATE(6, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE3))
 	}
 #endif
 }
