@@ -98,9 +98,14 @@ public:
 	virtual u32 getRenderedDIPsCount ( E_RENDER_PASS pass );
 	virtual u32 getRenderedDIPsCount ();
 
-    virtual u32 getMaximalTextureUnitsAmount() const;
+	virtual u32 getMaximalDrawBuffersAmount() const
+		{ return m_MaxDrawBuffers; }
 
-    virtual const core::dimension2di& getMaximalTextureSize() const;
+    virtual u32 getMaximalTextureUnitsAmount() const
+		{ return m_MaxTextureUnits; }
+
+    virtual const core::dimension2di& getMaximalTextureSize() const
+		{ return m_MaxTextureSize; }
 	    
     virtual void setGlobalAmbientColor(const img::SColorf& color);
 

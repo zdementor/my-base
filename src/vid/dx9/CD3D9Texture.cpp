@@ -160,6 +160,9 @@ bool CD3D9Texture::createHardwareTexture(bool renderTarget)
 		format = FOURCC_INTZ;
 		usage = D3DUSAGE_DEPTHSTENCIL;
 		break;
+	case img::ECF_LUMINANCE32F:
+		format = D3DFMT_R32F;
+		break;
 	default:
 		LOGGER.logErr("Unsupported D3D hardware texture format %s.",
 			img::getColorFormatName(m_ColorFormat));

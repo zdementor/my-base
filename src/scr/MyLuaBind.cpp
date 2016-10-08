@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 10/08/16 17:28:20.
+** Generated automatically by tolua++-1.0.92 on 10/08/16 20:56:06.
 */
 
 #ifndef __cplusplus
@@ -47720,6 +47720,38 @@ tolua_lerror:
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: getMaximalDrawBuffersAmount of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_getMaximalDrawBuffersAmount00
+static int tolua_MyLuaBind_vid_IVideoDriver_getMaximalDrawBuffersAmount00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"const vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  const vid::IVideoDriver* self = (const vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getMaximalDrawBuffersAmount'",NULL);
+#endif
+ {
+  unsigned tolua_ret = (unsigned)  self->getMaximalDrawBuffersAmount();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getMaximalDrawBuffersAmount'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: getMaximalTextureUnitsAmount of class  vid::IVideoDriver */
 #ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_getMaximalTextureUnitsAmount00
 static int tolua_MyLuaBind_vid_IVideoDriver_getMaximalTextureUnitsAmount00(lua_State* tolua_S)
@@ -59548,7 +59580,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"ECF_DXT5",img::ECF_DXT5);
   tolua_constant(tolua_S,"ECF_LUMINANCE16",img::ECF_LUMINANCE16);
   tolua_constant(tolua_S,"ECF_DEPTH24_STENCIL8",img::ECF_DEPTH24_STENCIL8);
-  tolua_constant(tolua_S,"ECF_ALPHA32F",img::ECF_ALPHA32F);
+  tolua_constant(tolua_S,"ECF_LUMINANCE32F",img::ECF_LUMINANCE32F);
   tolua_constant(tolua_S,"E_COLOR_FORMAT_COUNT",img::E_COLOR_FORMAT_COUNT);
   tolua_function(tolua_S,"getColorFormatName",tolua_MyLuaBind_img_getColorFormatName00);
   tolua_function(tolua_S,"getBitsPerPixelFromFormat",tolua_MyLuaBind_img_getBitsPerPixelFromFormat00);
@@ -62108,6 +62140,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
    tolua_function(tolua_S,"getRenderedTrianglesCount",tolua_MyLuaBind_vid_IVideoDriver_getRenderedTrianglesCount01);
    tolua_function(tolua_S,"getRenderedDIPsCount",tolua_MyLuaBind_vid_IVideoDriver_getRenderedDIPsCount00);
    tolua_function(tolua_S,"getRenderedDIPsCount",tolua_MyLuaBind_vid_IVideoDriver_getRenderedDIPsCount01);
+   tolua_function(tolua_S,"getMaximalDrawBuffersAmount",tolua_MyLuaBind_vid_IVideoDriver_getMaximalDrawBuffersAmount00);
    tolua_function(tolua_S,"getMaximalTextureUnitsAmount",tolua_MyLuaBind_vid_IVideoDriver_getMaximalTextureUnitsAmount00);
    tolua_function(tolua_S,"getMaximalTextureSize",tolua_MyLuaBind_vid_IVideoDriver_getMaximalTextureSize00);
    tolua_function(tolua_S,"setGlobalAmbientColor",tolua_MyLuaBind_vid_IVideoDriver_setGlobalAmbientColor00);

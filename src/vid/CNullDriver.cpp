@@ -4413,20 +4413,6 @@ int CNullDriver::_clip2DLineRect(
 
 //---------------------------------------------------------------------------
 
-u32 CNullDriver::getMaximalTextureUnitsAmount() const
-{
-	return m_MaxTextureUnits;
-}
-
-//---------------------------------------------------------------------------
-
-const core::dimension2di& CNullDriver::getMaximalTextureSize() const
-{
-	return m_MaxTextureSize;
-}
-
-//---------------------------------------------------------------------------
-
 #ifdef __MY_BUILD_VID_NULL_LIB__
 
 __MY_IMPORT__ IVideoDriver* createDirectX9Driver(

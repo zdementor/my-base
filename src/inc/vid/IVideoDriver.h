@@ -242,6 +242,9 @@ public:
 	virtual u32 getRenderedDIPsCount ( E_RENDER_PASS pass ) = 0;
 	virtual u32 getRenderedDIPsCount () = 0;
 
+	//! Returns the maximal amount of the draw buffers (simultanious render targets)
+	virtual u32 getMaximalDrawBuffersAmount() const = 0;
+
 	//! Returns the maximal amount of texture units in single render pass
     //! \return Maximal amount of texture units
     virtual u32 getMaximalTextureUnitsAmount() const = 0;

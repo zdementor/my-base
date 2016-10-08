@@ -218,7 +218,7 @@ s32 CImage::_getBitsPerPixelFromFormat()
         GreenMask = 0xFF<<8;
         RedMask = 0xFF;
         break;
-    case ECF_ALPHA32F:
+    case ECF_LUMINANCE32F:
         AlphaMask = 0xFF<<24;
         BlueMask = 0xFF<<16;
         GreenMask = 0xFF<<8;

@@ -670,7 +670,7 @@ bool CD3D9Driver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 	case EVDF_NON_POWER_OF_TWO_TEXTURES:
 		return m_TexturesNonPowerOfTwo;
 	case EVDF_MULTIPLE_RENDER_TARGETS:
-		return m_MaxDrawBuffers > 1;
+		return getMaximalDrawBuffersAmount() > 1;
     };
 
     return false;
