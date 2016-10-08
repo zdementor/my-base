@@ -294,8 +294,9 @@ function _HelperInit()
 	_ScenedScenePropsInit()
 	_ScenedNMapConvInit()
 	
-	LOG_INFO("Helper initialized")
 	MyLogger:decreaseFormatLevel()
+	LOG_INFO("Helper initialized")
+
 	_HelperOK = true
 	return _HelperOK
 end

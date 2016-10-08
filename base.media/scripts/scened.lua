@@ -87,8 +87,9 @@ function _ScenedInit()
 	
 	_ScenedInitImpl()
 
-	LOG_INFO("Scened initialized")
 	MyLogger:decreaseFormatLevel()
+	LOG_INFO("Scened initialized")
+
 	_ScenedOK = true
 	return _ScenedOK
 end

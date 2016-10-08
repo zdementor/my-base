@@ -174,6 +174,7 @@ public:
     virtual bool removeTexture(ITexture* texture) = 0;
 
 	//! Add/remove a Render Target object.
+    virtual IRenderTarget* addRenderTarget() = 0;
     virtual IRenderTarget* addRenderTarget(u32 width, u32 height,
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat) = 0;
     virtual IRenderTarget* addRenderTarget(const core::dimension2di &size,

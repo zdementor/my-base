@@ -1496,6 +1496,22 @@ ITexture* CD3D9Driver::createRenderTargetTexture(
 
 //---------------------------------------------------------------------------
 
+IRenderTarget* CD3D9Driver::addRenderTarget()
+{
+	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+		new CD3D9RenderTarget() : NULL;
+	if (rt && !rt->isOK())
+	{
+		rt->drop();
+		rt = NULL;
+	}
+	if (rt)
+		_addRenderTarget(rt);
+	return rt;
+}
+
+//---------------------------------------------------------------------------
+
 IRenderTarget* CD3D9Driver::addRenderTarget(const core::dimension2di &size,
 	img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
 {

@@ -18,6 +18,18 @@ namespace my {
 namespace vid {  
 //----------------------------------------------------------------------------
 
+CD3D9RenderTarget::CD3D9RenderTarget()
+	: CNullRenderTarget(),
+m_D3DDriver((CD3D9Driver*)VIDEO_DRIVER_PTR),
+m_D3DDepthStencilSurface(0)
+{
+	memset(m_D3DRenderTargetSurface, 0, sizeof(m_D3DRenderTargetSurface));
+
+	m_OK = true;
+}
+
+//----------------------------------------------------------------------------
+
 CD3D9RenderTarget::CD3D9RenderTarget(const core::dimension2di &size,
 	img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
 	: CNullRenderTarget(size, colorFormat, depthFormat),

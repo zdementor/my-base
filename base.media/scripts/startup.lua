@@ -103,6 +103,7 @@ function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 		arch = "64 bit"
 	end
 
+	LOG_INFO("Creating Device...")
 	LOG_INFO("-------------------------------------------------------")
 	LOG_INFO(string.format(" OS version           : %d.%d.%d (%s)",
 		ver.majorversion, ver.minorversion, ver.revision, ver.description))
@@ -111,23 +112,69 @@ function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 	LOG_INFO(string.format(" MyEngine binary arch : %s",
 		arch))
 	LOG_INFO("-------------------------------------------------------")
-
+	io.ILogger:getSingleton():increaseFormatLevel()	
 	dev.createDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 	if MyCEGUI.create(OPTIONS.CEGUIOptionsFileName) == false then
 		LOG_ERR("Can't initialize CEGUI System, MyEngine will exit now...")
 		dev.destroyDevice()
 		os.exit(1)
 	end	
+	io.ILogger:getSingleton():decreaseFormatLevel()	
+	LOG_INFO("Device created.")
+
 	RereadSingletons()
+
 	if MyDriver:queryFeature(vid.EVDF_RENDER_TO_TARGET) then
+		LOG_INFO("Creating Render Target...")
+		MyLogger:increaseFormatLevel()	
+		local rtOK = false
 		local colorRT = MyDriver:addRenderTargetTexture(MAIN_COLOR_RTT_NAME,
 			winWidth, winHeight, img.ECF_A8R8G8B8)
-		local depthRT = MyDriver:addRenderTargetTexture(MAIN_DEPTH_RTT_NAME,
-			winWidth, winHeight, img.ECF_DEPTH24_STENCIL8)
-		MyRT = MyDriver:addRenderTarget(nil, nil)
-		MyRT:bindColorTexture(colorRT, false)
-		MyRT:bindDepthTexture(depthRT, false)
-		MyRT:rebuild()
+		local depthRT = nil
+		if colorRT ~= nil then
+			depthRT = MyDriver:addRenderTargetTexture(MAIN_DEPTH_RTT_NAME,
+				winWidth, winHeight, img.ECF_DEPTH24_STENCIL8)
+		end
+		if depthRT ~= nil and colorRT ~= nil then
+			MyRT = MyDriver:addRenderTarget()
+			if MyRT == nil then
+				LOG_INFO("Can not add Render Target!")
+			end
+		end
+		if MyRT ~= nil then
+			rtOK = MyRT:bindColorTexture(0, colorRT, false)
+
+			if rtOK then
+				rtOK = MyRT:bindDepthTexture(depthRT, false)
+			end
+			if rtOK then
+				rtOK = MyRT:rebuild()
+			end
+			if rtOK then
+				local rt = MyDriver:getRenderTarget()
+				rtOK = MyDriver:setRenderTarget(MyRT)
+				MyDriver:setRenderTarget(rt)
+			end
+		end
+		if not rtOK then
+			if MyRT ~= nil then
+				MyDriver:removeRenderTarget(MyRT)
+				MyRT = nil
+			end
+			if colorRT ~= nil then
+				MyDriver:removeTexture(colorRT)
+				colorRT = nil
+			end
+			if depthRT ~= nil then
+				MyDriver:removeTexture(depthRT)
+				depthRT = nil
+			end
+			MyLogger:decreaseFormatLevel()	
+			LOG_INFO("Can not create Render Target, fallback to the default render buffer.")
+		else
+			MyLogger:decreaseFormatLevel()	
+			LOG_INFO("Render Target created.")
+		end
 	end
 	SetupResources()
 	MyLogger:setLogLevel(OPTIONS.LogLevel) 
@@ -139,12 +186,16 @@ function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 end
 
 function DestroyDevice()
+	LOG_INFO("Destroy Device...")
+	io.ILogger:getSingleton():increaseFormatLevel()	
 	for i = 0, scr.ESCT_SCRIPT_CALLBACK_TYPE_COUNT - 1 do
 		MyScript:setScriptCallback(i, nil)
 	end
 	MyCEGUI.destroy()
 	MyRT = nil -- will be destroyed by device
 	dev.destroyDevice()
+	io.ILogger:getSingleton():decreaseFormatLevel()	
+	LOG_INFO("Device destroyed.")
 end
 
 require "setup"

@@ -297,6 +297,7 @@ class IVideoDriver
 	E_POLYGON_FILL_MODE getPolygonFillMode();
 
 	//! Add/remove a render target object.
+	IRenderTarget* addRenderTarget();
 	IRenderTarget* addRenderTarget(unsigned width, unsigned height,
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat);
 	IRenderTarget* addRenderTarget(const core::dimension2di &size,

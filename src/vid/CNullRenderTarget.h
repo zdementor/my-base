@@ -24,7 +24,7 @@ class __MY_VID_LIB_API__ CNullRenderTarget : public IRenderTarget
 {
 	friend class CNullDriver;
 public:
-
+	CNullRenderTarget();
 	CNullRenderTarget(const core::dimension2di &size,
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat);
 	CNullRenderTarget(ITexture *colorTexture, ITexture *depthTexture);
@@ -71,6 +71,10 @@ protected:
 
 	img::E_COLOR_FORMAT m_ColorFormat[MY_MAX_COLOR_ATTACHMENTS];
 	img::E_COLOR_FORMAT m_DepthFormat;
+
+private:
+
+	void _defaultInit();
 };
 
 //---------------------------------------------------------------------------

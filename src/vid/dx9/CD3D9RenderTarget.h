@@ -23,6 +23,7 @@ namespace vid {
 class __MY_VID_LIB_API__ CD3D9RenderTarget : public CNullRenderTarget
 {
 public:
+	CD3D9RenderTarget();
 	CD3D9RenderTarget(const core::dimension2di &size,
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat);
 	CD3D9RenderTarget(ITexture *colorTexture, ITexture *depthTexture);

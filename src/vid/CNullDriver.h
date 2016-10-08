@@ -136,6 +136,8 @@ public:
 	{ return 0; }
     virtual bool removeTexture(ITexture* texture);
 
+	virtual IRenderTarget* addRenderTarget()
+	{ return 0; }
     virtual IRenderTarget* addRenderTarget(u32 width, u32 height,
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
 	{ return addRenderTarget(core::dimension2di(width, height), colorFormat, depthFormat); }

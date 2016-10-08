@@ -15,37 +15,57 @@
 
 //----------------------------------------------------------------------------
 namespace my {
-namespace vid {  
+namespace vid {
+//----------------------------------------------------------------------------
+
+void CNullRenderTarget::_defaultInit()
+{
+	m_OK = false;
+	m_RTEntry = 0;
+
+	m_DepthTexture = 0;
+	m_DepthFormat = img::ECF_NONE;
+
+	memset(m_Size, 0, sizeof(m_Size));
+	memset(m_ColorFormat, 0, sizeof(m_ColorFormat));
+	memset(m_ColorTexture, 0, sizeof(m_ColorTexture));
+}
+
+//----------------------------------------------------------------------------
+
+CNullRenderTarget::CNullRenderTarget()
+	: m_Driver(VIDEO_DRIVER)
+{
+	_defaultInit();	
+}
+
 //----------------------------------------------------------------------------
 
 CNullRenderTarget::CNullRenderTarget(const core::dimension2di &size,
 	img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
-	: m_OK(false), m_Driver(VIDEO_DRIVER), m_RTEntry(0),
-m_DepthTexture(NULL), m_DepthFormat(depthFormat)
+	: m_Driver(VIDEO_DRIVER)
 {
-	memset(m_Size, 0, sizeof(m_Size));
-	memset(m_ColorFormat, 0, sizeof(m_ColorFormat));
-	memset(m_ColorTexture, 0, sizeof(m_ColorTexture));
+	_defaultInit();
 
 	m_Size[0] = size;
-	m_ColorFormat[0] = colorFormat;
 
+	m_ColorFormat[0] = colorFormat;
 	m_ColorTexture[0] = m_Driver.createRenderTargetTexture(size, colorFormat);
 
 	if (m_Driver.queryFeature(vid::EVDF_DEPTH_STENCIL_TEXTURES)
-			&& m_DepthFormat == img::ECF_DEPTH24_STENCIL8)
-		m_DepthTexture = m_Driver.createRenderTargetTexture(size, m_DepthFormat);
+			&& depthFormat == img::ECF_DEPTH24_STENCIL8)
+	{
+		m_DepthFormat = depthFormat;
+		m_DepthTexture = m_Driver.createRenderTargetTexture(size, depthFormat);
+	}
 }
 
 //----------------------------------------------------------------------------
 
 CNullRenderTarget::CNullRenderTarget(ITexture *colorTexture, ITexture *depthTexture)
-	: m_OK(false), m_Driver(VIDEO_DRIVER), m_RTEntry(0),
-m_DepthTexture(NULL), m_DepthFormat(img::ECF_NONE)
+	: m_Driver(VIDEO_DRIVER)
 {
-	memset(m_Size, 0, sizeof(m_Size));
-	memset(m_ColorFormat, 0, sizeof(m_ColorFormat));
-	memset(m_ColorTexture, 0, sizeof(m_ColorTexture));
+	_defaultInit();
 
 	bindColorTexture(colorTexture, false);
 	bindDepthTexture(depthTexture, false);

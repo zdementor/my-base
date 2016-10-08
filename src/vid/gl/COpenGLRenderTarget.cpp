@@ -17,6 +17,15 @@ namespace my {
 namespace vid {  
 //----------------------------------------------------------------------------
 
+COpenGLRenderTarget::COpenGLRenderTarget()
+	: CNullRenderTarget(),
+m_FBO(0)
+{
+	m_OK = true;
+}
+
+//----------------------------------------------------------------------------
+
 COpenGLRenderTarget::COpenGLRenderTarget(const core::dimension2di &size,
 	img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
 	: CNullRenderTarget(size, colorFormat, depthFormat),

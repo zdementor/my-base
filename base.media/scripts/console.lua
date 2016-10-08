@@ -85,8 +85,9 @@ function _ConsoleInit()
 	_ConsoleInfoFont:setSize(14)
 	_ConsoleInfoFont:setMonospaceMode(true)
 
-	LOG_INFO("Console initialized")
 	MyLogger:decreaseFormatLevel()
+	LOG_INFO("Console initialized")
+
 	_ConsoleOK = true
 	return _ConsoleOK
 end
