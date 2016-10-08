@@ -36,6 +36,7 @@ protected:
 private:
 
 	GLuint m_FBO;
+	u32 m_ColorAttachmentsBuilded;
 };
 
 //---------------------------------------------------------------------------

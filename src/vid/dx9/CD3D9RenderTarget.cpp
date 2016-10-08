@@ -78,21 +78,23 @@ bool CD3D9RenderTarget::_rebuild()
 		SAFE_RELEASE(m_D3DRenderTargetSurface[no]);
 	SAFE_RELEASE(m_D3DDepthStencilSurface);
 
-	u32 no = 0;
-
-	ITexture *colTex = m_ColorTexture[no];
-
-	if (colTex && colTex->isRenderTarget())
+	for (u32 no = 0; no < MY_MAX_COLOR_ATTACHMENTS; no++)
 	{
-		m_D3DRenderTargetSurface[no] =
-			((CD3D9RenderTargetTexture *)colTex)->getRenderTargetSurface();
-		if (m_D3DRenderTargetSurface[no])
-			m_D3DRenderTargetSurface[no]->AddRef();
+		ITexture *colTex = m_ColorTexture[no];
+		if (!colTex)
+			break;
+		if (colTex->isRenderTarget())
+		{
+			m_D3DRenderTargetSurface[no] =
+				((CD3D9RenderTargetTexture *)colTex)->getRenderTargetSurface();
+			if (m_D3DRenderTargetSurface[no])
+				m_D3DRenderTargetSurface[no]->AddRef();
+			else
+				m_OK = false;
+		}
 		else
 			m_OK = false;
 	}
-	else
-		m_OK = false;
 
 	if (m_OK)
 	{
@@ -146,20 +148,24 @@ bool CD3D9RenderTarget::bind()
 	bool ret = true;
 	HRESULT hr;
 
-	u32 no = 0;
-
-	hr = pd3dDevice->SetRenderTarget(no, m_D3DRenderTargetSurface[no]);
-	if (FAILED(hr))
-		LOGGER.logWarn("Can not bind Render Target surface %d (%dx%d, %s)!",
-			no, m_Size[no].Width, m_Size[no].Height,
-			img::getColorFormatName(m_ColorFormat[no]));
-	else
+	for (u32 no = 0; m_OK && no < MY_MAX_COLOR_ATTACHMENTS; no++)
+	{
+		if (! m_D3DRenderTargetSurface[no])
+			break;
+		hr = pd3dDevice->SetRenderTarget(no, m_D3DRenderTargetSurface[no]);
+		if (FAILED(hr))
+			LOGGER.logWarn("Can not bind Render Target surface %d (%dx%d, %s)!",
+				no, m_Size[no].Width, m_Size[no].Height,
+				img::getColorFormatName(m_ColorFormat[no]));
+		m_OK = SUCCEEDED(hr);
+	}
+	if (m_OK)
 	{
 		hr = pd3dDevice->SetDepthStencilSurface(m_D3DDepthStencilSurface);
 		if (FAILED(hr))
 			LOGGER.logWarn("Can not bind Depth Stencil surface!");
+		m_OK = SUCCEEDED(hr);
 	}
-	m_OK = SUCCEEDED(hr);
 
 	if (!m_OK)
 	{

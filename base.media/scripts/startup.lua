@@ -143,7 +143,6 @@ function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 		end
 		if MyRT ~= nil then
 			rtOK = MyRT:bindColorTexture(0, colorRT, false)
-
 			if rtOK then
 				rtOK = MyRT:bindDepthTexture(depthRT, false)
 			end

@@ -19,7 +19,7 @@ namespace vid {
 
 COpenGLRenderTarget::COpenGLRenderTarget()
 	: CNullRenderTarget(),
-m_FBO(0)
+m_FBO(0), m_ColorAttachmentsBuilded(0)
 {
 	m_OK = true;
 }
@@ -29,7 +29,7 @@ m_FBO(0)
 COpenGLRenderTarget::COpenGLRenderTarget(const core::dimension2di &size,
 	img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
 	: CNullRenderTarget(size, colorFormat, depthFormat),
-m_FBO(0)
+m_FBO(0), m_ColorAttachmentsBuilded(0)
 {
 	_rebuild();
 }
@@ -39,7 +39,7 @@ m_FBO(0)
 COpenGLRenderTarget::COpenGLRenderTarget(
 	ITexture *colorTexture, ITexture *depthTexture)
 	: CNullRenderTarget(colorTexture, depthTexture),
-m_FBO(0)
+m_FBO(0), m_ColorAttachmentsBuilded(0)
 {
 	if (colorTexture)
 		_rebuild();
@@ -65,6 +65,8 @@ COpenGLRenderTarget::~COpenGLRenderTarget()
 bool COpenGLRenderTarget::_rebuild()
 {
 	m_OK = false;
+	m_ColorAttachmentsBuilded = 0;
+
 #if GL_ARB_framebuffer_object
 	if (!m_FBO)
 		glGenFramebuffers(1, &m_FBO);
@@ -72,18 +74,25 @@ bool COpenGLRenderTarget::_rebuild()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
-		ITexture *colAttach = m_ColorTexture[0];
-		ITexture *depAttach = m_DepthTexture;
+		u32 &no = m_ColorAttachmentsBuilded;
 
-		if (colAttach)
+		for (; no < MY_MAX_COLOR_ATTACHMENTS; no++)
 		{
+			ITexture *colAttach = m_ColorTexture[no];
+			if (!colAttach)
+				break;
 			GLuint colTex = (GLuint)(size_t)colAttach->getHardwareTexture();
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + no,
+				GL_TEXTURE_2D, colTex, 0);
+		}
+		if (no > 0)
+		{
+			ITexture *depAttach = m_DepthTexture;
 			GLuint depTex = (GLuint)(size_t)(depAttach ? depAttach->getHardwareTexture() : 0);
 
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
 				GL_TEXTURE_2D, depTex, 0);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-				GL_TEXTURE_2D, colTex, 0);
 		}
 
 		GLint status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -98,7 +107,10 @@ bool COpenGLRenderTarget::_rebuild()
 	}
 	else
 		LOGGER.logErr("Can not create OGL render target");
+
 #endif
+	if (!m_OK)
+		m_ColorAttachmentsBuilded = 0;
 	return m_OK;
 }
 
@@ -109,10 +121,18 @@ bool COpenGLRenderTarget::bind()
 	if (!m_OK)
 		return false;
 #if GL_ARB_framebuffer_object
-	//glFlush ();
 	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
+
+	GLuint drawBuf[MY_MAX_COLOR_ATTACHMENTS] =
+	{
+		GL_COLOR_ATTACHMENT0,
+		GL_COLOR_ATTACHMENT1,
+		GL_COLOR_ATTACHMENT2,
+		GL_COLOR_ATTACHMENT3,
+	};
+
 	glReadBuffer(GL_COLOR_ATTACHMENT0);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+	glDrawBuffers(m_ColorAttachmentsBuilded, drawBuf);
 #endif
 	return CNullRenderTarget::bind();
 }
