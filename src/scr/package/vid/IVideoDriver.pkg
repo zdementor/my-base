@@ -89,7 +89,7 @@ class IVideoDriver
 	unsigned getRenderedDIPsCount ();
 
 	//! Returns the maximal amount of the draw buffers (simultanious render targets)
-	unsigned getMaximalDrawBuffersAmount() const;
+	unsigned getMaximalColorAttachmentsAmount() const;
 
 	//! Returns the maximal amount of texture units in single render pass
     //! \return Maximal amount of texture units

@@ -38,9 +38,8 @@ namespace vid {
 
 CD3D9Driver::CD3D9Driver(const core::dimension2di &screenSize) 
 	: CNullDriver(screenSize), m_D3DLibrary(0), m_D3DDevice(0), m_D3D(0), DeviceLost(false),
-MaxAnisotropyLevel(0), StencilFogTexture(0), pEventQuery(0), m_D3D9HardwareOcclusionQuery(0),
-m_D3DMainRenderTargetSurface(0), m_D3DMainDepthStencilSurface(0),
-m_DepthStencilTexturesSupport(false)
+pEventQuery(0), m_D3D9HardwareOcclusionQuery(0),
+m_D3DMainRenderTargetSurface(0), m_D3DMainDepthStencilSurface(0)
 {
 #if MY_DEBUG_MODE 
 	IUnknown::setClassName("CD3D9Driver");    
@@ -65,7 +64,6 @@ CD3D9Driver::~CD3D9Driver()
 
 	SAFE_DROP(m_D3D9HardwareOcclusionQuery);
 
-    SAFE_RELEASE(StencilFogTexture);   
 	SAFE_RELEASE(pEventQuery);
 
 	for (u32 i = 0; i < E_VERTEX_TYPE_COUNT; i++)
@@ -350,20 +348,9 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 	else
 		m_TwoSidedStencil = false;
 
-	// initializes occlusion querry
-
-	m_D3D9HardwareOcclusionQuery = new CD3D9HardwareOcclusionQuery(m_D3DDevice);
-
-	if (!m_D3D9HardwareOcclusionQuery->isOK())
-	{
-		SAFE_DROP(m_D3D9HardwareOcclusionQuery);
-	}
-	
-	setGlobalAmbientColor(getGlobalAmbientColor());
-
 	// D3D driver constants
 
-	MaxAnisotropyLevel = m_D3DCaps.MaxAnisotropy;		
+	m_MaxAnisotropyLevel = m_D3DCaps.MaxAnisotropy;		
 
 	// MaxActiveLights of 0 or -1 are indicative of software processing.
 	// Software processing having no limitations can support an infinite number of lights. 
@@ -371,7 +358,7 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 	CHECK_MIN_RANGE(maxlights, 8);
 	m_MaxLights = maxlights;
 
-	s32 max_tex_units = m_MaxTextureUnits = m_D3DCaps.MaxSimultaneousTextures;
+	m_MaxTextureUnits = m_D3DCaps.MaxSimultaneousTextures;
 	CHECK_MAX_RANGE(m_MaxTextureUnits, MY_MATERIAL_MAX_LAYERS);
 
 	m_MaxTextureSize = core::dimension2di(m_D3DCaps.MaxTextureWidth, m_D3DCaps.MaxTextureHeight);
@@ -379,86 +366,46 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 	m_MaxDrawBuffers = m_D3DCaps.NumSimultaneousRTs;
 	CHECK_RANGE(m_MaxDrawBuffers, 1, MY_MAX_COLOR_ATTACHMENTS);
 
-    // set fog mode
-    setFog(Fog);
+    m_RenderTargetSupport = m_D3DCaps.NumSimultaneousRTs > 0;
+
+	m_VertexShaderVersion =
+		(0xff00 & m_D3DCaps.VertexShaderVersion) | (0xff & m_D3DCaps.VertexShaderVersion);
+	m_PixelShaderVersion =
+		(0xff00 & m_D3DCaps.PixelShaderVersion) | (0xff & m_D3DCaps.PixelShaderVersion);
 
     // set exposed data
-
     out_video_data.Win32.D3D9.D3D       = m_D3D;
     out_video_data.Win32.D3D9.D3DDevice = m_D3DDevice;
 	out_video_data.DriverType = EDT_DIRECTX9;
 
-    // Create Our Empty Fog Texture
-    StencilFogTexture = createEmptyD3D9Texture(
-        getStencilFogTextureSize(), getStencilFogTextureSize());  
-
-	LOGGER.logInfo(" Direct3D driver features:");
-
-	LOGGER.logInfo("  Back Color Format : %s",
-		getColorFormatName(getBackColorFormat()));
-	LOGGER.logInfo("  Multitexturing    : %s",
-		queryFeature(EVDF_MULITEXTURE) ?
-		"OK" : "None");
-	LOGGER.logInfo("  Vertex buffer     : OK"); 
-	LOGGER.logInfo("  Anisotropic filt. : %s (%d level)",
-		queryFeature(EVDF_ANISOTROPIC_FILTER) ?
-			"OK" : "None", MaxAnisotropyLevel);
-	LOGGER.logInfo("  Swap control      : OK");
-	if (queryFeature(EVDF_SHADER_LANGUAGE))
-	{
-		LOGGER.logInfo("  HLSL              : OK");
-		LOGGER.logInfo("   Vertex shader v.%d.%d",
-			0xff & m_D3DCaps.VertexShaderVersion >> 8,
-			0xff & m_D3DCaps.VertexShaderVersion);
-		LOGGER.logInfo("   Pixel shader v.%d.%d",
-			0xff & m_D3DCaps.PixelShaderVersion >> 8,
-			0xff & m_D3DCaps.PixelShaderVersion);
-	}
-	else
-		LOGGER.logInfo("  HLSL             : None");
-
-	LOGGER.logInfo("  Two side stencil  : %s",
-		m_TwoSidedStencil ? "OK" : "None");
-	LOGGER.logInfo("  Occlusion Query   : %s",
-		queryFeature(EVDF_OCCLUSION_QUERY) ? "OK" : "None");
-	LOGGER.logInfo("  Render Target     : %s",
-		queryFeature(EVDF_RENDER_TO_TARGET) ? "OK" : "None");
-	LOGGER.logInfo("  Compressed tex.   : %s",
-		queryFeature(EVDF_COMPRESSED_TEXTURES) ? "OK" : "None");
-	LOGGER.logInfo("  Depth Stencil tex.: %s",
-		queryFeature(vid::EVDF_DEPTH_STENCIL_TEXTURES) ? "OK" : "None");
-	LOGGER.logInfo("  Non pwr. of 2 tex.: %s",
-		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) ? "OK" : "None");
-	LOGGER.logInfo("  MRT               : %s (%d)",
-		queryFeature(EVDF_MULTIPLE_RENDER_TARGETS) ? "OK" : "None",
-		m_MaxDrawBuffers);
-
-	//antialiasing ON! 
 	if (m_Antialiasing)
 		m_D3DDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS , true); 
 
-	 // log Video driver parameters
-
-	s32 depthbit =24;
+	m_ColorBits = (m_PresentParams.BackBufferFormat == D3DFMT_A8R8G8B8) ? 32 : 16;
+    m_AlphaBits = (m_PresentParams.BackBufferFormat == D3DFMT_A8R8G8B8) ? 8 : 1;
+	m_DepthBits =24;
 	if (m_PresentParams.AutoDepthStencilFormat == D3DFMT_D16) 
-		depthbit = 16;
+		m_DepthBits = 16;
 	else if (m_PresentParams.AutoDepthStencilFormat == D3DFMT_D32)
-		depthbit = 32;
+		m_DepthBits = 32;
+    m_StencilBits = (m_PresentParams.AutoDepthStencilFormat == D3DFMT_D24S8) ? 8 : 0;
 
-    LOGGER.logInfo(" Video driver parameters: ");
-	LOGGER.logInfo("  color   : %d bit",
-		(m_PresentParams.BackBufferFormat == D3DFMT_A8R8G8B8) ? 32 : 16);
-    LOGGER.logInfo("  alpha   : %d bit",
-		(m_PresentParams.BackBufferFormat == D3DFMT_A8R8G8B8) ? 8 : 1);
-	LOGGER.logInfo("  depth(z): %d bit", depthbit);
-    LOGGER.logInfo("  stencil : %d bit",
-		(m_PresentParams.AutoDepthStencilFormat == D3DFMT_D24S8) ? 8 : 0);
-    LOGGER.logInfo("  max lights    : %d", m_MaxLights);
-    LOGGER.logInfo("  max tex. units: %d", max_tex_units);
-    LOGGER.logInfo("  max tex. res. : %d x %d",
-		m_MaxTextureSize.Width, m_MaxTextureSize.Height);
+	// specular highlights
+	m_D3DDevice->SetRenderState(D3DRS_SPECULARENABLE, true);
+	m_D3DDevice->SetRenderState(D3DRS_SPECULARMATERIALSOURCE, D3DMCS_MATERIAL);
+	
+	if (FAILED(m_D3DDevice->CreateQuery(D3DQUERYTYPE_EVENT, &pEventQuery)))
+		LOGGER.logWarn("Can't allocate a Hardware event query. "
+			"This video card doesn't supports it, sorry.");
 
-	// vertical syncronization
+	m_D3D9HardwareOcclusionQuery = new CD3D9HardwareOcclusionQuery(m_D3DDevice);
+	if (!m_D3D9HardwareOcclusionQuery->isOK())
+		SAFE_DROP(m_D3D9HardwareOcclusionQuery);
+
+	for (u32 i = 0; i < E_VERTEX_TYPE_COUNT; i++)
+		m_D3DDevice->CreateVertexDeclaration(
+			D3D9VertexElements[i], &m_VertexDecls[i]);
+
 	if (m_Fullscreen && m_VerticalSync)
 		LOGGER.logInfo(" Vertical Sync enabled");
 	else if (m_Fullscreen && !m_VerticalSync)
@@ -466,30 +413,6 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 	else
 		LOGGER.logInfo(" Can't on/off Vertical Sync ");
 
-	// specular highlights
-	m_D3DDevice->SetRenderState(D3DRS_SPECULARENABLE, true);
-	m_D3DDevice->SetRenderState(D3DRS_SPECULARMATERIALSOURCE, D3DMCS_MATERIAL);
-	
-	// create event query
-	if (FAILED(m_D3DDevice->CreateQuery(D3DQUERYTYPE_EVENT, &pEventQuery)))
-	{
-		LOGGER.logWarn("Can't allocate a Hardware event query. "
-			"This video card doesn't supports it, sorry.");
-	}
-
-	setTextureCreationFlag(ETCF_CREATE_POWER_OF_TWO,
-		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) == false);
-
-	// setting texture filter
-	setTextureFilter(m_TextureFilter);
-
-	CNullDriver::setColorMask(m_ColorMask);
-
-	for (u32 i = 0; i < E_VERTEX_TYPE_COUNT; i++)
-		m_D3DDevice->CreateVertexDeclaration(
-			D3D9VertexElements[i], &m_VertexDecls[i]);
-
-	// so far so good.
 	return CNullDriver::_initDriver(out_video_data);
 }
 
@@ -633,8 +556,6 @@ bool CD3D9Driver::reset()
 	for (u32 i=0; i<MY_MATERIAL_MAX_LAYERS; ++i)
 		SAFE_DROP(CurrentTexture[i]);
 
-    setFog(Fog);
-
     return true;
 }
 
@@ -644,20 +565,11 @@ bool CD3D9Driver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 {
     switch (feature)
     {
-	case EVDF_MULITEXTURE:
-		return getMaximalTextureUnitsAmount()>1;
     case EVDF_BILINEAR_FILTER:
-        return true;
     case EVDF_TRILINEAR_FILTER:
         return true;
-    case EVDF_ANISOTROPIC_FILTER:
-        return MaxAnisotropyLevel>0;
-    case EVDF_RENDER_TO_TARGET:
-        return m_D3DCaps.NumSimultaneousRTs > 0;
     case EVDF_MIP_MAP:
         return (m_D3DCaps.TextureCaps & D3DPTEXTURECAPS_MIPMAP) != 0;
-    case EVDF_STENCIL_BUFFER:
-        return m_StencilBuffer;
     case EVDF_SHADER_LANGUAGE:
         return m_D3DCaps.VertexShaderVersion >= D3DVS_VERSION(1,1) &&
 			m_D3DCaps.PixelShaderVersion >= D3DPS_VERSION(1,1);
@@ -665,15 +577,9 @@ bool CD3D9Driver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 		return m_D3D9HardwareOcclusionQuery!=NULL;
 	case EVDF_COMPRESSED_TEXTURES:
 		return true;
-	case EVDF_DEPTH_STENCIL_TEXTURES:
-		return m_DepthStencilTexturesSupport;
-	case EVDF_NON_POWER_OF_TWO_TEXTURES:
-		return m_TexturesNonPowerOfTwo;
-	case EVDF_MULTIPLE_RENDER_TARGETS:
-		return getMaximalDrawBuffersAmount() > 1;
     };
 
-    return false;
+    return CNullDriver::queryFeature(feature);
 }
 
 //----------------------------------------------------------------------------
@@ -907,7 +813,7 @@ void CD3D9Driver::_setBasicRenderStates()
 			m_D3DDevice->SetSamplerState (l, D3DSAMP_MAGFILTER,  D3DTEXF_ANISOTROPIC);
 			m_D3DDevice->SetSamplerState (l, D3DSAMP_MINFILTER,  D3DTEXF_ANISOTROPIC);				
 			m_D3DDevice->SetSamplerState (l, D3DSAMP_MIPFILTER,  mips?D3DTEXF_LINEAR:D3DTEXF_NONE);
-			m_D3DDevice->SetSamplerState (l, D3DSAMP_MAXANISOTROPY, core::math::Min(8, MaxAnisotropyLevel));			
+			m_D3DDevice->SetSamplerState (l, D3DSAMP_MAXANISOTROPY, core::math::Min(8, m_MaxAnisotropyLevel));			
 		}
 		else 
 		if (tf==ETF_TRILINEAR)
@@ -1496,52 +1402,28 @@ ITexture* CD3D9Driver::createRenderTargetTexture(
 
 //---------------------------------------------------------------------------
 
-IRenderTarget* CD3D9Driver::addRenderTarget()
+IRenderTarget* CD3D9Driver::createRenderTarget()
 {
-	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
 		new CD3D9RenderTarget() : NULL;
-	if (rt && !rt->isOK())
-	{
-		rt->drop();
-		rt = NULL;
-	}
-	if (rt)
-		_addRenderTarget(rt);
-	return rt;
 }
 
 //---------------------------------------------------------------------------
 
-IRenderTarget* CD3D9Driver::addRenderTarget(const core::dimension2di &size,
+IRenderTarget* CD3D9Driver::createRenderTarget(const core::dimension2di &size,
 	img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
 {
-	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
 		new CD3D9RenderTarget(size, colorFormat, depthFormat) : NULL;
-	if (rt && !rt->isOK())
-	{
-		rt->drop();
-		rt = NULL;
-	}
-	if (rt)
-		_addRenderTarget(rt);
-	return rt;
 }
 
 //---------------------------------------------------------------------------
 
-IRenderTarget* CD3D9Driver::addRenderTarget(
+IRenderTarget* CD3D9Driver::createRenderTarget(
 	ITexture *colorTexture, ITexture *depthTexture)
 {
-	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
 		new CD3D9RenderTarget(colorTexture, depthTexture) : NULL;
-	if (rt && !rt->isOK())
-	{
-		rt->drop();
-		rt = NULL;
-	}
-	if (rt)
-		_addRenderTarget(rt);
-	return rt;
 }
 
 //---------------------------------------------------------------------------

@@ -173,7 +173,14 @@ public:
     //! \param texture: Texture to delete from the engines cache.
     virtual bool removeTexture(ITexture* texture) = 0;
 
-	//! Add/remove a Render Target object.
+	//! Creates Render Target object (unmanaged).
+	virtual IRenderTarget* createRenderTarget() = 0;
+	virtual IRenderTarget* createRenderTarget(const core::dimension2di &size,
+		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat) = 0;
+	virtual IRenderTarget* createRenderTarget(
+		ITexture *colorTexture, ITexture *depthTexture) = 0;
+
+	//! Add/remove a Render Target object (managed by video friver).
     virtual IRenderTarget* addRenderTarget() = 0;
     virtual IRenderTarget* addRenderTarget(u32 width, u32 height,
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat) = 0;
@@ -243,7 +250,7 @@ public:
 	virtual u32 getRenderedDIPsCount () = 0;
 
 	//! Returns the maximal amount of the draw buffers (simultanious render targets)
-	virtual u32 getMaximalDrawBuffersAmount() const = 0;
+	virtual u32 getMaximalColorAttachmentsAmount() const = 0;
 
 	//! Returns the maximal amount of texture units in single render pass
     //! \return Maximal amount of texture units
@@ -301,9 +308,6 @@ public:
 
     //! getting video driver family
     virtual E_DRIVER_FAMILY getDriverFamily()=0;
-
-    //! Return the size of the texture, in which stencil fog will be drawn
-    virtual s32 getStencilFogTextureSize() = 0;
 
 	//! Clear Depth buffer
 	virtual void clearDepth() = 0;

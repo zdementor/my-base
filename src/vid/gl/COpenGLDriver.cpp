@@ -39,7 +39,6 @@ const f32 inv_color = 1.0f / 255.0f;
 COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize) 
 	: CNullDriver(screenSize),
 HWnd(0), HDc(0), m_RenderContext(0),
- StencilFogTexture(0),
 m_OpenGLHardwareOcclusionQuery(0)
 {
 #if MY_DEBUG_MODE 
@@ -246,19 +245,20 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 #else
 	m_MaxTextureUnits = 1;
 #endif	
+	CHECK_MAX_RANGE(m_MaxTextureUnits, MY_MATERIAL_MAX_LAYERS);
 
     if (m_MaxTextureUnits < 2)
-		LOGGER.logWarn(" OpenGL device only has one texture unit. Disabling multitexturing.");
+		LOGGER.logWarn("OpenGL device only has one texture unit. Disabling multitexturing.");
 
 #ifdef GL_EXT_texture_filter_anisotropic
 	if (GLEW_EXT_texture_filter_anisotropic)
 	{
         glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &temp);
-		MaxAnisotropyLevel = temp;
+		m_MaxAnisotropyLevel = temp;
 	}
 	else
 #endif
-		MaxAnisotropyLevel = 0;
+		m_MaxAnisotropyLevel = 0;
 
 #ifdef GL_EXT_stencil_two_side
 	if (GLEW_EXT_stencil_two_side) // for nVidia
@@ -292,44 +292,28 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 	m_MaxDrawBuffers = 1;
 #endif
 
-	LOGGER.logInfo(" OpenGL driver features:");
-
-	LOGGER.logInfo("  Back Color Format : %s",
-		img::getColorFormatName(getBackColorFormat()));
-	LOGGER.logInfo("  Multitexturing    : %s",
-		queryFeature(EVDF_MULITEXTURE) ? "OK" : "None");
-	LOGGER.logInfo("  Vertex Buffer Obj.: %s",
-		vboSupport ?
-			"OK" : "None (using vertex arrays instead)");
-	LOGGER.logInfo("  Vertex Array Obj. : %s",
-		COpenGLVertexArrayObject::ms_VAOSupport ?
-			"OK" : "None");
-	LOGGER.logInfo("  Anisotropic filt. : %s (%d level)",
-		queryFeature(EVDF_ANISOTROPIC_FILTER) ?
-			"OK" : "None", MaxAnisotropyLevel);
-	LOGGER.logInfo("  Swap control      : %s",
-		WGLEW_EXT_swap_control ? "OK" : "None"); 
-	LOGGER.logInfo("  GLSL              : %s",
-		queryFeature(EVDF_SHADER_LANGUAGE) ? "OK" : "None");
-#if __MY_BUILD_GL_VER__ >= MY_DRIVER_TYPE_OPENGL21
-		LOGGER.logInfo("   Vertex/Pixel shader v.%s",
-			glGetString(GL_SHADING_LANGUAGE_VERSION));
+	m_RenderTargetSupport = m_DepthStencilTexturesSupport =
+#if defined(GL_ARB_framebuffer_object)
+		!!GLEW_ARB_framebuffer_object;
+#else
+        false;
 #endif
-	LOGGER.logInfo("  Two side stencil  : %s",
-		m_TwoSidedStencil ? "OK" : "None");
-	LOGGER.logInfo("  Occlusion Query   : %s",
-		queryFeature(EVDF_OCCLUSION_QUERY) ? "OK" : "None");
-	LOGGER.logInfo("  Render Target     : %s",
-		queryFeature(EVDF_RENDER_TO_TARGET) ? "OK" : "None");
-	LOGGER.logInfo("  Compressed tex.   : %s",
-		queryFeature(EVDF_COMPRESSED_TEXTURES) ? "OK" : "None");
-	LOGGER.logInfo("  Depth Stencil tex.: %s",
-		queryFeature(EVDF_DEPTH_STENCIL_TEXTURES) ? "OK" : "None");
-	LOGGER.logInfo("  Non pwr. of 2 tex.: %s",
-		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) ? "OK" : "None");
-	LOGGER.logInfo("  MRT               : %s (%d)",
-		queryFeature(EVDF_MULTIPLE_RENDER_TARGETS) ? "OK" : "None",
-		m_MaxDrawBuffers);
+
+#if __MY_BUILD_GL_VER__ >= MY_DRIVER_TYPE_OPENGL21
+	u32 shVerMaj = 0, shVerMin = 0;
+	const GLubyte *shVer = glGetString(GL_SHADING_LANGUAGE_VERSION);
+	sscanf((const c8 *)shVer, "%d.%d", &shVerMaj, &shVerMin);
+	CHECK_RANGE(shVerMaj, 0, 255);
+	CHECK_RANGE(shVerMin, 0, 255);
+
+	m_PixelShaderVersion = m_VertexShaderVersion =
+		(0xff00 & shVerMaj << 8) | (0xff & shVerMin);
+#endif
+
+	if (!vboSupport)
+		LOGGER.logWarn("Vertex Buffer Objects not supported (using vertex arrays instead).");
+	if (!COpenGLVertexArrayObject::ms_VAOSupport)
+		LOGGER.logWarn("Vertex Array Objects not supported.");
 
 	// OpenGL driver constants
 
@@ -340,24 +324,13 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 	glGetIntegerv( GL_MAX_TEXTURE_SIZE, &temp );
 	m_MaxTextureSize = core::dimension2di(temp, temp);
 
-	s32 max_tex_units = m_MaxTextureUnits;
-	CHECK_MAX_RANGE(m_MaxTextureUnits, MY_MATERIAL_MAX_LAYERS);
-
-	// Set The Current Viewport
-	glViewport(0, 0, m_ScreenSize.Width, m_ScreenSize.Height); 
-
 	// setup ogl initial render states    
 	glShadeModel(GL_SMOOTH);
     
-	setGlobalAmbientColor(getGlobalAmbientColor());
-
 	glClearDepth(1.0f);
 	glClearStencil(MY_STENCIL_ZERO_VALUE);    
 
 	glFrontFace( GL_CCW );		
-
-	// set fog mode
-	setFog(Fog);
 
 	glDisable(GL_COLOR_MATERIAL);
 	
@@ -372,43 +345,24 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
     out_video_data.Win32.OGL.HRc  = reinterpret_cast<void*>(m_RenderContext);	
 	out_video_data.DriverType = EDT_OPENGL21;
   
-    // Create Our Empty Fog Textures
-    StencilFogTexture = createEmptyOGLTexture(
-        getStencilFogTextureSize(), getStencilFogTextureSize());  
- 
-    // log Video driver parameters
     DescribePixelFormat(HDc, PixelFormat, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
-
 	if (pfd.cStencilBits == 0)
 	{
-		LOGGER.logWarn(" Device does not support stencilbuffer, disabling stencil buffer.");
+		LOGGER.logWarn(" Device does not support Stencil Buffer, disabling it.");
 		m_StencilBuffer = false;
 	}
 	else 
 		m_StencilBuffer = true;
 
-    LOGGER.logInfo(" Video driver parameters: ");
-    LOGGER.logInfo("  color   : %d bit", pfd.cColorBits);
-    LOGGER.logInfo("  alpha   : %d bit", pfd.cAlphaBits);
-    LOGGER.logInfo("  depth(z): %d bit", pfd.cDepthBits);
-    LOGGER.logInfo("  stencil : %d bit", pfd.cStencilBits);
-    LOGGER.logInfo("  max lights    : %d", m_MaxLights);
-    LOGGER.logInfo("  max tex. units: %d", max_tex_units);
-    LOGGER.logInfo("  max tex. res. : %d x %d", m_MaxTextureSize.Width, m_MaxTextureSize.Height);	
+	m_ColorBits = pfd.cColorBits;
+    m_AlphaBits = pfd.cAlphaBits;
+    m_DepthBits = pfd.cDepthBits;
+    m_StencilBits = pfd.cStencilBits;
 
-	// vertical syncronization
 	if (WGLEW_EXT_swap_control && wglSwapIntervalEXT(m_VerticalSync?1:0)!=0)
 		LOGGER.logInfo(" Vertical Sync %s", m_VerticalSync ? "enabled" : "disabled");
 	else
 		LOGGER.logInfo(" Can't on/off Vertical Sync ");
-
-	setTextureCreationFlag(ETCF_CREATE_POWER_OF_TWO,
-		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) == false);
-
-	// setting texture filter
-	setTextureFilter(m_TextureFilter);
-
-	CNullDriver::setColorMask(m_ColorMask);
 
     return CNullDriver::_initDriver(out_video_data);
 }
@@ -420,7 +374,6 @@ COpenGLDriver::~COpenGLDriver()
 	free();
 
 	SAFE_DROP(m_OpenGLHardwareOcclusionQuery);
-    glDeleteTextures(1,&StencilFogTexture);
 
 	setNullContextCurrent();
 
@@ -871,25 +824,10 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 {
     switch (feature)
     {
-	case EVDF_MULITEXTURE:
-		return getMaximalTextureUnitsAmount()>1;
 	case EVDF_BILINEAR_FILTER:
-        return true;
     case EVDF_TRILINEAR_FILTER:
-        return true;
-    case EVDF_ANISOTROPIC_FILTER:
-        return MaxAnisotropyLevel > 0;
-    case EVDF_RENDER_TO_TARGET:
-	case EVDF_DEPTH_STENCIL_TEXTURES:
-#if defined(GL_ARB_framebuffer_object)
-		return !!GLEW_ARB_framebuffer_object;
-#else
-        return false;
-#endif
     case EVDF_MIP_MAP:
         return true;
-    case EVDF_STENCIL_BUFFER:
-        return m_StencilBuffer;
 	case EVDF_SHADER_LANGUAGE:
 	case EVDF_OCCLUSION_QUERY:
 #if __MY_BUILD_GL_VER__ >= MY_DRIVER_TYPE_OPENGL21
@@ -903,15 +841,11 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 #else
 		return false;
 #endif
-	case EVDF_NON_POWER_OF_TWO_TEXTURES:
-		return m_TexturesNonPowerOfTwo;
-	case EVDF_MULTIPLE_RENDER_TARGETS:
-		return getMaximalDrawBuffersAmount() > 1;
 	default:
 		break;
     };
 
-    return false;
+	return CNullDriver::queryFeature(feature);
 }
 
 //---------------------------------------------------------------------------
@@ -1092,7 +1026,7 @@ void COpenGLDriver::_setBasicRenderStates()
 #ifdef GL_EXT_texture_filter_anisotropic
 			if (GLEW_EXT_texture_filter_anisotropic)
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
-					core::math::Min(8, MaxAnisotropyLevel));
+					core::math::Min(8, m_MaxAnisotropyLevel));
 #endif
 		}
 		else 
@@ -1445,7 +1379,6 @@ void COpenGLDriver::setViewPort(const core::rect<s32>& area)
     core::rect<s32> vp = area;
     core::rect<s32> rendert(0,0, m_ScreenSize.Width, m_ScreenSize.Height);
     vp.clipAgainst(rendert);
-
 
     if (vp.getHeight()>0 && vp.getWidth()>0)
 	{
@@ -1820,7 +1753,7 @@ void COpenGLDriver::setTextureFilter(E_TEXTURE_FILTER textureFilter)
 {
 	CNullDriver::setTextureFilter(textureFilter);
 
-	if (m_TextureFilter == ETF_ANISOTROPIC && MaxAnisotropyLevel == 0 )
+	if (m_TextureFilter == ETF_ANISOTROPIC && m_MaxAnisotropyLevel == 0 )
 	{
 		m_TextureFilter = ETF_BILINEAR;
 		LOGGER.logWarn("OpenGL has no anisotropic filtering. Fall back to bilinear.");
@@ -1838,52 +1771,28 @@ ITexture* COpenGLDriver::createRenderTargetTexture(
 
 //---------------------------------------------------------------------------
 
-IRenderTarget* COpenGLDriver::addRenderTarget()
+IRenderTarget* COpenGLDriver::createRenderTarget()
 {
-	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
 		new COpenGLRenderTarget() : NULL;
-	if (rt && !rt->isOK())
-	{
-		rt->drop();
-		rt = NULL;
-	}
-	if (rt)
-		_addRenderTarget(rt);
-	return rt;
 }
 
 //---------------------------------------------------------------------------
 
-IRenderTarget* COpenGLDriver::addRenderTarget(const core::dimension2di &size,
+IRenderTarget* COpenGLDriver::createRenderTarget(const core::dimension2di &size,
 	img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
 {
-	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
 		new COpenGLRenderTarget(size, colorFormat, depthFormat) : NULL;
-	if (rt && !rt->isOK())
-	{
-		rt->drop();
-		rt = NULL;
-	}
-	if (rt)
-		_addRenderTarget(rt);
-	return rt;
 }
 
 //---------------------------------------------------------------------------
 
-IRenderTarget* COpenGLDriver::addRenderTarget(
+IRenderTarget* COpenGLDriver::createRenderTarget(
 	ITexture *colorTexture, ITexture *depthTexture)
 {
-	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
 		new COpenGLRenderTarget(colorTexture, depthTexture) : NULL;
-	if (rt && !rt->isOK())
-	{
-		rt->drop();
-		rt = NULL;
-	}
-	if (rt)
-		_addRenderTarget(rt);
-	return rt;
 }
 
 //---------------------------------------------------------------------------

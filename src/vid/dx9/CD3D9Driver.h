@@ -57,12 +57,12 @@ public:
 	virtual ITexture* createRenderTargetTexture(
 		const core::dimension2di &size, img::E_COLOR_FORMAT format);
 
-	virtual IRenderTarget* addRenderTarget();
-	virtual IRenderTarget* addRenderTarget(const core::dimension2di &size,
+	virtual IRenderTarget* createRenderTarget();
+	virtual IRenderTarget* createRenderTarget(const core::dimension2di &size,
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat);
-	virtual IRenderTarget* addRenderTarget(
+	virtual IRenderTarget* createRenderTarget(
 		ITexture *colorTexture, ITexture *depthTexture);
-        
+
 	virtual IHardwareOcclusionQuery& getHardwareOcclusionQuery();
 
 	virtual void setPolygonFillMode(E_POLYGON_FILL_MODE mode);
@@ -174,9 +174,6 @@ private:
     //! set gamma correction value, directx only at the moment patch by reaper
     void setGammaRamp(f32 gamme, f32 contrast, f32 brightness);
 
-    //! Stencil Fog Texture
-    IDirect3DTexture9* StencilFogTexture;  
-    
     virtual void _setVertexType(E_VERTEX_TYPE newType);
     virtual void _setBasicRenderStates();
 	virtual void _setFFPRenderStates();
@@ -234,8 +231,6 @@ private:
 	CD3D9HardwareOcclusionQuery* m_D3D9HardwareOcclusionQuery;
 
 	IDirect3DVertexDeclaration9* m_VertexDecls[E_VERTEX_TYPE_COUNT];
-
-	bool m_DepthStencilTexturesSupport;
 };
 
 //----------------------------------------------------------------------------

@@ -88,7 +88,7 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 	ViewPort(0,0,0,0), m_TrianglesDrawn(0), m_DIPsDrawn(0), TextureCreationFlags(0),  
 	StencilPreInitialized(true), AverageFPS(0), BackColor(255,0,0,0),
 	m_LastEnabledLightsCount(-1), Transformation3DChanged(true),
-	m_MaxTextureUnits(0), m_MaxLights(0), m_MaxTextureSize(1024, 1024), MaxAnisotropyLevel(0),
+	m_MaxTextureUnits(0), m_MaxLights(0), m_MaxTextureSize(1024, 1024), m_MaxAnisotropyLevel(0),
 	m_NormalMapCreationAmplitude(1.0f), 
 	m_PolygonFillMode(EPFM_SOLID), m_TextureFilter(ETF_NONE),
 	m_Rendering(false),
@@ -99,7 +99,9 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 	m_StencilEnabled(false), m_ScissorEnabled(false), m_ShadowColor(100,0,0,0),
 	m_Fullscreen(false), m_Antialiasing(false), m_VerticalSync(false), m_Shadows(false),
 	m_StencilBuffer(false), m_TwoSidedStencil(false), m_TexturesNonPowerOfTwo(false),
-	m_MaxDrawBuffers(1),
+	m_MaxDrawBuffers(1), m_DepthStencilTexturesSupport(false), m_RenderTargetSupport(false),
+	m_ColorBits(0), m_AlphaBits(0), m_DepthBits(0), m_StencilBits(0),
+	m_VertexShaderVersion(0), m_PixelShaderVersion(0),
 	m_CurrentVertexType((E_VERTEX_TYPE)-1), 
 	m_DriverType(EDT_NULL), m_Profiler(PROFILER),
 	m_DirtyTexUnit(-1), m_CurrentGPUProgram(NULL),
@@ -260,6 +262,14 @@ void CNullDriver::free()
 
 bool CNullDriver::_initDriver(SExposedVideoData &out_video_data)
 {
+	setTextureCreationFlag(ETCF_CREATE_POWER_OF_TWO,
+		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) == false);
+	setTextureFilter(m_TextureFilter);
+	setColorMask(m_ColorMask);
+	setFog(m_Fog);
+	setGlobalAmbientColor(getGlobalAmbientColor());
+	setViewPort(0, 0, m_ScreenSize.Width, m_ScreenSize.Height);
+
 	if (m_UseShaders && !queryFeature(EVDF_SHADER_LANGUAGE))
 	{
 		m_UseShaders = false;
@@ -272,9 +282,83 @@ bool CNullDriver::_initDriver(SExposedVideoData &out_video_data)
 	m_CacheShaders = m_UseShaders && m_CacheShaders;
 	m_UseFFP = !m_UseShaders || m_UseFFP;
 
+	LOGGER.logInfo(" Video driver features:");
+	LOGGER.logInfo("  Back Color Format : %s",
+		img::getColorFormatName(getBackColorFormat()));
+	LOGGER.logInfo("  Multitexturing    : %s",
+		queryFeature(EVDF_MULITEXTURE) ? "OK" : "None");
+	LOGGER.logInfo("  Anisotropic filt. : %s (%d level)",
+		queryFeature(EVDF_ANISOTROPIC_FILTER) ?
+			"OK" : "None", m_MaxAnisotropyLevel);
+	if (getDriverFamily() != vid::EDF_NULL)
+	{
+		LOGGER.logInfo("  %s              : %s",
+			getDriverFamily() == EDF_OPENGL ? "GLSL" : "HLSL",
+			queryFeature(EVDF_SHADER_LANGUAGE) ? "OK" : "None");
+		if (queryFeature(EVDF_SHADER_LANGUAGE))
+		{
+			LOGGER.logInfo("   Vertex shader - v.%d.%d",
+				0xff & m_VertexShaderVersion >> 8,
+				0xff & m_VertexShaderVersion);
+			LOGGER.logInfo("   Pixel shader  - v.%d.%d",
+				0xff & m_PixelShaderVersion >> 8,
+				0xff & m_PixelShaderVersion);
+		}
+	}
+	LOGGER.logInfo("  Two side stencil  : %s",
+		m_TwoSidedStencil ? "OK" : "None");
+	LOGGER.logInfo("  Occlusion Query   : %s",
+		queryFeature(EVDF_OCCLUSION_QUERY) ? "OK" : "None");
+	LOGGER.logInfo("  Render Target     : %s",
+		queryFeature(EVDF_RENDER_TO_TARGET) ? "OK" : "None");
+	LOGGER.logInfo("  Compressed tex.   : %s",
+		queryFeature(EVDF_COMPRESSED_TEXTURES) ? "OK" : "None");
+	LOGGER.logInfo("  Depth Stencil tex.: %s",
+		queryFeature(EVDF_DEPTH_STENCIL_TEXTURES) ? "OK" : "None");
+	LOGGER.logInfo("  Non pwr. of 2 tex.: %s",
+		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) ? "OK" : "None");
+	LOGGER.logInfo("  MRT               : %s (%d)",
+		queryFeature(EVDF_MULTIPLE_RENDER_TARGETS) ? "OK" : "None",
+		m_MaxDrawBuffers);
+
+    LOGGER.logInfo(" Video driver parameters: ");
+    LOGGER.logInfo("  color   : %d bit", m_ColorBits);
+    LOGGER.logInfo("  alpha   : %d bit", m_AlphaBits);
+    LOGGER.logInfo("  depth(z): %d bit", m_DepthBits);
+    LOGGER.logInfo("  stencil : %d bit", m_StencilBits);
+    LOGGER.logInfo("  max lights    : %d", m_MaxLights);
+    LOGGER.logInfo("  max tex. units: %d", m_MaxTextureUnits);
+    LOGGER.logInfo("  max tex. res. : %d x %d",
+		m_MaxTextureSize.Width, m_MaxTextureSize.Height);	
+
 	_createEmbeddedTextures();
 
     return true;
+}
+
+//---------------------------------------------------------------------------
+
+bool CNullDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
+{
+	switch (feature)
+    {
+	case EVDF_MULITEXTURE:
+		return getMaximalTextureUnitsAmount()>1;
+    case EVDF_ANISOTROPIC_FILTER:
+        return m_MaxAnisotropyLevel>0;
+    case EVDF_STENCIL_BUFFER:
+        return m_StencilBuffer;
+    case EVDF_RENDER_TO_TARGET:
+		return m_RenderTargetSupport;
+	case EVDF_DEPTH_STENCIL_TEXTURES:
+		return m_DepthStencilTexturesSupport;
+	case EVDF_NON_POWER_OF_TWO_TEXTURES:
+		return m_TexturesNonPowerOfTwo;
+	case EVDF_MULTIPLE_RENDER_TARGETS:
+		return getMaximalColorAttachmentsAmount() > 1;
+    }
+
+	return false;
 }
 
 //---------------------------------------------------------------------------
@@ -598,6 +682,55 @@ ITexture* CNullDriver::addRenderTargetTexture(const c8 *name,
 		t->drop();
 
 	return t;
+}
+
+//---------------------------------------------------------------------------
+
+IRenderTarget* CNullDriver::addRenderTarget()
+{
+	CNullRenderTarget *rt =(CNullRenderTarget *)createRenderTarget();
+	if (rt && !rt->isOK())
+	{
+		rt->drop();
+		rt = NULL;
+	}
+	if (rt)
+		_addRenderTarget(rt);
+	return rt;
+}
+
+//---------------------------------------------------------------------------
+
+IRenderTarget* CNullDriver::addRenderTarget(const core::dimension2di &size,
+	img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
+{
+	CNullRenderTarget *rt =
+		(CNullRenderTarget *)createRenderTarget(size, colorFormat, depthFormat);
+	if (rt && !rt->isOK())
+	{
+		rt->drop();
+		rt = NULL;
+	}
+	if (rt)
+		_addRenderTarget(rt);
+	return rt;
+}
+
+//---------------------------------------------------------------------------
+
+IRenderTarget* CNullDriver::addRenderTarget(
+	ITexture *colorTexture, ITexture *depthTexture)
+{
+	CNullRenderTarget *rt =
+		(CNullRenderTarget *)createRenderTarget(colorTexture, depthTexture);
+	if (rt && !rt->isOK())
+	{
+		rt->drop();
+		rt = NULL;
+	}
+	if (rt)
+		_addRenderTarget(rt);
+	return rt;
 }
 
 //---------------------------------------------------------------------------
@@ -1028,20 +1161,18 @@ bool CNullDriver::getTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag)
 
 //---------------------------------------------------------------------------
 
-//! Set Current Fog Mode
 void CNullDriver::setFog(const SFog &fog)
 {
-    Fog = fog;
+    m_Fog = fog;
 
 	setBackgroundColor(fog.Color);
 }
 
 //---------------------------------------------------------------------------
 
-//! Returns Current Fog Mode
 const SFog& CNullDriver::getFog()
 {
-    return Fog;
+    return m_Fog;
 }
 
 //---------------------------------------------------------------------------
@@ -1142,17 +1273,10 @@ void CNullDriver::maxIndexWarning(u8 idxSize)
 
 //---------------------------------------------------------------------------
 
-s32 CNullDriver::getStencilFogTextureSize() 
-{ 
-    return 128; 
-}
-
-//---------------------------------------------------------------------------
-
 void CNullDriver::setBackgroundColor(const img::SColor &color)
 {
 	BackColor = color;
-	Fog.Color = color;
+	m_Fog.Color = color;
 }
 
 //---------------------------------------------------------------------------
@@ -4186,21 +4310,21 @@ bool CNullDriver::_bindGPUProgram(IGPUProgram* gpu_prog)
 
 	if (mask & EUF_FOG_PARAMS)
 	{
-		if (((CNullGPUProgram*)gpu_prog)->getFog() != Fog
+		if (((CNullGPUProgram*)gpu_prog)->getFog() != m_Fog
 				// For D3D must reset uniforms all the times
 				// TODO - reserch this issue
 				|| getDriverFamily() == vid::EDF_DIRECTX
 			)
 		{
-			f32 fog[3] = { Fog.Start, Fog.End, Fog.Density };
+			f32 fog[3] = { m_Fog.Start, m_Fog.End, m_Fog.Density };
 			res = gpu_prog->setUniformfv(EUT_FOG_PARAMS, fog, sizeof(fog)) && res;
 			if (mask & EUF_FOG_COLOR)
 			{
-				img::SColorf col(Fog.Color);
+				img::SColorf col(m_Fog.Color);
 				res = gpu_prog->setUniformfv(EUT_FOG_COLOR, (f32*)&col, 3 * sizeof(f32)) && res;
 			}
 		}
-		((CNullGPUProgram*)gpu_prog)->setFog(Fog);
+		((CNullGPUProgram*)gpu_prog)->setFog(m_Fog);
 	}
 
 	return res;

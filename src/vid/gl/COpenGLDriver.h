@@ -79,10 +79,10 @@ public:
 	virtual ITexture* createRenderTargetTexture(
 		const core::dimension2di &size, img::E_COLOR_FORMAT format);
 
-	virtual IRenderTarget* addRenderTarget();
-	virtual IRenderTarget* addRenderTarget(const core::dimension2di &size,
+	virtual IRenderTarget* createRenderTarget();
+	virtual IRenderTarget* createRenderTarget(const core::dimension2di &size,
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat);
-	virtual IRenderTarget* addRenderTarget(
+	virtual IRenderTarget* createRenderTarget(
 		ITexture *colorTexture, ITexture *depthTexture);
         
 	virtual bool setRenderTarget(IRenderTarget *rt);
@@ -256,10 +256,7 @@ private:
 	IRenderBuffer * createDynamicRenderBufferTemplate(
 		const void * varray, u32 vert_size,
 		const void * iarray, E_INDEX_TYPE itype, u32 ind_size, E_DRAW_PRIMITIVE_TYPE dpt );
-
-    //! Stencil Fog Texture
-    GLuint StencilFogTexture;  
-    
+ 
     //! returns a device dependent texture from a software surface (IImage)
     //! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
     virtual ITexture* _createDeviceDependentTexture(img::IImage* surface);
