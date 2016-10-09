@@ -1580,6 +1580,38 @@ enum E_COLOR_MASK_BIT
 };
 
 //----------------------------------------------------------------------------
+
+enum E_RENDER_PATH
+{
+	//! Standard rendering with multipass lighting
+	ERP_FORWARD_RENDERING = 0,
+
+	//! Rendering with deferred lighting pass
+	ERP_DEFERRED_SHADING,
+
+	E_RENDER_PATH_COUNT,
+	E_RENDER_PATH_FORCE_32BIT = 0xffffffff
+};
+
+static const c8* RenderPathName[E_RENDER_PATH_COUNT] =
+{
+	"ERP_FORWARD_RENDERING",
+	"ERP_DEFERRED_SHADING",
+};
+
+static const c8* RenderPathReadableName[E_RENDER_PATH_COUNT] =
+{
+	"Forward Rendering",
+	"Deferred Shading",
+};
+
+MY_FORCEINLINE const c8* getRenderPathName(E_RENDER_PATH path)
+{ return RenderPathName[path]; }
+
+MY_FORCEINLINE const c8* getRenderPathReadableName(E_RENDER_PATH path)
+{ return RenderPathReadableName[path]; }
+
+//----------------------------------------------------------------------------
 } // end namespace vid
 } // end namespace my
 //----------------------------------------------------------------------------

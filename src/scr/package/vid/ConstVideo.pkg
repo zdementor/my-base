@@ -735,5 +735,21 @@ enum E_COLOR_MASK_BIT
 };
 
 //----------------------------------------------------------------------------
+
+enum E_RENDER_PATH
+{
+	//! Standard rendering with multipass lighting
+	ERP_FORWARD_RENDERING = 0,
+
+	//! Rendering with deferred lighting pass
+	ERP_DEFERRED_SHADING,
+
+	E_RENDER_PATH_COUNT,
+};
+
+const char* getRenderPathName(E_RENDER_PATH path);
+const char* getRenderPathReadableName(E_RENDER_PATH path);
+
+//----------------------------------------------------------------------------
 } // end namespace vid 
 //----------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 10/09/16 19:03:55.
+** Generated automatically by tolua++-1.0.92 on 10/09/16 19:56:30.
 */
 
 #ifndef __cplusplus
@@ -46822,6 +46822,71 @@ static int tolua_MyLuaBind_vid_IVideoDriver_getSingleton00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: setRenderPath of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_setRenderPath00
+static int tolua_MyLuaBind_vid_IVideoDriver_setRenderPath00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+  vid::E_RENDER_PATH renderPath = ((vid::E_RENDER_PATH) (int)  tolua_tonumber(tolua_S,2,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'setRenderPath'",NULL);
+#endif
+ {
+  self->setRenderPath(renderPath);
+ }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'setRenderPath'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getRenderPath of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_getRenderPath00
+static int tolua_MyLuaBind_vid_IVideoDriver_getRenderPath00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,2,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getRenderPath'",NULL);
+#endif
+ {
+  vid::E_RENDER_PATH tolua_ret = (vid::E_RENDER_PATH)  self->getRenderPath();
+ tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getRenderPath'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: getBackColorFormat of class  vid::IVideoDriver */
 #ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_getBackColorFormat00
 static int tolua_MyLuaBind_vid_IVideoDriver_getBackColorFormat00(lua_State* tolua_S)
@@ -59911,6 +59976,9 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"ECM_GREEN",vid::ECM_GREEN);
   tolua_constant(tolua_S,"ECM_BLUE",vid::ECM_BLUE);
   tolua_constant(tolua_S,"ECM_ALPHA",vid::ECM_ALPHA);
+  tolua_constant(tolua_S,"ERP_FORWARD_RENDERING",vid::ERP_FORWARD_RENDERING);
+  tolua_constant(tolua_S,"ERP_DEFERRED_SHADING",vid::ERP_DEFERRED_SHADING);
+  tolua_constant(tolua_S,"E_RENDER_PATH_COUNT",vid::E_RENDER_PATH_COUNT);
  tolua_endmodule(tolua_S);
  tolua_module(tolua_S,"os",0);
  tolua_beginmodule(tolua_S,"os");
@@ -62112,6 +62180,8 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_cclass(tolua_S,"IVideoDriver","vid::IVideoDriver","",NULL);
   tolua_beginmodule(tolua_S,"IVideoDriver");
    tolua_function(tolua_S,"getSingleton",tolua_MyLuaBind_vid_IVideoDriver_getSingleton00);
+   tolua_function(tolua_S,"setRenderPath",tolua_MyLuaBind_vid_IVideoDriver_setRenderPath00);
+   tolua_function(tolua_S,"getRenderPath",tolua_MyLuaBind_vid_IVideoDriver_getRenderPath00);
    tolua_function(tolua_S,"getBackColorFormat",tolua_MyLuaBind_vid_IVideoDriver_getBackColorFormat00);
    tolua_function(tolua_S,"clearDepth",tolua_MyLuaBind_vid_IVideoDriver_clearDepth00);
    tolua_function(tolua_S,"clearStencil",tolua_MyLuaBind_vid_IVideoDriver_clearStencil00);

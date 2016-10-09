@@ -49,6 +49,12 @@ class __MY_VID_LIB_API__ IVideoDriver :
 {
 public:
 
+	//! Set render path used for rendering geometry an lighting
+	virtual void setRenderPath(E_RENDER_PATH renderPath) = 0;
+
+	//! Returns render path used for rendering geometry an lighting
+	virtual E_RENDER_PATH getRenderPath() = 0;
+
 	//! Returns color format of the Back Color Buffer
 	virtual img::E_COLOR_FORMAT getBackColorFormat() = 0;
 

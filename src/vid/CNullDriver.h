@@ -58,19 +58,25 @@ public:
     CNullDriver(const core::dimension2d<s32>& screenSize);
     virtual ~CNullDriver();
 
+	virtual void setRenderPath(E_RENDER_PATH renderPath);
+	virtual E_RENDER_PATH getRenderPath()
+		{ return m_RenderPath; }
+
 	virtual img::E_COLOR_FORMAT getBackColorFormat() { return m_BackColorFormat; }
 
     virtual bool queryFeature(E_VIDEO_DRIVER_FEATURE feature);
 
     virtual void setTransform(E_TRANSFORMATION_STATE state, const core::matrix4& mat);
 
-    virtual const core::matrix4& getTransform(E_TRANSFORMATION_STATE state);
+    virtual const core::matrix4& getTransform(E_TRANSFORMATION_STATE state)
+		{ return Matrices[state]; }
 
-    virtual const SRenderPass& getLastRenderPass();
-
-    virtual const SRenderPass& getRenderPass();
-
-    virtual void setRenderPass(const SRenderPass& material);
+    virtual const SRenderPass& getLastRenderPass()
+		{ return m_LastRenderPass; }
+    virtual const SRenderPass& getRenderPass()
+		{ return m_CurrentRenderPass; }
+    virtual void setRenderPass(const SRenderPass& pass)
+		{ m_CurrentRenderPass = pass; }
 
     virtual void setViewPort(const core::rect<s32>& area);
 	virtual void setViewPort(s32 left, s32 top, s32 right, s32 bottom);
@@ -628,6 +634,8 @@ protected:
     int _clip2DLineRect(
 		const core::rect<s32>* clip, core::position2d<s32>& p1, core::position2d<s32>& p2);
 
+	E_RENDER_PATH m_RenderPath;
+
 	core::array < SRenderPool > m_RenderPools[E_RENDER_PASS_COUNT];
 	u32 m_RenderPoolsCacheIndex;
 	core::hash_array < SRenderPool* > m_RenderPoolsCache[2][E_RENDER_PASS_COUNT];
@@ -815,6 +823,11 @@ protected:
 	IRenderTarget* m_CurrentRenderTarget;
 
 	bool m_YInverted;
+
+private:
+
+	void _renderForward(E_RENDER_PASS pass);
+	void _renderDeferred(E_RENDER_PASS pass);
 };
 
 //---------------------------------------------------------------------------

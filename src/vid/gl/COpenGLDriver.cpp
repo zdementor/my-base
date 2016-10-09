@@ -89,28 +89,28 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
     {
         if (i == 1)
         {
-            LOGGER.logWarn(" Cannot create a GL device with stencil buffer, disabling stencil shadows");
+            LOGGER.logWarn("Can not create a GL device with stencil buffer, disabling stencil shadows");
             m_StencilBuffer = false;
             pfd.cStencilBits = 0;
         }
         else
         if (i == 2)
         {
-            LOGGER.logErr(" Cannot create a GL device context");
+            LOGGER.logErr("Can not create a GL device context");
             return false;
         }
 
         // get hdc
         if (!(HDc=GetDC(HWnd)))
         {
-            LOGGER.logErr(" Cannot create a GL device context");
+            LOGGER.logErr("Can not create a GL device context");
             continue;
         }        
 
         // choose pixelformat
         if (!(PixelFormat = ChoosePixelFormat(HDc, &pfd)))
         {
-            LOGGER.logErr(" Cannot find a suitable pixel format");
+            LOGGER.logErr("Can not find a suitable pixel format");
             continue;
         }
 
@@ -119,7 +119,7 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 		PIXELFORMATDESCRIPTOR dpfd;
 		if (!DescribePixelFormat(HDc, PixelFormat, sizeof(dpfd), &dpfd))
 		{
-            LOGGER.logErr(" Cannot describe pixel format");
+            LOGGER.logErr("Can not describe pixel format");
             continue;
         }
 
@@ -143,32 +143,32 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 			}
 			if (!(dpfd.dwFlags & PFD_GENERIC_FORMAT))
 			{
-				LOGGER.logErr(" Cannot find GDI generic pixel format");
+				LOGGER.logErr("Can not find GDI generic pixel format");
 			}
 		}
 
         // set pixel format
         if (!SetPixelFormat(HDc, PixelFormat, &dpfd))
         {
-            LOGGER.logErr(" Cannot set the pixel format");
+            LOGGER.logErr("Can not set the pixel format");
             continue;
         }
 
         // create rendering context
         if (!(m_RenderContext = wglCreateContext(HDc)))
         {
-            LOGGER.logErr(" Cannot create a GL rendering context");
+            LOGGER.logErr("Can not create a GL rendering context");
             continue;
         }
 
         if (!setRenderContextCurrent())
         {
-            LOGGER.logErr(" Cannot activate GL context");
+            LOGGER.logErr("Can not activate GL context");
             continue;
         }
 		else
 		{
-			LOGGER.logInfo(" OGL context activated");            
+			LOGGER.logInfo("OGL context activated");            
 		}
 
 		if (dpfd.cColorBits == 15 && dpfd.cAlphaBits == 1)
@@ -195,9 +195,9 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 	core::stringc glVer = glGetString(GL_VERSION);
 	core::stringc glExt = glGetString(GL_EXTENSIONS);
 
-	LOGGER.logInfo(" Video adapter model: %s %s", glRend.c_str(), glVend.c_str());
-	LOGGER.logInfo(" OGL driver version: %s", glVer.c_str());
-	LOGGER.logInfo(" Supported OpenGL extentions:\n  %s", glExt.c_str());
+	LOGGER.logInfo("Video adapter model: %s %s", glRend.c_str(), glVend.c_str());
+	LOGGER.logInfo("OGL driver version: %s", glVer.c_str());
+	LOGGER.logInfo("Supported OpenGL extentions:\n  %s", glExt.c_str());
 
 	m_StencilBuffer &= m_Shadows;
 
@@ -222,17 +222,17 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 			|| !GLEW_VERSION_1_5 || !GLEW_VERSION_1_4 || !GLEW_VERSION_1_3
 			|| !GLEW_VERSION_1_2 || !GLEW_VERSION_1_1)
 	{
-        LOGGER.logErr(" OpenGL driver version is not 2.1 or better.");
+        LOGGER.logErr("OpenGL driver version is not 2.1 or better.");
 		return false;
 	}
 	if (!GLEW_ARB_imaging)
 	{
-        LOGGER.logErr(" OpenGL driver is not supported GL_ARB_imaging extension.");
+        LOGGER.logErr("OpenGL driver is not supported GL_ARB_imaging extension.");
 		return false;
 	}
 	if (!GLEW_EXT_texture_compression_s3tc)
 	{
-		LOGGER.logWarn(" OpenGL driver is not supported EXT_texture_compression_s3tc extension,"
+		LOGGER.logWarn("OpenGL driver is not supported EXT_texture_compression_s3tc extension,"
 			"be aware from using DXT textures.");
 	}
 	vboSupport = true;
@@ -248,7 +248,8 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 	CHECK_MAX_RANGE(m_MaxTextureUnits, MY_MATERIAL_MAX_LAYERS);
 
     if (m_MaxTextureUnits < 2)
-		LOGGER.logWarn("OpenGL device only has one texture unit. Disabling multitexturing.");
+		LOGGER.logWarn(
+			"OpenGL device only has one texture unit. Disabling multitexturing.");
 
 #ifdef GL_EXT_texture_filter_anisotropic
 	if (GLEW_EXT_texture_filter_anisotropic)
@@ -311,7 +312,8 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 #endif
 
 	if (!vboSupport)
-		LOGGER.logWarn("Vertex Buffer Objects not supported (using vertex arrays instead).");
+		LOGGER.logWarn(
+			"Vertex Buffer Objects not supported (using vertex arrays instead).");
 	if (!COpenGLVertexArrayObject::ms_VAOSupport)
 		LOGGER.logWarn("Vertex Array Objects not supported.");
 
@@ -348,7 +350,7 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
     DescribePixelFormat(HDc, PixelFormat, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
 	if (pfd.cStencilBits == 0)
 	{
-		LOGGER.logWarn(" Device does not support Stencil Buffer, disabling it.");
+		LOGGER.logWarn("Device does not support Stencil Buffer, disabling it.");
 		m_StencilBuffer = false;
 	}
 	else 
@@ -360,9 +362,9 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
     m_StencilBits = pfd.cStencilBits;
 
 	if (WGLEW_EXT_swap_control && wglSwapIntervalEXT(m_VerticalSync?1:0)!=0)
-		LOGGER.logInfo(" Vertical Sync %s", m_VerticalSync ? "enabled" : "disabled");
+		LOGGER.logInfo("Vertical Sync %s", m_VerticalSync ? "enabled" : "disabled");
 	else
-		LOGGER.logInfo(" Can't on/off Vertical Sync ");
+		LOGGER.logInfo("Can't on/off Vertical Sync ");
 
     return CNullDriver::_initDriver(out_video_data);
 }

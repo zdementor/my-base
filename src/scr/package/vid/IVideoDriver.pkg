@@ -14,6 +14,12 @@ class IVideoDriver
     //! Return singleton object
     static IVideoDriver& getSingleton();
 
+	//! Set render path used for rendering geometry an lighting
+	virtual void setRenderPath(E_RENDER_PATH renderPath);
+
+	//! Returns render path used for rendering geometry an lighting
+	virtual E_RENDER_PATH getRenderPath();
+
 	//! Returns color format of the Back Color Buffer
 	img::E_COLOR_FORMAT getBackColorFormat();
 

@@ -84,7 +84,7 @@ const f32 CNullDriver::fog_blur[fog_blur_num][2] =
 //---------------------------------------------------------------------------
 
 CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize) 
-	: m_ScreenSize(screenSize), 
+	: m_RenderPath((E_RENDER_PATH)-1), m_ScreenSize(screenSize), 
 	ViewPort(0,0,0,0), m_TrianglesDrawn(0), m_DIPsDrawn(0), TextureCreationFlags(0),  
 	StencilPreInitialized(true), AverageFPS(0), BackColor(255,0,0,0),
 	m_LastEnabledLightsCount(-1), Transformation3DChanged(true),
@@ -115,15 +115,15 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 	IUnknown::setClassName("CNullDriver");
 #endif
 
-    setTextureCreationFlag(ETCF_AUTOGEN_MIP_MAPS, true);
-
-    ViewPort = core::rect<s32>(core::position2d<s32>(0,0), screenSize);
-
-	// grabbing needed singletons
-
 	m_Profiler.grab();
 	IMAGE_LIBRARY.grab();
 	FILE_SYSTEM.grab();
+
+	setRenderPath(ERP_FORWARD_RENDERING);
+
+    setTextureCreationFlag(ETCF_AUTOGEN_MIP_MAPS, true);
+
+    ViewPort = core::rect<s32>(core::position2d<s32>(0,0), screenSize);
 
 	// some needed stuff
 
@@ -282,58 +282,70 @@ bool CNullDriver::_initDriver(SExposedVideoData &out_video_data)
 	m_CacheShaders = m_UseShaders && m_CacheShaders;
 	m_UseFFP = !m_UseShaders || m_UseFFP;
 
-	LOGGER.logInfo(" Video driver features:");
-	LOGGER.logInfo("  Back Color Format : %s",
+	LOGGER.logInfo("Video driver features:");
+	LOGGER.logInfo(" Back Color Format : %s",
 		img::getColorFormatName(getBackColorFormat()));
-	LOGGER.logInfo("  Multitexturing    : %s",
+	LOGGER.logInfo(" Multitexturing    : %s",
 		queryFeature(EVDF_MULITEXTURE) ? "OK" : "None");
-	LOGGER.logInfo("  Anisotropic filt. : %s (%d level)",
+	LOGGER.logInfo(" Anisotropic filt. : %s (%d level)",
 		queryFeature(EVDF_ANISOTROPIC_FILTER) ?
 			"OK" : "None", m_MaxAnisotropyLevel);
 	if (getDriverFamily() != vid::EDF_NULL)
 	{
-		LOGGER.logInfo("  %s              : %s",
+		LOGGER.logInfo(" %s              : %s",
 			getDriverFamily() == EDF_OPENGL ? "GLSL" : "HLSL",
 			queryFeature(EVDF_SHADER_LANGUAGE) ? "OK" : "None");
 		if (queryFeature(EVDF_SHADER_LANGUAGE))
 		{
-			LOGGER.logInfo("   Vertex shader - v.%d.%d",
+			LOGGER.logInfo("  Vertex shader - v.%d.%d",
 				0xff & m_VertexShaderVersion >> 8,
 				0xff & m_VertexShaderVersion);
-			LOGGER.logInfo("   Pixel shader  - v.%d.%d",
+			LOGGER.logInfo("  Pixel shader  - v.%d.%d",
 				0xff & m_PixelShaderVersion >> 8,
 				0xff & m_PixelShaderVersion);
 		}
 	}
-	LOGGER.logInfo("  Two side stencil  : %s",
+	LOGGER.logInfo(" Two side stencil  : %s",
 		m_TwoSidedStencil ? "OK" : "None");
-	LOGGER.logInfo("  Occlusion Query   : %s",
+	LOGGER.logInfo(" Occlusion Query   : %s",
 		queryFeature(EVDF_OCCLUSION_QUERY) ? "OK" : "None");
-	LOGGER.logInfo("  Render Target     : %s",
+	LOGGER.logInfo(" Render Target     : %s",
 		queryFeature(EVDF_RENDER_TO_TARGET) ? "OK" : "None");
-	LOGGER.logInfo("  Compressed tex.   : %s",
+	LOGGER.logInfo(" Compressed tex.   : %s",
 		queryFeature(EVDF_COMPRESSED_TEXTURES) ? "OK" : "None");
-	LOGGER.logInfo("  Depth Stencil tex.: %s",
+	LOGGER.logInfo(" Depth Stencil tex.: %s",
 		queryFeature(EVDF_DEPTH_STENCIL_TEXTURES) ? "OK" : "None");
-	LOGGER.logInfo("  Non pwr. of 2 tex.: %s",
+	LOGGER.logInfo(" Non pwr. of 2 tex.: %s",
 		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) ? "OK" : "None");
-	LOGGER.logInfo("  MRT               : %s (%d)",
+	LOGGER.logInfo(" MRT               : %s (%d)",
 		queryFeature(EVDF_MULTIPLE_RENDER_TARGETS) ? "OK" : "None",
 		m_MaxDrawBuffers);
 
-    LOGGER.logInfo(" Video driver parameters: ");
-    LOGGER.logInfo("  color   : %d bit", m_ColorBits);
-    LOGGER.logInfo("  alpha   : %d bit", m_AlphaBits);
-    LOGGER.logInfo("  depth(z): %d bit", m_DepthBits);
-    LOGGER.logInfo("  stencil : %d bit", m_StencilBits);
-    LOGGER.logInfo("  max lights    : %d", m_MaxLights);
-    LOGGER.logInfo("  max tex. units: %d", m_MaxTextureUnits);
-    LOGGER.logInfo("  max tex. res. : %d x %d",
+    LOGGER.logInfo("Video driver parameters: ");
+    LOGGER.logInfo(" color   : %d bit", m_ColorBits);
+    LOGGER.logInfo(" alpha   : %d bit", m_AlphaBits);
+    LOGGER.logInfo(" depth(z): %d bit", m_DepthBits);
+    LOGGER.logInfo(" stencil : %d bit", m_StencilBits);
+    LOGGER.logInfo(" max lights    : %d", m_MaxLights);
+    LOGGER.logInfo(" max tex. units: %d", m_MaxTextureUnits);
+    LOGGER.logInfo(" max tex. res. : %d x %d",
 		m_MaxTextureSize.Width, m_MaxTextureSize.Height);	
 
 	_createEmbeddedTextures();
 
     return true;
+}
+
+//---------------------------------------------------------------------------
+
+void CNullDriver::setRenderPath(E_RENDER_PATH renderPath)
+{
+	if (renderPath != m_RenderPath)
+	{
+		LOGGER.logInfo("Use '%s' render path.",
+			getRenderPathReadableName(renderPath));
+	}
+	m_RenderPath = renderPath;
 }
 
 //---------------------------------------------------------------------------
@@ -506,37 +518,6 @@ void CNullDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matrix4
 	m_ModelInvMatrix.makeInversed();
 	m_ViewInvMatrix = Matrices[ETS_VIEW];
 	m_ViewInvMatrix.makeInversed();
-}
-
-//---------------------------------------------------------------------------
-
-const core::matrix4& CNullDriver::getTransform(E_TRANSFORMATION_STATE state)
-{
-    return Matrices[state];
-}
-
-//---------------------------------------------------------------------------
-
-//! Returns a material, using to draw geometry now
-const SRenderPass& CNullDriver::getLastRenderPass()
-{
-	return m_LastRenderPass;
-}
-
-//---------------------------------------------------------------------------
-
-//! Returns a material, using to draw geometry now
-const SRenderPass& CNullDriver::getRenderPass()
-{
-	return m_CurrentRenderPass;
-}
-
-//---------------------------------------------------------------------------
-
-//! sets a material
-void CNullDriver::setRenderPass(const SRenderPass& pass)
-{
-	m_CurrentRenderPass = pass;
 }
 
 //---------------------------------------------------------------------------
@@ -2932,6 +2913,14 @@ void CNullDriver::renderAll()
 
 void CNullDriver::renderPass(E_RENDER_PASS pass)
 {
+	(m_RenderPath == ERP_FORWARD_RENDERING) ?
+		_renderForward(pass) : _renderDeferred(pass);
+}
+
+//---------------------------------------------------------------------------
+
+void CNullDriver::_renderForward(E_RENDER_PASS pass)
+{
 	if (!m_Rendering)
 		return;
 
@@ -3071,6 +3060,13 @@ void CNullDriver::renderPass(E_RENDER_PASS pass)
 
 		m_Profiler.stopProfiling(m_ProfileIds[i], profileInfo.c_str());
 	}
+}
+
+//---------------------------------------------------------------------------
+
+void CNullDriver::_renderDeferred(E_RENDER_PASS pass)
+{
+	_renderForward(pass);
 }
 
 //---------------------------------------------------------------------------

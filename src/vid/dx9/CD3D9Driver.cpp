@@ -87,7 +87,7 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 
     if (!m_D3DLibrary)
     {
-        LOGGER.log(" Error, could not load d3d9.dll.", io::ELL_ERROR);
+        LOGGER.log("Error, could not load d3d9.dll.", io::ELL_ERROR);
         return false;
     }
 
@@ -96,7 +96,7 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 
     if (!d3dCreate)
     {
-        LOGGER.logErr(" Error, could not get proc adress of Direct3DCreate9.");
+        LOGGER.logErr("Could not get proc adress of Direct3DCreate9.");
         return false;
     }
 
@@ -105,7 +105,7 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 
     if (!m_D3D)
     {
-        LOGGER.log(" Error initializing D3D.", io::ELL_ERROR);
+        LOGGER.logErr("Initializing D3D.");
         return false;
     }
 	
@@ -113,7 +113,7 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
     hr = m_D3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &d3ddm);
     if (FAILED(hr))
     {
-        LOGGER.log(" Error: Could not get Adapter Display mode.", io::ELL_ERROR);
+        LOGGER.logErr("Could not get Adapter Display mode.");
         return false;
     }
 	
@@ -217,7 +217,7 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 	if (!m_StencilBuffer)
 	{
 		LOGGER.logWarn(
-			" Device does not support stencilbuffer, disabling stencil buffer.");
+			"Device does not support stencilbuffer, disabling stencil buffer.");
 	}	
 
 	m_StencilBuffer &= m_Shadows;
@@ -237,7 +237,7 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 
     if (FAILED(hr))
     {
-		LOGGER.logWarn(" Was not able to create hardware accelerated Direct3D device.");
+		LOGGER.logWarn("Was not able to create hardware accelerated Direct3D device.");
 
 		hr = m_D3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
             D3DCREATE_MIXED_VERTEXPROCESSING, &m_PresentParams, &m_D3DDevice);
@@ -247,7 +247,7 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 				D3DCREATE_SOFTWARE_VERTEXPROCESSING, &m_PresentParams, &m_D3DDevice);
 			if (FAILED(hr))
 			{
-				LOGGER.logErr(" Was not able to create Direct3D device.");
+				LOGGER.logErr("Was not able to create Direct3D device.");
 				return false;
 			}
         }
@@ -304,7 +304,7 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 		return false;
 	}
 
-	LOGGER.log(" D3D device created");            
+	LOGGER.log("D3D device created");            
 
 	// print device information
     D3DADAPTER_IDENTIFIER9 dai;
@@ -317,10 +317,10 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
         s32 SubVersion = HIWORD(dai.DriverVersion.LowPart);
         s32 Build = LOWORD(dai.DriverVersion.LowPart);
 
-        sprintf(tmp, " Video adapter model: %s %s", dai.Description, dai.Driver);
+        sprintf(tmp, "Video adapter model: %s %s", dai.Description, dai.Driver);
         LOGGER.log(tmp, io::ELL_INFORMATION);     
 
-		sprintf(tmp, " D3D driver version: %d.%d.%d.%d", Product,Version, SubVersion, Build);
+		sprintf(tmp, "D3D driver version: %d.%d.%d.%d", Product,Version, SubVersion, Build);
 		LOGGER.log(tmp, io::ELL_INFORMATION);  		
     }
 
@@ -334,7 +334,7 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 			)
 		)
     {
-        LOGGER.log(" Device not able to use stencil buffer, disabling stencil buffer.", io::ELL_WARNING);
+        LOGGER.logWarn("Device not able to use stencil buffer, disabling stencil buffer.");
         m_StencilBuffer = false;
     }
 	
@@ -407,11 +407,11 @@ bool CD3D9Driver::_initDriver(SExposedVideoData &out_video_data)
 			D3D9VertexElements[i], &m_VertexDecls[i]);
 
 	if (m_Fullscreen && m_VerticalSync)
-		LOGGER.logInfo(" Vertical Sync enabled");
+		LOGGER.logInfo("Vertical Sync enabled");
 	else if (m_Fullscreen && !m_VerticalSync)
-		LOGGER.logInfo(" Vertical Sync disabled");
+		LOGGER.logInfo("Vertical Sync disabled");
 	else
-		LOGGER.logInfo(" Can't on/off Vertical Sync ");
+		LOGGER.logInfo("Can't on/off Vertical Sync ");
 
 	return CNullDriver::_initDriver(out_video_data);
 }
