@@ -110,6 +110,7 @@ function AppendDefines(vtype, pass, perpixel, lightcnt, uniforms)
 		text = text.."#define VARY varying\n"
 		text = text.."#define UNI uniform\n"
 		text = text.."#define MIX mix\n"
+		text = text.."#define MUL(v1,v2) (v2*v1)\n"
 	else
 		text = text.."#define FLOAT float\n"
 		text = text.."#define INT   int\n"
@@ -127,6 +128,7 @@ function AppendDefines(vtype, pass, perpixel, lightcnt, uniforms)
 		text = text.."#define VARY\n"
 		text = text.."#define UNI uniform\n"
 		text = text.."#define MIX lerp\n"
+		text = text.."#define MUL(v1,v2) mul(v1,v2)\n"
 	end
 	text = text.."\n"
 	if bit.band(uniforms, vid.EUF_MATERIAL_COLORS) ~= 0 then
@@ -435,12 +437,12 @@ function GenInfo(vtype, pass, perpixel, lightcnt)
 					animated = true
 				end
 				GenTCInfo[ti + 1].VPreText = text
-				GenTCInfo[ti + 1].VValue = AppendMul("("..AppendMul("vertex", Uniforms.ModelMatrix)..")", Uniforms.TexMatrix[i+1])
+				GenTCInfo[ti + 1].VValue = string.format("MUL(MUL(vertex,%s),%s)", Uniforms.ModelMatrix, Uniforms.TexMatrix[i+1])
 			end
 			if pass.Layers[i]:isTexCoordAnimated() and not animated then
 				local text = ""
 				text = text.."    // animating texture coords (translate/scale/rotate)\n"
-				text = text..string.format("    tc%d = "..AppendMul("tc%d", Uniforms.TexMatrix[i+1])..";\n", i, i)
+				text = text..string.format("    tc%d = MUL(tc%d,%s);\n", i, i, Uniforms.TexMatrix[i+1])
 				GenTCInfo[ti + 1].VPostText = text
 			end
 			ti = ti + 1
@@ -524,23 +526,23 @@ function AppendVertShaderBody(vtype, pass, perpixel, lightcnt)
 	local hasSplatMap	= HasMap(pass, vid.ETLT_SPLATTING_MAP)
 
 	text = text.."    VEC4 vertex = VS_IN(Vertex);\n"
-	text = text.."    VEC4 positionMVP = "..AppendMul("vertex", Uniforms.ModelViewProjMatrix)..";\n"
+	text = text.."    VEC4 positionMVP = MUL(vertex,"..Uniforms.ModelViewProjMatrix..");\n"
 	text = text.."\n"
 
 	if IsNeedNormal(vtype, pass, lightcnt) then
-		text = text.."    VEC4 position = "..AppendMul("vertex", Uniforms.ModelViewMatrix)..";\n"
+		text = text.."    VEC4 position = MUL(vertex,"..Uniforms.ModelViewMatrix..");\n"
 		text = text.."    VEC3 eyeVec = -position.xyz;\n"
 		text = text.."    VEC3 normal = VS_IN(Normal);\n"
-		text = text.."    normal = "..AppendMul("normal", Uniforms.NormalMatrix)..";\n\n"
+		text = text.."    normal = MUL(normal,"..Uniforms.NormalMatrix..");\n\n"
 		if not perpixel then
 			text = text.."    normal = normalize(normal);\n"
 			text = text.."    eyeVec = normalize(eyeVec);\n"
 		end
 	elseif hasNMap then
-		text = text.."    VEC4 position = "..AppendMul("vertex", Uniforms.ModelViewMatrix)..";\n"
+		text = text.."    VEC4 position = MUL(vertex,"..Uniforms.ModelViewMatrix..");\n"
 		text = text.."    VEC3 eyeVec = -position.xyz;\n"
 	elseif fogging then
-		text = text.."    VEC4 position = "..AppendMul("vertex", Uniforms.ModelViewMatrix)..";\n"
+		text = text.."    VEC4 position = MUL(vertex,"..Uniforms.ModelViewMatrix..");\n"
 	end
 	
 	if light and vnormal and perpixel == false then
@@ -555,8 +557,8 @@ function AppendVertShaderBody(vtype, pass, perpixel, lightcnt)
 		if HasTBN(vtype) and hasNMap then
 			text = text..string.format("    VEC3 tangent  = VS_IN(MultiTexCoord2).xyz;\n")
 			text = text..string.format("    VEC3 binormal = VS_IN(MultiTexCoord3).xyz;\n")
-			text = text..string.format("    tangent  = "..AppendMul("tangent", Uniforms.NormalMatrix)..";\n")
-			text = text..string.format("    binormal = "..AppendMul("binormal", Uniforms.NormalMatrix)..";\n")
+			text = text..string.format("    tangent  = MUL(tangent,"..Uniforms.NormalMatrix..");\n")
+			text = text..string.format("    binormal = MUL(binormal,"..Uniforms.NormalMatrix..");\n")
 			text = text..string.format("    VS_OUT(EyeVec) = VEC3(\n", i)
 			text = text.."        dot(eyeVec, tangent),\n"
 			text = text.."        dot(eyeVec, binormal),\n"
@@ -827,20 +829,6 @@ function AppendPixelShaderBody(vtype, pass, perpixel, lightcnt)
 		text = text.."    PS_OUT(FragData,0).rgb = MIX("..Uniforms.FogColor.."*PS_OUT(FragData,0).a, PS_OUT(FragData,0).rgb, fog);\n"
 	end
 	
-	return text
-end
-
-function AppendMul(v1, v2)
-
-	local text = ""
-	local ogl = MyDriver:getDriverFamily() == vid.EDF_OPENGL
-	
-	if ogl then
-		text = string.format("%s * %s", v2, v1)
-	else
-		text = string.format("mul(%s, %s)", v1, v2)	
-	end
-
 	return text
 end
 		
