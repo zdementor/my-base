@@ -261,9 +261,9 @@ function AppendVarying(vtype, pass, perpixel, lightcnt, uniforms)
 
 	local tii = 0
 
-	for i = 1, table.getn(GenTCInfo) do
-		if GenTCInfo[i].Name then
-			if GenTCInfo[i].VValueRefIdx == nil then
+	for i = 1, table.getn(ShaderGenInfo.TCoords) do
+		if ShaderGenInfo.TCoords[i].VarName then
+			if ShaderGenInfo.TCoords[i].VertValueRefIdx == nil then
 				text = text..string.format("VARY VEC4 TexCoord%d"..AppendVaryingVectorSpec(tii)..";\n", tii)
 				tii = tii + 1
 			end
@@ -402,7 +402,8 @@ end
 
 function GenInfo(vtype, pass, perpixel, lightcnt)
 	local light = IsLighting(pass, lightcnt)
-	GenTCInfo = {}
+
+	ShaderGenInfo.TCoords = {}
 	-- Vertex
 	local ti = 0
 	for i = 0, vid.MY_MATERIAL_MAX_LAYERS-1 do
@@ -410,25 +411,25 @@ function GenInfo(vtype, pass, perpixel, lightcnt)
 		if texture ~= nil and (pass.Layers[i]:getType() ~= vid.ETLT_NORMAL_MAP or perpixel) then
 			local animated = false
 			local tchnl = pass.Layers[i]:getTexCoordChannel()
-			GenTCInfo[ti + 1] = {}
-			GenTCInfo[ti + 1].Name = string.format("tc%d", i)
-			GenTCInfo[ti + 1].LayerIdx = i
-			GenTCInfo[ti + 1].TChnl = -1
+			ShaderGenInfo.TCoords[ti + 1] = {}
+			ShaderGenInfo.TCoords[ti + 1].VarName = string.format("tc%d", i)
+			ShaderGenInfo.TCoords[ti + 1].LayerIdx = i
+			ShaderGenInfo.TCoords[ti + 1].TChnl = -1
 			if pass.Layers[i]:getTexCoordGen() == vid.ETCGT_ENVIRONMENT_MAPPING then
-				if GenTCInfo.TCEnv == nil then
+				if ShaderGenInfo.TCoords.TCEnv == nil then
 					local text = ""
 					text = text.."    // sphere map tcoords\n"
 					text = text.."    VEC3 r = reflect(-eyeVec, normal);\n"
 					text = text.."    FLOAT m = 2.0 * sqrt(r.x*r.x + r.y*r.y + (r.z+1.0)*(r.z+1.0));\n"
 					text = text..string.format("    VEC4 tcenv = VEC4(r.xy/m + 0.5, 1.0, 1.0);\n\n")
-					GenTCInfo.TCEnv = text
+					ShaderGenInfo.TCoords.EnvGen = text
 				end
-				GenTCInfo[ti + 1].VPreText = nil
-				GenTCInfo[ti + 1].VValue = "tcenv"
+				ShaderGenInfo.TCoords[ti + 1].VertPreVar = nil
+				ShaderGenInfo.TCoords[ti + 1].VertVarValue = "tcenv"
 			elseif pass.Layers[i]:getTexCoordGen() == vid.ETCGT_MANUAL_MAPPING then
-				GenTCInfo[ti + 1].VPreText = nil
-				GenTCInfo[ti + 1].VValue = string.format("VEC4(VS_IN(MultiTexCoord%d).xy, 1.0, 1.0)", tchnl)
-				GenTCInfo[ti + 1].TChnl = tchnl
+				ShaderGenInfo.TCoords[ti + 1].VertPreVar = nil
+				ShaderGenInfo.TCoords[ti + 1].VertVarValue = string.format("VEC4(VS_IN(MultiTexCoord%d).xy, 1.0, 1.0)", tchnl)
+				ShaderGenInfo.TCoords[ti + 1].TChnl = tchnl
 			elseif pass.Layers[i]:getTexCoordGen() == vid.ETCGT_PROJECTED_MAPPING then
 				local text = ""
 				text = text.."    // calculating texture coords for projected mapping\n"
@@ -436,44 +437,46 @@ function GenInfo(vtype, pass, perpixel, lightcnt)
 					text = text.."    // and animating texture coords (translate/scale/rotate)\n"
 					animated = true
 				end
-				GenTCInfo[ti + 1].VPreText = text
-				GenTCInfo[ti + 1].VValue = string.format("MUL(MUL(vertex,%s),%s)", Uniforms.ModelMatrix, Uniforms.TexMatrix[i+1])
+				ShaderGenInfo.TCoords[ti + 1].VertPreVar = text
+				ShaderGenInfo.TCoords[ti + 1].VertVarValue = string.format("MUL(MUL(vertex,%s),%s)",
+					Uniforms.ModelMatrix, Uniforms.TexMatrix[i+1])
 			end
 			if pass.Layers[i]:isTexCoordAnimated() and not animated then
 				local text = ""
 				text = text.."    // animating texture coords (translate/scale/rotate)\n"
 				text = text..string.format("    tc%d = MUL(tc%d,%s);\n", i, i, Uniforms.TexMatrix[i+1])
-				GenTCInfo[ti + 1].VPostText = text
+				ShaderGenInfo.TCoords[ti + 1].VertPostVar = text
 			end
 			ti = ti + 1
 		end
 	end
 	
-	for i = 1, table.getn(GenTCInfo) do
-		local tchnl = GenTCInfo[i].TChnl
-		local idx = GenTCInfo[i].LayerIdx
+	for i = 1, table.getn(ShaderGenInfo.TCoords) do
+		local tchnl = ShaderGenInfo.TCoords[i].TChnl
+		local idx = ShaderGenInfo.TCoords[i].LayerIdx
 		if pass.Layers[idx]:getType() == vid.ETLT_NORMAL_MAP then
 			if not perpixel then
-				GenTCInfo[i].Name = nil
+				ShaderGenInfo.TCoords[i].VarName = nil
 			elseif not light then
 				local used = 0
-				for j = 1, table.getn(GenTCInfo) do
-					if i ~= j and tchnl ~= -1 and tchnl == GenTCInfo[j].TChnl then
+				for j = 1, table.getn(ShaderGenInfo.TCoords) do
+					if i ~= j and tchnl ~= -1 and tchnl == ShaderGenInfo.TCoords[j].TChnl then
 						used = used + 1
 					end
 				end
 				if used == 0 then
-					GenTCInfo[i].Name = nil
+					ShaderGenInfo.TCoords[i].VarName = nil
 				end
 			end
 		end
 	end
 	
-	for i = 1, table.getn(GenTCInfo) do
-		if GenTCInfo[i].Name ~= nil then
-			for j = i + 1, table.getn(GenTCInfo) do
-				if (GenTCInfo[j].VValueRefIdx == nil) and (GenTCInfo[i].VValue == GenTCInfo[j].VValue) then
-					GenTCInfo[j].VValueRefIdx = i
+	for i = 1, table.getn(ShaderGenInfo.TCoords) do
+		if ShaderGenInfo.TCoords[i].VarName ~= nil then
+			for j = i + 1, table.getn(ShaderGenInfo.TCoords) do
+				if (ShaderGenInfo.TCoords[j].VertValueRefIdx == nil)
+						and (ShaderGenInfo.TCoords[i].VertVarValue == ShaderGenInfo.TCoords[j].VertVarValue) then
+					ShaderGenInfo.TCoords[j].VertValueRefIdx = i
 				end
 			end
 		end
@@ -481,11 +484,11 @@ function GenInfo(vtype, pass, perpixel, lightcnt)
 	
 	-- Pixel
 	local ti = 0
-	for i = 1, table.getn(GenTCInfo) do
-		if GenTCInfo[i].Name ~= nil then
+	for i = 1, table.getn(ShaderGenInfo.TCoords) do
+		if ShaderGenInfo.TCoords[i].VarName ~= nil then
 			local text = ""
-			local idx = GenTCInfo[i].LayerIdx
-			if GenTCInfo[i].VValueRefIdx == nil then
+			local idx = ShaderGenInfo.TCoords[i].LayerIdx
+			if ShaderGenInfo.TCoords[i].VertValueRefIdx == nil then
 				if ti < 3 then
 					text = text..string.format("VEC2(PS_IN(TexCoord%d).xy)", ti)
 				else
@@ -493,20 +496,21 @@ function GenInfo(vtype, pass, perpixel, lightcnt)
 				end
 				ti = ti + 1
 			else
-				text = text..GenTCInfo[GenTCInfo[i].VValueRefIdx].Name
+				text = text..ShaderGenInfo.TCoords[ShaderGenInfo.TCoords[i].VertValueRefIdx].VarName
 			end
-			GenTCInfo[i].PValue = text
-			if pass.Layers[idx]:getType() == vid.ETLT_NORMAL_MAP and GenTCInfo.Paralax == nil then
-				local tchnl = GenTCInfo[i].TChnl
+			ShaderGenInfo.TCoords[i].FragVarValue = text
+			if pass.Layers[idx]:getType() == vid.ETLT_NORMAL_MAP and ShaderGenInfo.TCoords.Paralax == nil then
+				local tchnl = ShaderGenInfo.TCoords[i].TChnl
 				local text = ""
 				text = text.."    // texcoord offset (paralax effect)\n"
-				text = text.."    FLOAT height = PARALAX_SCALE * (TEX2D("..Uniforms.Tex[idx + 1]..", "..GenTCInfo[i].Name..").a) + PARALAX_BIAS;\n"
-				for j = 1, table.getn(GenTCInfo) do
-					if i ~= j and tchnl ~= -1 and tchnl == GenTCInfo[j].TChnl then
-						text = text.."    "..GenTCInfo[j].Name.." += VEC2(eyeVec.x,-eyeVec.y) * height;\n"
+				text = text.."    FLOAT height = PARALAX_SCALE * (TEX2D("..
+					Uniforms.Tex[idx + 1]..", "..ShaderGenInfo.TCoords[i].VarName..").a) + PARALAX_BIAS;\n"
+				for j = 1, table.getn(ShaderGenInfo.TCoords) do
+					if i ~= j and tchnl ~= -1 and tchnl == ShaderGenInfo.TCoords[j].TChnl then
+						text = text.."    "..ShaderGenInfo.TCoords[j].VarName.." += VEC2(eyeVec.x,-eyeVec.y) * height;\n"
 					end
 				end
-				GenTCInfo.Paralax = text
+				ShaderGenInfo.TCoords.Paralax = text
 			end
 		end
 	end
@@ -615,19 +619,19 @@ function AppendVertShaderBody(vtype, pass, perpixel, lightcnt)
 	end
 	text = text.."\n"
 
-	if GenTCInfo.TCEnv ~= nil then
-		text = text .. GenTCInfo.TCEnv
+	if ShaderGenInfo.TCoords.EnvGen ~= nil then
+		text = text .. ShaderGenInfo.TCoords.EnvGen
 	end
 	
-	for i = 1, table.getn(GenTCInfo) do
-		if GenTCInfo[i].Name ~= nil then
-			if GenTCInfo[i].VValueRefIdx == nil then
-				if GenTCInfo[i].VPreText ~= nil then
-					text = text..GenTCInfo[i].VPreText
+	for i = 1, table.getn(ShaderGenInfo.TCoords) do
+		if ShaderGenInfo.TCoords[i].VarName ~= nil then
+			if ShaderGenInfo.TCoords[i].VertValueRefIdx == nil then
+				if ShaderGenInfo.TCoords[i].VertPreVar ~= nil then
+					text = text..ShaderGenInfo.TCoords[i].VertPreVar
 				end
-				text = text.."    VEC4 "..GenTCInfo[i].Name.." = "..GenTCInfo[i].VValue..";\n"
-				if GenTCInfo[i].VPostText ~= nil then
-					text = text..GenTCInfo[i].VPostText
+				text = text.."    VEC4 "..ShaderGenInfo.TCoords[i].VarName.." = "..ShaderGenInfo.TCoords[i].VertVarValue..";\n"
+				if ShaderGenInfo.TCoords[i].VertPostVar ~= nil then
+					text = text..ShaderGenInfo.TCoords[i].VertPostVar
 				end
 			end
 		end
@@ -635,11 +639,11 @@ function AppendVertShaderBody(vtype, pass, perpixel, lightcnt)
 	text = text.."\n"
 
 	local ti = 0
-	for i = 1, table.getn(GenTCInfo) do
-		if GenTCInfo[i].Name ~= nil then
-			if GenTCInfo[i].VValueRefIdx == nil then
+	for i = 1, table.getn(ShaderGenInfo.TCoords) do
+		if ShaderGenInfo.TCoords[i].VarName ~= nil then
+			if ShaderGenInfo.TCoords[i].VertValueRefIdx == nil then
 				if ti < 3 then
-					text = text..string.format("    VS_OUT(TexCoord%d) = VEC4("..GenTCInfo[i].Name..".xy, 0.0, 0.0);\n", ti, i)
+					text = text..string.format("    VS_OUT(TexCoord%d) = VEC4("..ShaderGenInfo.TCoords[i].VarName..".xy, 0.0, 0.0);\n", ti, i)
 				else
 					text = text..string.format("    VS_OUT(TexCoord0).w = tc3.x;\n")
 					text = text..string.format("    VS_OUT(TexCoord1).w = tc3.y;\n")
@@ -679,21 +683,21 @@ function AppendPixelShaderBody(vtype, pass, perpixel, lightcnt)
 		end
 	end
 
-	for i = 1, table.getn(GenTCInfo) do
-		if GenTCInfo[i].Name ~= nil then
-			text = text.."    VEC2 "..GenTCInfo[i].Name.." = "..GenTCInfo[i].PValue..";\n"
+	for i = 1, table.getn(ShaderGenInfo.TCoords) do
+		if ShaderGenInfo.TCoords[i].VarName ~= nil then
+			text = text.."    VEC2 "..ShaderGenInfo.TCoords[i].VarName.." = "..ShaderGenInfo.TCoords[i].FragVarValue..";\n"
 		end
 	end
 	text = text.."\n"
 	
-	if GenTCInfo.Paralax ~= nil then
-		text = text..GenTCInfo.Paralax
+	if ShaderGenInfo.TCoords.Paralax ~= nil then
+		text = text..ShaderGenInfo.TCoords.Paralax
 		text = text.."\n"
 	end
 
-	for i = 1, table.getn(GenTCInfo) do
-		if GenTCInfo[i].Name ~= nil then
-			local idx = GenTCInfo[i].LayerIdx
+	for i = 1, table.getn(ShaderGenInfo.TCoords) do
+		if ShaderGenInfo.TCoords[i].VarName ~= nil then
+			local idx = ShaderGenInfo.TCoords[i].LayerIdx
 			if light or pass.Layers[idx]:getType() ~= vid.ETLT_NORMAL_MAP then
 				local tcol = ""
 				if pass.Layers[idx]:getType() == vid.ETLT_NORMAL_MAP then
@@ -701,7 +705,7 @@ function AppendPixelShaderBody(vtype, pass, perpixel, lightcnt)
 				else
 					tcol = string.format("tcol%d", idx)
 				end
-				text = text.."    VEC4 "..tcol.." = TEX2D("..Uniforms.Tex[idx+1]..", "..GenTCInfo[i].Name..");\n"
+				text = text.."    VEC4 "..tcol.." = TEX2D("..Uniforms.Tex[idx+1]..", "..ShaderGenInfo.TCoords[i].VarName..");\n"
 			end
 		end
 	end

@@ -56,7 +56,7 @@ local _UniformsMask =
 	Pixel = vid.EUF_NONE,
 }
 
-GenTCInfo = {}
+ShaderGenInfo = {}
 
 local function _GenUniforms(vtype, pass, perpixel, lightcnt)
 
@@ -110,9 +110,9 @@ local function _GenUniforms(vtype, pass, perpixel, lightcnt)
 			vid.EUF_MATERIAL_COLORS)
 	end
 
-	for i = 1, table.getn(GenTCInfo) do
-		local idx = GenTCInfo[i].LayerIdx
-		if GenTCInfo[i].Name ~= nil then
+	for i = 1, table.getn(ShaderGenInfo.TCoords) do
+		local idx = ShaderGenInfo.TCoords[i].LayerIdx
+		if ShaderGenInfo.TCoords[i].VarName ~= nil then
 			local texture = pass.Layers[idx]:getTexture()
 			if texture ~= nil then
 				if pass.Layers[idx]:getType() ~= vid.ETLT_NORMAL_MAP or perpixel then
