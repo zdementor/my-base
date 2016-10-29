@@ -619,9 +619,6 @@ public:
 		bool useAlphaBlending = false, bool useColorBlending = false,
 		E_RENDER_MODE mode = ERM_RENDER_STANDARD) = 0;
 
-	virtual bool setRenderContextCurrent() = 0;
-	virtual bool setNullContextCurrent() = 0;
-
 	//! Manages rendering pipeline
 	virtual bool beginRendering() = 0;
 	virtual void renderAll() = 0;
@@ -680,6 +677,8 @@ public:
 
 	virtual f64 getFrameCurrentRenderTimeSec() = 0;
 	virtual f64 getFrameFilteredRenderTimeSec() = 0;
+
+	virtual void clearGPUProgramHash() = 0;
 
 	virtual const c8* findGPUProgramFileName(vid::IGPUProgram *gpu_prog) = 0;
 	virtual const c8* findGPUProgramFullFileName(vid::IGPUProgram *gpu_prog) = 0;

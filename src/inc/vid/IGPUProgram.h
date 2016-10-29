@@ -77,6 +77,8 @@ public:
 	//! Return true id GPU program sucessfully loaded, compiled and linked
 	virtual bool isOK() = 0;
 
+	virtual void clear() = 0;
+
 	virtual bool recreate(u32 uniforms, u32 lights_count,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader) = 0;

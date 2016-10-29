@@ -150,8 +150,13 @@ end
 
 function _ShaderGenGenGPUProgram(vtype, arg1, lightcnt)
 	local pass = tolua.cast(arg1, "const vid::SRenderPass")
-	local sources = ShaderGen.getSourcesFor(vtype, pass, lightcnt)
+	local lightcntGen = lightcnt
+	if MyDriver:getRenderPath() == vid.ERP_DEFERRED_SHADING then
+		lightcntGen = 0
+	end
+	local sources = ShaderGen.getSourcesFor(vtype, pass, lightcntGen)
 	if sources ~= nil then
+		sources.LightsCount = lightcnt
 		MyDriver:addGPUProgram(
 			vtype, pass, sources.Uniforms, sources.LightsCount,
 			sources.Vertex.Ver, sources.Vertex.Source,
@@ -213,12 +218,21 @@ local _ShaderGenTags =
 {
 	[1] = "LowQual",
 	[2] = "HighQual",
+	[3] = "LowQualDS",
+	[4] = "HighQualDS",
 }
 
 function _ShaderGenGetCurrentTag()
+	local hiQual = (SETUP_SETTINGS[StartupDriverIndex].ShadersHighQuality == 1)
 	local tag = _ShaderGenTags[1]
-	if SETUP_SETTINGS[StartupDriverIndex].ShadersHighQuality == 1 then
+	if hiQual then
 		tag = _ShaderGenTags[2]
+	end
+	if MyDriver:getRenderPath() == vid.ERP_DEFERRED_SHADING then
+		tag = _ShaderGenTags[3]
+		if hiQual then
+			tag = _ShaderGenTags[4]
+		end
 	end
 	return tag
 end

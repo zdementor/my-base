@@ -444,12 +444,6 @@ public:
 		bool useAlphaBlending, bool useColorBlending,
 		E_RENDER_MODE mode);
 
-	virtual bool setRenderContextCurrent()
-	{ LOGGER.logErr("Invalid call %s", __FUNCTION__ ); return false; }
-
-	virtual bool setNullContextCurrent()
-	{ LOGGER.logErr("Invalid call %s", __FUNCTION__ ); return false; }
-
 	virtual bool beginRendering();
 	virtual void renderAll();
 	virtual void renderPass(E_RENDER_PASS pass);
@@ -483,6 +477,8 @@ public:
 
 	virtual f64 getFrameCurrentRenderTimeSec();
 	virtual f64 getFrameFilteredRenderTimeSec();
+
+	virtual void clearGPUProgramHash();
 
 	virtual const c8* findGPUProgramFileName(vid::IGPUProgram *gpu_prog);
 	virtual const c8* findGPUProgramFullFileName(vid::IGPUProgram *gpu_prog);

@@ -91,9 +91,6 @@ public:
 	virtual void render2DRect(const SMaterial &material,
 		const core::rectf &drawRect, const core::rectf &texRect);
 
-	virtual bool setRenderContextCurrent();
-	virtual bool setNullContextCurrent();
-
 	virtual bool _bindGPUProgram(IGPUProgram *gpu_prog);
 
 	virtual void _setTexture(s32 stage, ITexture *texture);

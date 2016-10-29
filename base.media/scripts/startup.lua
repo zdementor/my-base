@@ -210,6 +210,7 @@ function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 		MyLogger:decreaseFormatLevel()
 		if MyRT ~= nil then
 			LOG_INFO("Main Render Target created.")
+			--MyDriver:setRenderPath(vid.ERP_DEFERRED_SHADING)
 		else
 			LOG_INFO("Can not create Main Render Target, fallback to the default render buffer.")
 		end

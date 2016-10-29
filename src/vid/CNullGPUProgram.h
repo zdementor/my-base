@@ -51,6 +51,8 @@ public:
 
 	virtual bool isOK() { return m_OK; }
 
+	virtual void clear() { _destroyProgram(); }
+
 	virtual bool recreate(u32 uniforms, u32 lights_count,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader);

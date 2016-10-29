@@ -221,18 +221,10 @@ void CNullDriver::free()
 
 	// prepare for clearing video cache
 
-	vid::releaseResources();
+	vid::releaseTextures();
+	vid::releaseGPUPrograms();
 
-	// clear GPU programs
-
-	_bindGPUProgram(NULL);
-	m_GPUPrograms.clear();
-	for (u32 i = 0; i < E_VERTEX_TYPE_COUNT; i++)
-		for (u32 j = 0; j <= PRL_MAX_SHADER_LIGHTS; j++)
-			m_GPUProgramsHash[i][j].clear();
-	m_GPUProgramsHashByContent.clear();
-	m_GPUProgramsHashByFileName.clear();
-	m_GPUProgramsHashFileNames.clear();
+	clearGPUProgramHash();
 
 	// clear Textures
 
@@ -256,6 +248,22 @@ void CNullDriver::free()
 	if (nErasedTextures > 0)
 		LOGGER.logInfo("Video cache (%d textures) has been cleared.",
 			nErasedTextures);
+}
+
+//---------------------------------------------------------------------------
+
+void CNullDriver::clearGPUProgramHash()
+{
+	_bindGPUProgram(NULL);
+	 m_GPUPrograms.clear();
+	for (u32 i = 0; i < E_VERTEX_TYPE_COUNT; i++)
+		for (u32 j = 0; j <= PRL_MAX_SHADER_LIGHTS; j++)
+			m_GPUProgramsHash[i][j].clear();
+	m_GPUProgramsHashByContent.clear();
+	m_GPUProgramsHashByFileName.clear();
+	m_GPUProgramsHashFileNames.clear();
+
+	LOGGER.logInfo("Cleared GPU program hash.");
 }
 
 //---------------------------------------------------------------------------
@@ -342,6 +350,7 @@ void CNullDriver::setRenderPath(E_RENDER_PATH renderPath)
 {
 	if (renderPath != m_RenderPath)
 	{
+		clearGPUProgramHash();
 		LOGGER.logInfo("Use '%s' render path.",
 			getRenderPathReadableName(renderPath));
 	}
@@ -3066,7 +3075,126 @@ void CNullDriver::_renderForward(E_RENDER_PASS pass)
 
 void CNullDriver::_renderDeferred(E_RENDER_PASS pass)
 {
-	_renderForward(pass);
+	if (!m_Rendering)
+		return;
+
+	u32 sys_time_ms = TIMER.getSystemTime();
+
+	core::matrix4 m_proj = Matrices[ETS_PROJ];
+	core::matrix4 m_view = Matrices[ETS_VIEW];
+	core::matrix4 m_model = Matrices[ETS_MODEL];
+
+	u32 i = pass;
+	{
+		m_CurrentRenderPassType = (E_RENDER_PASS)i;
+
+		m_Profiler.startProfiling(m_ProfileIds[i]);
+
+		u32 dips_count = getRenderedDIPsCount();
+		u32 tris_count = getRenderedTrianglesCount();
+
+		core::array <SRenderPool*> &rpools_all = m_RenderData[i];
+
+		u32 rp_size = rpools_all.size();
+		if (rp_size)
+		{
+			switch (i)
+			{
+			case ERP_3D_SKY_PASS:
+			case ERP_3D_SOLID_PASS:
+			case ERP_3D_DIRT_PASS:
+			case ERP_3D_TRANSP_1ST_PASS:
+			case ERP_3D_TRANSP_2ND_PASS:
+			case ERP_3D_TRANSP_3RD_PASS:
+			case ERP_GUI_3D_SOLID_PASS:
+			case ERP_GUI_3D_TRANSP_PASS:
+				{
+					// setting transformations
+					core::matrix4 m_proj_shift = m_proj;
+					if (i == ERP_3D_DIRT_PASS)
+					{
+						core::vector3df tr = m_proj_shift.getTranslation();
+						tr.Z -= 0.001f; // shift matrix in z-direction, to avoid potential Z-fighting
+						m_proj_shift.setTranslation(tr);
+					}
+					
+					setTransform(ETS_PROJ, m_proj_shift);
+					setTransform(ETS_VIEW, m_view);
+
+					for (u32 j = 0; j < rp_size; j++)
+					{
+						SRenderPool & rpool = *rpools_all[j];
+						rpool.update ( sys_time_ms );
+
+						setTransform(ETS_MODEL, core::matrix4());
+
+						// setup lighting
+						_applyDynamicLights(
+							NULL, 0, 0);
+
+						// setup transformation
+						setTransform(ETS_MODEL, rpool.Transform);
+
+						// render geometry
+						u32 rb_size = rpool.RenderBuffers->size();
+						for ( u32 k = 0;  k < rb_size; k++ )
+						{
+							vid::IRenderBuffer *rb = (*rpool.RenderBuffers)[k];
+							const vid::SMaterial *mat = (*rpool.Materials)[k];
+
+							renderBuffer(rb, mat->getPass(0));
+						}
+					}
+				}
+				break;
+			case ERP_3D_LIGHTING_PASS:
+				break;
+			case ERP_2D_PASS:
+			case ERP_GUI_2D_PASS:
+				{
+					// zero transformations
+					setTransform(ETS_PROJ, core::matrix4());
+					setTransform(ETS_VIEW, core::matrix4());
+					setTransform(ETS_MODEL, core::matrix4());
+
+					for ( u32 j = 0; j < rp_size; j++ )
+					{
+						SRenderPool & rpool = *rpools_all[j];
+						rpool.update ( sys_time_ms );
+
+						// render geometry
+						u32 rb_size = rpool.RenderBuffers->size();
+						for ( u32 k = 0;  k < rb_size; k++ )
+						{
+							vid::IRenderBuffer *rb = (*rpool.RenderBuffers)[k];
+							const vid::SMaterial *mat = (*rpool.Materials)[k];
+	
+							renderBuffer(rb, *mat);
+						}
+					}
+				}
+				break;
+			default:
+				LOGGER.logErr("Unknown render pass %s (%d)",
+					vid::RenderPassName[i], i);
+				break;
+			}
+		}
+
+		dips_count = getRenderedDIPsCount() - dips_count;
+		tris_count = getRenderedTrianglesCount() - tris_count;
+
+		m_RenderedDIPsCount[i]		+= dips_count;
+		m_RenderedTrianglesCount[i] += tris_count;
+
+		static core::stringc profileInfo;
+		profileInfo = "";
+
+		if (m_Profiler.isProfiling())
+			profileInfo.sprintf("(%6d tris, %4d dips)", tris_count, dips_count);
+
+		m_Profiler.stopProfiling(m_ProfileIds[i], profileInfo.c_str());
+	}
 }
 
 //---------------------------------------------------------------------------
@@ -3089,8 +3217,6 @@ bool CNullDriver::beginRendering()
 {
 	if (m_Rendering)
 		return false;
-
-	setRenderContextCurrent();
 
 	_sort();
 
@@ -3758,7 +3884,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 		if (program)
 		{
 			LOGGER.logErr("Possibble hash conflict, same GPU program already exists "
-				"(vertex_type = %s, hash = 0x%016I64X, lights = d%):",
+				"(vertex_type = %s, hash = 0x%016I64X, lights = %d):",
 				getVertexTypeName(vertex_type), pass.getHashGPU(), lightcnt);
 			LOGGER.logErr("Vertex Shader:\n%s", vertex_shader);
 			LOGGER.logErr("Pixel Shader:\n%s", pixel_shader);

@@ -77,7 +77,7 @@ __MY_CORE_LIB_API__ void onDestroyRenderPass(core::list_node<SRenderPass*> *pass
 
 //---------------------------------------------------------------------------
 
-__MY_CORE_LIB_API__ void releaseResources()
+__MY_CORE_LIB_API__ void releaseTextures()
 {
 	{
 		core::list_fast<STextureLayer*>::iterator it = _TextureLayers.begin();
@@ -87,7 +87,12 @@ __MY_CORE_LIB_API__ void releaseResources()
 			layer->setTexture(NULL);
 		}
 	}
+}
 
+//---------------------------------------------------------------------------
+
+__MY_CORE_LIB_API__ void releaseGPUPrograms()
+{
 	{
 		core::list_fast<SRenderPass*>::iterator it = _RenderPasses.begin();
 		for (; it != _RenderPasses.end(); ++it)

@@ -1580,20 +1580,6 @@ void CD3D9Driver::render2DRect(const SMaterial &material,
 	setTransform(ETS_PROJ, matProj);
 }
 
-//----------------------------------------------------------------------------
-
-bool CD3D9Driver::setRenderContextCurrent()
-{
-	return true;
-}
-
-//----------------------------------------------------------------------------
-
-bool CD3D9Driver::setNullContextCurrent()
-{
-	return true;
-}
-
 //---------------------------------------------------------------------------
 
 //! return hardware occlusion object
