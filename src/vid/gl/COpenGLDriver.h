@@ -110,6 +110,17 @@ public:
 
 	virtual bool _makeScreenShot(img::IImage *image);
 
+	void _setupGLAttributes(
+		bool *enabledAttribs,
+		GLenum type0 = GL_NONE, s32 size0 = 0, s32 stride0 = 0, const void *ptr0 = NULL,
+		GLenum type1 = GL_NONE, s32 size1 = 0, s32 stride1 = 0, const void *ptr1 = NULL,
+		GLenum type2 = GL_NONE, s32 size2 = 0, s32 stride2 = 0, const void *ptr2 = NULL,
+		GLenum type3 = GL_NONE, s32 size3 = 0, s32 stride3 = 0, const void *ptr3 = NULL,
+		GLenum type4 = GL_NONE, s32 size4 = 0, s32 stride4 = 0, const void *ptr4 = NULL,
+		GLenum type5 = GL_NONE, s32 size5 = 0, s32 stride5 = 0, const void *ptr5 = NULL,
+		GLenum type6 = GL_NONE, s32 size6 = 0, s32 stride6 = 0, const void *ptr6 = NULL
+		);
+
 private:
 
 	virtual void _enableStencil();
@@ -239,7 +250,7 @@ private:
     //! prints error if an error happened.
     void printGLError();
 
-	virtual CNullGPUProgram* _createGPUProgram(u32 uniforms, u32 lightcnt,
+	virtual CNullGPUProgram* _createGPUProgram(u32 uniforms, u32 attributes, u32 lightcnt,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader);
 

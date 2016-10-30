@@ -483,6 +483,39 @@ const char* getFogTypeReadableName(E_FOG_TYPE type);
 
 //----------------------------------------------------------------------------
 
+enum E_ATTRIB_TYPE
+{
+	EAT_POSITION = 0,
+	EAT_NORMAL,
+	EAT_COLOR,
+	EAT_TCOORD0,
+	EAT_TCOORD1,
+	EAT_TCOORD2,
+	EAT_TCOORD3,
+
+	E_ATTRIB_TYPE_COUNT,
+};
+
+//----------------------------------------------------------------------------
+
+enum E_ATTRIB_FLAG
+{
+	EAF_POSITION = 1 << 0,
+	EAF_NORMAL   = 1 << 1,
+	EAF_COLOR    = 1 << 2,
+	EAF_TCOORD0  = 1 << 3,
+	EAF_TCOORD1  = 1 << 4,
+	EAF_TCOORD2  = 1 << 5,
+	EAF_TCOORD3  = 1 << 6,	
+};
+
+E_ATTRIB_FLAG getAttribFlag(E_ATTRIB_TYPE type);
+
+const char* getAttribName(E_ATTRIB_TYPE type);
+const char* getAttribReadableName(E_ATTRIB_TYPE type);
+
+//----------------------------------------------------------------------------
+
 enum E_UNIFORM_TYPE
 {
 	EUT_NONE = 0,

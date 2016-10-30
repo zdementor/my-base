@@ -1984,16 +1984,16 @@ void CD3D9Driver::_disableScissor()
 
 //---------------------------------------------------------------------------
 
-CNullGPUProgram* CD3D9Driver::_createGPUProgram(u32 uniforms, u32 lightcnt,
+CNullGPUProgram* CD3D9Driver::_createGPUProgram(u32 uniforms, u32 attributes, u32 lightcnt,
 	E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader)
 {
 	if (m_UseShaders)
-		return new CD3D9GPUProgram(uniforms, lightcnt,
+		return new CD3D9GPUProgram(uniforms, attributes, lightcnt,
 			vertex_shader_ver, vertex_shader,
 			pixel_shader_ver, pixel_shader);
-	CNullGPUProgram *gpu_prog = gpu_prog = new CNullGPUProgram();
-	gpu_prog->recreate(0, 0, EVSV_HLSL_1_1, NULL, EPSV_HLSL_1_1, NULL);
+	CNullGPUProgram *gpu_prog = new CNullGPUProgram();
+	gpu_prog->recreate(0, 0, 0, EVSV_HLSL_1_1, NULL, EPSV_HLSL_1_1, NULL);
 	return gpu_prog;
 }
 

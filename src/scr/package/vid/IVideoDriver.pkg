@@ -278,7 +278,7 @@ class IVideoDriver
 
 	IGPUProgram* addGPUProgram(
 		vid::E_VERTEX_TYPE vertex_type, const vid::SRenderPass &pass,
-		unsigned uniforms, unsigned lightcnt,
+		unsigned uniforms, unsigned attributes, unsigned lightcnt,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const char *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const char *pixel_shader,
 		const char *tag);
@@ -295,7 +295,7 @@ class IVideoDriver
 	void loadGPUProgramsFromDir(const char *dir);
 	void loadGPUProgramsFromDir(const char *dir, const char *tag, bool reload_if_exists);
 
-	bool compileGPUSources(unsigned uniforms, unsigned lights_count,
+	bool compileGPUSources(unsigned uniforms, unsigned attributes, unsigned lights_count,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const char *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const char *pixel_shader);
 

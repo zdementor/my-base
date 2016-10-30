@@ -14,12 +14,12 @@
 
 #define LERP(v1,v2,k) (v1+(v2-(v1))*(k))
 
-uniform vec4 GlobalAmbientColor;
-uniform vec4 MaterialColors[4];
-uniform float MaterialShininess;
-uniform mat4 Lighting[4];
-uniform sampler2D Texture0;
-uniform sampler2D Texture3;
+uniform vec4 uGlobalAmbientColor;
+uniform vec4 uMaterialColors[4];
+uniform float uMaterialShininess;
+uniform mat4 uLighting[4];
+uniform sampler2D uTexture0;
+uniform sampler2D uTexture3;
 
 varying vec3 Position;
 varying vec3 EyeVec;
@@ -34,32 +34,32 @@ void main(void)
     vec3 position	= Position.xyz;
 
 	// get corrected height
-	float h = scale * (texture2D(Texture3, gl_TexCoord[0].st).a) + bias;
+	float h = scale * (texture2D(uTexture3, gl_TexCoord[0].st).a) + bias;
 	vec2 tcoord0 = gl_TexCoord[0].st + vec2(eyeVec.x,-eyeVec.y) * h;
 
-	vec3 normal = normalize((texture2D(Texture3, tcoord0)* 2 - 1).xyz);
+	vec3 normal = normalize((texture2D(uTexture3, tcoord0)* 2 - 1).xyz);
 
-    vec4 tcol0 = texture2D(Texture0, tcoord0);
+    vec4 tcol0 = texture2D(uTexture0, tcoord0);
     vec4 tcol = tcol0;
 
-    vec4 mDiffuse = M_DIFFUSE(MaterialColors);
-    vec4 mAmbient = M_AMBIENT(MaterialColors);
-    vec4 mSpecular = M_SPECULAR(MaterialColors);
-    vec4 mEmissive = M_EMISSIVE(MaterialColors);
-	float mShininess = MaterialShininess;
+    vec4 mDiffuse = M_DIFFUSE(uMaterialColors);
+    vec4 mAmbient = M_AMBIENT(uMaterialColors);
+    vec4 mSpecular = M_SPECULAR(uMaterialColors);
+    vec4 mEmissive = M_EMISSIVE(uMaterialColors);
+	float mShininess = uMaterialShininess;
 
 	vec3 SeparateSpecular = vec3(0.0,0.0,0.0);
     vec4 color = vec4(0.0, 0.0, 0.0, mDiffuse.a);
-    color.rgb = GlobalAmbientColor.rgb * mAmbient.rgb + mEmissive.rgb;
+    color.rgb = uGlobalAmbientColor.rgb * mAmbient.rgb + mEmissive.rgb;
 
     // calculating lighting from point lights
 	{
 		int i = 0;
-	    vec4 lDiffuse  = L_DIFFUSE(Lighting[i]);
-    	vec4 lAmbient  = L_AMBIENT(Lighting[i]);
-	    vec4 lSpecular = L_SPECULAR(Lighting[i]);
-    	vec3 lPosition = L_POSITION(Lighting[i]);
-	    float lRadius  = L_RADIUS(Lighting[i]);
+	    vec4 lDiffuse  = L_DIFFUSE(uLighting[i]);
+    	vec4 lAmbient  = L_AMBIENT(uLighting[i]);
+	    vec4 lSpecular = L_SPECULAR(uLighting[i]);
+    	vec3 lPosition = L_POSITION(uLighting[i]);
+	    float lRadius  = L_RADIUS(uLighting[i]);
     	float lDist = length(lPosition - position);
 		vec3 lightVec = normalize(LightVec[i].xyz);
 		float idx = min(lDist / lRadius, 1.0);
@@ -73,11 +73,11 @@ void main(void)
 	}
 	{
 		int i = 1;
-	    vec4 lDiffuse  = L_DIFFUSE(Lighting[i]);
-    	vec4 lAmbient  = L_AMBIENT(Lighting[i]);
-	    vec4 lSpecular = L_SPECULAR(Lighting[i]);
-    	vec3 lPosition = L_POSITION(Lighting[i]);
-	    float lRadius  = L_RADIUS(Lighting[i]);
+	    vec4 lDiffuse  = L_DIFFUSE(uLighting[i]);
+    	vec4 lAmbient  = L_AMBIENT(uLighting[i]);
+	    vec4 lSpecular = L_SPECULAR(uLighting[i]);
+    	vec3 lPosition = L_POSITION(uLighting[i]);
+	    float lRadius  = L_RADIUS(uLighting[i]);
     	float lDist = length(lPosition - position);
 		vec3 lightVec = normalize(LightVec[i].xyz);
 		float idx = min(lDist / lRadius, 1.0);
@@ -91,11 +91,11 @@ void main(void)
 	}
 	{
 		int i = 2;
-	    vec4 lDiffuse  = L_DIFFUSE(Lighting[i]);
-    	vec4 lAmbient  = L_AMBIENT(Lighting[i]);
-	    vec4 lSpecular = L_SPECULAR(Lighting[i]);
-    	vec3 lPosition = L_POSITION(Lighting[i]);
-	    float lRadius  = L_RADIUS(Lighting[i]);
+	    vec4 lDiffuse  = L_DIFFUSE(uLighting[i]);
+    	vec4 lAmbient  = L_AMBIENT(uLighting[i]);
+	    vec4 lSpecular = L_SPECULAR(uLighting[i]);
+    	vec3 lPosition = L_POSITION(uLighting[i]);
+	    float lRadius  = L_RADIUS(uLighting[i]);
     	float lDist = length(lPosition - position);
 		vec3 lightVec = normalize(LightVec[i].xyz);
 		float idx = min(lDist / lRadius, 1.0);
@@ -109,11 +109,11 @@ void main(void)
 	}
 	{
 		int i = 3;
-	    vec4 lDiffuse  = L_DIFFUSE(Lighting[i]);
-    	vec4 lAmbient  = L_AMBIENT(Lighting[i]);
-	    vec4 lSpecular = L_SPECULAR(Lighting[i]);
-    	vec3 lPosition = L_POSITION(Lighting[i]);
-	    float lRadius  = L_RADIUS(Lighting[i]);
+	    vec4 lDiffuse  = L_DIFFUSE(uLighting[i]);
+    	vec4 lAmbient  = L_AMBIENT(uLighting[i]);
+	    vec4 lSpecular = L_SPECULAR(uLighting[i]);
+    	vec3 lPosition = L_POSITION(uLighting[i]);
+	    float lRadius  = L_RADIUS(uLighting[i]);
     	float lDist = length(lPosition - position);
 		vec3 lightVec = normalize(LightVec[i].xyz);
 		float idx = min(lDist / lRadius, 1.0);

@@ -485,13 +485,13 @@ public:
 
 	virtual IGPUProgram* addGPUProgram(
 		vid::E_VERTEX_TYPE vertex_type, const vid::SRenderPass &pass,
-		u32 uniforms, u32 lightcnt,
+		u32 uniforms, u32 attributes, u32 lightcnt,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader,
 		const c8 *tag);
 
 	virtual IGPUProgram* addGPUProgram(
-		u32 uniforms, u32 lightcnt,
+		u32 uniforms, u32 attributes, u32 lightcnt,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader,
 		const c8 *tag);
@@ -509,7 +509,7 @@ public:
 
 	virtual void loadGPUProgramsFromDir(const c8 *dir, const c8 *tag, bool reload_if_exists);
 
-	virtual bool compileGPUSources(u32 uniforms, u32 lights_count,
+	virtual bool compileGPUSources(u32 uniforms, u32 attributes, u32 lights_count,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader);
 
@@ -640,7 +640,7 @@ protected:
 
 	void free();
 
-	virtual class CNullGPUProgram* _createGPUProgram(u32 uniforms, u32 lightcnt,
+	virtual class CNullGPUProgram* _createGPUProgram(u32 uniforms, u32 attributes, u32 lightcnt,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader)
 	{

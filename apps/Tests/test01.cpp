@@ -21,15 +21,12 @@ using namespace my;
 
 const c8 *caption = "Test01 - Dynamic Lighting";
 
-u32 GPUProgCur = 5;
+u32 GPUProgCur = 0;
 
 const c8 *GPUProgNames[] =
 {
-	"Fixed Pipeline",
 	"vertex_lighting.gpu",
 	"perpixel_paralax_1_lighting.gpu",
-	"perpixel_paralax_2_lighting.gpu",
-	"perpixel_paralax_3_lighting.gpu",
 	"perpixel_paralax_4_lighting.gpu",
 };
 
@@ -262,7 +259,7 @@ int main(int argc, char* argv[])
 	// show MyEngine Setup
 	//-------------------------------------------------------------------------
    	
-	vid::E_DRIVER_TYPE driverType = vid::EDT_OPENGL21;
+	vid::E_DRIVER_TYPE driverType = vid::EDT_DIRECTX9;
 	core::dimension2d<s32> resolution(1024, 768);
 	s32 colorBit=32;
 	s32 Flags=0;
@@ -271,7 +268,7 @@ int main(int argc, char* argv[])
 	//Flags |= dev::EDCF_SOUND_ON;
 	//Flags |= dev::EDCF_FULLSCREEN;
 	Flags |= dev::EDCF_USE_SHADERS;
-	Flags |= dev::EDCF_USE_FFP;
+	//Flags |= dev::EDCF_USE_FFP;
 	Flags |= dev::EDCF_LIGHTING_MEDIUM_QUALITY;
 
 	dev::SDeviceCreationParameters creation_params; 
@@ -353,16 +350,11 @@ int main(int argc, char* argv[])
 	VIDEO_DRIVER.loadGPUProgramsFromDir(
 		RESOURCE_MANAGER.getMediaDirFull(res::EMT_GPU_PROGRAMS));
 
-	for (u32 i = 1; i < sizeof(GPUProg)/sizeof(*GPUProg); i++)
+	for (u32 i = 0; i < sizeof(GPUProg)/sizeof(*GPUProg); i++)
 	{
-		if (i == 0)
-			GPUProg[i] = NULL;
-		else
-		{
-			const c8 *dir = RESOURCE_MANAGER.getMediaDirFull(res::EMT_MATERIALS);
-			GPUProg[i] = VIDEO_DRIVER.getGPUProgram(
-				core::stringc().sprintf("%s%s", dir, GPUProgNames[i]).c_str());
-		}
+		const c8 *dir = RESOURCE_MANAGER.getMediaDirFull(res::EMT_MATERIALS);
+		GPUProg[i] = VIDEO_DRIVER.getGPUProgram(
+			core::stringc().sprintf("%s%s", dir, GPUProgNames[i]).c_str());
 	}
 
 	{
@@ -474,10 +466,7 @@ int main(int argc, char* argv[])
 		if (last_fps != fps || last_gpu != GPUProgCur)
 		{
 			static core::stringc str, str2;
-			if (GPUProgCur)
-				str2.sprintf("Using GPU Program (%s)", GPUProgNames[GPUProgCur]);
-			else
-				str2 = "Using Fixed Pipeline";
+			str2.sprintf("Using GPU Program (%s)", GPUProgNames[GPUProgCur]);
 			str.sprintf("%s (FPS=%d, tris=%d, DIPs=%d) %s", caption, fps,
 				VIDEO_DRIVER.getRenderedTrianglesCount(),
 				VIDEO_DRIVER.getRenderedDIPsCount(), str2.c_str());

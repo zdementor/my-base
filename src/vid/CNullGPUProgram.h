@@ -53,7 +53,7 @@ public:
 
 	virtual void clear() { _destroyProgram(); }
 
-	virtual bool recreate(u32 uniforms, u32 lights_count,
+	virtual bool recreate(u32 uniforms, u32 attributes, u32 lights_count,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader);
 
@@ -70,7 +70,7 @@ protected:
 
 private:
 
-	u32		m_UniformMask;
+	u32		m_UniformMask, m_AttribsMask;
 	bool	m_OK;
 	u32		m_LightsCount;
 

@@ -3565,19 +3565,21 @@ const core::stringc& CNullDriver::_getShaderName(
 void _writeShader(io::IXMLWriter *xml_file,
 	const core::array <SGPUProgramShaderInfo> &shaders)
 {
-	static core::stringw uniforms_strw, driver_strw;
+	static core::stringw uniforms_strw, attributes_strw, driver_strw;
 	for (u32 i = 0; i < shaders.size(); i++)
 	{
 		if (shaders[i].Driver == vid::EDT_NULL)
 			continue;
 		driver_strw = getDriverTypeName(shaders[i].Driver);
 		uniforms_strw.sprintf("%d", shaders[i].Uniforms);
+		attributes_strw.sprintf("%d", shaders[i].Attributes);
 		core::stringc vertex_fname = core::extractFileName(shaders[i].VertexFileName);
 		core::stringc pixel_fname = core::extractFileName(shaders[i].PixelFileName);
 		xml_file->writeElement(L"Shader", true,
 			L"driver", driver_strw.c_str(),
 			L"tag", core::stringw(shaders[i].Tag.c_str()).c_str(),
 			L"uniforms", uniforms_strw.c_str(),
+			L"attributes", attributes_strw.c_str(),
 			L"vertex_ver", core::stringw(VertexShaderVersionName[shaders[i].VertexVer]).c_str(),
 			L"vertex_fname", core::stringw(vertex_fname.c_str()).c_str(),
 			L"pixel_ver", core::stringw(PixelShaderVersionName[shaders[i].PixelVer]).c_str(),
@@ -3677,6 +3679,13 @@ bool _loadGPUProgramFile(const c8 *file_name, const c8 *tag,
 					L"uniform_names",
 					vid::UniformTypeReadableNames, vid::UniformTypeBits, vid::E_UNIFORM_TYPE_COUNT,
 					(u32)vid::EUF_NONE);
+			e.Attributes = (E_UNIFORM_FLAG)
+				xml_file->getAttributeValueAsInt(L"attributes", 0);
+			if (e.Attributes == 0)
+				e.Attributes = (E_UNIFORM_FLAG)xml_file->getAttributeValueAsFlagBits(
+					L"attribute_names",
+					vid::AttribTypeReadableNames, vid::AttribTypeBits, vid::E_ATTRIB_TYPE_COUNT,
+					0);
 
 			e.VertexVer = (E_VERTEX_SHADER_VERSION)xml_file->getAttributeValueAsIndexInArray(
 				L"vertex_ver",
@@ -3710,12 +3719,12 @@ bool _loadGPUProgramFile(const c8 *file_name, const c8 *tag,
 
 //---------------------------------------------------------------------------
 
-bool CNullDriver::compileGPUSources(u32 uniforms, u32 lights_count,
+bool CNullDriver::compileGPUSources(u32 uniforms, u32 attributes, u32 lights_count,
 	E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader)
 {
 	bool res = true;
-	CNullGPUProgram *gpu_prog = _createGPUProgram(uniforms, lights_count,
+	CNullGPUProgram *gpu_prog = _createGPUProgram(uniforms, attributes, lights_count,
 		vertex_shader_ver, vertex_shader,
 		pixel_shader_ver, pixel_shader);
 	if (!gpu_prog->isOK())
@@ -3781,6 +3790,7 @@ bool setGPUProgramInfoLightsCount(const SGPUProgramInfo *prog_info,
 
 bool appendGPUProgramInfo(const SGPUProgramInfo *prog_info,
 	u32                     uniforms,
+	u32                     attributes,
     E_DRIVER_TYPE           driver,
 	const c8                *tag,
 	E_VERTEX_SHADER_VERSION vertex_ver,
@@ -3792,6 +3802,7 @@ bool appendGPUProgramInfo(const SGPUProgramInfo *prog_info,
 		return false;
 	SGPUProgramShaderInfo shader_info;
 	shader_info.Uniforms       = uniforms;
+	shader_info.Attributes     = attributes;
 	shader_info.Driver         = driver;
 	shader_info.Tag            = tag;
 	shader_info.VertexVer      = vertex_ver;
@@ -3862,7 +3873,7 @@ const c8* CNullDriver::findGPUProgramFullFileName(vid::IGPUProgram *gpu_prog)
 
 IGPUProgram* CNullDriver::addGPUProgram(
 	vid::E_VERTEX_TYPE vertex_type, const vid::SRenderPass &pass,
-	u32 uniforms, u32 lightcnt,
+	u32 uniforms, u32 attributes, u32 lightcnt,
 	E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader,
 	const c8 *tag)
@@ -3949,6 +3960,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 			SGPUProgramShaderInfo e;
 			e.Driver	     = getDriverType();
 			e.Uniforms	     = uniforms;
+			e.Attributes     = attributes;
 			e.VertexVer      = vertex_shader_ver;
 			e.VertexFileName = vsh;
 			e.PixelVer       = pixel_shader_ver;
@@ -3967,13 +3979,13 @@ IGPUProgram* CNullDriver::addGPUProgram(
 			if (!has_entry_already)
 			{
 				if (appendGPUProgramInfo(prog_info,
-						e.Uniforms, e.Driver, e.Tag.c_str(),
+						e.Uniforms, e.Attributes, e.Driver, e.Tag.c_str(),
 						e.VertexVer, e.VertexFileName.c_str(),
 						e.PixelVer, e.PixelFileName.c_str()))
 					writeGPUProgramInfo(gpu_file_name.c_str(), prog_info);
 			}
 		}
-		CNullGPUProgram* gpu_prog = _createGPUProgram(uniforms, lightcnt,
+		CNullGPUProgram* gpu_prog = _createGPUProgram(uniforms, attributes, lightcnt,
 			vertex_shader_ver, vertex_shader,
 			pixel_shader_ver, pixel_shader);
 		if (!gpu_prog->isOK())
@@ -3994,7 +4006,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 //---------------------------------------------------------------------------
 
 IGPUProgram* CNullDriver::addGPUProgram(
-	u32 uniforms, u32 lightcnt,
+	u32 uniforms, u32 attributes, u32 lightcnt,
 	E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader,
 	const c8 *tag)
@@ -4020,7 +4032,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 		if (program)
 			break;
 
-		CNullGPUProgram *gpu_prog = _createGPUProgram(uniforms, lightcnt,
+		CNullGPUProgram *gpu_prog = _createGPUProgram(uniforms, attributes, lightcnt,
 			vertex_shader_ver, vertex_shader,
 			pixel_shader_ver, pixel_shader);
 		if (!gpu_prog->isOK())
@@ -4153,6 +4165,7 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 		E_VERTEX_SHADER_VERSION vsh_ver;
 		E_PIXEL_SHADER_VERSION psh_ver;
 		u32 uniforms = EUF_NONE;
+		u32 attributes = 0;
 		for (u32 i = 0; i < shadersp->size(); i++)
 		{
 			if ((*shadersp)[i].Driver == getDriverType())
@@ -4162,6 +4175,7 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 				vsh_fname = (*shadersp)[i].VertexFileName.c_str();
 				psh_fname = (*shadersp)[i].PixelFileName.c_str();
 				uniforms  = (*shadersp)[i].Uniforms;
+				attributes= (*shadersp)[i].Attributes;
 				ok = true;
 				break;
 			}
@@ -4213,7 +4227,7 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 
 		if (program)
 			program->Program->recreate(
-				uniforms, lights != -1 ? lights : 0,
+				uniforms, attributes, lights != -1 ? lights : 0,
 				vsh_ver, &vertex_shader[0],
 				psh_ver, &pixel_shader[0]);
 		else
@@ -4232,13 +4246,13 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 				
 				if (program)
 					program->Program->recreate(
-						uniforms, lights != -1 ? lights : 0,
+						uniforms, attributes, lights != -1 ? lights : 0,
 						vsh_ver, &vertex_shader[0],
 						psh_ver, &pixel_shader[0]);
 				else
 				{
 					CNullGPUProgram *gpu_prog = _createGPUProgram(
-						uniforms, lights != -1 ? lights : 0,
+						uniforms, attributes, lights != -1 ? lights : 0,
 						vsh_ver, &vertex_shader[0],
 						psh_ver, &pixel_shader[0]);
 					program = new SGPUProgram(gpu_prog, file_name);

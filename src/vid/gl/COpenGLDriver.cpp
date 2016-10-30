@@ -282,7 +282,7 @@ void COpenGLDriver::renderPass(E_RENDER_PASS pass)
 {
 	CNullDriver::renderPass(pass);
 
-	setupGLAttributes(COpenGLRenderBuffer::ms_EnabledAttribs);
+	_setupGLAttributes(COpenGLRenderBuffer::ms_EnabledAttribs);
 
 #ifdef GL_VERSION_1_2
 	glClientActiveTexture(GL_TEXTURE0);
@@ -307,6 +307,174 @@ bool COpenGLDriver::_makeScreenShot(img::IImage *image)
 	}
 
 	return true;
+}
+
+//----------------------------------------------------------------------------
+
+#define MY_ENABLE_CLIENT_STATE(index, state, preFunc) \
+	if (!enabledAttribs[index]) \
+	{ \
+		preFunc; \
+		glEnableClientState(state); \
+		enabledAttribs[index] = true; \
+	}
+
+#define MY_DISABLE_CLIENT_STATE(index, state, preFunc) \
+	if (enabledAttribs[index]) \
+	{ \
+		preFunc; \
+		glDisableClientState(state); \
+		enabledAttribs[index] = false; \
+	}
+
+#define MY_ENABLE_ATTRIB_ARRAY(index, size, type, normalized, stride, ptr) \
+	if (!enabledAttribs[index]) \
+	{ \
+		glEnableVertexAttribArray(index); \
+		enabledAttribs[index] = true; \
+	} \
+	glVertexAttribPointer(index, size, type, normalized, stride, ptr);
+
+#define MY_DISABLE_ATTRIB_ARRAY(index) \
+	if (enabledAttribs[index]) \
+	{ \
+		glDisableVertexAttribArray(index); \
+		enabledAttribs[index] = false; \
+	}
+
+void COpenGLDriver::_setupGLAttributes(
+	bool *enabledAttribs,
+	GLenum type0, s32 size0, s32 stride0, const void *ptr0,
+	GLenum type1, s32 size1, s32 stride1, const void *ptr1,
+	GLenum type2, s32 size2, s32 stride2, const void *ptr2,
+	GLenum type3, s32 size3, s32 stride3, const void *ptr3,
+	GLenum type4, s32 size4, s32 stride4, const void *ptr4,
+	GLenum type5, s32 size5, s32 stride5, const void *ptr5,
+	GLenum type6, s32 size6, s32 stride6, const void *ptr6)
+{
+#ifdef GL_VERSION_2_1
+	if (m_UseShaders)
+	{
+		if (type0 != GL_NONE)
+		{ MY_ENABLE_ATTRIB_ARRAY(0, size0, type0, GL_FALSE, stride0, ptr0) }
+		else
+		{ MY_DISABLE_ATTRIB_ARRAY(0) }
+
+		if (type1 != GL_NONE)
+		{ MY_ENABLE_ATTRIB_ARRAY(1, size1, type1, GL_FALSE, stride1, ptr1) }
+		else
+		{ MY_DISABLE_ATTRIB_ARRAY(1) }
+
+		if (type2 != GL_NONE) // Color
+		{ MY_ENABLE_ATTRIB_ARRAY(2, size2, type2, GL_TRUE, stride2, ptr2) }
+		else
+		{ MY_DISABLE_ATTRIB_ARRAY(2) }
+
+		if (type3 != GL_NONE)
+		{ MY_ENABLE_ATTRIB_ARRAY(3, size3, type3, GL_FALSE, stride3, ptr3) }
+		else
+		{ MY_DISABLE_ATTRIB_ARRAY(3) }
+
+		if (type4 != GL_NONE)
+		{ MY_ENABLE_ATTRIB_ARRAY(4, size4, type4, GL_FALSE, stride4, ptr4) }
+		else
+		{ MY_DISABLE_ATTRIB_ARRAY(4) }
+
+		if (type5 != GL_NONE)
+		{ MY_ENABLE_ATTRIB_ARRAY(5, size5, type5, GL_FALSE, stride5, ptr5) }
+		else
+		{ MY_DISABLE_ATTRIB_ARRAY(5) }
+
+		if (type6 != GL_NONE)
+		{ MY_ENABLE_ATTRIB_ARRAY(6, size6, type6, GL_FALSE, stride6, ptr6) }
+		else
+		{ MY_DISABLE_ATTRIB_ARRAY(6) }
+	}
+	else
+#endif
+	{
+		if (type0 != GL_NONE)
+		{
+			MY_ENABLE_CLIENT_STATE(0, GL_VERTEX_ARRAY, (void)0)
+			glVertexPointer(size0, type0, stride0, ptr0);
+		}
+		else
+		{
+			MY_DISABLE_CLIENT_STATE(0, GL_VERTEX_ARRAY, (void)0)
+		}
+
+		if (type1 != GL_NONE)
+		{
+			MY_ENABLE_CLIENT_STATE(1, GL_NORMAL_ARRAY, (void)0)
+			glNormalPointer(type1, stride1, ptr1);
+		}
+		else
+		{
+			MY_DISABLE_CLIENT_STATE(1, GL_NORMAL_ARRAY, (void)0)
+		}
+
+		if (type2 != GL_NONE)
+		{
+			MY_ENABLE_CLIENT_STATE(2, GL_COLOR_ARRAY, (void)0)
+			glColorPointer(size2, type2, stride2, ptr2);
+		}
+		else
+		{
+			MY_DISABLE_CLIENT_STATE(2, GL_COLOR_ARRAY, (void)0)
+		}
+
+		if (type3 != GL_NONE)
+		{
+#ifdef GL_VERSION_1_2
+			glClientActiveTexture(GL_TEXTURE0);
+#endif
+			MY_ENABLE_CLIENT_STATE(3, GL_TEXTURE_COORD_ARRAY, (void)0)
+			glTexCoordPointer(size3, type3, stride3, ptr3);
+		}
+		else
+		{
+#ifdef GL_VERSION_1_2
+			MY_DISABLE_CLIENT_STATE(3, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE0))
+#else
+			MY_DISABLE_CLIENT_STATE(3, GL_TEXTURE_COORD_ARRAY, (void)0)
+#endif
+		}
+
+#ifdef GL_VERSION_1_2
+		if (type4 != GL_NONE)
+		{
+			glClientActiveTexture(GL_TEXTURE1);
+			MY_ENABLE_CLIENT_STATE(4, GL_TEXTURE_COORD_ARRAY, (void)0)
+			glTexCoordPointer(size4, type4, stride4, ptr4);
+		}
+		else
+		{
+			MY_DISABLE_CLIENT_STATE(4, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE1))
+		}
+
+		if (type5 != GL_NONE)
+		{
+			glClientActiveTexture(GL_TEXTURE2);
+			MY_ENABLE_CLIENT_STATE(5, GL_TEXTURE_COORD_ARRAY, (void)0)
+			glTexCoordPointer(size5, type5, stride5, ptr5);
+		}
+		else
+		{
+			MY_DISABLE_CLIENT_STATE(5, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE2))
+		}
+
+		if (type6 != GL_NONE)
+		{
+			glClientActiveTexture(GL_TEXTURE3);
+			MY_ENABLE_CLIENT_STATE(6, GL_TEXTURE_COORD_ARRAY, (void)0)
+			glTexCoordPointer(size6, type6, stride6, ptr6);
+		}
+		else
+		{
+			MY_DISABLE_CLIENT_STATE(6, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE3))
+		}
+#endif
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -1675,18 +1843,18 @@ void COpenGLDriver::render2DRect(const SMaterial &material,
 
 //---------------------------------------------------------------------------
 
-CNullGPUProgram* COpenGLDriver::_createGPUProgram(u32 uniforms, u32 lightcnt,
+CNullGPUProgram* COpenGLDriver::_createGPUProgram(u32 uniforms, u32 attributes, u32 lightcnt,
 	E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader)
 {
 #if __MY_BUILD_GL_VER__ >= MY_DRIVER_TYPE_OPENGL21
 	if (m_UseShaders)
-		return new COpenGLGPUProgram(uniforms, lightcnt,
+		return new COpenGLGPUProgram(uniforms, attributes, lightcnt,
 			vertex_shader_ver, vertex_shader,
 			pixel_shader_ver, pixel_shader);
 #endif
 	CNullGPUProgram *gpu_prog = gpu_prog = new CNullGPUProgram();
-	gpu_prog->recreate(0, 0, EVSV_GLSL_1_0, NULL, EPSV_GLSL_1_0, NULL);
+	gpu_prog->recreate(0, 0, 0, EVSV_GLSL_1_0, NULL, EPSV_GLSL_1_0, NULL);
 	return gpu_prog;
 }
 

@@ -26,7 +26,7 @@ class COpenGLGPUProgram : public CNullGPUProgram
 {
 public:
 
-	COpenGLGPUProgram(u32 uniforms, u32 lights_count,
+	COpenGLGPUProgram(u32 uniforms, u32 attributes, u32 lights_count,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader);
 	virtual ~COpenGLGPUProgram();
@@ -38,7 +38,7 @@ public:
 	virtual bool setUniform1f(E_UNIFORM_TYPE uniform, f32 float_val);
 	virtual bool setUniform1i(E_UNIFORM_TYPE uniform, s32 int_val);
 
-	virtual bool recreate(u32 uniforms, u32 lights_count,
+	virtual bool recreate(u32 uniforms, u32 attributes, u32 lights_count,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader);
 

@@ -187,7 +187,7 @@ private:
 	//! Create An Empty D3D9 Texture
     IDirect3DTexture9 * createEmptyD3D9Texture(s32 w, s32 h);
 
-	virtual CNullGPUProgram* _createGPUProgram(u32 uniforms, u32 lightcnt,
+	virtual CNullGPUProgram* _createGPUProgram(u32 uniforms, u32 attributes, u32 lightcnt,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader);
 

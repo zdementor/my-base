@@ -142,6 +142,7 @@ local function _ScenedShaderEditorReadShaderSources(file_name)
 		local tag = ShaderGen.getCurrentTag()
 		local progInfo = vid.loadGPUProgramInfo(file_name, tag)
 		local unforms = 0
+		local attributes = 0
 		local lights_count = progInfo.LightsCount
 		local vertex_file_name = ""
 		local vertex_source = ""
@@ -155,6 +156,7 @@ local function _ScenedShaderEditorReadShaderSources(file_name)
 				if shaderInfo.Driver == MyDriver:getDriverType() then
 					tag = shaderInfo:getTag()
 					uniforms = shaderInfo.Uniforms
+					attributes = shaderInfo.Attributes
 					vertex_file_name = shaderInfo:getVertexFileName()
 					vertex_ver = shaderInfo.VertexVer
 					pixel_file_name = shaderInfo:getPixelFileName()
@@ -168,6 +170,7 @@ local function _ScenedShaderEditorReadShaderSources(file_name)
 				if shaderInfo.Driver == MyDriver:getDriverType() then
 					tag = shaderInfo:getTag()
 					uniforms = shaderInfo.Uniforms
+					attributes = shaderInfo.Attributes
 					vertex_file_name = shaderInfo:getVertexFileName()
 					vertex_ver = shaderInfo.VertexVer
 					pixel_file_name = shaderInfo:getPixelFileName()
@@ -198,6 +201,7 @@ local function _ScenedShaderEditorReadShaderSources(file_name)
 		_ScenedShaderSources = {
 			LightsCount = lights_count,
 			Uniforms = uniforms,
+			Attributes = attributes,
 			Tag = tag,
 			Vertex = { Source = vertex_source, Ver = vertex_ver},
 			Pixel  = { Source = pixel_source, Ver = pixel_ver},
@@ -227,7 +231,7 @@ local function _ScenedShaderEditorSaveCallback(full_file_name)
 		local vertex_file_name = file_name..".vsh"
 		local pixel_file_name = file_name..".psh"
 		vid.appendGPUProgramInfo(progInfo,
-			sources.Uniforms, MyDriver:getDriverType(),
+			sources.Uniforms, sources.Attributes, MyDriver:getDriverType(),
 			sources.Tag,
 			sources.Vertex.Ver, vertex_file_name,
 			sources.Pixel.Ver, pixel_file_name)
@@ -318,7 +322,7 @@ local function _ScenedShaderEditorClick(args)
 		local v_src = _Ctrls.VertexShaderEditbox.Ctrl:getText()
 		local p_src = _Ctrls.PixelShaderEditbox.Ctrl:getText()
 		if not MyDriver:compileGPUSources(
-				_ScenedShaderSources.Uniforms, _ScenedShaderSources.LightsCount,
+				_ScenedShaderSources.Uniforms, _ScenedShaderSources.Attributes, _ScenedShaderSources.LightsCount,
 				_ScenedShaderSources.Vertex.Ver, v_src,
 				_ScenedShaderSources.Pixel.Ver, p_src) then
 			LOG_INFO(" GPU program compiled with errors")
