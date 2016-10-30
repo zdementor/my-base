@@ -317,7 +317,7 @@ void COpenGLVertexArray < S3DVertex1TCoordsRHWColoured > ::_setupPointers(bool *
 {
 	m_Driver->_setupGLAttributes(
 		enabledAttribs,
-		GL_FLOAT,         3, m_DataStride, _getPointer(m_VertexOffset),
+		GL_FLOAT,         4, m_DataStride, _getPointer(m_VertexOffset),
 		GL_NONE,          0, 0,            NULL,
 		GL_UNSIGNED_BYTE, 4, m_DataStride, _getPointer(m_ColorOffset),
 		GL_FLOAT,         2, m_DataStride, _getPointer(m_TCoordOffset),
