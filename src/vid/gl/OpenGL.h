@@ -42,7 +42,7 @@ typedef char GLchar;
 #include <GL/glew.h>
 #include <GL/wglew.h>
 
-#define MY_VERTEX_MAX_ATTRIBS (MY_MATERIAL_MAX_LAYERS+3)
+#define MY_VERTEX_MAX_ATTRIBS 16
 
 //---------------------------------------------------------------------------
 
