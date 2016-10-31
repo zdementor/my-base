@@ -525,7 +525,7 @@ bool CImageLibrary::copy(img::IImage* image, img::IImage* tex_image)
 	case img::ECF_LUMINANCE16:
 		copyTo = copyToLum16;
 		break;
-	case img::ECF_ALPHA32F:
+	case img::ECF_LUMINANCE32F:
 		copyTo = copyToAlpha32F;
 		break;
 	default:
@@ -550,7 +550,8 @@ static void copyToAlpha32F(
 	float* source = (float*)src_img->getLevelData(level);
 	float* dest = (float*)dst_img->getLevelData(level);
 
-	if (src_img->getColorFormat() != img::ECF_ALPHA32F || dst_img->getColorFormat() != img::ECF_ALPHA32F)
+	if (src_img->getColorFormat() != img::ECF_LUMINANCE32F
+			|| dst_img->getColorFormat() != img::ECF_LUMINANCE32F)
 	{
 		LOGGER.logErr("Can't copy data format %s to %s",
 			img::getColorFormatName(src_img->getColorFormat()),
@@ -570,7 +571,7 @@ static void copyToAlpha32F(
         f32 sourceYStep = (f32)src_dim.Height / (f32)dst_dim.Height;
         f32 sy;
 
-        if (src_img->getColorFormat() == img::ECF_ALPHA32F)
+        if (src_img->getColorFormat() == img::ECF_LUMINANCE32F)
         {
 			// copy texture scaling, fast
             for (s32 x = 0; x < dst_dim.Width; ++x)

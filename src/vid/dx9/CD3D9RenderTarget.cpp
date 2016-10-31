@@ -18,12 +18,26 @@ namespace my {
 namespace vid {  
 //----------------------------------------------------------------------------
 
+CD3D9RenderTarget::CD3D9RenderTarget()
+	: CNullRenderTarget(),
+m_D3DDriver((CD3D9Driver*)VIDEO_DRIVER_PTR),
+m_D3DDepthStencilSurface(0)
+{
+	memset(m_D3DRenderTargetSurface, 0, sizeof(m_D3DRenderTargetSurface));
+
+	m_OK = true;
+}
+
+//----------------------------------------------------------------------------
+
 CD3D9RenderTarget::CD3D9RenderTarget(const core::dimension2di &size,
 	img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
 	: CNullRenderTarget(size, colorFormat, depthFormat),
 m_D3DDriver((CD3D9Driver*)VIDEO_DRIVER_PTR),
-m_D3DRenderTargetSurface(0), m_D3DDepthStencilSurface(0)
+m_D3DDepthStencilSurface(0)
 {
+	memset(m_D3DRenderTargetSurface, 0, sizeof(m_D3DRenderTargetSurface));
+
 	_rebuild();
 }
 
@@ -33,8 +47,10 @@ CD3D9RenderTarget::CD3D9RenderTarget(
 	ITexture *colorTexture, ITexture *depthTexture)
 	: CNullRenderTarget(colorTexture, depthTexture),
 m_D3DDriver((CD3D9Driver*)VIDEO_DRIVER_PTR),
-m_D3DRenderTargetSurface(0), m_D3DDepthStencilSurface(0)
+m_D3DDepthStencilSurface(0)
 {
+	memset(m_D3DRenderTargetSurface, 0, sizeof(m_D3DRenderTargetSurface));
+
 	if (colorTexture)
 		_rebuild();
 	else
@@ -45,7 +61,8 @@ m_D3DRenderTargetSurface(0), m_D3DDepthStencilSurface(0)
 
 CD3D9RenderTarget::~CD3D9RenderTarget()
 {
-	SAFE_RELEASE(m_D3DRenderTargetSurface);
+	for (u32 no = 0; no < MY_MAX_COLOR_ATTACHMENTS; no++)
+		SAFE_RELEASE(m_D3DRenderTargetSurface[no]);
 	SAFE_RELEASE(m_D3DDepthStencilSurface);
 }
 
@@ -57,20 +74,27 @@ bool CD3D9RenderTarget::_rebuild()
 
 	IDirect3DDevice9 *pd3dDevice = m_D3DDriver->_getDirect3DDevice();
 
-	SAFE_RELEASE(m_D3DRenderTargetSurface);
+	for (u32 no = 0; no < MY_MAX_COLOR_ATTACHMENTS; no++)
+		SAFE_RELEASE(m_D3DRenderTargetSurface[no]);
 	SAFE_RELEASE(m_D3DDepthStencilSurface);
 
-	if (m_ColorTexture && m_ColorTexture->isRenderTarget())
+	for (u32 no = 0; no < MY_MAX_COLOR_ATTACHMENTS; no++)
 	{
-		m_D3DRenderTargetSurface =
-			((CD3D9RenderTargetTexture *)m_ColorTexture)->getRenderTargetSurface();
-		if (m_D3DRenderTargetSurface)
-			m_D3DRenderTargetSurface->AddRef();
+		ITexture *colTex = m_ColorTexture[no];
+		if (!colTex)
+			break;
+		if (colTex->isRenderTarget())
+		{
+			m_D3DRenderTargetSurface[no] =
+				((CD3D9RenderTargetTexture *)colTex)->getRenderTargetSurface();
+			if (m_D3DRenderTargetSurface[no])
+				m_D3DRenderTargetSurface[no]->AddRef();
+			else
+				m_OK = false;
+		}
 		else
 			m_OK = false;
 	}
-	else
-		m_OK = false;
 
 	if (m_OK)
 	{
@@ -95,7 +119,7 @@ bool CD3D9RenderTarget::_rebuild()
 			if (format != D3DFMT_UNKNOWN)
 			{
 				HRESULT hr = pd3dDevice->CreateDepthStencilSurface(
-					m_Size.Width, m_Size.Height,
+					m_Size[0].Width, m_Size[0].Height,
 					format,
 					D3DMULTISAMPLE_NONE,
 					0,
@@ -124,21 +148,29 @@ bool CD3D9RenderTarget::bind()
 	bool ret = true;
 	HRESULT hr;
 
-	hr = pd3dDevice->SetRenderTarget(0, m_D3DRenderTargetSurface);
-	if (FAILED(hr))
-		LOGGER.logWarn("Can not bind Render Target surface!");
-	else
+	for (u32 no = 0; m_OK && no < MY_MAX_COLOR_ATTACHMENTS; no++)
+	{
+		if (! m_D3DRenderTargetSurface[no])
+			break;
+		hr = pd3dDevice->SetRenderTarget(no, m_D3DRenderTargetSurface[no]);
+		if (FAILED(hr))
+			LOGGER.logWarn("Can not bind Render Target surface %d (%dx%d, %s)!",
+				no, m_Size[no].Width, m_Size[no].Height,
+				img::getColorFormatName(m_ColorFormat[no]));
+		m_OK = SUCCEEDED(hr);
+	}
+	if (m_OK)
 	{
 		hr = pd3dDevice->SetDepthStencilSurface(m_D3DDepthStencilSurface);
 		if (FAILED(hr))
 			LOGGER.logWarn("Can not bind Depth Stencil surface!");
+		m_OK = SUCCEEDED(hr);
 	}
-	m_OK = SUCCEEDED(hr);
 
 	if (!m_OK)
 	{
 		LOGGER.logErr("Failed to bind Render Target (%dx%d, %s/%s)!",
-			m_Size.Width, m_Size.Height, img::getColorFormatName(m_ColorFormat),
+			m_Size[0].Width, m_Size[0].Height, img::getColorFormatName(m_ColorFormat[0]),
 			img::getColorFormatName(m_DepthFormat));
 
 		_bindMainRT();

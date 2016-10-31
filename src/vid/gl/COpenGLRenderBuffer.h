@@ -57,13 +57,15 @@ public:
 	{
 		if (!IVideoBuffer::lock(mode))
 			return NULL;
-		return m_Array;
+		m_LockedData = m_Array;
+		return m_LockedData;
 	}
 
 	virtual bool unlock()
 	{
 		if (!IVideoBuffer::unlock())
 			return false;
+		m_LockedData = NULL;
 		return true;
 	}
 
@@ -76,8 +78,7 @@ public:
 	virtual bool isOK()
 	{ return m_Array != 0; }
 
-	void setPointers();
-	void unsetPointers();
+	void _setupPointers(bool *enabledAttribs);
 
 protected:
 
@@ -139,13 +140,15 @@ public:
 	{
 		if (!IVideoBuffer::lock(mode))
 			return NULL;
-		return m_Array;
+		m_LockedData = m_Array;
+		return m_LockedData;
 	}
 
 	virtual bool unlock()
 	{
 		if (!IVideoBuffer::unlock())
 			return false;
+		m_LockedData = NULL;
 		return true;
 	}
 
@@ -213,7 +216,10 @@ public:
 		if (!IVideoBuffer::lock(mode))
 			return NULL;
 		bind();
-		return glMapBuffer(GL_ARRAY_BUFFER, convertToOGLLockMode(mode));
+		m_LockedData = glMapBuffer(GL_ARRAY_BUFFER, convertToOGLLockMode(mode));
+		if (!m_LockedData)
+			unlock();
+		return m_LockedData;
 	}
 
 	virtual bool unlock()
@@ -226,6 +232,7 @@ public:
 			glBufferData(GL_ARRAY_BUFFER, m_Size * sizeof(T), m_Array,
 				m_Dynamic ? GL_STREAM_DRAW : GL_STATIC_DRAW);
 			unbind();
+			m_LockedData = NULL;
 			return true;
 		}
 
@@ -233,14 +240,25 @@ public:
 			return false;
 		glUnmapBuffer(GL_ARRAY_BUFFER);
 		unbind();
+		m_LockedData = NULL;
 		return true;
 	}
 
-	void bind()
-	{ glBindBuffer(GL_ARRAY_BUFFER, m_Buffer); }
+	virtual bool bind()
+	{
+		if (!IVideoBuffer::bind())
+			return false;
+		glBindBuffer(GL_ARRAY_BUFFER, m_Buffer);
+		return true;
+	}
 
-	void unbind()
-	{ glBindBuffer(GL_ARRAY_BUFFER, 0); }
+	virtual bool unbind()
+	{
+		if (!IVideoBuffer::unbind())
+			return false;
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		return true;
+	}
 
 	virtual bool isOK()
 	{ return m_Buffer != 0; }
@@ -298,7 +316,10 @@ public:
 		if (!IVideoBuffer::lock(mode))
 			return NULL;
 		bind();
-		return glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, convertToOGLLockMode(mode));
+		m_LockedData = glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, convertToOGLLockMode(mode));
+		if (!m_LockedData)
+			unlock();
+		return m_LockedData;
 	}
 
 	virtual bool unlock()
@@ -311,6 +332,7 @@ public:
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Size * sizeof(T), m_Array,
 				m_Dynamic ? GL_STREAM_DRAW : GL_STATIC_DRAW);
 			unbind();
+			m_LockedData = NULL;
 			return true;
 		}
 		
@@ -318,17 +340,28 @@ public:
 			return false;
 		glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
 		unbind();
+		m_LockedData = NULL;
 		return true;
 	}
 
 	virtual bool isOK()
 	{ return m_Buffer != 0; }
 
-	void bind()
-	{ glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffer); }
+	virtual bool bind()
+	{
+		if (!IVideoBuffer::bind())
+			return false;
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffer);
+		return true;
+	}
 
-	void unbind()
-	{ glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); }
+	virtual bool unbind()
+	{
+		if (!IVideoBuffer::unbind())
+			return false;
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		return true;
+	}
 
 private:
 
@@ -338,15 +371,35 @@ private:
 
 //----------------------------------------------------------------------------
 
+class COpenGLRenderBuffer : public CNullRenderBuffer
+{
+public:
+
+	COpenGLRenderBuffer(E_DRAW_PRIMITIVE_TYPE dpt)
+		: CNullRenderBuffer(dpt)
+	{
+	}
+	virtual ~COpenGLRenderBuffer()
+	{
+	}
+
+	static bool ms_EnabledAttribs[MY_VERTEX_MAX_ATTRIBS];
+
+protected:
+
+};
+
+//----------------------------------------------------------------------------
+
 template <class TVert, class TInd >
-class COpenGLRenderArray : public CNullRenderBuffer
+class COpenGLRenderArray : public COpenGLRenderBuffer
 {
 public:
 
 	COpenGLRenderArray(
 		COpenGLDriver *driver,
 		s32 vert_size, s32 ind_size, E_DRAW_PRIMITIVE_TYPE dpt
-		) : CNullRenderBuffer(dpt),
+		) : COpenGLRenderBuffer(dpt),
 		m_GLDrawPrimitiveType(convertToOGLPrimitiveType(dpt)),
 		m_GLIndicesType((sizeof(TInd)==2) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT),
 		m_VertexArray(driver, vert_size),
@@ -363,7 +416,7 @@ public:
 		const TInd * indices, s32 ind_size,
 		E_DRAW_PRIMITIVE_TYPE dpt,
 		bool own_data = false
-		) : CNullRenderBuffer(dpt),
+		) : COpenGLRenderBuffer(dpt),
 		m_GLDrawPrimitiveType(convertToOGLPrimitiveType(dpt)),
 		m_GLIndicesType((sizeof(TInd)==2) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT),
 		m_VertexArray(driver, vertices, vert_size, own_data),
@@ -387,26 +440,44 @@ public:
 	virtual IIndexBuffer* getIndices()
 	{ return &m_IndexArray; }
 
-	virtual void draw()
+	virtual bool bind()
 	{
-		u32 vsize = m_VertexArray.getSize();
 		u32 isize = m_IndexArray.getSize();
 
-		m_VertexArray.setPointers();
-
+		m_VertexArray._setupPointers(ms_EnabledAttribs);
+		
 		if (isize)
+			m_IndexArray.lock(ERBLM_READ_ONLY);
+
+		return true;
+	}
+
+	virtual void render()
+	{
+		if (m_IndexArray.isLocked())
 		{
-			void *indices = m_IndexArray.lock(ERBLM_READ_ONLY);
+			void *indices = m_IndexArray.getLockedData();
 			if (indices)
+			{
+				u32 isize = m_IndexArray.getSize();
 				glDrawElements(
 					m_GLDrawPrimitiveType, isize, m_GLIndicesType, indices);
-			m_IndexArray.unlock();
+			}
 		}
 		else
+		{
+			u32 vsize = m_VertexArray.getSize();
 			glDrawArrays(
 				m_GLDrawPrimitiveType, 0, vsize);
+		}
+	}
 
-		m_VertexArray.unsetPointers();
+	virtual bool unbind()
+	{
+		if (m_IndexArray.isLocked())
+			m_IndexArray.unlock();
+
+		return true;
 	}
 
 private:
@@ -420,8 +491,43 @@ private:
 
 //----------------------------------------------------------------------------
 
+class COpenGLVertexArrayObject : public COpenGLRenderBuffer
+{
+public:
+
+	COpenGLVertexArrayObject(E_DRAW_PRIMITIVE_TYPE dpt)
+		: COpenGLRenderBuffer(dpt), m_VAO(0), m_VAOCompleted(false)
+	{
+		if (ms_VAOSupport)
+		{
+#if GL_ARB_vertex_array_object
+			glGenVertexArrays(1, &m_VAO);
+#endif
+		}
+	}
+	virtual ~COpenGLVertexArrayObject()
+	{
+		if (m_VAO)
+		{
+#if GL_ARB_vertex_array_object
+			glDeleteVertexArrays(1, &m_VAO);
+#endif
+			m_VAO = 0;
+		}
+	}
+
+	static bool ms_VAOSupport;
+
+protected:
+
+	GLuint m_VAO;
+	bool m_VAOCompleted;
+};
+
+//----------------------------------------------------------------------------
+
 template < class TVert, class TInd >
-class COpenGLVertexBufferObject : public CNullRenderBuffer
+class COpenGLVertexBufferObject : public COpenGLVertexArrayObject
 {
 public:
 
@@ -429,7 +535,7 @@ public:
 		bool dynamic,
 		vid::COpenGLDriver *driver, 
 		s32 vert_size, s32 ind_size, E_DRAW_PRIMITIVE_TYPE dpt
-		) : CNullRenderBuffer(dpt),
+		) : COpenGLVertexArrayObject(dpt),
 		m_GLDrawPrimitiveType(convertToOGLPrimitiveType(dpt)),
 		m_GLIndicesType((sizeof(TInd)==2) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT),
 		m_Dynamic(dynamic),
@@ -439,6 +545,8 @@ public:
 #if MY_DEBUG_MODE 
 		setClassName("COpenGLVertexBufferObject");
 #endif
+		memset(m_EnabledAttribs, 0, sizeof(m_EnabledAttribs));
+
 		POST_CREATE_VBO("OGL vertex buffer object");
 	}
 
@@ -455,27 +563,62 @@ public:
 	virtual IIndexBuffer* getIndices()
 	{ return &m_IndexBuffer; }
 
-	virtual void draw()
+	virtual bool bind()
 	{
 		u32 vsize = m_VertexBuffer.getSize();
 		u32 isize = m_IndexBuffer.getSize();
 
-		m_VertexBuffer.bind();
-		m_VertexBuffer.setPointers();
-		
-		if (isize)
+		if (m_VAO)
 		{
-			m_IndexBuffer.bind();
-			glDrawElements(
-				m_GLDrawPrimitiveType, isize, m_GLIndicesType, 0);
-			m_IndexBuffer.unbind();
+#if GL_ARB_vertex_array_object
+			glBindVertexArray(m_VAO);
+#endif
 		}
-		else
-			glDrawArrays(
-				m_GLDrawPrimitiveType, 0, vsize);
+		if (!m_VAOCompleted)
+		{
+			if (vsize)
+				m_VertexBuffer.bind();
+			m_VertexBuffer._setupPointers(
+				m_VAO ? m_EnabledAttribs : ms_EnabledAttribs);
+			if (isize)
+				m_IndexBuffer.bind();
+			if (m_VAO)
+				m_VAOCompleted = true;
+		}
 
-		m_VertexBuffer.unsetPointers();
-		m_VertexBuffer.unbind();
+		return true;
+	}
+	
+	virtual void render()
+	{
+		u32 vsize = m_VertexBuffer.getSize();
+		u32 isize = m_IndexBuffer.getSize();
+
+		if (vsize)
+		{
+			if (isize)
+				glDrawElements(
+					m_GLDrawPrimitiveType, isize, m_GLIndicesType, 0);
+			else
+				glDrawArrays(
+					m_GLDrawPrimitiveType, 0, vsize);
+		}
+	}
+
+	virtual bool unbind()
+	{
+		if (m_VAO)
+		{
+#if GL_ARB_vertex_array_object
+			glBindVertexArray(0);
+#endif
+		}
+		if (m_IndexBuffer.isBound())
+			m_IndexBuffer.unbind();
+		if (m_VertexBuffer.isBound())
+			m_VertexBuffer.unbind();
+
+		return true;
 	}
 
 private:
@@ -487,6 +630,8 @@ private:
 	GLuint m_GLIndicesType;
 
 	bool m_Dynamic;
+
+	bool m_EnabledAttribs[MY_VERTEX_MAX_ATTRIBS];
 };
 
 //----------------------------------------------------------------------------

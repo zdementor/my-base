@@ -610,6 +610,7 @@ while MyDevice:run() do
 			MyDriver:renderAll()
 			MyDriver:endRendering()
 		end
+		MyDriver:swapBuffers()
 		needToRender = false
 	end
 end

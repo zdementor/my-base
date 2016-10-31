@@ -28,7 +28,8 @@ __MY_CORE_LIB_API__ void onDestroyTextureLayer(core::list_node<STextureLayer*> *
 __MY_CORE_LIB_API__ void onCreateRenderPass(core::list_node<SRenderPass*> *pass);
 __MY_CORE_LIB_API__ void onDestroyRenderPass(core::list_node<SRenderPass*> *pass);
 
-__MY_CORE_LIB_API__ void releaseResources();
+__MY_CORE_LIB_API__ void releaseTextures();
+__MY_CORE_LIB_API__ void releaseGPUPrograms();
 
 //----------------------------------------------------------------------------
 } // end namespace vid

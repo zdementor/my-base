@@ -84,11 +84,11 @@ const f32 CNullDriver::fog_blur[fog_blur_num][2] =
 //---------------------------------------------------------------------------
 
 CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize) 
-	: m_ScreenSize(screenSize), 
+	: m_RenderPath((E_RENDER_PATH)-1), m_ScreenSize(screenSize), 
 	ViewPort(0,0,0,0), m_TrianglesDrawn(0), m_DIPsDrawn(0), TextureCreationFlags(0),  
 	StencilPreInitialized(true), AverageFPS(0), BackColor(255,0,0,0),
 	m_LastEnabledLightsCount(-1), Transformation3DChanged(true),
-	m_MaxTextureUnits(0), m_MaxLights(0), m_MaxTextureSize(1024, 1024), MaxAnisotropyLevel(0),
+	m_MaxTextureUnits(0), m_MaxLights(0), m_MaxTextureSize(1024, 1024), m_MaxAnisotropyLevel(0),
 	m_NormalMapCreationAmplitude(1.0f), 
 	m_PolygonFillMode(EPFM_SOLID), m_TextureFilter(ETF_NONE),
 	m_Rendering(false),
@@ -99,6 +99,9 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 	m_StencilEnabled(false), m_ScissorEnabled(false), m_ShadowColor(100,0,0,0),
 	m_Fullscreen(false), m_Antialiasing(false), m_VerticalSync(false), m_Shadows(false),
 	m_StencilBuffer(false), m_TwoSidedStencil(false), m_TexturesNonPowerOfTwo(false),
+	m_MaxDrawBuffers(1), m_DepthStencilTexturesSupport(false), m_RenderTargetSupport(false),
+	m_ColorBits(0), m_AlphaBits(0), m_DepthBits(0), m_StencilBits(0),
+	m_VertexShaderVersion(0), m_PixelShaderVersion(0),
 	m_CurrentVertexType((E_VERTEX_TYPE)-1), 
 	m_DriverType(EDT_NULL), m_Profiler(PROFILER),
 	m_DirtyTexUnit(-1), m_CurrentGPUProgram(NULL),
@@ -112,15 +115,15 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 	IUnknown::setClassName("CNullDriver");
 #endif
 
-    setTextureCreationFlag(ETCF_AUTOGEN_MIP_MAPS, true);
-
-    ViewPort = core::rect<s32>(core::position2d<s32>(0,0), screenSize);
-
-	// grabbing needed singletons
-
 	m_Profiler.grab();
 	IMAGE_LIBRARY.grab();
 	FILE_SYSTEM.grab();
+
+	setRenderPath(ERP_FORWARD_RENDERING);
+
+    setTextureCreationFlag(ETCF_AUTOGEN_MIP_MAPS, true);
+
+    ViewPort = core::rect<s32>(core::position2d<s32>(0,0), screenSize);
 
 	// some needed stuff
 
@@ -218,18 +221,10 @@ void CNullDriver::free()
 
 	// prepare for clearing video cache
 
-	vid::releaseResources();
+	vid::releaseTextures();
+	vid::releaseGPUPrograms();
 
-	// clear GPU programs
-
-	_bindGPUProgram(NULL);
-	m_GPUPrograms.clear();
-	for (u32 i = 0; i < E_VERTEX_TYPE_COUNT; i++)
-		for (u32 j = 0; j <= PRL_MAX_SHADER_LIGHTS; j++)
-			m_GPUProgramsHash[i][j].clear();
-	m_GPUProgramsHashByContent.clear();
-	m_GPUProgramsHashByFileName.clear();
-	m_GPUProgramsHashFileNames.clear();
+	clearGPUProgramHash();
 
 	// clear Textures
 
@@ -257,8 +252,32 @@ void CNullDriver::free()
 
 //---------------------------------------------------------------------------
 
+void CNullDriver::clearGPUProgramHash()
+{
+	_bindGPUProgram(NULL);
+	 m_GPUPrograms.clear();
+	for (u32 i = 0; i < E_VERTEX_TYPE_COUNT; i++)
+		for (u32 j = 0; j <= PRL_MAX_SHADER_LIGHTS; j++)
+			m_GPUProgramsHash[i][j].clear();
+	m_GPUProgramsHashByContent.clear();
+	m_GPUProgramsHashByFileName.clear();
+	m_GPUProgramsHashFileNames.clear();
+
+	LOGGER.logInfo("Cleared GPU program hash.");
+}
+
+//---------------------------------------------------------------------------
+
 bool CNullDriver::_initDriver(SExposedVideoData &out_video_data)
 {
+	setTextureCreationFlag(ETCF_CREATE_POWER_OF_TWO,
+		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) == false);
+	setTextureFilter(m_TextureFilter);
+	setColorMask(m_ColorMask);
+	setFog(m_Fog);
+	setGlobalAmbientColor(getGlobalAmbientColor());
+	setViewPort(0, 0, m_ScreenSize.Width, m_ScreenSize.Height);
+
 	if (m_UseShaders && !queryFeature(EVDF_SHADER_LANGUAGE))
 	{
 		m_UseShaders = false;
@@ -271,9 +290,96 @@ bool CNullDriver::_initDriver(SExposedVideoData &out_video_data)
 	m_CacheShaders = m_UseShaders && m_CacheShaders;
 	m_UseFFP = !m_UseShaders || m_UseFFP;
 
+	LOGGER.logInfo("Video driver features:");
+	LOGGER.logInfo(" Back Color Format : %s",
+		img::getColorFormatName(getBackColorFormat()));
+	LOGGER.logInfo(" Multitexturing    : %s",
+		queryFeature(EVDF_MULITEXTURE) ? "OK" : "None");
+	LOGGER.logInfo(" Anisotropic filt. : %s (%d level)",
+		queryFeature(EVDF_ANISOTROPIC_FILTER) ?
+			"OK" : "None", m_MaxAnisotropyLevel);
+	if (getDriverFamily() != vid::EDF_NULL)
+	{
+		LOGGER.logInfo(" %s              : %s",
+			getDriverFamily() == EDF_OPENGL ? "GLSL" : "HLSL",
+			queryFeature(EVDF_SHADER_LANGUAGE) ? "OK" : "None");
+		if (queryFeature(EVDF_SHADER_LANGUAGE))
+		{
+			LOGGER.logInfo("  Vertex shader - v.%d.%d",
+				0xff & m_VertexShaderVersion >> 8,
+				0xff & m_VertexShaderVersion);
+			LOGGER.logInfo("  Pixel shader  - v.%d.%d",
+				0xff & m_PixelShaderVersion >> 8,
+				0xff & m_PixelShaderVersion);
+		}
+	}
+	LOGGER.logInfo(" Two side stencil  : %s",
+		m_TwoSidedStencil ? "OK" : "None");
+	LOGGER.logInfo(" Occlusion Query   : %s",
+		queryFeature(EVDF_OCCLUSION_QUERY) ? "OK" : "None");
+	LOGGER.logInfo(" Render Target     : %s",
+		queryFeature(EVDF_RENDER_TO_TARGET) ? "OK" : "None");
+	LOGGER.logInfo(" Compressed tex.   : %s",
+		queryFeature(EVDF_COMPRESSED_TEXTURES) ? "OK" : "None");
+	LOGGER.logInfo(" Depth Stencil tex.: %s",
+		queryFeature(EVDF_DEPTH_STENCIL_TEXTURES) ? "OK" : "None");
+	LOGGER.logInfo(" Non pwr. of 2 tex.: %s",
+		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) ? "OK" : "None");
+	LOGGER.logInfo(" MRT               : %s (%d)",
+		queryFeature(EVDF_MULTIPLE_RENDER_TARGETS) ? "OK" : "None",
+		m_MaxDrawBuffers);
+
+    LOGGER.logInfo("Video driver parameters: ");
+    LOGGER.logInfo(" color   : %d bit", m_ColorBits);
+    LOGGER.logInfo(" alpha   : %d bit", m_AlphaBits);
+    LOGGER.logInfo(" depth(z): %d bit", m_DepthBits);
+    LOGGER.logInfo(" stencil : %d bit", m_StencilBits);
+    LOGGER.logInfo(" max lights    : %d", m_MaxLights);
+    LOGGER.logInfo(" max tex. units: %d", m_MaxTextureUnits);
+    LOGGER.logInfo(" max tex. res. : %d x %d",
+		m_MaxTextureSize.Width, m_MaxTextureSize.Height);	
+
 	_createEmbeddedTextures();
 
     return true;
+}
+
+//---------------------------------------------------------------------------
+
+void CNullDriver::setRenderPath(E_RENDER_PATH renderPath)
+{
+	if (renderPath != m_RenderPath)
+	{
+		clearGPUProgramHash();
+		LOGGER.logInfo("Use '%s' render path.",
+			getRenderPathReadableName(renderPath));
+	}
+	m_RenderPath = renderPath;
+}
+
+//---------------------------------------------------------------------------
+
+bool CNullDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
+{
+	switch (feature)
+    {
+	case EVDF_MULITEXTURE:
+		return getMaximalTextureUnitsAmount()>1;
+    case EVDF_ANISOTROPIC_FILTER:
+        return m_MaxAnisotropyLevel>0;
+    case EVDF_STENCIL_BUFFER:
+        return m_StencilBuffer;
+    case EVDF_RENDER_TO_TARGET:
+		return m_RenderTargetSupport;
+	case EVDF_DEPTH_STENCIL_TEXTURES:
+		return m_DepthStencilTexturesSupport;
+	case EVDF_NON_POWER_OF_TWO_TEXTURES:
+		return m_TexturesNonPowerOfTwo;
+	case EVDF_MULTIPLE_RENDER_TARGETS:
+		return getMaximalColorAttachmentsAmount() > 1;
+    }
+
+	return false;
 }
 
 //---------------------------------------------------------------------------
@@ -425,37 +531,6 @@ void CNullDriver::setTransform(E_TRANSFORMATION_STATE state, const core::matrix4
 
 //---------------------------------------------------------------------------
 
-const core::matrix4& CNullDriver::getTransform(E_TRANSFORMATION_STATE state)
-{
-    return Matrices[state];
-}
-
-//---------------------------------------------------------------------------
-
-//! Returns a material, using to draw geometry now
-const SRenderPass& CNullDriver::getLastRenderPass()
-{
-	return m_LastRenderPass;
-}
-
-//---------------------------------------------------------------------------
-
-//! Returns a material, using to draw geometry now
-const SRenderPass& CNullDriver::getRenderPass()
-{
-	return m_CurrentRenderPass;
-}
-
-//---------------------------------------------------------------------------
-
-//! sets a material
-void CNullDriver::setRenderPass(const SRenderPass& pass)
-{
-	m_CurrentRenderPass = pass;
-}
-
-//---------------------------------------------------------------------------
-
 ITexture* CNullDriver::getTexture(const c8* filename)
 {
 	if (!filename || core::stringc(filename) == NONAME_FILE_NAME)
@@ -597,6 +672,55 @@ ITexture* CNullDriver::addRenderTargetTexture(const c8 *name,
 		t->drop();
 
 	return t;
+}
+
+//---------------------------------------------------------------------------
+
+IRenderTarget* CNullDriver::addRenderTarget()
+{
+	CNullRenderTarget *rt =(CNullRenderTarget *)createRenderTarget();
+	if (rt && !rt->isOK())
+	{
+		rt->drop();
+		rt = NULL;
+	}
+	if (rt)
+		_addRenderTarget(rt);
+	return rt;
+}
+
+//---------------------------------------------------------------------------
+
+IRenderTarget* CNullDriver::addRenderTarget(const core::dimension2di &size,
+	img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
+{
+	CNullRenderTarget *rt =
+		(CNullRenderTarget *)createRenderTarget(size, colorFormat, depthFormat);
+	if (rt && !rt->isOK())
+	{
+		rt->drop();
+		rt = NULL;
+	}
+	if (rt)
+		_addRenderTarget(rt);
+	return rt;
+}
+
+//---------------------------------------------------------------------------
+
+IRenderTarget* CNullDriver::addRenderTarget(
+	ITexture *colorTexture, ITexture *depthTexture)
+{
+	CNullRenderTarget *rt =
+		(CNullRenderTarget *)createRenderTarget(colorTexture, depthTexture);
+	if (rt && !rt->isOK())
+	{
+		rt->drop();
+		rt = NULL;
+	}
+	if (rt)
+		_addRenderTarget(rt);
+	return rt;
 }
 
 //---------------------------------------------------------------------------
@@ -1027,20 +1151,18 @@ bool CNullDriver::getTextureCreationFlag(E_TEXTURE_CREATION_FLAG flag)
 
 //---------------------------------------------------------------------------
 
-//! Set Current Fog Mode
 void CNullDriver::setFog(const SFog &fog)
 {
-    Fog = fog;
+    m_Fog = fog;
 
 	setBackgroundColor(fog.Color);
 }
 
 //---------------------------------------------------------------------------
 
-//! Returns Current Fog Mode
 const SFog& CNullDriver::getFog()
 {
-    return Fog;
+    return m_Fog;
 }
 
 //---------------------------------------------------------------------------
@@ -1141,17 +1263,10 @@ void CNullDriver::maxIndexWarning(u8 idxSize)
 
 //---------------------------------------------------------------------------
 
-s32 CNullDriver::getStencilFogTextureSize() 
-{ 
-    return 128; 
-}
-
-//---------------------------------------------------------------------------
-
 void CNullDriver::setBackgroundColor(const img::SColor &color)
 {
 	BackColor = color;
-	Fog.Color = color;
+	m_Fog.Color = color;
 }
 
 //---------------------------------------------------------------------------
@@ -2638,6 +2753,38 @@ void CNullDriver::_renderLightedRenderPools(
 
 void CNullDriver::renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass)
 {
+	if (!((CNullRenderBuffer*)rbuf)->bind())
+	{
+		LOGGER.logErr(__FUNCTION__ ": Can not bind buffer to render!");
+		return;
+	}
+
+	_renderBuffer(rbuf, pass);
+
+	((CNullRenderBuffer*)rbuf)->unbind();
+}
+
+//---------------------------------------------------------------------------
+
+void CNullDriver::renderBuffer(IRenderBuffer *rbuf, const SMaterial &mat)
+{
+	if (!((CNullRenderBuffer*)rbuf)->bind())
+	{
+		LOGGER.logErr(__FUNCTION__ ": Can not bind buffer to render!");
+		return;
+	}
+
+	u32 pCnt = mat.getPassesCount();
+	for (u32 p = 0; p < pCnt; p++)
+		_renderBuffer(rbuf, mat.getPass(p));
+
+	((CNullRenderBuffer*)rbuf)->unbind();
+}
+
+//---------------------------------------------------------------------------
+
+void CNullDriver::_renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass)
+{
 	m_TrianglesDrawn += rbuf->getPrimitiveCount();
 	m_DIPsDrawn++;
 
@@ -2706,7 +2853,7 @@ void CNullDriver::renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass)
 				m_DIPsDrawn++;
 				_setRenderStates();
 			}
-			((CNullRenderBuffer*)rbuf)->draw();
+			((CNullRenderBuffer*)rbuf)->render();
 
 			firstPass = false;
 		}
@@ -2724,20 +2871,7 @@ void CNullDriver::renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass)
 	}
 	else
 	{
-		((CNullRenderBuffer*)rbuf)->draw();
-	}
-}
-
-//---------------------------------------------------------------------------
-
-void CNullDriver::renderBuffer(IRenderBuffer *rbuf, const SMaterial &mat)
-{
-	u32 passes_size = mat.getPassesCount();
-	for (u32 p = 0; p < passes_size; p++)
-	{					
-		const vid::SRenderPass &pass = mat.getPass(p);
-
-		renderBuffer(rbuf, pass);
+		((CNullRenderBuffer*)rbuf)->render();
 	}
 }
 
@@ -2787,6 +2921,14 @@ void CNullDriver::renderAll()
 //---------------------------------------------------------------------------
 
 void CNullDriver::renderPass(E_RENDER_PASS pass)
+{
+	(m_RenderPath == ERP_FORWARD_RENDERING) ?
+		_renderForward(pass) : _renderDeferred(pass);
+}
+
+//---------------------------------------------------------------------------
+
+void CNullDriver::_renderForward(E_RENDER_PASS pass)
 {
 	if (!m_Rendering)
 		return;
@@ -2931,6 +3073,132 @@ void CNullDriver::renderPass(E_RENDER_PASS pass)
 
 //---------------------------------------------------------------------------
 
+void CNullDriver::_renderDeferred(E_RENDER_PASS pass)
+{
+	if (!m_Rendering)
+		return;
+
+	u32 sys_time_ms = TIMER.getSystemTime();
+
+	core::matrix4 m_proj = Matrices[ETS_PROJ];
+	core::matrix4 m_view = Matrices[ETS_VIEW];
+	core::matrix4 m_model = Matrices[ETS_MODEL];
+
+	u32 i = pass;
+	{
+		m_CurrentRenderPassType = (E_RENDER_PASS)i;
+
+		m_Profiler.startProfiling(m_ProfileIds[i]);
+
+		u32 dips_count = getRenderedDIPsCount();
+		u32 tris_count = getRenderedTrianglesCount();
+
+		core::array <SRenderPool*> &rpools_all = m_RenderData[i];
+
+		u32 rp_size = rpools_all.size();
+		if (rp_size)
+		{
+			switch (i)
+			{
+			case ERP_3D_SKY_PASS:
+			case ERP_3D_SOLID_PASS:
+			case ERP_3D_DIRT_PASS:
+			case ERP_3D_TRANSP_1ST_PASS:
+			case ERP_3D_TRANSP_2ND_PASS:
+			case ERP_3D_TRANSP_3RD_PASS:
+			case ERP_GUI_3D_SOLID_PASS:
+			case ERP_GUI_3D_TRANSP_PASS:
+				{
+					// setting transformations
+					core::matrix4 m_proj_shift = m_proj;
+					if (i == ERP_3D_DIRT_PASS)
+					{
+						core::vector3df tr = m_proj_shift.getTranslation();
+						tr.Z -= 0.001f; // shift matrix in z-direction, to avoid potential Z-fighting
+						m_proj_shift.setTranslation(tr);
+					}
+					
+					setTransform(ETS_PROJ, m_proj_shift);
+					setTransform(ETS_VIEW, m_view);
+
+					for (u32 j = 0; j < rp_size; j++)
+					{
+						SRenderPool & rpool = *rpools_all[j];
+						rpool.update ( sys_time_ms );
+
+						setTransform(ETS_MODEL, core::matrix4());
+
+						// setup lighting
+						_applyDynamicLights(
+							NULL, 0, 0);
+
+						// setup transformation
+						setTransform(ETS_MODEL, rpool.Transform);
+
+						// render geometry
+						u32 rb_size = rpool.RenderBuffers->size();
+						for ( u32 k = 0;  k < rb_size; k++ )
+						{
+							vid::IRenderBuffer *rb = (*rpool.RenderBuffers)[k];
+							const vid::SMaterial *mat = (*rpool.Materials)[k];
+
+							renderBuffer(rb, mat->getPass(0));
+						}
+					}
+				}
+				break;
+			case ERP_3D_LIGHTING_PASS:
+				break;
+			case ERP_2D_PASS:
+			case ERP_GUI_2D_PASS:
+				{
+					// zero transformations
+					setTransform(ETS_PROJ, core::matrix4());
+					setTransform(ETS_VIEW, core::matrix4());
+					setTransform(ETS_MODEL, core::matrix4());
+
+					for ( u32 j = 0; j < rp_size; j++ )
+					{
+						SRenderPool & rpool = *rpools_all[j];
+						rpool.update ( sys_time_ms );
+
+						// render geometry
+						u32 rb_size = rpool.RenderBuffers->size();
+						for ( u32 k = 0;  k < rb_size; k++ )
+						{
+							vid::IRenderBuffer *rb = (*rpool.RenderBuffers)[k];
+							const vid::SMaterial *mat = (*rpool.Materials)[k];
+	
+							renderBuffer(rb, *mat);
+						}
+					}
+				}
+				break;
+			default:
+				LOGGER.logErr("Unknown render pass %s (%d)",
+					vid::RenderPassName[i], i);
+				break;
+			}
+		}
+
+		dips_count = getRenderedDIPsCount() - dips_count;
+		tris_count = getRenderedTrianglesCount() - tris_count;
+
+		m_RenderedDIPsCount[i]		+= dips_count;
+		m_RenderedTrianglesCount[i] += tris_count;
+
+		static core::stringc profileInfo;
+		profileInfo = "";
+
+		if (m_Profiler.isProfiling())
+			profileInfo.sprintf("(%6d tris, %4d dips)", tris_count, dips_count);
+
+		m_Profiler.stopProfiling(m_ProfileIds[i], profileInfo.c_str());
+	}
+}
+
+//---------------------------------------------------------------------------
+
 bool CNullDriver::_beginRendering()
 {
 	return true;
@@ -2949,8 +3217,6 @@ bool CNullDriver::beginRendering()
 {
 	if (m_Rendering)
 		return false;
-
-	setRenderContextCurrent();
 
 	_sort();
 
@@ -3035,6 +3301,13 @@ void CNullDriver::endRendering()
 		}
 	}
 
+	m_Rendering = false;
+}
+
+//---------------------------------------------------------------------------
+
+void CNullDriver::swapBuffers()
+{
 	m_Profiler.startProfiling(m_ProfileSwapBuffers);
 
 	_swapBuffers();
@@ -3054,8 +3327,6 @@ void CNullDriver::endRendering()
 	AverageFPS = avg;	
 
 	m_Profiler.stopProfiling(m_ProfileSwapBuffers);
-
-	m_Rendering = false;
 }
 
 //---------------------------------------------------------------------------
@@ -3294,19 +3565,21 @@ const core::stringc& CNullDriver::_getShaderName(
 void _writeShader(io::IXMLWriter *xml_file,
 	const core::array <SGPUProgramShaderInfo> &shaders)
 {
-	static core::stringw uniforms_strw, driver_strw;
+	static core::stringw uniforms_strw, attributes_strw, driver_strw;
 	for (u32 i = 0; i < shaders.size(); i++)
 	{
 		if (shaders[i].Driver == vid::EDT_NULL)
 			continue;
 		driver_strw = getDriverTypeName(shaders[i].Driver);
 		uniforms_strw.sprintf("%d", shaders[i].Uniforms);
+		attributes_strw.sprintf("%d", shaders[i].Attributes);
 		core::stringc vertex_fname = core::extractFileName(shaders[i].VertexFileName);
 		core::stringc pixel_fname = core::extractFileName(shaders[i].PixelFileName);
 		xml_file->writeElement(L"Shader", true,
 			L"driver", driver_strw.c_str(),
 			L"tag", core::stringw(shaders[i].Tag.c_str()).c_str(),
 			L"uniforms", uniforms_strw.c_str(),
+			L"attributes", attributes_strw.c_str(),
 			L"vertex_ver", core::stringw(VertexShaderVersionName[shaders[i].VertexVer]).c_str(),
 			L"vertex_fname", core::stringw(vertex_fname.c_str()).c_str(),
 			L"pixel_ver", core::stringw(PixelShaderVersionName[shaders[i].PixelVer]).c_str(),
@@ -3406,6 +3679,13 @@ bool _loadGPUProgramFile(const c8 *file_name, const c8 *tag,
 					L"uniform_names",
 					vid::UniformTypeReadableNames, vid::UniformTypeBits, vid::E_UNIFORM_TYPE_COUNT,
 					(u32)vid::EUF_NONE);
+			e.Attributes = (E_UNIFORM_FLAG)
+				xml_file->getAttributeValueAsInt(L"attributes", 0);
+			if (e.Attributes == 0)
+				e.Attributes = (E_UNIFORM_FLAG)xml_file->getAttributeValueAsFlagBits(
+					L"attribute_names",
+					vid::AttribTypeReadableNames, vid::AttribTypeBits, vid::E_ATTRIB_TYPE_COUNT,
+					0);
 
 			e.VertexVer = (E_VERTEX_SHADER_VERSION)xml_file->getAttributeValueAsIndexInArray(
 				L"vertex_ver",
@@ -3439,12 +3719,12 @@ bool _loadGPUProgramFile(const c8 *file_name, const c8 *tag,
 
 //---------------------------------------------------------------------------
 
-bool CNullDriver::compileGPUSources(u32 uniforms, u32 lights_count,
+bool CNullDriver::compileGPUSources(u32 uniforms, u32 attributes, u32 lights_count,
 	E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader)
 {
 	bool res = true;
-	CNullGPUProgram *gpu_prog = _createGPUProgram(uniforms, lights_count,
+	CNullGPUProgram *gpu_prog = _createGPUProgram(uniforms, attributes, lights_count,
 		vertex_shader_ver, vertex_shader,
 		pixel_shader_ver, pixel_shader);
 	if (!gpu_prog->isOK())
@@ -3510,6 +3790,7 @@ bool setGPUProgramInfoLightsCount(const SGPUProgramInfo *prog_info,
 
 bool appendGPUProgramInfo(const SGPUProgramInfo *prog_info,
 	u32                     uniforms,
+	u32                     attributes,
     E_DRIVER_TYPE           driver,
 	const c8                *tag,
 	E_VERTEX_SHADER_VERSION vertex_ver,
@@ -3521,6 +3802,7 @@ bool appendGPUProgramInfo(const SGPUProgramInfo *prog_info,
 		return false;
 	SGPUProgramShaderInfo shader_info;
 	shader_info.Uniforms       = uniforms;
+	shader_info.Attributes     = attributes;
 	shader_info.Driver         = driver;
 	shader_info.Tag            = tag;
 	shader_info.VertexVer      = vertex_ver;
@@ -3591,7 +3873,7 @@ const c8* CNullDriver::findGPUProgramFullFileName(vid::IGPUProgram *gpu_prog)
 
 IGPUProgram* CNullDriver::addGPUProgram(
 	vid::E_VERTEX_TYPE vertex_type, const vid::SRenderPass &pass,
-	u32 uniforms, u32 lightcnt,
+	u32 uniforms, u32 attributes, u32 lightcnt,
 	E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader,
 	const c8 *tag)
@@ -3613,7 +3895,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 		if (program)
 		{
 			LOGGER.logErr("Possibble hash conflict, same GPU program already exists "
-				"(vertex_type = %s, hash = 0x%016I64X, lights = d%):",
+				"(vertex_type = %s, hash = 0x%016I64X, lights = %d):",
 				getVertexTypeName(vertex_type), pass.getHashGPU(), lightcnt);
 			LOGGER.logErr("Vertex Shader:\n%s", vertex_shader);
 			LOGGER.logErr("Pixel Shader:\n%s", pixel_shader);
@@ -3678,6 +3960,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 			SGPUProgramShaderInfo e;
 			e.Driver	     = getDriverType();
 			e.Uniforms	     = uniforms;
+			e.Attributes     = attributes;
 			e.VertexVer      = vertex_shader_ver;
 			e.VertexFileName = vsh;
 			e.PixelVer       = pixel_shader_ver;
@@ -3696,13 +3979,13 @@ IGPUProgram* CNullDriver::addGPUProgram(
 			if (!has_entry_already)
 			{
 				if (appendGPUProgramInfo(prog_info,
-						e.Uniforms, e.Driver, e.Tag.c_str(),
+						e.Uniforms, e.Attributes, e.Driver, e.Tag.c_str(),
 						e.VertexVer, e.VertexFileName.c_str(),
 						e.PixelVer, e.PixelFileName.c_str()))
 					writeGPUProgramInfo(gpu_file_name.c_str(), prog_info);
 			}
 		}
-		CNullGPUProgram* gpu_prog = _createGPUProgram(uniforms, lightcnt,
+		CNullGPUProgram* gpu_prog = _createGPUProgram(uniforms, attributes, lightcnt,
 			vertex_shader_ver, vertex_shader,
 			pixel_shader_ver, pixel_shader);
 		if (!gpu_prog->isOK())
@@ -3723,7 +4006,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 //---------------------------------------------------------------------------
 
 IGPUProgram* CNullDriver::addGPUProgram(
-	u32 uniforms, u32 lightcnt,
+	u32 uniforms, u32 attributes, u32 lightcnt,
 	E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader,
 	const c8 *tag)
@@ -3749,7 +4032,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 		if (program)
 			break;
 
-		CNullGPUProgram *gpu_prog = _createGPUProgram(uniforms, lightcnt,
+		CNullGPUProgram *gpu_prog = _createGPUProgram(uniforms, attributes, lightcnt,
 			vertex_shader_ver, vertex_shader,
 			pixel_shader_ver, pixel_shader);
 		if (!gpu_prog->isOK())
@@ -3882,6 +4165,7 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 		E_VERTEX_SHADER_VERSION vsh_ver;
 		E_PIXEL_SHADER_VERSION psh_ver;
 		u32 uniforms = EUF_NONE;
+		u32 attributes = 0;
 		for (u32 i = 0; i < shadersp->size(); i++)
 		{
 			if ((*shadersp)[i].Driver == getDriverType())
@@ -3891,6 +4175,7 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 				vsh_fname = (*shadersp)[i].VertexFileName.c_str();
 				psh_fname = (*shadersp)[i].PixelFileName.c_str();
 				uniforms  = (*shadersp)[i].Uniforms;
+				attributes= (*shadersp)[i].Attributes;
 				ok = true;
 				break;
 			}
@@ -3942,7 +4227,7 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 
 		if (program)
 			program->Program->recreate(
-				uniforms, lights != -1 ? lights : 0,
+				uniforms, attributes, lights != -1 ? lights : 0,
 				vsh_ver, &vertex_shader[0],
 				psh_ver, &pixel_shader[0]);
 		else
@@ -3961,13 +4246,13 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 				
 				if (program)
 					program->Program->recreate(
-						uniforms, lights != -1 ? lights : 0,
+						uniforms, attributes, lights != -1 ? lights : 0,
 						vsh_ver, &vertex_shader[0],
 						psh_ver, &pixel_shader[0]);
 				else
 				{
 					CNullGPUProgram *gpu_prog = _createGPUProgram(
-						uniforms, lights != -1 ? lights : 0,
+						uniforms, attributes, lights != -1 ? lights : 0,
 						vsh_ver, &vertex_shader[0],
 						psh_ver, &pixel_shader[0]);
 					program = new SGPUProgram(gpu_prog, file_name);
@@ -4161,21 +4446,21 @@ bool CNullDriver::_bindGPUProgram(IGPUProgram* gpu_prog)
 
 	if (mask & EUF_FOG_PARAMS)
 	{
-		if (((CNullGPUProgram*)gpu_prog)->getFog() != Fog
+		if (((CNullGPUProgram*)gpu_prog)->getFog() != m_Fog
 				// For D3D must reset uniforms all the times
 				// TODO - reserch this issue
 				|| getDriverFamily() == vid::EDF_DIRECTX
 			)
 		{
-			f32 fog[3] = { Fog.Start, Fog.End, Fog.Density };
+			f32 fog[3] = { m_Fog.Start, m_Fog.End, m_Fog.Density };
 			res = gpu_prog->setUniformfv(EUT_FOG_PARAMS, fog, sizeof(fog)) && res;
 			if (mask & EUF_FOG_COLOR)
 			{
-				img::SColorf col(Fog.Color);
+				img::SColorf col(m_Fog.Color);
 				res = gpu_prog->setUniformfv(EUT_FOG_COLOR, (f32*)&col, 3 * sizeof(f32)) && res;
 			}
 		}
-		((CNullGPUProgram*)gpu_prog)->setFog(Fog);
+		((CNullGPUProgram*)gpu_prog)->setFog(m_Fog);
 	}
 
 	return res;
@@ -4384,20 +4669,6 @@ int CNullDriver::_clip2DLineRect(
 	}
 
 	return 2;
-}
-
-//---------------------------------------------------------------------------
-
-u32 CNullDriver::getMaximalTextureUnitsAmount() const
-{
-	return m_MaxTextureUnits;
-}
-
-//---------------------------------------------------------------------------
-
-const core::dimension2di& CNullDriver::getMaximalTextureSize() const
-{
-	return m_MaxTextureSize;
 }
 
 //---------------------------------------------------------------------------

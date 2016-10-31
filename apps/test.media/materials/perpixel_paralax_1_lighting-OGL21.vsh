@@ -1,8 +1,14 @@
 #version 120
 
-uniform mat4 ModelViewProjMatrix;
-uniform mat4 ModelViewMatrix;
-uniform mat3 NormalMatrix;
+attribute vec4 aPosition;
+attribute vec2 aTCoord0;
+attribute vec3 aTCoord2;
+attribute vec3 aTCoord3;
+attribute vec3 aNormal;
+
+uniform mat4 uModelViewProjMatrix;
+uniform mat4 uModelViewMatrix;
+uniform mat3 uNormalMatrix;
 
 varying vec2 TexCoord0;
 varying vec2 TexCoord3;
@@ -14,20 +20,20 @@ varying vec3 EyeVec;
 
 void main(void)
 {
-    vec4 position = ModelViewMatrix * gl_Vertex;
+    vec4 position = uModelViewMatrix * aPosition;
     vec3 eyeVec = -position.xyz;
 
-    Tangent  = NormalMatrix * gl_MultiTexCoord2.xyz;
-	Binormal = NormalMatrix * gl_MultiTexCoord3.xyz;
-	Normal   = NormalMatrix * gl_Normal;
+    Tangent  = uNormalMatrix * aTCoord2.xyz;
+	Binormal = uNormalMatrix * aTCoord3.xyz;
+	Normal   = uNormalMatrix * aNormal;
 	EyeVec = vec3(
 		dot(eyeVec, Tangent),
 		dot(eyeVec, Binormal),
 		dot(eyeVec, Normal));
     Position = position.xyz;
 
-    TexCoord0 = gl_MultiTexCoord0.xy;
-	TexCoord3 = gl_MultiTexCoord0.xy;
+    TexCoord0 = aTCoord0.xy;
+	TexCoord3 = aTCoord0.xy;
 
-    gl_Position = ModelViewProjMatrix * gl_Vertex;
+    gl_Position = uModelViewProjMatrix * aPosition;
 }

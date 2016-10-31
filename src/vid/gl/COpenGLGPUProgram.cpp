@@ -18,7 +18,7 @@ namespace my {
 namespace vid {
 //---------------------------------------------------------------------------
 
-COpenGLGPUProgram::COpenGLGPUProgram(u32 uniforms, u32 lights_count,
+COpenGLGPUProgram::COpenGLGPUProgram(u32 uniforms, u32 attributes, u32 lights_count,
 	E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader)
 {
@@ -35,7 +35,7 @@ COpenGLGPUProgram::COpenGLGPUProgram(u32 uniforms, u32 lights_count,
 			LOGGER.logErr("Your video hardware not support GLSL feature");
 			break;
 		}
-		if (!recreate(uniforms, lights_count,
+		if (!recreate(uniforms, attributes, lights_count,
 				vertex_shader_ver, vertex_shader,
 				pixel_shader_ver, pixel_shader))
 			break;
@@ -74,7 +74,7 @@ void COpenGLGPUProgram::_destroyProgram()
 
 //---------------------------------------------------------------------------
 
-bool COpenGLGPUProgram::recreate(u32 uniforms, u32 lights_count,
+bool COpenGLGPUProgram::recreate(u32 uniforms, u32 attributes, u32 lights_count,
 	E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader)
 {
@@ -98,6 +98,13 @@ bool COpenGLGPUProgram::recreate(u32 uniforms, u32 lights_count,
 	// linking shaders into program
 	glAttachShader(m_Program.u, m_VertexShader.u);
 	glAttachShader(m_Program.u, m_PixelShader.u);
+
+	for (u32 i = 0; i < E_ATTRIB_TYPE_COUNT; i++)
+	{
+		if (attributes & vid::AttribTypeBits[i])
+			glBindAttribLocation(m_Program.u, i, getAttribReadableName((E_ATTRIB_TYPE)i));
+	}
+
 	glLinkProgram(m_Program.u);
 
 	GLint status = 0;
@@ -244,7 +251,7 @@ bool COpenGLGPUProgram::recreate(u32 uniforms, u32 lights_count,
 	}
 
 	if (!errors)
-		return CNullGPUProgram::recreate(uniforms, lights_count,
+		return CNullGPUProgram::recreate(uniforms, attributes, lights_count,
 			vertex_shader_ver, vertex_shader,
 			pixel_shader_ver, pixel_shader);
 	return false;

@@ -17,39 +17,43 @@
 
 #define LERP(v1,v2,k) (v1+(v2-(v1))*(k))
 
-uniform mat4 ModelViewProjMatrix;
-uniform mat4 ModelViewMatrix;
-uniform mat3 NormalMatrix;
-uniform vec4 GlobalAmbientColor;
-uniform vec4 MaterialColors[4];
-uniform float MaterialShininess;
-uniform mat4 Lighting[4];
+attribute vec4 aPosition;
+attribute vec2 aTCoord0;
+attribute vec3 aNormal;
+
+uniform mat4 uModelViewProjMatrix;
+uniform mat4 uModelViewMatrix;
+uniform mat3 uNormalMatrix;
+uniform vec4 uGlobalAmbientColor;
+uniform vec4 uMaterialColors[4];
+uniform float uMaterialShininess;
+uniform mat4 uLighting[4];
 
 varying vec3 SeparateSpecular;
 
 void main(void)
 {
-    vec3 position = vec3(ModelViewMatrix * gl_Vertex);
+    vec3 position = vec3(uModelViewMatrix * aPosition);
     vec3 eyeVec = -normalize(position);
-    vec3 normal = normalize(NormalMatrix * gl_Normal);
+    vec3 normal = normalize(uNormalMatrix * aNormal);
 
-    vec4 mDiffuse = M_DIFFUSE(MaterialColors);
-    vec4 mAmbient = M_AMBIENT(MaterialColors);
-    vec4 mSpecular = M_SPECULAR(MaterialColors);
-    vec4 mEmissive = M_EMISSIVE(MaterialColors);
+    vec4 mDiffuse = M_DIFFUSE(uMaterialColors);
+    vec4 mAmbient = M_AMBIENT(uMaterialColors);
+    vec4 mSpecular = M_SPECULAR(uMaterialColors);
+    vec4 mEmissive = M_EMISSIVE(uMaterialColors);
 
     vec3 specular = vec3(0.0,0.0,0.0);
     vec4 color = vec4(0.0, 0.0, 0.0, mDiffuse.a);
-    color.rgb = GlobalAmbientColor.rgb * mAmbient.rgb + mEmissive.rgb;
+    color.rgb = uGlobalAmbientColor.rgb * mAmbient.rgb + mEmissive.rgb;
     
     // calculating lighting
     {
 		int i = 0;
-        vec4 lDiffuse  = L_DIFFUSE(Lighting[i]);
-        vec4 lAmbient  = L_AMBIENT(Lighting[i]);
-        vec4 lSpecular = L_SPECULAR(Lighting[i]);
-        vec3 lPosition = L_POSITION(Lighting[i]);
-        float lRadius  = L_RADIUS(Lighting[i]);
+        vec4 lDiffuse  = L_DIFFUSE(uLighting[i]);
+        vec4 lAmbient  = L_AMBIENT(uLighting[i]);
+        vec4 lSpecular = L_SPECULAR(uLighting[i]);
+        vec3 lPosition = L_POSITION(uLighting[i]);
+        float lRadius  = L_RADIUS(uLighting[i]);
         vec3 lightVec = lPosition - position;
         float lDist = length(lightVec);
         lightVec = normalize(lightVec);
@@ -61,18 +65,18 @@ void main(void)
             lAmbient.rgb * mAmbient.rgb // ambient component
             );
 		vec3 reflVec = reflect(-lightVec, normal);
-        float specPow = pow(max(dot(eyeVec, reflVec),0.0),  MaterialShininess);
+        float specPow = pow(max(dot(eyeVec, reflVec),0.0),  uMaterialShininess);
         // separate specular component
         specular +=
             attenuation * specPow * mSpecular.rgb * lSpecular.rgb;
     }
     {
 		int i = 1;
-        vec4 lDiffuse  = L_DIFFUSE(Lighting[i]);
-        vec4 lAmbient  = L_AMBIENT(Lighting[i]);
-        vec4 lSpecular = L_SPECULAR(Lighting[i]);
-        vec3 lPosition = L_POSITION(Lighting[i]);
-        float lRadius  = L_RADIUS(Lighting[i]);
+        vec4 lDiffuse  = L_DIFFUSE(uLighting[i]);
+        vec4 lAmbient  = L_AMBIENT(uLighting[i]);
+        vec4 lSpecular = L_SPECULAR(uLighting[i]);
+        vec3 lPosition = L_POSITION(uLighting[i]);
+        float lRadius  = L_RADIUS(uLighting[i]);
         vec3 lightVec = lPosition - position;
         float lDist = length(lightVec);
         lightVec = normalize(lightVec);
@@ -84,18 +88,18 @@ void main(void)
             lAmbient.rgb * mAmbient.rgb // ambient component
             );
 		vec3 reflVec = reflect(-lightVec, normal);
-        float specPow = pow(max(dot(eyeVec, reflVec),0.0),  MaterialShininess);
+        float specPow = pow(max(dot(eyeVec, reflVec),0.0),  uMaterialShininess);
         // separate specular component
         specular +=
             attenuation * specPow * mSpecular.rgb * lSpecular.rgb;
     }
     {
 		int i = 2;
-        vec4 lDiffuse  = L_DIFFUSE(Lighting[i]);
-        vec4 lAmbient  = L_AMBIENT(Lighting[i]);
-        vec4 lSpecular = L_SPECULAR(Lighting[i]);
-        vec3 lPosition = L_POSITION(Lighting[i]);
-        float lRadius  = L_RADIUS(Lighting[i]);
+        vec4 lDiffuse  = L_DIFFUSE(uLighting[i]);
+        vec4 lAmbient  = L_AMBIENT(uLighting[i]);
+        vec4 lSpecular = L_SPECULAR(uLighting[i]);
+        vec3 lPosition = L_POSITION(uLighting[i]);
+        float lRadius  = L_RADIUS(uLighting[i]);
         vec3 lightVec = lPosition - position;
         float lDist = length(lightVec);
         lightVec = normalize(lightVec);
@@ -107,18 +111,18 @@ void main(void)
             lAmbient.rgb * mAmbient.rgb // ambient component
             );
 		vec3 reflVec = reflect(-lightVec, normal);
-        float specPow = pow(max(dot(eyeVec, reflVec),0.0),  MaterialShininess);
+        float specPow = pow(max(dot(eyeVec, reflVec),0.0),  uMaterialShininess);
         // separate specular component
         specular +=
             attenuation * specPow * mSpecular.rgb * lSpecular.rgb;
     }
     {
 		int i = 3;
-        vec4 lDiffuse  = L_DIFFUSE(Lighting[i]);
-        vec4 lAmbient  = L_AMBIENT(Lighting[i]);
-        vec4 lSpecular = L_SPECULAR(Lighting[i]);
-        vec3 lPosition = L_POSITION(Lighting[i]);
-        float lRadius  = L_RADIUS(Lighting[i]);
+        vec4 lDiffuse  = L_DIFFUSE(uLighting[i]);
+        vec4 lAmbient  = L_AMBIENT(uLighting[i]);
+        vec4 lSpecular = L_SPECULAR(uLighting[i]);
+        vec3 lPosition = L_POSITION(uLighting[i]);
+        float lRadius  = L_RADIUS(uLighting[i]);
         vec3 lightVec = lPosition - position;
         float lDist = length(lightVec);
         lightVec = normalize(lightVec);
@@ -130,7 +134,7 @@ void main(void)
             lAmbient.rgb * mAmbient.rgb // ambient component
             );
 		vec3 reflVec = reflect(-lightVec, normal);
-        float specPow = pow(max(dot(eyeVec, reflVec),0.0),  MaterialShininess);
+        float specPow = pow(max(dot(eyeVec, reflVec),0.0),  uMaterialShininess);
         // separate specular component
         specular +=
             attenuation * specPow * mSpecular.rgb * lSpecular.rgb;
@@ -138,6 +142,6 @@ void main(void)
 	SeparateSpecular = specular;
 
     gl_FrontColor = color;
-    gl_Position = ModelViewProjMatrix * gl_Vertex;
-    gl_TexCoord[0] = gl_MultiTexCoord0;
+    gl_Position = uModelViewProjMatrix * aPosition;
+    gl_TexCoord[0].xy = aTCoord0.xy;
 }

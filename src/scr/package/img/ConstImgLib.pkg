@@ -39,8 +39,8 @@ enum E_COLOR_FORMAT
 	//! Depth formats
 	ECF_DEPTH24_STENCIL8,
 
-	//! Alpha 32 bit float format
-	ECF_ALPHA32F,
+	//! Single channel 32 bit float format
+	ECF_LUMINANCE32F,
 
 	E_COLOR_FORMAT_COUNT
 };

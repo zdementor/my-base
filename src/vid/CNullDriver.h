@@ -58,20 +58,25 @@ public:
     CNullDriver(const core::dimension2d<s32>& screenSize);
     virtual ~CNullDriver();
 
+	virtual void setRenderPath(E_RENDER_PATH renderPath);
+	virtual E_RENDER_PATH getRenderPath()
+		{ return m_RenderPath; }
+
 	virtual img::E_COLOR_FORMAT getBackColorFormat() { return m_BackColorFormat; }
 
-    virtual bool queryFeature(E_VIDEO_DRIVER_FEATURE feature)
-	{ return false; }
+    virtual bool queryFeature(E_VIDEO_DRIVER_FEATURE feature);
 
     virtual void setTransform(E_TRANSFORMATION_STATE state, const core::matrix4& mat);
 
-    virtual const core::matrix4& getTransform(E_TRANSFORMATION_STATE state);
+    virtual const core::matrix4& getTransform(E_TRANSFORMATION_STATE state)
+		{ return Matrices[state]; }
 
-    virtual const SRenderPass& getLastRenderPass();
-
-    virtual const SRenderPass& getRenderPass();
-
-    virtual void setRenderPass(const SRenderPass& material);
+    virtual const SRenderPass& getLastRenderPass()
+		{ return m_LastRenderPass; }
+    virtual const SRenderPass& getRenderPass()
+		{ return m_CurrentRenderPass; }
+    virtual void setRenderPass(const SRenderPass& pass)
+		{ m_CurrentRenderPass = pass; }
 
     virtual void setViewPort(const core::rect<s32>& area);
 	virtual void setViewPort(s32 left, s32 top, s32 right, s32 bottom);
@@ -98,9 +103,14 @@ public:
 	virtual u32 getRenderedDIPsCount ( E_RENDER_PASS pass );
 	virtual u32 getRenderedDIPsCount ();
 
-    virtual u32 getMaximalTextureUnitsAmount() const;
+	virtual u32 getMaximalColorAttachmentsAmount() const
+		{ return m_MaxDrawBuffers; }
 
-    virtual const core::dimension2di& getMaximalTextureSize() const;
+    virtual u32 getMaximalTextureUnitsAmount() const
+		{ return m_MaxTextureUnits; }
+
+    virtual const core::dimension2di& getMaximalTextureSize() const
+		{ return m_MaxTextureSize; }
 	    
     virtual void setGlobalAmbientColor(const img::SColorf& color);
 
@@ -136,15 +146,23 @@ public:
 	{ return 0; }
     virtual bool removeTexture(ITexture* texture);
 
+	virtual IRenderTarget* createRenderTarget()
+	{ return 0; }
+	virtual IRenderTarget* createRenderTarget(const core::dimension2di &size,
+		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
+	{ return 0; }
+	virtual IRenderTarget* createRenderTarget(
+		ITexture *colorTexture, ITexture *depthTexture)
+	{ return 0; }
+
+	virtual IRenderTarget* addRenderTarget();
     virtual IRenderTarget* addRenderTarget(u32 width, u32 height,
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
 	{ return addRenderTarget(core::dimension2di(width, height), colorFormat, depthFormat); }
     virtual IRenderTarget* addRenderTarget(const core::dimension2di &size,
-		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
-	{ return 0; }
+		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat);
 	virtual IRenderTarget* addRenderTarget(
-		ITexture *colorTexture, ITexture *depthTexture)
-	{ return 0; }
+		ITexture *colorTexture, ITexture *depthTexture);
 	virtual bool removeRenderTarget(IRenderTarget *rt);
 
 	virtual bool setRenderTarget(IRenderTarget *rt);
@@ -174,8 +192,6 @@ public:
 	virtual img::IImage* makeScreenShotImage();
 
     void maxIndexWarning(u8 idxSize);
-
-    virtual s32 getStencilFogTextureSize();
 
 	virtual void clearDepth() {}
 	virtual void clearStencil() {}
@@ -208,7 +224,7 @@ public:
 	virtual E_TEXTURE_FILTER getTextureFilter();
 
 	virtual u32 getMaxAnisotropyLevel()
-	{ return MaxAnisotropyLevel; }
+	{ return m_MaxAnisotropyLevel; }
 
     virtual void clearUnusedVideoCache();
 
@@ -428,16 +444,11 @@ public:
 		bool useAlphaBlending, bool useColorBlending,
 		E_RENDER_MODE mode);
 
-	virtual bool setRenderContextCurrent()
-	{ LOGGER.logErr("Invalid call %s", __FUNCTION__ ); return false; }
-
-	virtual bool setNullContextCurrent()
-	{ LOGGER.logErr("Invalid call %s", __FUNCTION__ ); return false; }
-
 	virtual bool beginRendering();
 	virtual void renderAll();
 	virtual void renderPass(E_RENDER_PASS pass);
 	virtual void endRendering();
+	virtual void swapBuffers();
 
 	virtual bool isRendering();
 
@@ -467,18 +478,20 @@ public:
 	virtual f64 getFrameCurrentRenderTimeSec();
 	virtual f64 getFrameFilteredRenderTimeSec();
 
+	virtual void clearGPUProgramHash();
+
 	virtual const c8* findGPUProgramFileName(vid::IGPUProgram *gpu_prog);
 	virtual const c8* findGPUProgramFullFileName(vid::IGPUProgram *gpu_prog);
 
 	virtual IGPUProgram* addGPUProgram(
 		vid::E_VERTEX_TYPE vertex_type, const vid::SRenderPass &pass,
-		u32 uniforms, u32 lightcnt,
+		u32 uniforms, u32 attributes, u32 lightcnt,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader,
 		const c8 *tag);
 
 	virtual IGPUProgram* addGPUProgram(
-		u32 uniforms, u32 lightcnt,
+		u32 uniforms, u32 attributes, u32 lightcnt,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader,
 		const c8 *tag);
@@ -496,7 +509,7 @@ public:
 
 	virtual void loadGPUProgramsFromDir(const c8 *dir, const c8 *tag, bool reload_if_exists);
 
-	virtual bool compileGPUSources(u32 uniforms, u32 lights_count,
+	virtual bool compileGPUSources(u32 uniforms, u32 attributes, u32 lights_count,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader);
 
@@ -559,6 +572,8 @@ protected:
 
 	void _renderLightedRenderPools(core::array <SRenderPool*> & rpools);
 
+	void _renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass);
+
 	virtual void _renderStencilVolume(IRenderBuffer *rbuf, const SRenderPass &pass, bool zfail);
 
 	void _sort();
@@ -615,6 +630,8 @@ protected:
     int _clip2DLineRect(
 		const core::rect<s32>* clip, core::position2d<s32>& p1, core::position2d<s32>& p2);
 
+	E_RENDER_PATH m_RenderPath;
+
 	core::array < SRenderPool > m_RenderPools[E_RENDER_PASS_COUNT];
 	u32 m_RenderPoolsCacheIndex;
 	core::hash_array < SRenderPool* > m_RenderPoolsCache[2][E_RENDER_PASS_COUNT];
@@ -623,7 +640,7 @@ protected:
 
 	void free();
 
-	virtual class CNullGPUProgram* _createGPUProgram(u32 uniforms, u32 lightcnt,
+	virtual class CNullGPUProgram* _createGPUProgram(u32 uniforms, u32 attributes, u32 lightcnt,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader)
 	{
@@ -689,7 +706,7 @@ protected:
 
     u32 TextureCreationFlags;
 
-	SFog Fog; 
+	SFog m_Fog; 
 
     img::SColor BackColor; 
 
@@ -715,7 +732,7 @@ protected:
 
 	SRenderPass m_CurrentRenderPass, m_LastRenderPass;
 
-	u32 m_MaxTextureUnits, m_MaxLights, MaxAnisotropyLevel;
+	u32 m_MaxTextureUnits, m_MaxLights, m_MaxAnisotropyLevel;
 
 	core::dimension2di m_MaxTextureSize;	
 
@@ -752,6 +769,12 @@ protected:
 	bool m_StencilBuffer;
 	bool m_TexturesNonPowerOfTwo;
 	bool m_TwoSidedStencil;
+	u32 m_MaxDrawBuffers;
+	bool m_RenderTargetSupport, m_DepthStencilTexturesSupport;
+
+	u8 m_ColorBits, m_AlphaBits, m_DepthBits, m_StencilBits;
+	u16 m_VertexShaderVersion, m_PixelShaderVersion;
+
 	bool m_UseShaders, m_CacheShaders, m_UseFFP;
 	bool m_LightingMediumQuality, m_LightingHighQuality, m_ShadersHighQuality;
 
@@ -796,6 +819,11 @@ protected:
 	IRenderTarget* m_CurrentRenderTarget;
 
 	bool m_YInverted;
+
+private:
+
+	void _renderForward(E_RENDER_PASS pass);
+	void _renderDeferred(E_RENDER_PASS pass);
 };
 
 //---------------------------------------------------------------------------

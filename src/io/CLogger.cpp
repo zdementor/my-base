@@ -47,9 +47,9 @@ m_OnLogCallback(0), m_CaretReturnEnabled(true), m_LoggingRecursion(0)
 
 CLogger::~CLogger()
 {
+	logInfo("Logger destroyed.");
 	SAFE_DROP(m_LogFile);
 	FILE_SYSTEM.drop();
-	logInfo("Logger destroyed.");
 }
 
 //---------------------------------------------------------------------------

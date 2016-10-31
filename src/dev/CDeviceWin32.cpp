@@ -25,7 +25,7 @@
 struct SEnvMapper
 {
     HWND hWnd;
-    my::dev::CDeviceWin32* irrDev;
+    my::dev::CDeviceWin32* device;
 };
 
 //----------------------------------------------------------------------------
@@ -34,24 +34,12 @@ my::core::list<SEnvMapper> EnvMap;
 
 //----------------------------------------------------------------------------
 
-SEnvMapper* getEnvMapperFromHWnd(HWND hWnd)
-{
-    my::core::list<SEnvMapper>::iterator it = EnvMap.begin();
-    for (; it!= EnvMap.end(); ++it)
-        if ((*it).hWnd == hWnd)
-            return &(*it);
-
-    return 0;
-}
-
-//----------------------------------------------------------------------------
-
 my::dev::CDeviceWin32* getDeviceFromHWnd(HWND hWnd)
 {
     my::core::list<SEnvMapper>::iterator it = EnvMap.begin();
     for (; it!= EnvMap.end(); ++it)
         if ((*it).hWnd == hWnd)
-            return (*it).irrDev;
+            return (*it).device;
 
     return 0;
 }
@@ -383,14 +371,18 @@ HWnd(0), IsNonNTWindows(false), ExternalWindow(false), m_Quit(false)
 			dpiY = GetDeviceCaps(hdc, LOGPIXELSY);
 			ReleaseDC(NULL, hdc);
 		}
-		LOGGER.logInfo(" Created window rect={%d, %d x %d, %d} size={%d, %d} client_size{%d, %d} dpi={%d, %d}",
+		LOGGER.logInfo(" Created window rect={%d, %d x %d, %d} size={%d, %d} client_size={%d, %d} dpi={%d, %d}",
 			wrect.left, wrect.top, wrect.right, wrect.bottom,
 			wrect.right - wrect.left, wrect.bottom - wrect.top,
 			crect.right - crect.left, crect.bottom - crect.top,
 			dpiX, dpiY);
 	}
 
-    VideoDriver = vid::createVideoDriver(ExposedDeviceData.Video, textureFilter);
+	LOGGER.increaseFormatLevel();
+
+	VideoDriver = vid::createVideoDriver(ExposedDeviceData.Video, textureFilter);
+
+	LOGGER.decreaseFormatLevel();
 	
 	if (VideoDriver)
 		LOGGER.logInfo("Video OK");
@@ -410,7 +402,7 @@ HWnd(0), IsNonNTWindows(false), ExternalWindow(false), m_Quit(false)
 
     // register environment
     SEnvMapper em;
-    em.irrDev = this;
+    em.device = this;
     em.hWnd = HWnd;
     EnvMap.push_back(em);
 

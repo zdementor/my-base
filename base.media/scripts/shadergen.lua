@@ -20,6 +20,7 @@ ShaderGen =
 	--     {
 	--       LightsCount = 4,
 	--       Uniforms = bit.bor(vid.EUF_MODEL_VIEW_MATRIX, vid.EUF_NORMAL_MATRIX),
+	--       Attributes = bit.bor(vid.EAF_POSITION, vid.EAF_NORMAL),
 	--       Vertex = { Source = "void main(void) {}", Ver = vid.EVSV_GLSL_1_2 },
 	--       Pixel  = { Source = "void main(void) {}", Ver = vid.EPSV_GLSL_1_2 },
 	--     }
@@ -50,95 +51,7 @@ local _ShaderGen =
 	},
 }
 
-local _UniformsMask =
-{
-	Vertex = vid.EUF_NONE,
-	Pixel = vid.EUF_NONE,
-}
-
-GenTCInfo = {}
-
-local function _GenUniforms(vtype, pass, perpixel, lightcnt)
-
-	local vsh	= ""
-	local psh	= ""
-	local light = IsLighting(pass, lightcnt)
-	local vnormal = HasNormal(vtype)
-	local mcolor = IsCustomVertexColor(vtype, pass)
-	local hasNMap = HasNMap(pass)
-	local fogging = IsFogging(pass)
-	
-	_UniformsMask.Vertex = vid.EUF_NONE
-	_UniformsMask.Pixel = vid.EUF_NONE
-	
-	_UniformsMask.Vertex = bit.bor(_UniformsMask.Vertex,
-		vid.EUF_MODEL_VIEW_PROJ_MATRIX)
-		
-	if IsNeedNormal(vtype, pass, lightcnt) then
-		_UniformsMask.Vertex = bit.bor(_UniformsMask.Vertex,
-			vid.EUF_MODEL_VIEW_MATRIX)
-			
-		_UniformsMask.Vertex = bit.bor(_UniformsMask.Vertex,
-			vid.EUF_NORMAL_MATRIX)
-		if light then
-			if perpixel then
-				_UniformsMask.Pixel = bit.bor(_UniformsMask.Pixel,
-					vid.EUF_GLOBAL_AMBIENT_COLOR,
-					vid.EUF_MATERIAL_COLORS, vid.EUF_MATERIAL_SHININESS,
-					vid.EUF_LIGHTING)
-				if HasTBN(vtype) then
-					_UniformsMask.Vertex = bit.bor(_UniformsMask.Vertex,
-						vid.EUF_LIGHTING)
-				end
-			else
-				_UniformsMask.Vertex = bit.bor(_UniformsMask.Vertex,
-					vid.EUF_GLOBAL_AMBIENT_COLOR,
-					vid.EUF_MATERIAL_COLORS, vid.EUF_MATERIAL_SHININESS,
-					vid.EUF_LIGHTING)
-			end
-		end
-	elseif hasNMap then
-		_UniformsMask.Vertex = bit.bor(_UniformsMask.Vertex,
-			vid.EUF_MODEL_VIEW_MATRIX)
-	elseif fogging then
-		_UniformsMask.Vertex = bit.bor(_UniformsMask.Vertex,
-			vid.EUF_MODEL_VIEW_MATRIX)
-	end
-	
-	if mcolor then
-		_UniformsMask.Vertex = bit.bor(_UniformsMask.Vertex,
-			vid.EUF_MATERIAL_COLORS)
-	end
-
-	for i = 1, table.getn(GenTCInfo) do
-		local idx = GenTCInfo[i].LayerIdx
-		if GenTCInfo[i].Name ~= nil then
-			local texture = pass.Layers[idx]:getTexture()
-			if texture ~= nil then
-				if pass.Layers[idx]:getType() ~= vid.ETLT_NORMAL_MAP or perpixel then
-					_UniformsMask.Pixel = bit.bor(_UniformsMask.Pixel, TexFlags[idx+1])
-					if pass.Layers[idx]:isTexCoordAnimated() then
-						_UniformsMask.Vertex = bit.bor(_UniformsMask.Vertex,
-							TexMatrixFlags[idx+1])
-					end
-					if pass.Layers[idx]:getTexCoordGen() == vid.ETCGT_PROJECTED_MAPPING then
-						_UniformsMask.Vertex = bit.bor(_UniformsMask.Vertex,
-							TexMatrixFlags[idx+1], vid.EUF_MODEL_MATRIX)
-					end
-				end
-			end
-		end
-	end
-
-	if fogging then
-		_UniformsMask.Pixel = bit.bor(_UniformsMask.Pixel,
-			vid.EUF_FOG_PARAMS)
-		_UniformsMask.Pixel = bit.bor(_UniformsMask.Pixel,
-			vid.EUF_FOG_COLOR)
-	end
-	
-	return bit.bor(_UniformsMask.Vertex, _UniformsMask.Pixel)
-end
+ShaderGenInfo = {}
 
 local function _GenShaderHeader()
 	local text = ""
@@ -150,10 +63,15 @@ end
 
 function _ShaderGenGenGPUProgram(vtype, arg1, lightcnt)
 	local pass = tolua.cast(arg1, "const vid::SRenderPass")
-	local sources = ShaderGen.getSourcesFor(vtype, pass, lightcnt)
+	local lightcntGen = lightcnt
+	if MyDriver:getRenderPath() == vid.ERP_DEFERRED_SHADING then
+		lightcntGen = 0
+	end
+	local sources = ShaderGen.getSourcesFor(vtype, pass, lightcntGen)
 	if sources ~= nil then
-		MyDriver:addGPUProgram(
-			vtype, pass, sources.Uniforms, sources.LightsCount,
+		sources.LightsCount = lightcnt
+		MyDriver:addGPUProgram(vtype, pass,
+			sources.Uniforms, sources.Attributes, sources.LightsCount,
 			sources.Vertex.Ver, sources.Vertex.Source,
 			sources.Pixel.Ver, sources.Pixel.Source,
 			sources.Tag)
@@ -195,15 +113,16 @@ local function _ShaderGenGetSourcesFor(vertex_type, render_pass, lights_count)
 		GenInfo(vertex_type, render_pass, perpixel, lights_count)
 		sources.Tag = ShaderGen.getCurrentTag()
 		sources.LightsCount = lights_count
-		sources.Uniforms = _GenUniforms(vertex_type, render_pass, perpixel, lights_count)
+		sources.Uniforms = ShaderGenInfo.Uniforms.Mask
+		sources.Attributes  = ShaderGenInfo.Attribs.Mask
 		sources.Vertex = {}
 		sources.Vertex.Ver = _ShaderGen[driver_type].VertexShaderVer
 		sources.Vertex.Source = _GenShaderHeader().._ShaderGen[driver_type].GenVertexShader(
-			vertex_type, render_pass, perpixel, lights_count, _UniformsMask.Vertex)
+			vertex_type, render_pass, perpixel, lights_count, ShaderGenInfo.Uniforms.VertMask)
 		sources.Pixel = {}
 		sources.Pixel.Ver = _ShaderGen[driver_type].PixelShaderVer
 		sources.Pixel.Source = _GenShaderHeader().._ShaderGen[driver_type].GenPixelShader(
-			vertex_type, render_pass, perpixel, lights_count, _UniformsMask.Pixel)
+			vertex_type, render_pass, perpixel, lights_count, ShaderGenInfo.Uniforms.FragMask)
 	end
 	return sources
 end
@@ -213,12 +132,21 @@ local _ShaderGenTags =
 {
 	[1] = "LowQual",
 	[2] = "HighQual",
+	[3] = "LowQualDS",
+	[4] = "HighQualDS",
 }
 
 function _ShaderGenGetCurrentTag()
+	local hiQual = (SETUP_SETTINGS[StartupDriverIndex].ShadersHighQuality == 1)
 	local tag = _ShaderGenTags[1]
-	if SETUP_SETTINGS[StartupDriverIndex].ShadersHighQuality == 1 then
+	if hiQual then
 		tag = _ShaderGenTags[2]
+	end
+	if MyDriver:getRenderPath() == vid.ERP_DEFERRED_SHADING then
+		tag = _ShaderGenTags[3]
+		if hiQual then
+			tag = _ShaderGenTags[4]
+		end
 	end
 	return tag
 end

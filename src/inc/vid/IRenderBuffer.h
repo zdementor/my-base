@@ -25,7 +25,27 @@ class __MY_VID_LIB_API__ IVideoBuffer
 public:
 
 	IVideoBuffer(u32 max_size)
-		: m_Locked(false), m_Size(max_size), m_MaxSize(max_size) {}
+		: m_Bound(false), m_Locked(false),
+	m_Size(max_size), m_MaxSize(max_size),
+	m_LockedData(NULL)
+	{}
+
+	virtual bool bind()
+	{
+		if (m_Bound || !isOK())
+			return false;
+		m_Bound = true;
+		return true;
+	}
+	virtual bool unbind()
+	{
+		if (!m_Bound || !isOK())
+			return false;
+		m_Bound = false;
+		return true;
+	}
+	bool isBound() 
+	{ return m_Bound; }
 
 	virtual void* lock(E_RENDER_BUFFER_LOCK_MODE mode = ERBLM_WRITE_ONLY)
 	{
@@ -41,7 +61,6 @@ public:
 		m_Locked = false;
 		return true;
 	}
-
 	bool isLocked() 
 	{ return m_Locked; }
 
@@ -65,13 +84,17 @@ public:
 	virtual u32 getDataMaxSize()
 	{ return m_MaxSize * getTypeSize(); }
 
+	virtual void* getLockedData()
+	{ return m_LockedData; }
+
 	virtual bool isOK() = 0;
 
 protected:
-
+	bool	m_Bound;
 	bool	m_Locked;
 	u32		m_Size;
 	u32		m_MaxSize;
+	void	*m_LockedData;
 };
 
 //---------------------------------------------------------------------------

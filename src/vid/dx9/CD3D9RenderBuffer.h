@@ -49,13 +49,15 @@ public:
 	{
 		if (!IVideoBuffer::lock(mode))
 			return NULL;
-		return m_Array;
+		m_LockedData = m_Array;
+		return m_LockedData;
 	}
 
 	virtual bool unlock()
 	{
 		if (!IVideoBuffer::unlock())
 			return false;
+		m_LockedData = NULL;
 		return true;
 	}
 
@@ -113,13 +115,15 @@ public:
 	{
 		if (!IVideoBuffer::lock(mode))
 			return NULL;
-		return m_Array;
+		m_LockedData = m_Array;
+		return m_LockedData;
 	}
 
 	virtual bool unlock()
 	{
 		if (!IVideoBuffer::unlock())
 			return false;
+		m_LockedData = NULL;
 		return true;
 	}
 
@@ -181,10 +185,10 @@ public:
 	{
 		if (!IVideoBuffer::lock(mode))
 			return NULL;
-		void * pData = NULL;
-		if (m_Buffer)
-			m_Buffer->Lock(0, sizeof(pData), (void**)&pData, 0);
-		return pData;
+		HRESULT hr = m_Buffer->Lock(0, sizeof(m_LockedData), (void**)&m_LockedData, 0);
+		if (FAILED(hr) || !m_LockedData)
+			unlock();
+		return m_LockedData;
 	}
 
 	virtual bool unlock()
@@ -192,6 +196,7 @@ public:
 		if (!IVideoBuffer::unlock())
 			return false;
 		m_Buffer->Unlock();
+		m_LockedData = NULL;
 		return true;
 	}
 
@@ -204,11 +209,21 @@ public:
 	virtual bool isOK()
 	{ return m_Buffer != NULL; }
 
-	void bind()
-	{ m_Device->SetStreamSource(0, m_Buffer, 0, sizeof(T)); }
+	virtual bool bind()
+	{
+		if (!IVideoBuffer::bind())
+			return false;
+		m_Device->SetStreamSource(0, m_Buffer, 0, sizeof(T));
+		return true;
+	}
 
-	void unbind()
-	{ m_Device->SetStreamSource(0, 0, 0, 0); }
+	virtual bool unbind()
+	{
+		if (!IVideoBuffer::unbind())
+			return false;
+		m_Device->SetStreamSource(0, 0, 0, 0);
+		return true;
+	}
 
 private:
 
@@ -251,10 +266,10 @@ public:
 	{
 		if (!IVideoBuffer::lock(mode))
 			return NULL;
-		void *pData = NULL;
-		if (m_Buffer)
-			m_Buffer->Lock(0, sizeof(pData), (void**)&pData, 0);
-		return pData;
+		HRESULT hr = m_Buffer->Lock(0, sizeof(m_LockedData), (void**)&m_LockedData, 0);
+		if (FAILED(hr) || !m_LockedData)
+			unlock();
+		return m_LockedData;
 	}
 
 	virtual bool unlock()
@@ -262,6 +277,7 @@ public:
 		if (!IVideoBuffer::unlock())
 			return false;
 		m_Buffer->Unlock();
+		m_LockedData = NULL;
 		return true;
 	}
 
@@ -274,11 +290,21 @@ public:
 	virtual bool isOK()
 	{ return m_Buffer != NULL; }
 
-	void bind()
-	{ m_Device->SetIndices(m_Buffer); }
+	virtual bool bind()
+	{
+		if (!IVideoBuffer::bind())
+			return false;
+		m_Device->SetIndices(m_Buffer);
+		return true;
+	}
 
-	void unbind()
-	{ m_Device->SetIndices(0); }
+	virtual bool unbind()
+	{
+		if (!IVideoBuffer::unbind())
+			return false;
+		m_Device->SetIndices(0);
+		return true;
+	}
 
 private:
 
@@ -337,31 +363,57 @@ public:
 	virtual IIndexBuffer * getIndices()
 	{ return &m_IndexArray; }
 
-	virtual void draw()
+	virtual bool bind()
 	{
 		u32 vsize = m_VertexArray.getSize();
 		u32 isize = m_IndexArray.getSize();
 
-		void *vertices = m_VertexArray.lock(ERBLM_READ_ONLY);
+		if (vsize)
+			m_VertexArray.lock(ERBLM_READ_ONLY);
 		if (isize)
+			m_IndexArray.lock(ERBLM_READ_ONLY);
+
+		return true;
+	}
+
+	virtual void render()
+	{
+		void *vertices = NULL;
+		if (m_VertexArray.isLocked())
+			vertices = m_VertexArray.getLockedData();
+
+		void *indices = NULL;
+		if (m_IndexArray.isLocked())
+			indices = m_IndexArray.getLockedData();
+
+		if (vertices)
 		{
-			void *indices = m_IndexArray.lock(ERBLM_READ_ONLY);
+			u32 vsize = m_VertexArray.getSize();
 			if (indices)
 			{
+				u32 isize = m_IndexArray.getSize();
 				u32 primCount = getPrimitiveCountForPrimitiveType(m_DrawPrimitiveType, isize);
 				m_Device->DrawIndexedPrimitiveUP(
 					m_D3DDrawPrimitiveType, 0, vsize, primCount,
 					indices, m_D3DIndicesType, vertices, sizeof(TVert));
 			}
+			else
+			{
+				u32 primCount = getPrimitiveCountForPrimitiveType(m_DrawPrimitiveType, vsize);
+				m_Device->DrawPrimitiveUP(
+					m_D3DDrawPrimitiveType, primCount, vertices, sizeof(TVert));
+			}
+		}
+	}
+
+	virtual bool unbind()
+	{
+		if (m_IndexArray.isLocked())
 			m_IndexArray.unlock();
-		}
-		else
-		{
-			u32 primCount = getPrimitiveCountForPrimitiveType(m_DrawPrimitiveType, vsize);
-			m_Device->DrawPrimitiveUP(
-				m_D3DDrawPrimitiveType, primCount, vertices, sizeof(TVert));
-		}
-		m_VertexArray.unlock();
+		if (m_VertexArray.isLocked())
+			m_VertexArray.unlock();
+
+		return true;
 	}
 
 private:
@@ -410,27 +462,49 @@ public:
 	virtual IIndexBuffer *getIndices()
 	{ return &m_IndexBuffer; }
 
-	virtual void draw()
+	virtual bool bind()
 	{
 		u32 vsize = m_VertexBuffer.getSize();
 		u32 isize = m_IndexBuffer.getSize();
 
-		m_VertexBuffer.bind();
+		if (vsize)
+			m_VertexBuffer.bind();
 		if (isize)
-		{
-			u32 primCount = getPrimitiveCountForPrimitiveType(m_DrawPrimitiveType, isize);
 			m_IndexBuffer.bind();
-			m_Device->DrawIndexedPrimitive(
-				m_D3DDrawPrimitiveType, 0, 0, vsize, 0, primCount);
-			m_IndexBuffer.unbind();
-		}
-		else
+
+		return true;
+	}
+
+	virtual void render()
+	{
+		if (m_VertexBuffer.isBound())
 		{
-			u32 primCount = getPrimitiveCountForPrimitiveType(m_DrawPrimitiveType, vsize);
-			m_Device->DrawPrimitive(
-				m_D3DDrawPrimitiveType, 0, primCount);
+			u32 vsize = m_VertexBuffer.getSize();
+
+			if (m_IndexBuffer.isBound())
+			{
+				u32 isize = m_IndexBuffer.getSize();
+				u32 primCount = getPrimitiveCountForPrimitiveType(m_DrawPrimitiveType, isize);
+				m_Device->DrawIndexedPrimitive(
+					m_D3DDrawPrimitiveType, 0, 0, vsize, 0, primCount);
+			}
+			else
+			{
+				u32 primCount = getPrimitiveCountForPrimitiveType(m_DrawPrimitiveType, vsize);
+				m_Device->DrawPrimitive(
+					m_D3DDrawPrimitiveType, 0, primCount);
+			}
 		}
-		m_VertexBuffer.unbind();
+	}
+
+	virtual bool unbind()
+	{
+		if (m_VertexBuffer.isBound())
+			m_VertexBuffer.unbind();
+		if (m_IndexBuffer.isBound())
+			m_IndexBuffer.unbind();
+
+		return true;
 	}
 
 private:

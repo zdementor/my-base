@@ -12,30 +12,7 @@
 #define COpenGLDriverHPP
 //---------------------------------------------------------------------------
 
-#include "../CNullDriver.h"
-
-typedef ptrdiff_t GLsizeiptr;
-typedef ptrdiff_t GLintptr;
-typedef char GLchar;
-
-#if defined __MY_BUILD_VID_GL11_LIB__
-#	define __MY_BUILD_GL_VER__ MY_DRIVER_TYPE_OPENGL11
-#elif defined __MY_BUILD_VID_GL21_LIB__
-#	define __MY_BUILD_GL_VER__ MY_DRIVER_TYPE_OPENGL21
-#elif defined __MY_BUILD_VID_GL32_LIB__
-#	define __MY_BUILD_GL_VER__ MY_DRIVER_TYPE_OPENGL32
-#else
-#	error "Building unknown OpenGL driver version"
-#endif
-
-#if defined __MY_BUILD_VID_MESA_LIB__
-#	define GLAPI extern
-#	define GLAPIENTRY __stdcall
-#	define GLEWAPI extern
-#endif
-
-#include <GL/glew.h>
-#include <GL/wglew.h>
+#include "OpenGL.h"
 
 //---------------------------------------------------------------------------
 namespace my {
@@ -77,9 +54,10 @@ public:
 	virtual ITexture* createRenderTargetTexture(
 		const core::dimension2di &size, img::E_COLOR_FORMAT format);
 
-	virtual IRenderTarget* addRenderTarget(const core::dimension2di &size,
+	virtual IRenderTarget* createRenderTarget();
+	virtual IRenderTarget* createRenderTarget(const core::dimension2di &size,
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat);
-	virtual IRenderTarget* addRenderTarget(
+	virtual IRenderTarget* createRenderTarget(
 		ITexture *colorTexture, ITexture *depthTexture);
         
 	virtual bool setRenderTarget(IRenderTarget *rt);
@@ -117,21 +95,31 @@ public:
 	virtual void render2DRect(const SMaterial &material,
 		const core::rectf &drawRect, const core::rectf &texRect);
 
-	virtual bool setRenderContextCurrent();
-	virtual bool setNullContextCurrent();
+	virtual void renderPass(E_RENDER_PASS pass);
 
 	virtual bool _bindGPUProgram(IGPUProgram* gpu_prog);
 
-	void _setTextureCoords(const void* tc, const void* tc2,
-		const void* tangents, const void* binormals,
-		s32 tc_stride);
-	void _unsetTextureCoords();
+	void _setupTextureCoords(
+		const void* tc = 0, const void* tc2 = 0,
+		const void* tangents = 0, const void* binormals = 0,
+		s32 tc_stride = 0);
 
 	virtual void _setTexture(s32 stage, ITexture* texture);
 
 	virtual bool _initDriver(SExposedVideoData &out_video_data);
 
 	virtual bool _makeScreenShot(img::IImage *image);
+
+	void _setupGLAttributes(
+		bool *enabledAttribs,
+		GLenum type0 = GL_NONE, s32 size0 = 0, s32 stride0 = 0, const void *ptr0 = NULL,
+		GLenum type1 = GL_NONE, s32 size1 = 0, s32 stride1 = 0, const void *ptr1 = NULL,
+		GLenum type2 = GL_NONE, s32 size2 = 0, s32 stride2 = 0, const void *ptr2 = NULL,
+		GLenum type3 = GL_NONE, s32 size3 = 0, s32 stride3 = 0, const void *ptr3 = NULL,
+		GLenum type4 = GL_NONE, s32 size4 = 0, s32 stride4 = 0, const void *ptr4 = NULL,
+		GLenum type5 = GL_NONE, s32 size5 = 0, s32 stride5 = 0, const void *ptr5 = NULL,
+		GLenum type6 = GL_NONE, s32 size6 = 0, s32 stride6 = 0, const void *ptr6 = NULL
+		);
 
 private:
 
@@ -240,10 +228,7 @@ private:
 	IRenderBuffer * createDynamicRenderBufferTemplate(
 		const void * varray, u32 vert_size,
 		const void * iarray, E_INDEX_TYPE itype, u32 ind_size, E_DRAW_PRIMITIVE_TYPE dpt );
-
-    //! Stencil Fog Texture
-    GLuint StencilFogTexture;  
-    
+ 
     //! returns a device dependent texture from a software surface (IImage)
     //! THIS METHOD HAS TO BE OVERRIDDEN BY DERIVED DRIVERS WITH OWN TEXTURES
     virtual ITexture* _createDeviceDependentTexture(img::IImage* surface);
@@ -265,17 +250,14 @@ private:
     //! prints error if an error happened.
     void printGLError();
 
-	virtual CNullGPUProgram* _createGPUProgram(u32 uniforms, u32 lightcnt,
+	virtual CNullGPUProgram* _createGPUProgram(u32 uniforms, u32 attributes, u32 lightcnt,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader);
 
     core::array<s32> ColorBuffer;
 
-#ifdef WIN32  
-	HWND HWnd;
-    HDC HDc; // Private GDI Device Context
-    HGLRC m_RenderContext; // Rendering Context
-#endif
+	MyGLWindow	*m_Window;
+	MyGLContext *m_Context;
     
 	CNullHardwareOcclusionQuery *m_OpenGLHardwareOcclusionQuery;
 };

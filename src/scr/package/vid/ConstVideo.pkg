@@ -6,7 +6,7 @@ namespace vid {
 enum
 {
     MY_MATERIAL_MAX_LAYERS = 4,
-	MY_MAX_COLOR_ATTACHEMENTS = 4,
+	MY_MAX_COLOR_ATTACHMENTS = 4,
 };
 
 //----------------------------------------------------------------------------
@@ -444,6 +444,9 @@ enum E_VIDEO_DRIVER_FEATURE
 	//! Is non power of two textures supported by video hardware?
 	EVDF_NON_POWER_OF_TWO_TEXTURES,
 
+	//! Multiple render targets support
+	EVDF_MULTIPLE_RENDER_TARGETS,
+
     E_VIDEO_DRIVER_FEATURE_COUNT
 };
 
@@ -477,6 +480,39 @@ enum E_FOG_TYPE
 
 const char* getFogTypeName(E_FOG_TYPE type);
 const char* getFogTypeReadableName(E_FOG_TYPE type);
+
+//----------------------------------------------------------------------------
+
+enum E_ATTRIB_TYPE
+{
+	EAT_POSITION = 0,
+	EAT_NORMAL,
+	EAT_COLOR,
+	EAT_TCOORD0,
+	EAT_TCOORD1,
+	EAT_TCOORD2,
+	EAT_TCOORD3,
+
+	E_ATTRIB_TYPE_COUNT,
+};
+
+//----------------------------------------------------------------------------
+
+enum E_ATTRIB_FLAG
+{
+	EAF_POSITION = 1 << 0,
+	EAF_NORMAL   = 1 << 1,
+	EAF_COLOR    = 1 << 2,
+	EAF_TCOORD0  = 1 << 3,
+	EAF_TCOORD1  = 1 << 4,
+	EAF_TCOORD2  = 1 << 5,
+	EAF_TCOORD3  = 1 << 6,	
+};
+
+E_ATTRIB_FLAG getAttribFlag(E_ATTRIB_TYPE type);
+
+const char* getAttribName(E_ATTRIB_TYPE type);
+const char* getAttribReadableName(E_ATTRIB_TYPE type);
 
 //----------------------------------------------------------------------------
 
@@ -730,6 +766,22 @@ enum E_COLOR_MASK_BIT
 	ECM_BLUE	= 1 << 2,
 	ECM_ALPHA	= 1 << 3,
 };
+
+//----------------------------------------------------------------------------
+
+enum E_RENDER_PATH
+{
+	//! Standard rendering with multipass lighting
+	ERP_FORWARD_RENDERING = 0,
+
+	//! Rendering with deferred lighting pass
+	ERP_DEFERRED_SHADING,
+
+	E_RENDER_PATH_COUNT,
+};
+
+const char* getRenderPathName(E_RENDER_PATH path);
+const char* getRenderPathReadableName(E_RENDER_PATH path);
 
 //----------------------------------------------------------------------------
 } // end namespace vid 

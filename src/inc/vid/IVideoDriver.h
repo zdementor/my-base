@@ -49,6 +49,12 @@ class __MY_VID_LIB_API__ IVideoDriver :
 {
 public:
 
+	//! Set render path used for rendering geometry an lighting
+	virtual void setRenderPath(E_RENDER_PATH renderPath) = 0;
+
+	//! Returns render path used for rendering geometry an lighting
+	virtual E_RENDER_PATH getRenderPath() = 0;
+
 	//! Returns color format of the Back Color Buffer
 	virtual img::E_COLOR_FORMAT getBackColorFormat() = 0;
 
@@ -173,7 +179,15 @@ public:
     //! \param texture: Texture to delete from the engines cache.
     virtual bool removeTexture(ITexture* texture) = 0;
 
-	//! Add/remove a Render Target object.
+	//! Creates Render Target object (unmanaged).
+	virtual IRenderTarget* createRenderTarget() = 0;
+	virtual IRenderTarget* createRenderTarget(const core::dimension2di &size,
+		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat) = 0;
+	virtual IRenderTarget* createRenderTarget(
+		ITexture *colorTexture, ITexture *depthTexture) = 0;
+
+	//! Add/remove a Render Target object (managed by video friver).
+    virtual IRenderTarget* addRenderTarget() = 0;
     virtual IRenderTarget* addRenderTarget(u32 width, u32 height,
 		img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat) = 0;
     virtual IRenderTarget* addRenderTarget(const core::dimension2di &size,
@@ -241,6 +255,9 @@ public:
 	virtual u32 getRenderedDIPsCount ( E_RENDER_PASS pass ) = 0;
 	virtual u32 getRenderedDIPsCount () = 0;
 
+	//! Returns the maximal amount of the draw buffers (simultanious render targets)
+	virtual u32 getMaximalColorAttachmentsAmount() const = 0;
+
 	//! Returns the maximal amount of texture units in single render pass
     //! \return Maximal amount of texture units
     virtual u32 getMaximalTextureUnitsAmount() const = 0;
@@ -297,9 +314,6 @@ public:
 
     //! getting video driver family
     virtual E_DRIVER_FAMILY getDriverFamily()=0;
-
-    //! Return the size of the texture, in which stencil fog will be drawn
-    virtual s32 getStencilFogTextureSize() = 0;
 
 	//! Clear Depth buffer
 	virtual void clearDepth() = 0;
@@ -605,14 +619,12 @@ public:
 		bool useAlphaBlending = false, bool useColorBlending = false,
 		E_RENDER_MODE mode = ERM_RENDER_STANDARD) = 0;
 
-	virtual bool setRenderContextCurrent() = 0;
-	virtual bool setNullContextCurrent() = 0;
-
 	//! Manages rendering pipeline
 	virtual bool beginRendering() = 0;
 	virtual void renderAll() = 0;
 	virtual void renderPass(E_RENDER_PASS pass) = 0;
 	virtual void endRendering() = 0;
+	virtual void swapBuffers() = 0;
 
 	//! Returns true if renering is still in progress, otherwise false
 	virtual bool isRendering() = 0;
@@ -666,18 +678,20 @@ public:
 	virtual f64 getFrameCurrentRenderTimeSec() = 0;
 	virtual f64 getFrameFilteredRenderTimeSec() = 0;
 
+	virtual void clearGPUProgramHash() = 0;
+
 	virtual const c8* findGPUProgramFileName(vid::IGPUProgram *gpu_prog) = 0;
 	virtual const c8* findGPUProgramFullFileName(vid::IGPUProgram *gpu_prog) = 0;
 
 	virtual IGPUProgram* addGPUProgram(
 		vid::E_VERTEX_TYPE vertex_type, const vid::SRenderPass &pass,
-		u32 uniforms, u32 lightcnt,
+		u32 uniforms, u32 attributes, u32 lightcnt,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader,
 		const c8 *tag = NULL) = 0;
 
 	virtual IGPUProgram* addGPUProgram(
-		u32 uniforms, u32 lightcnt,
+		u32 uniforms, u32 attributes, u32 lightcnt,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader,
 		const c8 *tag = NULL) = 0;
@@ -696,7 +710,7 @@ public:
 	virtual void loadGPUProgramsFromDir(
 		const c8 *dir, const c8 *tag = NULL, bool reload_if_exists = true) = 0;
 
-	virtual bool compileGPUSources(u32 uniforms, u32 lights_count,
+	virtual bool compileGPUSources(u32 uniforms, u32 attributes, u32 lights_count,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader) = 0;
 

@@ -23,6 +23,7 @@ namespace vid {
 struct SGPUProgramShaderInfo
 {
 	u32                     Uniforms;
+	u32                     Attributes;
     E_DRIVER_TYPE           Driver;
 	core::stringc           Tag;
 	E_VERTEX_SHADER_VERSION VertexVer;
@@ -77,7 +78,9 @@ public:
 	//! Return true id GPU program sucessfully loaded, compiled and linked
 	virtual bool isOK() = 0;
 
-	virtual bool recreate(u32 uniforms, u32 lights_count,
+	virtual void clear() = 0;
+
+	virtual bool recreate(u32 uniforms, u32 attributes, u32 lights_count,
 		E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 		E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader) = 0;
 
@@ -100,6 +103,7 @@ __MY_VID_LIB_API__ bool setGPUProgramInfoLightsCount(const SGPUProgramInfo *prog
 
 __MY_VID_LIB_API__ bool appendGPUProgramInfo(const SGPUProgramInfo *prog_info,
 	u32                     uniforms,
+	u32                     attributes,
     E_DRIVER_TYPE           driver,
 	const c8                *tag,
 	E_VERTEX_SHADER_VERSION vertex_ver,

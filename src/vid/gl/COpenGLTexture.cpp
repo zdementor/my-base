@@ -183,9 +183,9 @@ bool COpenGLTexture::createHardwareTexture(bool renderTarget)
 		break;
 #endif
 #ifdef GL_ARB_texture_float
-	case img::ECF_ALPHA32F:
-		m_InternalFormat= GL_ALPHA32F_ARB;
-		m_PixelFormat	= GL_ALPHA;
+	case img::ECF_LUMINANCE32F:
+		m_InternalFormat= GL_LUMINANCE32F_ARB;
+		m_PixelFormat	= GL_LUMINANCE;
 		m_PixelType		= GL_FLOAT;
 		break;
 #endif

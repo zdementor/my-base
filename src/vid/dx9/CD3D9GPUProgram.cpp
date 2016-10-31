@@ -24,7 +24,7 @@ namespace my {
 namespace vid {
 //---------------------------------------------------------------------------
 
-CD3D9GPUProgram::CD3D9GPUProgram(u32 uniforms, u32 lights_count,
+CD3D9GPUProgram::CD3D9GPUProgram(u32 uniforms, u32 attributes, u32 lights_count,
 	E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader)
 	: m_VertexShader(NULL), m_PixelShader(NULL)
@@ -45,7 +45,7 @@ CD3D9GPUProgram::CD3D9GPUProgram(u32 uniforms, u32 lights_count,
 			LOGGER.logErr("Your video hardware not support HLSL feature");
 			break;
 		}
-		if (!recreate(uniforms, lights_count,
+		if (!recreate(uniforms, attributes, lights_count,
 				vertex_shader_ver, vertex_shader,
 				pixel_shader_ver, pixel_shader))
 			break;
@@ -86,7 +86,7 @@ void CD3D9GPUProgram::_destroyProgram()
 
 //---------------------------------------------------------------------------
 
-bool CD3D9GPUProgram::recreate(u32 uniforms, u32 lights_count,
+bool CD3D9GPUProgram::recreate(u32 uniforms, u32 attributes, u32 lights_count,
 	E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader)
 {
@@ -193,7 +193,7 @@ bool CD3D9GPUProgram::recreate(u32 uniforms, u32 lights_count,
 	}
 
 	if (!errors)
-		return CNullGPUProgram::recreate(uniforms, lights_count,
+		return CNullGPUProgram::recreate(uniforms, attributes, lights_count,
 			vertex_shader_ver, vertex_shader,
 			pixel_shader_ver, pixel_shader);
 	return false;

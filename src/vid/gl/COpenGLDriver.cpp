@@ -31,16 +31,11 @@ namespace vid {
 
 const f32 inv_color = 1.0f / 255.0f;
 
-#if MY_PLATFORM == MY_PLATFORM_WIN32    
-
 //---------------------------------------------------------------------------
 
-//! Win32 constructor and init code
 COpenGLDriver::COpenGLDriver(const core::dimension2d<s32>& screenSize) 
 	: CNullDriver(screenSize),
-HWnd(0), HDc(0), m_RenderContext(0),
- StencilFogTexture(0),
-m_OpenGLHardwareOcclusionQuery(0)
+m_Window(0), m_Context(0), m_OpenGLHardwareOcclusionQuery(0)
 {
 #if MY_DEBUG_MODE 
 	IVideoDriver::setClassName("COpenGLDriver::IVideoDriver");
@@ -50,140 +45,58 @@ m_OpenGLHardwareOcclusionQuery(0)
 
 //---------------------------------------------------------------------------
 
+COpenGLDriver::~COpenGLDriver()
+{
+	free();
+
+	SAFE_DROP(m_OpenGLHardwareOcclusionQuery);
+
+    if (m_Window)
+	{
+		setGLContext(m_Window, 0);
+        destroyGLWindow(m_Window);
+	}
+    if (m_Context)
+    {
+        destroyGLContext(m_Context);
+        m_Context = 0;
+    }
+	setGLContext(0, 0);
+
+	LOGGER.logInfo("OpenGL graphic deactivated");
+}
+
+//---------------------------------------------------------------------------
+
 bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 {
 	bool swrast = DEVICE.getDeviceFlagValue(dev::EDCF_SOFTWARE_RASTERIZER);
 
-    static  PIXELFORMATDESCRIPTOR pfd =
-    {   
-		sizeof(PIXELFORMATDESCRIPTOR),  // Size Of This Pixel Format Descriptor
-        1,                          // Version Number
-        PFD_DRAW_TO_WINDOW |        // Format Must Support Window
-        PFD_SUPPORT_OPENGL |        // Format Must Support OpenGL
-		(swrast ? PFD_GENERIC_FORMAT : 0) |
-        PFD_DOUBLEBUFFER,           // Must Support Double Buffering
-        PFD_TYPE_RGBA,              // Request An RGBA Format
-        24,                         // Select Our Color Depth
-        0, 0, 0, 0, 0, 0,           // Color Bits Ignored
-        8,                          // alpha bits in each RGBA color buffer
-        0,                          // Shift Bit Ignored
-        0,                          // No Accumulation Buffer
-        0, 0, 0, 0,                 // Accumulation Bits Ignored
-        24,                         // Depth-buffers bits
-        8,                          // stencil buffer bits
-        0,                          // No Auxiliary Buffer
-        PFD_MAIN_PLANE,             // Main Drawing Layer
-        0,                          // Reserved
-        0, 0, 0                     // Layer Masks Ignored
-    };
-
 	if (out_video_data.FullScreen)
 		DEVICE.switchMonitorToFullScreen();
 
-	HWnd = reinterpret_cast<HWND>(out_video_data.Win32.HWnd);
+	m_Window = createGLWindow((MyWindow)out_video_data.Win32.HWnd);
+	if (!m_Window)
+	{
+		LOGGER.logErr("Could not create GL Window!");
+		return false;
+	}
 
-    GLuint PixelFormat;
+	m_Context = createGLContext(m_Window, swrast, &out_video_data);
+	if (!m_Context)
+	{
+		LOGGER.logErr("Could not create GL Context!");
+		return false;
+	}
+	out_video_data.DriverType = (vid::E_DRIVER_TYPE)__MY_BUILD_GL_VER__;
 
-	m_BackColorFormat = (img::E_COLOR_FORMAT)-1;
+	if (!setGLContext(m_Window, m_Context))
+	{
+		LOGGER.logErr("Could not set GL Context!");
+		return false;
+	}
 
-    for (int i = 0; i < 3; ++i)
-    {
-        if (i == 1)
-        {
-            LOGGER.logWarn(" Cannot create a GL device with stencil buffer, disabling stencil shadows");
-            m_StencilBuffer = false;
-            pfd.cStencilBits = 0;
-        }
-        else
-        if (i == 2)
-        {
-            LOGGER.logErr(" Cannot create a GL device context");
-            return false;
-        }
-
-        // get hdc
-        if (!(HDc=GetDC(HWnd)))
-        {
-            LOGGER.logErr(" Cannot create a GL device context");
-            continue;
-        }        
-
-        // choose pixelformat
-        if (!(PixelFormat = ChoosePixelFormat(HDc, &pfd)))
-        {
-            LOGGER.logErr(" Cannot find a suitable pixel format");
-            continue;
-        }
-
-		// describe pixelformat
-
-		PIXELFORMATDESCRIPTOR dpfd;
-		if (!DescribePixelFormat(HDc, PixelFormat, sizeof(dpfd), &dpfd))
-		{
-            LOGGER.logErr(" Cannot describe pixel format");
-            continue;
-        }
-
-		if (swrast && !(dpfd.dwFlags & PFD_GENERIC_FORMAT))		
-		{
-			s32 nfmt = DescribePixelFormat(HDc, 0, 0, NULL);
-			for (s32 j = 1; j <= nfmt; j++)
-			{
-				PIXELFORMATDESCRIPTOR tmppfd;
-				if (DescribePixelFormat(HDc, j, sizeof(tmppfd), &tmppfd) &&
-						(tmppfd.dwFlags & PFD_GENERIC_FORMAT) &&
-						(tmppfd.dwFlags & PFD_DOUBLEBUFFER) &&
-						(tmppfd.cColorBits >= 16) &&
-						tmppfd.cDepthBits >= 16 &&
-						tmppfd.iPixelType == PFD_TYPE_RGBA)
-				{
-					PixelFormat = j;
-					dpfd = tmppfd;
-					break;
-				}
-			}
-			if (!(dpfd.dwFlags & PFD_GENERIC_FORMAT))
-			{
-				LOGGER.logErr(" Cannot find GDI generic pixel format");
-			}
-		}
-
-        // set pixel format
-        if (!SetPixelFormat(HDc, PixelFormat, &dpfd))
-        {
-            LOGGER.logErr(" Cannot set the pixel format");
-            continue;
-        }
-
-        // create rendering context
-        if (!(m_RenderContext = wglCreateContext(HDc)))
-        {
-            LOGGER.logErr(" Cannot create a GL rendering context");
-            continue;
-        }
-
-        if (!setRenderContextCurrent())
-        {
-            LOGGER.logErr(" Cannot activate GL context");
-            continue;
-        }
-		else
-		{
-			LOGGER.logInfo(" OGL context activated");            
-		}
-
-		if (dpfd.cColorBits == 15 && dpfd.cAlphaBits == 1)
-			m_BackColorFormat = img::ECF_A1R5G5B5;
-		else if (dpfd.cColorBits == 16 && dpfd.cAlphaBits == 0)
-			m_BackColorFormat = img::ECF_R5G6B5;
-		else if (dpfd.cColorBits >= 32)
-			m_BackColorFormat = img::ECF_A8R8G8B8;
-		else if (dpfd.cColorBits >= 24)
-			m_BackColorFormat = img::ECF_R8G8B8;
-
-		break;
-    }
-
+	m_BackColorFormat = m_Context->colorFormat;
 	if ((u32)m_BackColorFormat >= img::E_COLOR_FORMAT_COUNT)
 	{
 		LOGGER.logErr("Could not detect BackBuffer color format!");
@@ -196,9 +109,9 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 	core::stringc glVer = glGetString(GL_VERSION);
 	core::stringc glExt = glGetString(GL_EXTENSIONS);
 
-	LOGGER.logInfo(" Video adapter model: %s %s", glRend.c_str(), glVend.c_str());
-	LOGGER.logInfo(" OGL driver version: %s", glVer.c_str());
-	LOGGER.logInfo(" Supported OpenGL extentions:\n  %s", glExt.c_str());
+	LOGGER.logInfo("Video adapter model: %s %s", glRend.c_str(), glVend.c_str());
+	LOGGER.logInfo("OGL driver version: %s", glVer.c_str());
+	LOGGER.logInfo("Supported OpenGL extentions:\n  %s", glExt.c_str());
 
 	m_StencilBuffer &= m_Shadows;
 
@@ -223,17 +136,17 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 			|| !GLEW_VERSION_1_5 || !GLEW_VERSION_1_4 || !GLEW_VERSION_1_3
 			|| !GLEW_VERSION_1_2 || !GLEW_VERSION_1_1)
 	{
-        LOGGER.logErr(" OpenGL driver version is not 2.1 or better.");
+        LOGGER.logErr("OpenGL driver version is not 2.1 or better.");
 		return false;
 	}
 	if (!GLEW_ARB_imaging)
 	{
-        LOGGER.logErr(" OpenGL driver is not supported GL_ARB_imaging extension.");
+        LOGGER.logErr("OpenGL driver is not supported GL_ARB_imaging extension.");
 		return false;
 	}
 	if (!GLEW_EXT_texture_compression_s3tc)
 	{
-		LOGGER.logWarn(" OpenGL driver is not supported EXT_texture_compression_s3tc extension,"
+		LOGGER.logWarn("OpenGL driver is not supported EXT_texture_compression_s3tc extension,"
 			"be aware from using DXT textures.");
 	}
 	vboSupport = true;
@@ -246,19 +159,21 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 #else
 	m_MaxTextureUnits = 1;
 #endif	
+	CHECK_MAX_RANGE(m_MaxTextureUnits, MY_MATERIAL_MAX_LAYERS);
 
     if (m_MaxTextureUnits < 2)
-		LOGGER.logWarn(" OpenGL device only has one texture unit. Disabling multitexturing.");
+		LOGGER.logWarn(
+			"OpenGL device only has one texture unit. Disabling multitexturing.");
 
 #ifdef GL_EXT_texture_filter_anisotropic
 	if (GLEW_EXT_texture_filter_anisotropic)
 	{
         glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &temp);
-		MaxAnisotropyLevel = temp;
+		m_MaxAnisotropyLevel = temp;
 	}
 	else
 #endif
-		MaxAnisotropyLevel = 0;
+		m_MaxAnisotropyLevel = 0;
 
 #ifdef GL_EXT_stencil_two_side
 	if (GLEW_EXT_stencil_two_side) // for nVidia
@@ -272,37 +187,49 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 #endif
 		m_TwoSidedStencil = false;
 
-	LOGGER.logInfo(" OpenGL driver features:");
-
-	LOGGER.logInfo("  Back Color Format : %s",
-		img::getColorFormatName(getBackColorFormat()));
-	LOGGER.logInfo("  Multitexturing    : %s",
-		queryFeature(EVDF_MULITEXTURE) ? "OK" : "None");
-	LOGGER.logInfo("  Vertex buffer     : %s", vboSupport ?
-		"OK" : "None (using vertex arrays instead)");
-	LOGGER.logInfo("  Anisotropic filt. : %s (%d level)",
-		queryFeature(EVDF_ANISOTROPIC_FILTER) ?
-			"OK" : "None", MaxAnisotropyLevel);
-	LOGGER.logInfo("  Swap control      : %s",
-		WGLEW_EXT_swap_control ? "OK" : "None"); 
-	LOGGER.logInfo("  GLSL              : %s",
-		queryFeature(EVDF_SHADER_LANGUAGE) ? "OK" : "None");
-#if __MY_BUILD_GL_VER__ >= MY_DRIVER_TYPE_OPENGL21
-		LOGGER.logInfo("   Vertex/Pixel shader v.%s",
-			glGetString(GL_SHADING_LANGUAGE_VERSION));
+#ifdef GL_ARB_vertex_array_object
+	if (GLEW_ARB_vertex_array_object)
+		COpenGLVertexArrayObject::ms_VAOSupport = true;
+	else
 #endif
-	LOGGER.logInfo("  Two side stencil  : %s",
-		m_TwoSidedStencil ? "OK" : "None");
-	LOGGER.logInfo("  Occlusion Query   : %s",
-		queryFeature(EVDF_OCCLUSION_QUERY) ? "OK" : "None");
-	LOGGER.logInfo("  Render Target     : %s",
-		queryFeature(EVDF_RENDER_TO_TARGET) ? "OK" : "None");
-	LOGGER.logInfo("  Compressed tex.   : %s",
-		queryFeature(EVDF_COMPRESSED_TEXTURES) ? "OK" : "None");
-	LOGGER.logInfo("  Depth Stencil tex.: %s",
-		queryFeature(EVDF_DEPTH_STENCIL_TEXTURES) ? "OK" : "None");
-	LOGGER.logInfo("  Non pwr. of 2 tex.: %s",
-		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) ? "OK" : "None");
+		COpenGLVertexArrayObject::ms_VAOSupport = false;
+
+#if defined(GL_ARB_texture_non_power_of_two)
+	m_TexturesNonPowerOfTwo = !!GLEW_ARB_texture_non_power_of_two;
+#else
+	m_TexturesNonPowerOfTwo = false;
+#endif
+
+#if  __MY_BUILD_GL_VER__ >= MY_DRIVER_TYPE_OPENGL21
+	glGetIntegerv(GL_MAX_DRAW_BUFFERS, (GLint*)&m_MaxDrawBuffers);
+	CHECK_RANGE(m_MaxDrawBuffers, 1, MY_MAX_COLOR_ATTACHMENTS);
+#else
+	m_MaxDrawBuffers = 1;
+#endif
+
+	m_RenderTargetSupport = m_DepthStencilTexturesSupport =
+#if defined(GL_ARB_framebuffer_object)
+		!!GLEW_ARB_framebuffer_object;
+#else
+        false;
+#endif
+
+#if __MY_BUILD_GL_VER__ >= MY_DRIVER_TYPE_OPENGL21
+	u32 shVerMaj = 0, shVerMin = 0;
+	const GLubyte *shVer = glGetString(GL_SHADING_LANGUAGE_VERSION);
+	sscanf((const c8 *)shVer, "%d.%d", &shVerMaj, &shVerMin);
+	CHECK_RANGE(shVerMaj, 0, 255);
+	CHECK_RANGE(shVerMin, 0, 255);
+
+	m_PixelShaderVersion = m_VertexShaderVersion =
+		(0xff00 & shVerMaj << 8) | (0xff & shVerMin);
+#endif
+
+	if (!vboSupport)
+		LOGGER.logWarn(
+			"Vertex Buffer Objects not supported (using vertex arrays instead).");
+	if (!COpenGLVertexArrayObject::ms_VAOSupport)
+		LOGGER.logWarn("Vertex Array Objects not supported.");
 
 	// OpenGL driver constants
 
@@ -313,24 +240,13 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 	glGetIntegerv( GL_MAX_TEXTURE_SIZE, &temp );
 	m_MaxTextureSize = core::dimension2di(temp, temp);
 
-	s32 max_tex_units = m_MaxTextureUnits;
-	CHECK_MAX_RANGE(m_MaxTextureUnits, MY_MATERIAL_MAX_LAYERS);
-
-	// Set The Current Viewport
-	glViewport(0, 0, m_ScreenSize.Width, m_ScreenSize.Height); 
-
 	// setup ogl initial render states    
 	glShadeModel(GL_SMOOTH);
     
-	setGlobalAmbientColor(getGlobalAmbientColor());
-
 	glClearDepth(1.0f);
 	glClearStencil(MY_STENCIL_ZERO_VALUE);    
 
 	glFrontFace( GL_CCW );		
-
-	// set fog mode
-	setFog(Fog);
 
 	glDisable(GL_COLOR_MATERIAL);
 	
@@ -340,80 +256,38 @@ bool COpenGLDriver::_initDriver(SExposedVideoData &out_video_data)
 #endif
 	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
 
-	// set exposed data
-    out_video_data.Win32.OGL.HDc  = reinterpret_cast<void*>(HDc);
-    out_video_data.Win32.OGL.HRc  = reinterpret_cast<void*>(m_RenderContext);	
-	out_video_data.DriverType = EDT_OPENGL21;
-  
-    // Create Our Empty Fog Textures
-    StencilFogTexture = createEmptyOGLTexture(
-        getStencilFogTextureSize(), getStencilFogTextureSize());  
- 
-    // log Video driver parameters
-    DescribePixelFormat(HDc, PixelFormat, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
-
-	if (pfd.cStencilBits == 0)
+	m_ColorBits  = m_Context->colorBits;
+    m_AlphaBits  = m_Context->alphaBits;
+    m_DepthBits  = m_Context->depthBits;
+    m_StencilBits = m_Context->stencilBits;
+	if (m_StencilBits == 0)
 	{
-		LOGGER.logWarn(" Device does not support stencilbuffer, disabling stencil buffer.");
+		LOGGER.logWarn("Device does not support Stencil Buffer, disabling it.");
 		m_StencilBuffer = false;
 	}
 	else 
 		m_StencilBuffer = true;
 
-    LOGGER.logInfo(" Video driver parameters: ");
-    LOGGER.logInfo("  color   : %d bit", pfd.cColorBits);
-    LOGGER.logInfo("  alpha   : %d bit", pfd.cAlphaBits);
-    LOGGER.logInfo("  depth(z): %d bit", pfd.cDepthBits);
-    LOGGER.logInfo("  stencil : %d bit", pfd.cStencilBits);
-    LOGGER.logInfo("  max lights    : %d", m_MaxLights);
-    LOGGER.logInfo("  max tex. units: %d", max_tex_units);
-    LOGGER.logInfo("  max tex. res. : %d x %d", m_MaxTextureSize.Width, m_MaxTextureSize.Height);	
-
-	// vertical syncronization
 	if (WGLEW_EXT_swap_control && wglSwapIntervalEXT(m_VerticalSync?1:0)!=0)
-		LOGGER.logInfo(" Vertical Sync %s", m_VerticalSync ? "enabled" : "disabled");
+		LOGGER.logInfo("Vertical Sync %s", m_VerticalSync ? "enabled" : "disabled");
 	else
-		LOGGER.logInfo(" Can't on/off Vertical Sync ");
-
-	setTextureCreationFlag(ETCF_CREATE_POWER_OF_TWO,
-		queryFeature(EVDF_NON_POWER_OF_TWO_TEXTURES) == false);
-
-	// setting texture filter
-	setTextureFilter(m_TextureFilter);
-
-	CNullDriver::setColorMask(m_ColorMask);
+		LOGGER.logInfo("Can't on/off Vertical Sync ");
 
     return CNullDriver::_initDriver(out_video_data);
 }
 
 //---------------------------------------------------------------------------
 
-COpenGLDriver::~COpenGLDriver()
+void COpenGLDriver::renderPass(E_RENDER_PASS pass)
 {
-	free();
+	CNullDriver::renderPass(pass);
 
-	SAFE_DROP(m_OpenGLHardwareOcclusionQuery);
-    glDeleteTextures(1,&StencilFogTexture);
+	_setupGLAttributes(COpenGLRenderBuffer::ms_EnabledAttribs);
 
-	setNullContextCurrent();
-
-    if (m_RenderContext)
-    {
-        if (!wglDeleteContext(m_RenderContext))
-            LOGGER.logWarn("Release of rendering context failed.");
-        m_RenderContext = 0;
-    }
-    if (HDc)
-	{
-        ReleaseDC(HWnd, HDc);
-		HDc = 0;
-	}	
-	LOGGER.logInfo("OpenGL graphic deactivated");
+#ifdef GL_VERSION_1_2
+	glClientActiveTexture(GL_TEXTURE0);
+#endif
 }
-
-// -----------------------------------------------------------------------
-
-#endif // #ifdef WIN32
 
 //---------------------------------------------------------------------------
 
@@ -437,10 +311,184 @@ bool COpenGLDriver::_makeScreenShot(img::IImage *image)
 
 //----------------------------------------------------------------------------
 
+#define MY_ENABLE_CLIENT_STATE(index, state, preFunc) \
+	if (!enabledAttribs[index]) \
+	{ \
+		preFunc; \
+		glEnableClientState(state); \
+		enabledAttribs[index] = true; \
+	}
+
+#define MY_DISABLE_CLIENT_STATE(index, state, preFunc) \
+	if (enabledAttribs[index]) \
+	{ \
+		preFunc; \
+		glDisableClientState(state); \
+		enabledAttribs[index] = false; \
+	}
+
+#define MY_ENABLE_ATTRIB_ARRAY(index, size, type, normalized, stride, ptr) \
+	if (!enabledAttribs[index]) \
+	{ \
+		glEnableVertexAttribArray(index); \
+		enabledAttribs[index] = true; \
+	} \
+	glVertexAttribPointer(index, size, type, normalized, stride, ptr);
+
+#define MY_DISABLE_ATTRIB_ARRAY(index) \
+	if (enabledAttribs[index]) \
+	{ \
+		glDisableVertexAttribArray(index); \
+		enabledAttribs[index] = false; \
+	}
+
+void COpenGLDriver::_setupGLAttributes(
+	bool *enabledAttribs,
+	GLenum type0, s32 size0, s32 stride0, const void *ptr0,
+	GLenum type1, s32 size1, s32 stride1, const void *ptr1,
+	GLenum type2, s32 size2, s32 stride2, const void *ptr2,
+	GLenum type3, s32 size3, s32 stride3, const void *ptr3,
+	GLenum type4, s32 size4, s32 stride4, const void *ptr4,
+	GLenum type5, s32 size5, s32 stride5, const void *ptr5,
+	GLenum type6, s32 size6, s32 stride6, const void *ptr6)
+{
+#ifdef GL_VERSION_2_1
+	if (m_UseShaders)
+	{
+		if (type0 != GL_NONE)
+		{ MY_ENABLE_ATTRIB_ARRAY(0, size0, type0, GL_FALSE, stride0, ptr0) }
+		else
+		{ MY_DISABLE_ATTRIB_ARRAY(0) }
+
+		if (type1 != GL_NONE)
+		{ MY_ENABLE_ATTRIB_ARRAY(1, size1, type1, GL_FALSE, stride1, ptr1) }
+		else
+		{ MY_DISABLE_ATTRIB_ARRAY(1) }
+
+		if (type2 != GL_NONE) // Color
+		{ MY_ENABLE_ATTRIB_ARRAY(2, size2, type2, GL_TRUE, stride2, ptr2) }
+		else
+		{ MY_DISABLE_ATTRIB_ARRAY(2) }
+
+		if (type3 != GL_NONE)
+		{ MY_ENABLE_ATTRIB_ARRAY(3, size3, type3, GL_FALSE, stride3, ptr3) }
+		else
+		{ MY_DISABLE_ATTRIB_ARRAY(3) }
+
+		if (type4 != GL_NONE)
+		{ MY_ENABLE_ATTRIB_ARRAY(4, size4, type4, GL_FALSE, stride4, ptr4) }
+		else
+		{ MY_DISABLE_ATTRIB_ARRAY(4) }
+
+		if (type5 != GL_NONE)
+		{ MY_ENABLE_ATTRIB_ARRAY(5, size5, type5, GL_FALSE, stride5, ptr5) }
+		else
+		{ MY_DISABLE_ATTRIB_ARRAY(5) }
+
+		if (type6 != GL_NONE)
+		{ MY_ENABLE_ATTRIB_ARRAY(6, size6, type6, GL_FALSE, stride6, ptr6) }
+		else
+		{ MY_DISABLE_ATTRIB_ARRAY(6) }
+	}
+	else
+#endif
+	{
+		if (type0 != GL_NONE)
+		{
+			MY_ENABLE_CLIENT_STATE(0, GL_VERTEX_ARRAY, (void)0)
+			glVertexPointer(size0, type0, stride0, ptr0);
+		}
+		else
+		{
+			MY_DISABLE_CLIENT_STATE(0, GL_VERTEX_ARRAY, (void)0)
+		}
+
+		if (type1 != GL_NONE)
+		{
+			MY_ENABLE_CLIENT_STATE(1, GL_NORMAL_ARRAY, (void)0)
+			glNormalPointer(type1, stride1, ptr1);
+		}
+		else
+		{
+			MY_DISABLE_CLIENT_STATE(1, GL_NORMAL_ARRAY, (void)0)
+		}
+
+		if (type2 != GL_NONE)
+		{
+			MY_ENABLE_CLIENT_STATE(2, GL_COLOR_ARRAY, (void)0)
+			glColorPointer(size2, type2, stride2, ptr2);
+		}
+		else
+		{
+			MY_DISABLE_CLIENT_STATE(2, GL_COLOR_ARRAY, (void)0)
+		}
+
+		if (type3 != GL_NONE)
+		{
+#ifdef GL_VERSION_1_2
+			glClientActiveTexture(GL_TEXTURE0);
+#endif
+			MY_ENABLE_CLIENT_STATE(3, GL_TEXTURE_COORD_ARRAY, (void)0)
+			glTexCoordPointer(size3, type3, stride3, ptr3);
+		}
+		else
+		{
+#ifdef GL_VERSION_1_2
+			MY_DISABLE_CLIENT_STATE(3, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE0))
+#else
+			MY_DISABLE_CLIENT_STATE(3, GL_TEXTURE_COORD_ARRAY, (void)0)
+#endif
+		}
+
+#ifdef GL_VERSION_1_2
+		if (type4 != GL_NONE)
+		{
+			glClientActiveTexture(GL_TEXTURE1);
+			MY_ENABLE_CLIENT_STATE(4, GL_TEXTURE_COORD_ARRAY, (void)0)
+			glTexCoordPointer(size4, type4, stride4, ptr4);
+		}
+		else
+		{
+			MY_DISABLE_CLIENT_STATE(4, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE1))
+		}
+
+		if (type5 != GL_NONE)
+		{
+			glClientActiveTexture(GL_TEXTURE2);
+			MY_ENABLE_CLIENT_STATE(5, GL_TEXTURE_COORD_ARRAY, (void)0)
+			glTexCoordPointer(size5, type5, stride5, ptr5);
+		}
+		else
+		{
+			MY_DISABLE_CLIENT_STATE(5, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE2))
+		}
+
+		if (type6 != GL_NONE)
+		{
+			glClientActiveTexture(GL_TEXTURE3);
+			MY_ENABLE_CLIENT_STATE(6, GL_TEXTURE_COORD_ARRAY, (void)0)
+			glTexCoordPointer(size6, type6, stride6, ptr6);
+		}
+		else
+		{
+			MY_DISABLE_CLIENT_STATE(6, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE3))
+		}
+#endif
+	}
+}
+
+//----------------------------------------------------------------------------
+
 void COpenGLDriver::_renderStencilVolume(IRenderBuffer * rbuf, const SRenderPass &pass, bool zfail)
 {
 	if (!m_StencilBuffer)  
         return;
+
+	if (!((CNullRenderBuffer*)rbuf)->bind())
+	{
+		LOGGER.logErr(__FUNCTION__ ": Can not bind buffer to render!");
+		return;
+	}
 
 	CNullDriver::_renderStencilVolume(rbuf, pass, zfail);
 
@@ -473,7 +521,7 @@ void COpenGLDriver::_renderStencilVolume(IRenderBuffer * rbuf, const SRenderPass
 				glStencilFuncSeparateATI(GL_ALWAYS, GL_ALWAYS, 1, 0xFFFFFFFFL);
 			}
 #endif
-			((CNullRenderBuffer*)rbuf)->draw();
+			((CNullRenderBuffer*)rbuf)->render();
 		}
 		else
 		{
@@ -487,7 +535,7 @@ void COpenGLDriver::_renderStencilVolume(IRenderBuffer * rbuf, const SRenderPass
 				GL_KEEP);	// depth test pass
 			// Draw back-side of shadow volume in stencil only
 			glFrontFace( GL_CW );
-			((CNullRenderBuffer*)rbuf)->draw();
+			((CNullRenderBuffer*)rbuf)->render();
 
 			// Second Pass:
 			// If ztest fail decrement stencil buffer value
@@ -497,7 +545,7 @@ void COpenGLDriver::_renderStencilVolume(IRenderBuffer * rbuf, const SRenderPass
 				GL_KEEP);	// depth test pass
 			// Draw front-side of shadow volume in stencil only
 			glFrontFace( GL_CCW );
-			((CNullRenderBuffer*)rbuf)->draw();
+			((CNullRenderBuffer*)rbuf)->render();
 		}
 	}
 	else
@@ -527,7 +575,7 @@ void COpenGLDriver::_renderStencilVolume(IRenderBuffer * rbuf, const SRenderPass
 				glStencilFuncSeparateATI(GL_ALWAYS, GL_ALWAYS, 1, 0xFFFFFFFFL);
 			}
 #endif
-			((CNullRenderBuffer*)rbuf)->draw();
+			((CNullRenderBuffer*)rbuf)->render();
 		}
 		else
 		{
@@ -541,7 +589,7 @@ void COpenGLDriver::_renderStencilVolume(IRenderBuffer * rbuf, const SRenderPass
 				GL_INCR);	// depth test pass
 			// Draw front-side of shadow volume in stencil only
 			glFrontFace( GL_CCW );
-			((CNullRenderBuffer*)rbuf)->draw();
+			((CNullRenderBuffer*)rbuf)->render();
 
 			// Second Pass:
 			// Decrement stencil buffer value
@@ -551,9 +599,11 @@ void COpenGLDriver::_renderStencilVolume(IRenderBuffer * rbuf, const SRenderPass
 				GL_DECR);	// depth test pass
 			// Draw back-side of shadow volume in stencil only
 			glFrontFace(GL_CW);
-			((CNullRenderBuffer*)rbuf)->draw();
+			((CNullRenderBuffer*)rbuf)->render();
 		}
 	}
+
+	((CNullRenderBuffer*)rbuf)->unbind();
 
 	// restore initial states
 	glPopAttrib();
@@ -696,7 +746,7 @@ bool COpenGLDriver::_swapBuffers()
 
 	bool res = true;
 #if MY_PLATFORM == MY_PLATFORM_WIN32
-	res = SwapBuffers(HDc) != 0;
+	res = SwapBuffers(m_Window->hdc) != 0;
 #endif
 	return res;
 }
@@ -707,34 +757,14 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 {
     switch (feature)
     {
-	case EVDF_MULITEXTURE:
-		return getMaximalTextureUnitsAmount()>1;
 	case EVDF_BILINEAR_FILTER:
-        return true;
     case EVDF_TRILINEAR_FILTER:
-        return true;
-    case EVDF_ANISOTROPIC_FILTER:
-        return MaxAnisotropyLevel > 0;
-    case EVDF_RENDER_TO_TARGET:
-	case EVDF_DEPTH_STENCIL_TEXTURES:
-#if defined(GL_ARB_framebuffer_object)
-		return !!GLEW_ARB_framebuffer_object;
-#else
-        return false;
-#endif
     case EVDF_MIP_MAP:
         return true;
-    case EVDF_STENCIL_BUFFER:
-        return m_StencilBuffer;
 	case EVDF_SHADER_LANGUAGE:
+	case EVDF_OCCLUSION_QUERY:
 #if __MY_BUILD_GL_VER__ >= MY_DRIVER_TYPE_OPENGL21
 		return true;
-#else
-		return false;
-#endif
-	case EVDF_OCCLUSION_QUERY:
-#if defined(GL_ARB_occlusion_query)
-		return !!GLEW_ARB_occlusion_query;
 #else
 		return false;
 #endif
@@ -744,17 +774,11 @@ bool COpenGLDriver::queryFeature(E_VIDEO_DRIVER_FEATURE feature)
 #else
 		return false;
 #endif
-	case EVDF_NON_POWER_OF_TWO_TEXTURES:
-#if defined(GL_ARB_texture_non_power_of_two)
-		return !!GLEW_ARB_texture_non_power_of_two;
-#else
-		return false;
-#endif
 	default:
 		break;
     };
 
-    return false;
+	return CNullDriver::queryFeature(feature);
 }
 
 //---------------------------------------------------------------------------
@@ -935,7 +959,7 @@ void COpenGLDriver::_setBasicRenderStates()
 #ifdef GL_EXT_texture_filter_anisotropic
 			if (GLEW_EXT_texture_filter_anisotropic)
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
-					core::math::Min(8, MaxAnisotropyLevel));
+					core::math::Min(8, m_MaxAnisotropyLevel));
 #endif
 		}
 		else 
@@ -1288,7 +1312,6 @@ void COpenGLDriver::setViewPort(const core::rect<s32>& area)
     core::rect<s32> vp = area;
     core::rect<s32> rendert(0,0, m_ScreenSize.Width, m_ScreenSize.Height);
     vp.clipAgainst(rendert);
-
 
     if (vp.getHeight()>0 && vp.getWidth()>0)
 	{
@@ -1663,7 +1686,7 @@ void COpenGLDriver::setTextureFilter(E_TEXTURE_FILTER textureFilter)
 {
 	CNullDriver::setTextureFilter(textureFilter);
 
-	if (m_TextureFilter == ETF_ANISOTROPIC && MaxAnisotropyLevel == 0 )
+	if (m_TextureFilter == ETF_ANISOTROPIC && m_MaxAnisotropyLevel == 0 )
 	{
 		m_TextureFilter = ETF_BILINEAR;
 		LOGGER.logWarn("OpenGL has no anisotropic filtering. Fall back to bilinear.");
@@ -1681,36 +1704,28 @@ ITexture* COpenGLDriver::createRenderTargetTexture(
 
 //---------------------------------------------------------------------------
 
-IRenderTarget* COpenGLDriver::addRenderTarget(const core::dimension2di &size,
-	img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
+IRenderTarget* COpenGLDriver::createRenderTarget()
 {
-	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
-		new COpenGLRenderTarget(size, colorFormat, depthFormat) : NULL;
-	if (rt && !rt->isOK())
-	{
-		rt->drop();
-		rt = NULL;
-	}
-	if (rt)
-		_addRenderTarget(rt);
-	return rt;
+	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+		new COpenGLRenderTarget() : NULL;
 }
 
 //---------------------------------------------------------------------------
 
-IRenderTarget* COpenGLDriver::addRenderTarget(
+IRenderTarget* COpenGLDriver::createRenderTarget(const core::dimension2di &size,
+	img::E_COLOR_FORMAT colorFormat, img::E_COLOR_FORMAT depthFormat)
+{
+	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+		new COpenGLRenderTarget(size, colorFormat, depthFormat) : NULL;
+}
+
+//---------------------------------------------------------------------------
+
+IRenderTarget* COpenGLDriver::createRenderTarget(
 	ITexture *colorTexture, ITexture *depthTexture)
 {
-	CNullRenderTarget *rt = (queryFeature(EVDF_RENDER_TO_TARGET)) ?
+	return (queryFeature(EVDF_RENDER_TO_TARGET)) ?
 		new COpenGLRenderTarget(colorTexture, depthTexture) : NULL;
-	if (rt && !rt->isOK())
-	{
-		rt->drop();
-		rt = NULL;
-	}
-	if (rt)
-		_addRenderTarget(rt);
-	return rt;
 }
 
 //---------------------------------------------------------------------------
@@ -1828,43 +1843,18 @@ void COpenGLDriver::render2DRect(const SMaterial &material,
 
 //---------------------------------------------------------------------------
 
-bool COpenGLDriver::setRenderContextCurrent()
-{
-	// activate rendering context
-	if (!wglMakeCurrent(HDc, m_RenderContext))
-	{
-		LOGGER.logErr("wglMakeCurrent for render context failed");
-		return false;
-	}
-	return true;
-}
-
-//---------------------------------------------------------------------------
-
-bool COpenGLDriver::setNullContextCurrent()
-{
-	if (!wglMakeCurrent(0, 0))
-	{
-		LOGGER.logWarn("wglMakeCurrent(0, 0) failed.");
-		return false;
-	}
-	return true;
-}
-
-//---------------------------------------------------------------------------
-
-CNullGPUProgram* COpenGLDriver::_createGPUProgram(u32 uniforms, u32 lightcnt,
+CNullGPUProgram* COpenGLDriver::_createGPUProgram(u32 uniforms, u32 attributes, u32 lightcnt,
 	E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader)
 {
 #if __MY_BUILD_GL_VER__ >= MY_DRIVER_TYPE_OPENGL21
 	if (m_UseShaders)
-		return new COpenGLGPUProgram(uniforms, lightcnt,
+		return new COpenGLGPUProgram(uniforms, attributes, lightcnt,
 			vertex_shader_ver, vertex_shader,
 			pixel_shader_ver, pixel_shader);
 #endif
 	CNullGPUProgram *gpu_prog = gpu_prog = new CNullGPUProgram();
-	gpu_prog->recreate(0, 0, EVSV_GLSL_1_0, NULL, EPSV_GLSL_1_0, NULL);
+	gpu_prog->recreate(0, 0, 0, EVSV_GLSL_1_0, NULL, EPSV_GLSL_1_0, NULL);
 	return gpu_prog;
 }
 
@@ -1946,10 +1936,6 @@ IHardwareOcclusionQuery& COpenGLDriver::getHardwareOcclusionQuery()
 
 //---------------------------------------------------------------------------
 
-#if MY_PLATFORM == MY_PLATFORM_WIN32    
-
-//---------------------------------------------------------------------------
-
 #ifdef __MY_BUILD_VID_GL11_LIB__
 __MY_EXPORT__ IVideoDriver* createOpenGL11Driver(
 #endif
@@ -1972,10 +1958,6 @@ __MY_EXPORT__ IVideoDriver* createOpenGL32Driver(
 		ogl->setTextureFilter(textureFilter);
     return ogl; 
 }
-
-//---------------------------------------------------------------------------
-
-#endif // #if MY_PLATFORM == MY_PLATFORM_WIN32
 
 //---------------------------------------------------------------------------
 } // end namespace vid

@@ -1283,7 +1283,7 @@ struct SRenderPass
 	s32 getNumber() const
 	{ return Number; }
 
-	void setGPUProgram(IGPUProgram* gpu)
+	void setGPUProgram(IGPUProgram* gpu) const
 	{
 		if (GPUProgram == gpu)
 			return;
@@ -1313,14 +1313,14 @@ struct SRenderPass
 		return true;
 	}
 
-	void setHashDirty(bool dirty = true)
+	void setHashDirty(bool dirty = true) const
 	{
 		HashFFPDirty = HashGPUDirty = dirty;
 		if (dirty && Material)
 			vid::setHashDirty(Material);
 	}
 
-	void setHashFFPDirty(bool dirty = true)
+	void setHashFFPDirty(bool dirty = true) const
 	{
 		HashFFPDirty = dirty;
 		if (dirty && Material)
@@ -1382,7 +1382,7 @@ private:
 
 	SMaterial *Material;
 
-	IGPUProgram	*GPUProgram;
+	mutable IGPUProgram	*GPUProgram;
 
 	core::list_node<SRenderPass*> m_RenderPassListNode;
 };

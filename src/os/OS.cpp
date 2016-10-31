@@ -399,6 +399,15 @@ __MY_EXPORT__ const c8* getTextFromClipboard()
 __MY_EXPORT__ bool switchMonitorToFullScreen(u32 width, u32 height, u32 bits)
 {
 #if MY_PLATFORM == MY_PLATFORM_WIN32
+
+	RECT desktopRect;
+	if (GetWindowRect(GetDesktopWindow(), &desktopRect))
+	{
+		if ((desktopRect.right - desktopRect.left) == width
+				&& (desktopRect.bottom - desktopRect.top) == height)
+			return true;
+	}
+
     DEVMODE dm;
     memset(&dm, 0, sizeof(dm));
     dm.dmSize = sizeof(dm);

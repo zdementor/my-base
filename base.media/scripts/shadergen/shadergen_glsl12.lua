@@ -5,6 +5,8 @@ function GLSL12GenVertexShader(vtype, pass, perpixel, lightcnt, uniforms)
 
 	text = text..AppendDefines(vtype, pass, perpixel, lightcnt, uniforms)
 	text = text..AppendUniforms(vtype, pass, perpixel, lightcnt, uniforms)
+	text = text..AppendAttributes()
+	text = text.."\n"
 	text = text..AppendVarying(vtype, pass, perpixel, lightcnt, uniforms)
 	text = text.."\n"
 	text = text.."void main(void)\n"

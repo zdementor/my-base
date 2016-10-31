@@ -19,7 +19,7 @@ namespace vid {
 enum
 {
 	MY_MATERIAL_MAX_LAYERS = 4,
-	MY_MAX_COLOR_ATTACHEMENTS = 4,
+	MY_MAX_COLOR_ATTACHMENTS = 4,
 };
 
 //----------------------------------------------------------------------------
@@ -828,6 +828,9 @@ enum E_VIDEO_DRIVER_FEATURE
 	//! Is non power of two textures supported by video hardware?
 	EVDF_NON_POWER_OF_TWO_TEXTURES,
 
+	//! Multiple render targets support
+	EVDF_MULTIPLE_RENDER_TARGETS,
+
 	E_VIDEO_DRIVER_FEATURE_COUNT,
 
 	E_VIDEO_DRIVER_FEATURE_FORCE_32_BIT = 0xffffffff
@@ -884,6 +887,81 @@ MY_FORCEINLINE const c8* getFogTypeName(E_FOG_TYPE type)
 
 MY_FORCEINLINE const c8* getFogTypeReadableName(E_FOG_TYPE type)
 { return FogTypeReadableName[type]; }
+
+//----------------------------------------------------------------------------
+
+enum E_ATTRIB_TYPE
+{
+	EAT_POSITION = 0,
+	EAT_NORMAL,
+	EAT_COLOR,
+	EAT_TCOORD0,
+	EAT_TCOORD1,
+	EAT_TCOORD2,
+	EAT_TCOORD3,
+
+	E_ATTRIB_TYPE_COUNT,
+	E_ATTRIB_TYPE_FORCE_32_BIT = 0xffffffff
+};
+
+//----------------------------------------------------------------------------
+
+enum E_ATTRIB_FLAG
+{
+	EAF_POSITION = 1 << 0,
+	EAF_NORMAL   = 1 << 1,
+	EAF_COLOR    = 1 << 2,
+	EAF_TCOORD0  = 1 << 3,
+	EAF_TCOORD1  = 1 << 4,
+	EAF_TCOORD2  = 1 << 5,
+	EAF_TCOORD3  = 1 << 6,	
+};
+
+//----------------------------------------------------------------------------
+
+static u32 AttribTypeBits[E_ATTRIB_TYPE_COUNT] =
+{
+	EAF_POSITION,
+	EAF_NORMAL,
+	EAF_COLOR,
+	EAF_TCOORD0,
+	EAF_TCOORD1,
+	EAF_TCOORD2,
+	EAF_TCOORD3,
+};
+
+//----------------------------------------------------------------------------
+
+static const c8* AttribTypeNames[E_ATTRIB_TYPE_COUNT] =
+{
+	"EAT_POSITION",
+	"EAT_NORMAL",
+	"EAT_COLOR",
+	"EAT_TCOORD0",
+	"EAT_TCOORD1",
+	"EAT_TCOORD2",
+	"EAT_TCOORD3",
+};
+
+static const c8* AttribTypeReadableNames[E_ATTRIB_TYPE_COUNT] =
+{
+	"aPosition",
+	"aNormal",
+	"aColor",
+	"aTCoord0",
+	"aTCoord1",
+	"aTCoord2",
+	"aTCoord3",
+};
+
+MY_FORCEINLINE E_ATTRIB_FLAG getAttribFlag(E_ATTRIB_TYPE type)
+{ return (E_ATTRIB_FLAG)AttribTypeBits[type]; }
+
+MY_FORCEINLINE const c8 *getAttribName(E_ATTRIB_TYPE type)
+{ return AttribTypeNames[type]; }
+
+MY_FORCEINLINE const c8 *getAttribReadableName(E_ATTRIB_TYPE type)
+{ return AttribTypeReadableNames[type]; }
 
 //----------------------------------------------------------------------------
 
@@ -996,26 +1074,26 @@ static const c8* UniformTypeNames[E_UNIFORM_TYPE_COUNT] =
 
 static const c8* UniformTypeReadableNames[E_UNIFORM_TYPE_COUNT] =
 {
-	"NoName",
-	"ModelViewProjMatrix",
-    "ModelViewMatrix",
-    "ModelMatrix",
-	"NormalMatrix",
-	"GlobalAmbientColor",
-	"MaterialColors",
-	"MaterialShininess",
-	"Lighting",
-	"EyePos",
-	"Texture0",
-	"Texture1",
-	"Texture2",
-	"Texture3",
-	"TextureMatrix0",
-	"TextureMatrix1",
-	"TextureMatrix2",
-	"TextureMatrix3",
-	"FogParams",
-	"FogColor",
+	"uNoName",
+	"uModelViewProjMatrix",
+    "uModelViewMatrix",
+    "uModelMatrix",
+	"uNormalMatrix",
+	"uGlobalAmbientColor",
+	"uMaterialColors",
+	"uMaterialShininess",
+	"uLighting",
+	"uEyePos",
+	"uTexture0",
+	"uTexture1",
+	"uTexture2",
+	"uTexture3",
+	"uTextureMatrix0",
+	"uTextureMatrix1",
+	"uTextureMatrix2",
+	"uTextureMatrix3",
+	"uFogParams",
+	"uFogColor",
 };
 
 MY_FORCEINLINE E_UNIFORM_FLAG getUniformFlag(E_UNIFORM_TYPE type)
@@ -1575,6 +1653,38 @@ enum E_COLOR_MASK_BIT
 	ECM_BLUE	= 1 << 2,
 	ECM_ALPHA	= 1 << 3,
 };
+
+//----------------------------------------------------------------------------
+
+enum E_RENDER_PATH
+{
+	//! Standard rendering with multipass lighting
+	ERP_FORWARD_RENDERING = 0,
+
+	//! Rendering with deferred lighting pass
+	ERP_DEFERRED_SHADING,
+
+	E_RENDER_PATH_COUNT,
+	E_RENDER_PATH_FORCE_32BIT = 0xffffffff
+};
+
+static const c8* RenderPathName[E_RENDER_PATH_COUNT] =
+{
+	"ERP_FORWARD_RENDERING",
+	"ERP_DEFERRED_SHADING",
+};
+
+static const c8* RenderPathReadableName[E_RENDER_PATH_COUNT] =
+{
+	"Forward Rendering",
+	"Deferred Shading",
+};
+
+MY_FORCEINLINE const c8* getRenderPathName(E_RENDER_PATH path)
+{ return RenderPathName[path]; }
+
+MY_FORCEINLINE const c8* getRenderPathReadableName(E_RENDER_PATH path)
+{ return RenderPathReadableName[path]; }
 
 //----------------------------------------------------------------------------
 } // end namespace vid

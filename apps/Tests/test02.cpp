@@ -130,6 +130,7 @@ int main(int argc, char* argv[])
 			VIDEO_DRIVER.endRendering();
 		}
 		SCENE_MANAGER.postRenderScene();
+		VIDEO_DRIVER.swapBuffers();
 		GAME_MANAGER.postRenderFrame();
 	}
 	  
