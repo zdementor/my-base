@@ -32,12 +32,10 @@ Attribs =
 	Position  = vid.getAttribReadableName(vid.EAT_POSITION),
 	Normal    = vid.getAttribReadableName(vid.EAT_NORMAL  ),
 	Color     = vid.getAttribReadableName(vid.EAT_COLOR   ),
-	Tangent   = vid.getAttribReadableName(vid.EAT_TANGENT ),
-	Binormal  = vid.getAttribReadableName(vid.EAT_BINORMAL),
 	TCoord0   = vid.getAttribReadableName(vid.EAT_TCOORD0 ),
 	TCoord1   = vid.getAttribReadableName(vid.EAT_TCOORD1 ),
-	TCoord2   = vid.getAttribReadableName(vid.EAT_TCOORD2 ),
-	TCoord3   = vid.getAttribReadableName(vid.EAT_TCOORD3 ),
+	Tangent   = vid.getAttribReadableName(vid.EAT_TANGENT ),
+	Binormal  = vid.getAttribReadableName(vid.EAT_BINORMAL),
 }
 
 TexFlags =
@@ -433,25 +431,19 @@ local function GetAttribParams(atype, specIdx)
 		[vid.EAT_POSITION+1] = "VEC4",
 		[vid.EAT_NORMAL+1]   = "VEC3",
 		[vid.EAT_COLOR+1]    = "VEC4",
-		[vid.EAT_TANGENT+1]  = "VEC3",
-		[vid.EAT_BINORMAL+1] = "VEC3",
 		[vid.EAT_TCOORD0+1]  = "VEC2",
 		[vid.EAT_TCOORD1+1]  = "VEC2",
-		[vid.EAT_TCOORD2+1]  = "VEC3",
-		[vid.EAT_TCOORD3+1]  = "VEC3",
-
+		[vid.EAT_TANGENT+1]  = "VEC3",
+		[vid.EAT_BINORMAL+1] = "VEC3",
 	}
 	local aspecDX = {
 		[vid.EAT_POSITION+1] = " : POSITION%s",
 		[vid.EAT_NORMAL+1]   = " : NORMAL%s",
 		[vid.EAT_COLOR+1]    = " : COLOR%s",
-		[vid.EAT_TANGENT+1]  = " : TANGENT%s",
-		[vid.EAT_BINORMAL+1] = " : BINORMAL%s",
 		[vid.EAT_TCOORD0+1]  = " : TEXCOORD%s",
 		[vid.EAT_TCOORD1+1]  = " : TEXCOORD%s",
-		[vid.EAT_TCOORD2+1]  = " : TEXCOORD%s",
-		[vid.EAT_TCOORD3+1]  = " : TEXCOORD%s",
-
+		[vid.EAT_TANGENT+1]  = " : TANGENT%s",
+		[vid.EAT_BINORMAL+1] = " : BINORMAL%s",
 	}
 	local idxStr = ""
 	if specIdx ~= nil then
@@ -518,14 +510,12 @@ function GenInfo(vtype, pass, perpixel, lightcnt)
 		ti = ti + 1
 	end
 	if bit.band(components, vid.EVC_TBN) ~= 0 then
-		atype = vid.EAT_TCOORD2
-		attribParams[atype] = GetAttribParams(atype, ti)
+		atype = vid.EAT_TANGENT
+		attribParams[atype] = GetAttribParams(atype)
 		attribs = bit.bor(attribs, attribParams[atype].Mask)
-		ti = ti + 1
-		atype = vid.EAT_TCOORD3
-		attribParams[atype] = GetAttribParams(atype, ti)
+		atype = vid.EAT_BINORMAL
+		attribParams[atype] = GetAttribParams(atype)
 		attribs = bit.bor(attribs, attribParams[atype].Mask)
-		ti = ti + 1
 	end
 
 	ShaderGenInfo.Attribs.Mask = attribs
@@ -543,8 +533,6 @@ function GenInfo(vtype, pass, perpixel, lightcnt)
 			local animated = false
 			local tchnl = pass.Layers[i]:getTexCoordChannel()
 			if (tchnl==1 and bit.band(ShaderGenInfo.Attribs.Mask, vid.EAF_TCOORD1)==0)
-					or (tchnl==2 and bit.band(ShaderGenInfo.Attribs.Mask, vid.EAF_TCOORD2)==0)
-					or (tchnl==3 and bit.band(ShaderGenInfo.Attribs.Mask, vid.EAF_TCOORD3)==0)
 				 then
 				tchnl=0
 			end
@@ -776,8 +764,8 @@ function AppendVertShaderBody(vtype, pass, perpixel, lightcnt)
 
 	if vnormal and perpixel then
 		if HasTBN(vtype) and hasNMap then
-			text = text..string.format("    VEC3 tangent  = VS_IN("..Attribs.TCoord2..").xyz;\n")
-			text = text..string.format("    VEC3 binormal = VS_IN("..Attribs.TCoord3..").xyz;\n")
+			text = text..string.format("    VEC3 tangent  = VS_IN("..Attribs.Tangent..").xyz;\n")
+			text = text..string.format("    VEC3 binormal = VS_IN("..Attribs.Binormal..").xyz;\n")
 			text = text..string.format("    tangent  = MUL(tangent,"..Uniforms.NormalMatrix..");\n")
 			text = text..string.format("    binormal = MUL(binormal,"..Uniforms.NormalMatrix..");\n")
 			text = text..string.format("    VS_OUT(EyeVec) = VEC3(\n", i)

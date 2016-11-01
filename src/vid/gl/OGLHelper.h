@@ -196,12 +196,10 @@ static u32 OGLAttribLocations[E_ATTRIB_TYPE_COUNT] =
 	0,  //EAF_POSITION,
 	2,  //EAF_NORMAL,
 	3,  //EAF_COLOR,
-	6,  //EAF_TANGENT,
-	7,  //EAF_BINORMAL,
 	8,  //EAF_TCOORD0,
 	9,  //EAF_TCOORD1,
-	10, //EAF_TCOORD2,
-	11, //EAF_TCOORD3,
+	6,  //EAF_TANGENT,
+	7,  //EAF_BINORMAL,
 };
 
 #define getOGLAttribLocation(attrib) \
@@ -283,13 +281,13 @@ MY_FORCEINLINE void setupGLAttributes(
 	else
 	{ MY_DISABLE_ATTRIB_ARRAY(index) }
 
-	index = getOGLAttribLocation(EAT_TCOORD2);
+	index = getOGLAttribLocation(EAT_TANGENT);
 	if (type5 != GL_NONE)
 	{ MY_ENABLE_ATTRIB_ARRAY(index, size5, type5, GL_FALSE, stride5, ptr5) }
 	else
 	{ MY_DISABLE_ATTRIB_ARRAY(index) }
 
-	index = getOGLAttribLocation(EAT_TCOORD3);
+	index = getOGLAttribLocation(EAT_BINORMAL);
 	if (type6 != GL_NONE)
 	{ MY_ENABLE_ATTRIB_ARRAY(index, size6, type6, GL_FALSE, stride6, ptr6) }
 	else
@@ -352,28 +350,6 @@ MY_FORCEINLINE void setupGLAttributes(
 	else
 	{
 		MY_DISABLE_CLIENT_STATE(4, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE1))
-	}
-
-	if (type5 != GL_NONE)
-	{
-		glClientActiveTexture(GL_TEXTURE2);
-		MY_ENABLE_CLIENT_STATE(5, GL_TEXTURE_COORD_ARRAY, (void)0)
-		glTexCoordPointer(size5, type5, stride5, ptr5);
-	}
-	else
-	{
-		MY_DISABLE_CLIENT_STATE(5, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE2))
-	}
-
-	if (type6 != GL_NONE)
-	{
-		glClientActiveTexture(GL_TEXTURE3);
-		MY_ENABLE_CLIENT_STATE(6, GL_TEXTURE_COORD_ARRAY, (void)0)
-		glTexCoordPointer(size6, type6, stride6, ptr6);
-	}
-	else
-	{
-		MY_DISABLE_CLIENT_STATE(6, GL_TEXTURE_COORD_ARRAY, glClientActiveTexture(GL_TEXTURE3))
 	}
 #endif // GL_VERSION_1_2
 
