@@ -118,11 +118,13 @@ local function _ShaderGenGetSourcesFor(vertex_type, render_pass, lights_count)
 		sources.Vertex = {}
 		sources.Vertex.Ver = _ShaderGen[driver_type].VertexShaderVer
 		sources.Vertex.Source = _GenShaderHeader().._ShaderGen[driver_type].GenVertexShader(
-			vertex_type, render_pass, perpixel, lights_count, ShaderGenInfo.Uniforms.VertMask)
+			vertex_type, render_pass, perpixel, lights_count,
+			ShaderGenInfo.Uniforms.VertMask, ShaderGenInfo.Attribs, ShaderGenInfo.Varyings)
 		sources.Pixel = {}
 		sources.Pixel.Ver = _ShaderGen[driver_type].PixelShaderVer
 		sources.Pixel.Source = _GenShaderHeader().._ShaderGen[driver_type].GenPixelShader(
-			vertex_type, render_pass, perpixel, lights_count, ShaderGenInfo.Uniforms.FragMask)
+			vertex_type, render_pass, perpixel, lights_count,
+			ShaderGenInfo.Uniforms.FragMask, ShaderGenInfo.Attribs, ShaderGenInfo.Varyings)
 	end
 	return sources
 end

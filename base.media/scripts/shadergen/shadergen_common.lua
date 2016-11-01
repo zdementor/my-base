@@ -176,10 +176,10 @@ function AppendDefines(vtype, pass, perpixel, lightcnt, uniforms)
 	return text
 end
 
-function AppendAttributes()
+function AppendAttributes(attribs)
 	local text=""
-	local aParams = ShaderGenInfo.Attribs.Params
-	local aMask = ShaderGenInfo.Attribs.Mask
+	local aParams = attribs.Params
+	local aMask = attribs.Mask
 	local aDecl = "ATTR "
 	for atype = 0, vid.E_ATTRIB_TYPE_COUNT-1 do	
 		if bit.band(aMask, vid.getAttribFlag(atype)) ~= 0 then
@@ -189,7 +189,7 @@ function AppendAttributes()
 	return text
 end
 
-function AppendUniforms(vtype, pass, perpixel, lightcnt, uniforms)
+function AppendUniforms(uniforms, lightcnt)
 
 	local text = ""
 	local ogl = MyDriver:getDriverFamily() == vid.EDF_OPENGL
@@ -263,65 +263,14 @@ function AppendVaryingColorSpec(n)
 	return string.format(" : COLOR%d", n);
 end
 
-function AppendVarying(vtype, pass, perpixel, lightcnt, uniforms)
+function AppendVaryings(varyings)
 	local text = ""
-	local components = vid.getVertexComponents(vtype)
-	local light = IsLighting(pass, lightcnt)
-	local vnormal = HasNormal(vtype)
-	local vcolor = HasColor(vtype)
-	local mcolor = IsCustomVertexColor(vtype, pass)
-	local hasNMap = HasNMap(pass)
-	local fogging = IsFogging(pass)
-
-	if vcolor or (light and vnormal and perpixel == false) or mcolor then
-		text = text.."VARY VEC4 Color"..AppendVaryingColorSpec(0)..";\n"	
-	end	
-	if light and vnormal and perpixel == false then
-		text = text.."VARY VEC3 Specular"..AppendVaryingColorSpec(1)..";\n"
+	local sortedVaryings = {}
+	for k, v in pairs(varyings) do
+		sortedVaryings[v.Idx] = v
 	end
-
-	local need_pos = false
-	if fogging then
-		need_pos = true
-	end
-
-	local tii = 0
-
-	for i = 1, table.getn(ShaderGenInfo.TCoords) do
-		if ShaderGenInfo.TCoords[i].VarName then
-			if ShaderGenInfo.TCoords[i].VertValueRefIdx == nil then
-				text = text..string.format("VARY VEC4 TexCoord%d"..AppendVaryingVectorSpec(tii)..";\n", tii)
-				tii = tii + 1
-			end
-		end
-	end
-	
-	if light and vnormal and perpixel then
-		if hasNMap == false then
-			text = text..string.format("VARY VEC3 Normal"..AppendVaryingVectorSpec(tii)..";\n")
-			tii = tii + 1
-		end
-		text = text..string.format("VARY VEC3 EyeVec"..AppendVaryingVectorSpec(tii)..";\n")
-		tii = tii + 1
-		need_pos = true
-	elseif hasNMap and perpixel then
-		text = text..string.format("VARY VEC3 EyeVec"..AppendVaryingVectorSpec(tii)..";\n")
-		tii = tii + 1
-	end
-	if need_pos then
-		text = text..string.format("VARY VEC4 Position"..AppendVaryingVectorSpec(tii)..";\n")
-		tii = tii + 1
-	end
-	
-	if light and hasNMap and HasTBN(vtype) and perpixel then
-		if pass:getLightingMode() ~= vid.ELM_NONE then
-			for i = 0, lightcnt - 1 do
-				if i < 3 then
-					text = text..string.format("VARY VEC4 LightVec%d"..AppendVaryingVectorSpec(tii)..";\n", i)
-					tii = tii + 1
-				end
-			end
-		end
+	for k, v in pairs(sortedVaryings) do
+		text = text..string.format("VARY "..v.Type.." "..v.VarName..v.Spec..";\n")
 	end
 	return text
 end
@@ -467,6 +416,7 @@ function GenInfo(vtype, pass, perpixel, lightcnt)
 	local psh	= ""
 	local light = IsLighting(pass, lightcnt)
 	local vnormal = HasNormal(vtype)
+	local vcolor = HasColor(vtype)
 	local mcolor = IsCustomVertexColor(vtype, pass)
 	local hasNMap = HasNMap(pass)
 	local fogging = IsFogging(pass)
@@ -477,7 +427,7 @@ function GenInfo(vtype, pass, perpixel, lightcnt)
 	local components = vid.getVertexComponents(vtype)
 
 	ShaderGenInfo = {}
-	
+
 	-- attributes
 
 	ShaderGenInfo.Attribs = {}
@@ -718,6 +668,105 @@ function GenInfo(vtype, pass, perpixel, lightcnt)
 	ShaderGenInfo.Uniforms.VertMask = vertUniforms
 	ShaderGenInfo.Uniforms.FragMask = fragUniforms
 	ShaderGenInfo.Uniforms.Mask = bit.bor(ShaderGenInfo.Uniforms.VertMask, ShaderGenInfo.Uniforms.FragMask)
+
+	-- varyings
+
+	local varyings = {}
+
+	local varyIdx = 1
+
+	if vcolor or (light and vnormal and perpixel == false) or mcolor then
+		local v = {Idx = varyIdx, Spec=""}
+		v.Type = "VEC4"	
+		v.VarName = "Color"
+		v.Spec = AppendVaryingColorSpec(0)
+		varyings.Color = v
+		varyIdx = varyIdx + 1
+	end	
+	if light and vnormal and perpixel == false then
+		local v = {Idx = varyIdx, Spec=""}
+		v.Type = "VEC3"	
+		v.VarName = "Specular"
+		v.Spec = AppendVaryingColorSpec(1)
+		varyings.Specular = v
+		varyIdx = varyIdx + 1
+	end	
+
+	local need_pos = false
+	if fogging then
+		need_pos = true
+	end
+
+	local tii = 0
+
+	for i = 1, table.getn(ShaderGenInfo.TCoords) do
+		if ShaderGenInfo.TCoords[i].VarName then
+			if ShaderGenInfo.TCoords[i].VertValueRefIdx == nil then
+				local v = {Idx = varyIdx, Spec=""}
+				v.Type = "VEC4"	
+				v.VarName = string.format("TexCoord%d", tii)
+				v.Spec = AppendVaryingVectorSpec(tii)
+				varyings[string.format("TexCoord%d", tii)] = v
+				varyIdx = varyIdx + 1
+				tii = tii + 1
+			end
+		end
+	end
+	
+	if light and vnormal and perpixel then
+		if hasNMap == false then
+			local v = {Idx = varyIdx, Spec=""}
+			v.Type = "VEC3"	
+			v.VarName = "Normal"
+			v.Spec = AppendVaryingVectorSpec(tii)
+			varyings.Normal = v
+			varyIdx = varyIdx + 1
+			tii = tii + 1
+		end
+		local v = {Idx = varyIdx, Spec=""}
+		v.Type = "VEC3"	
+		v.VarName = "EyeVec"
+		v.Spec = AppendVaryingVectorSpec(tii)
+		varyings.EyeVec = v
+		varyIdx = varyIdx + 1
+		tii = tii + 1
+		need_pos = true
+	elseif hasNMap and perpixel then
+		local v = {Idx = varyIdx, Spec=""}
+		v.Type = "VEC3"	
+		v.VarName = "EyeVec"
+		v.Spec = AppendVaryingVectorSpec(tii)
+		varyings.EyeVec = v
+		varyIdx = varyIdx + 1
+		tii = tii + 1
+	end
+	if need_pos then
+		local v = {Idx = varyIdx, Spec=""}
+		v.Type = "VEC4"	
+		v.VarName = "Position"
+		v.Spec = AppendVaryingVectorSpec(tii)
+		varyings.Position = v
+		varyIdx = varyIdx + 1
+		tii = tii + 1
+	end
+	
+	if light and hasNMap and HasTBN(vtype) and perpixel then
+		if pass:getLightingMode() ~= vid.ELM_NONE then
+			for i = 0, lightcnt - 1 do
+				if i < 3 then
+					local v = {Idx = varyIdx, Spec=""}
+					v.Type = "VEC4"	
+					v.VarName = string.format("LightVec%d", i)
+					v.Spec = AppendVaryingVectorSpec(tii)
+					varyings[string.format("LightVec%d", i)] = v
+					varyIdx = varyIdx + 1
+					tii = tii + 1
+				end
+			end
+		end
+	end
+
+	ShaderGenInfo.Varyings = varyings
 
 end
 
