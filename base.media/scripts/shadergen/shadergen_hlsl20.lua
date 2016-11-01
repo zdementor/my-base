@@ -1,5 +1,5 @@
 
-function HLSL20GenVertexShader(vtype, pass, perpixel, lightcnt, uniforms)
+function HLSL20GenVertexShader(vtype, pass, perpixel, lightcnt, uniforms, attribs, varyings)
 
 	local text = ""
 	local components = vid.getVertexComponents(vtype)
@@ -7,15 +7,15 @@ function HLSL20GenVertexShader(vtype, pass, perpixel, lightcnt, uniforms)
 	local aMask = ShaderGenInfo.Attribs.Mask
 	
 	text = text..AppendDefines(vtype, pass, perpixel, lightcnt, uniforms)
-	text = text..AppendUniforms(vtype, pass, perpixel, lightcnt, uniforms)
+	text = text..AppendUniforms(uniforms, lightcnt)
 	text = text.."struct VS_INPUT\n"
 	text = text.."{\n"
-	text = text..AppendAttributes()
+	text = text..AppendAttributes(attribs)
 	text = text.."};\n\n"
 	text = text.."struct VS_OUTPUT\n"
 	text = text.."{\n"
 	text = text.."VARY VEC4 PositionMVP : POSITION;\n"
-	text = text..AppendVarying(vtype, pass, perpixel, lightcnt, uniforms)
+	text = text..AppendVaryings(varyings)
 	text = text.."};\n\n"
 	text = text.."VS_OUTPUT main(VS_INPUT input)\n"
 	text = text.."{\n"
@@ -28,15 +28,15 @@ function HLSL20GenVertexShader(vtype, pass, perpixel, lightcnt, uniforms)
 	return text
 end
 	
-function HLSL20GenPixelShader(vtype, pass, perpixel, lightcnt, uniforms)
+function HLSL20GenPixelShader(vtype, pass, perpixel, lightcnt, uniforms, attribs, varyings)
 
 	local text = ""
 
 	text = text..AppendDefines(vtype, pass, perpixel, lightcnt, uniforms)
-	text = text..AppendUniforms(vtype, pass, perpixel, lightcnt, uniforms)
+	text = text..AppendUniforms(uniforms, lightcnt)
 	text = text.."struct PS_INPUT\n"
 	text = text.."{\n"
-	text = text..AppendVarying(vtype, pass, perpixel, lightcnt, uniforms)
+	text = text..AppendVaryings(varyings)
 	text = text.."};\n\n"
 	text = text.."struct PS_OUTPUT\n"
 	text = text.."{\n"

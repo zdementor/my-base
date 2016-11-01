@@ -102,7 +102,9 @@ bool COpenGLGPUProgram::recreate(u32 uniforms, u32 attributes, u32 lights_count,
 	for (u32 i = 0; i < E_ATTRIB_TYPE_COUNT; i++)
 	{
 		if (attributes & vid::AttribTypeBits[i])
-			glBindAttribLocation(m_Program.u, i, getAttribReadableName((E_ATTRIB_TYPE)i));
+			glBindAttribLocation(m_Program.u,
+				getOGLAttribLocation((E_ATTRIB_TYPE)i),
+				getAttribReadableName((E_ATTRIB_TYPE)i));
 	}
 
 	glLinkProgram(m_Program.u);

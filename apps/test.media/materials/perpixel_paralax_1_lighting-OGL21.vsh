@@ -2,8 +2,8 @@
 
 attribute vec4 aPosition;
 attribute vec2 aTCoord0;
-attribute vec3 aTCoord2;
-attribute vec3 aTCoord3;
+attribute vec3 aTangent;
+attribute vec3 aBinormal;
 attribute vec3 aNormal;
 
 uniform mat4 uModelViewProjMatrix;
@@ -23,8 +23,8 @@ void main(void)
     vec4 position = uModelViewMatrix * aPosition;
     vec3 eyeVec = -position.xyz;
 
-    Tangent  = uNormalMatrix * aTCoord2.xyz;
-	Binormal = uNormalMatrix * aTCoord3.xyz;
+    Tangent  = uNormalMatrix * aTangent.xyz;
+	Binormal = uNormalMatrix * aBinormal.xyz;
 	Normal   = uNormalMatrix * aNormal;
 	EyeVec = vec3(
 		dot(eyeVec, Tangent),

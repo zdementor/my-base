@@ -897,8 +897,8 @@ enum E_ATTRIB_TYPE
 	EAT_COLOR,
 	EAT_TCOORD0,
 	EAT_TCOORD1,
-	EAT_TCOORD2,
-	EAT_TCOORD3,
+	EAT_TANGENT,
+	EAT_BINORMAL,
 
 	E_ATTRIB_TYPE_COUNT,
 	E_ATTRIB_TYPE_FORCE_32_BIT = 0xffffffff
@@ -913,8 +913,8 @@ enum E_ATTRIB_FLAG
 	EAF_COLOR    = 1 << 2,
 	EAF_TCOORD0  = 1 << 3,
 	EAF_TCOORD1  = 1 << 4,
-	EAF_TCOORD2  = 1 << 5,
-	EAF_TCOORD3  = 1 << 6,	
+	EAF_TANGENT  = 1 << 5,
+	EAF_BINORMAL = 1 << 6,
 };
 
 //----------------------------------------------------------------------------
@@ -926,8 +926,8 @@ static u32 AttribTypeBits[E_ATTRIB_TYPE_COUNT] =
 	EAF_COLOR,
 	EAF_TCOORD0,
 	EAF_TCOORD1,
-	EAF_TCOORD2,
-	EAF_TCOORD3,
+	EAF_TANGENT,
+	EAF_BINORMAL,
 };
 
 //----------------------------------------------------------------------------
@@ -939,8 +939,8 @@ static const c8* AttribTypeNames[E_ATTRIB_TYPE_COUNT] =
 	"EAT_COLOR",
 	"EAT_TCOORD0",
 	"EAT_TCOORD1",
-	"EAT_TCOORD2",
-	"EAT_TCOORD3",
+	"EAT_TANGENT",
+	"EAT_BINORMAL",
 };
 
 static const c8* AttribTypeReadableNames[E_ATTRIB_TYPE_COUNT] =
@@ -950,8 +950,8 @@ static const c8* AttribTypeReadableNames[E_ATTRIB_TYPE_COUNT] =
 	"aColor",
 	"aTCoord0",
 	"aTCoord1",
-	"aTCoord2",
-	"aTCoord3",
+	"aTangent",
+	"aBinormal",
 };
 
 MY_FORCEINLINE E_ATTRIB_FLAG getAttribFlag(E_ATTRIB_TYPE type)
