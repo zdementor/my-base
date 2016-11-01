@@ -714,13 +714,10 @@ void CD3D9Driver::_setVertexType(E_VERTEX_TYPE newType)
     if (newType != m_CurrentVertexType)
     {
 		HRESULT hr;
-#if 0
-		IDirect3DVertexDeclaration9 *d3dvdecl =  m_VertexDecls[newType]
+
+		IDirect3DVertexDeclaration9 *d3dvdecl =  m_VertexDecls[newType];
 		hr = m_D3DDevice->SetVertexDeclaration(d3dvdecl);
-#else
-		DWORD d3dvtype = convertToD3D9VertexType(newType);
-		hr = m_D3DDevice->SetFVF(d3dvtype);
-#endif
+
 		if (FAILED(hr))
             LOGGER.logErr("Could not set Vertex Type %s",
 				vid::getVertexTypeName(newType));

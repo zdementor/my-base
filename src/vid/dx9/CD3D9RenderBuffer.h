@@ -166,7 +166,7 @@ public:
 			{
 				m_Device->CreateVertexBuffer(
 					size * sizeof(T), D3DUSAGE_WRITEONLY,	
-					convertToD3D9VertexType(T::Type),
+					0,
 					D3DPOOL_DEFAULT, &m_Buffer, NULL);
 			}
 			catch(...)
