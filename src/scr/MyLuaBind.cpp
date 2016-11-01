@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 10/30/16 00:12:32.
+** Generated automatically by tolua++-1.0.92 on 11/01/16 14:22:15.
 */
 
 #ifndef __cplusplus
@@ -60014,6 +60014,8 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"EAT_POSITION",vid::EAT_POSITION);
   tolua_constant(tolua_S,"EAT_NORMAL",vid::EAT_NORMAL);
   tolua_constant(tolua_S,"EAT_COLOR",vid::EAT_COLOR);
+  tolua_constant(tolua_S,"EAT_TANGENT",vid::EAT_TANGENT);
+  tolua_constant(tolua_S,"EAT_BINORMAL",vid::EAT_BINORMAL);
   tolua_constant(tolua_S,"EAT_TCOORD0",vid::EAT_TCOORD0);
   tolua_constant(tolua_S,"EAT_TCOORD1",vid::EAT_TCOORD1);
   tolua_constant(tolua_S,"EAT_TCOORD2",vid::EAT_TCOORD2);
@@ -60022,6 +60024,8 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"EAF_POSITION",vid::EAF_POSITION);
   tolua_constant(tolua_S,"EAF_NORMAL",vid::EAF_NORMAL);
   tolua_constant(tolua_S,"EAF_COLOR",vid::EAF_COLOR);
+  tolua_constant(tolua_S,"EAF_TANGENT",vid::EAF_TANGENT);
+  tolua_constant(tolua_S,"EAF_BINORMAL",vid::EAF_BINORMAL);
   tolua_constant(tolua_S,"EAF_TCOORD0",vid::EAF_TCOORD0);
   tolua_constant(tolua_S,"EAF_TCOORD1",vid::EAF_TCOORD1);
   tolua_constant(tolua_S,"EAF_TCOORD2",vid::EAF_TCOORD2);

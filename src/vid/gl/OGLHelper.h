@@ -196,6 +196,8 @@ static u32 OGLAttribLocations[E_ATTRIB_TYPE_COUNT] =
 	0,  //EAF_POSITION,
 	2,  //EAF_NORMAL,
 	3,  //EAF_COLOR,
+	6,  //EAF_TANGENT,
+	7,  //EAF_BINORMAL,
 	8,  //EAF_TCOORD0,
 	9,  //EAF_TCOORD1,
 	10, //EAF_TCOORD2,
