@@ -20,7 +20,7 @@ function HLSL20GenVertexShader(vtype, pass, perpixel, lightcnt, uniforms, attrib
 	text = text.."VS_OUTPUT main(VS_INPUT input)\n"
 	text = text.."{\n"
 	text = text.."    VS_OUTPUT output;\n\n"
-	text = text..AppendVertShaderBody(vtype, pass, perpixel, lightcnt)
+	text = text..AppendVertShaderBody(vtype, pass, perpixel, lightcnt, uniforms, attribs, varyings)
 	text = text.."    output.PositionMVP  = positionMVP;\n"
 	text = text.."    return output;\n"	
 	text = text.."}\n"
@@ -45,7 +45,7 @@ function HLSL20GenPixelShader(vtype, pass, perpixel, lightcnt, uniforms, attribs
 	text = text.."PS_OUTPUT main(PS_INPUT input)\n"
 	text = text.."{\n"
 	text = text.."    PS_OUTPUT output;\n\n"
-	text = text..AppendPixelShaderBody(vtype, pass, perpixel, lightcnt)
+	text = text..AppendPixelShaderBody(vtype, pass, perpixel, lightcnt, uniforms, attribs, varyings)
 	text = text.."    return output;\n"	
 	text = text.."}\n"
 

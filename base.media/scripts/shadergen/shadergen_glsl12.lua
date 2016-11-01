@@ -11,7 +11,7 @@ function GLSL12GenVertexShader(vtype, pass, perpixel, lightcnt, uniforms, attrib
 	text = text.."\n"
 	text = text.."void main(void)\n"
 	text = text.."{\n"
-	text = text..AppendVertShaderBody(vtype, pass, perpixel, lightcnt)	
+	text = text..AppendVertShaderBody(vtype, pass, perpixel, lightcnt, uniforms, attribs, varyings)
 	text = text.."    gl_Position = positionMVP;\n"	
 	text = text.."}\n"
 
@@ -28,7 +28,7 @@ function GLSL12GenPixelShader(vtype, pass, perpixel, lightcnt, uniforms, attribs
 	text = text.."\n"
 	text = text.."void main(void)\n"
 	text = text.."{\n"
-	text = text..AppendPixelShaderBody(vtype, pass, perpixel, lightcnt)
+	text = text..AppendPixelShaderBody(vtype, pass, perpixel, lightcnt, uniforms, attribs, varyings)
 	text = text.."}\n"
 
 	return text
