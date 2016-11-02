@@ -6,7 +6,7 @@ function HLSL20GenVertexShader(vtype, pass, perpixel, lightcnt, uniforms, attrib
 	local aParams = ShaderGenInfo.Attribs.Params
 	local aMask = ShaderGenInfo.Attribs.Mask
 	
-	text = text..AppendDefines(vtype, pass, perpixel, lightcnt, uniforms)
+	text = text..AppendDefines(true, vtype, pass, perpixel, lightcnt, uniforms)
 	text = text..AppendUniforms(uniforms, lightcnt)
 	text = text.."struct VS_INPUT\n"
 	text = text.."{\n"
@@ -32,7 +32,7 @@ function HLSL20GenPixelShader(vtype, pass, perpixel, lightcnt, uniforms, attribs
 
 	local text = ""
 
-	text = text..AppendDefines(vtype, pass, perpixel, lightcnt, uniforms)
+	text = text..AppendDefines(false, vtype, pass, perpixel, lightcnt, uniforms)
 	text = text..AppendUniforms(uniforms, lightcnt)
 	text = text.."struct PS_INPUT\n"
 	text = text.."{\n"

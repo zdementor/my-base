@@ -3,7 +3,7 @@ function GLSL12GenVertexShader(vtype, pass, perpixel, lightcnt, uniforms, attrib
 
 	local text = "#version 120\n\n"
 
-	text = text..AppendDefines(vtype, pass, perpixel, lightcnt, uniforms)
+	text = text..AppendDefines(true, vtype, pass, perpixel, lightcnt, uniforms)
 	text = text..AppendUniforms(uniforms, lightcnt)
 	text = text..AppendAttributes(attribs)
 	text = text.."\n"
@@ -22,7 +22,7 @@ function GLSL12GenPixelShader(vtype, pass, perpixel, lightcnt, uniforms, attribs
 
 	local text = "#version 120\n\n"
 
-	text = text..AppendDefines(vtype, pass, perpixel, lightcnt, uniforms)
+	text = text..AppendDefines(false, vtype, pass, perpixel, lightcnt, uniforms)
 	text = text..AppendUniforms(uniforms, lightcnt)
 	text = text..AppendVaryings(varyings)
 	text = text.."\n"
