@@ -1,26 +1,23 @@
 
-function HLSL20GenVertexShader(vtype, pass, perpixel, lightcnt, uniforms, attribs, varyings)
+function HLSL20GenVertexShader(info, pass)
 
 	local text = ""
-	local components = vid.getVertexComponents(vtype)
-	local aParams = ShaderGenInfo.Attribs.Params
-	local aMask = ShaderGenInfo.Attribs.Mask
 	
-	text = text..AppendDefines(true, vtype, pass, perpixel, lightcnt, uniforms)
-	text = text..AppendUniforms(uniforms, lightcnt)
+	text = text..AppendDefines(info, true)
+	text = text..AppendUniforms(info, true)
 	text = text.."struct VS_INPUT\n"
 	text = text.."{\n"
-	text = text..AppendAttributes(attribs)
+	text = text..AppendAttributes(info)
 	text = text.."};\n\n"
 	text = text.."struct VS_OUTPUT\n"
 	text = text.."{\n"
 	text = text.."VARY VEC4 PositionMVP : POSITION;\n"
-	text = text..AppendVaryings(varyings)
+	text = text..AppendVaryings(info)
 	text = text.."};\n\n"
 	text = text.."VS_OUTPUT main(VS_INPUT input)\n"
 	text = text.."{\n"
 	text = text.."    VS_OUTPUT output;\n\n"
-	text = text..AppendVertShaderBody(vtype, pass, perpixel, lightcnt, uniforms, attribs, varyings)
+	text = text..AppendVertShaderBody(info, pass)
 	text = text.."    output.PositionMVP  = positionMVP;\n"
 	text = text.."    return output;\n"	
 	text = text.."}\n"
@@ -28,24 +25,27 @@ function HLSL20GenVertexShader(vtype, pass, perpixel, lightcnt, uniforms, attrib
 	return text
 end
 	
-function HLSL20GenPixelShader(vtype, pass, perpixel, lightcnt, uniforms, attribs, varyings)
+function HLSL20GenPixelShader(info, pass)
 
 	local text = ""
 
-	text = text..AppendDefines(false, vtype, pass, perpixel, lightcnt, uniforms)
-	text = text..AppendUniforms(uniforms, lightcnt)
+	text = text..AppendDefines(info, false)
+	text = text..AppendUniforms(info, false)
 	text = text.."struct PS_INPUT\n"
 	text = text.."{\n"
-	text = text..AppendVaryings(varyings)
+	text = text..AppendVaryings(info)
 	text = text.."};\n\n"
 	text = text.."struct PS_OUTPUT\n"
 	text = text.."{\n"
 	text = text.."    VEC4 FragData0 : COLOR0;\n"
+	if IsDS() then
+		text = text.."    VEC4 FragData1 : COLOR0;\n"
+	end
 	text = text.."};\n\n"	
 	text = text.."PS_OUTPUT main(PS_INPUT input)\n"
 	text = text.."{\n"
 	text = text.."    PS_OUTPUT output;\n\n"
-	text = text..AppendPixelShaderBody(vtype, pass, perpixel, lightcnt, uniforms, attribs, varyings)
+	text = text..AppendPixelShaderBody(info, pass)
 	text = text.."    return output;\n"	
 	text = text.."}\n"
 

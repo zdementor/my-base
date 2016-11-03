@@ -1,142 +1,34 @@
 
-Uniforms =
-{
-	GlobalAmbientColor	= vid.getUniformReadableName(vid.EUT_GLOBAL_AMBIENT_COLOR),
-	MatColors			= vid.getUniformReadableName(vid.EUT_MATERIAL_COLORS),
-	MatShininess		= vid.getUniformReadableName(vid.EUT_MATERIAL_SHININESS),
-	Lighting			= vid.getUniformReadableName(vid.EUT_LIGHTING),
-	ModelViewProjMatrix	= vid.getUniformReadableName(vid.EUT_MODEL_VIEW_PROJ_MATRIX),
-	ModelViewMatrix		= vid.getUniformReadableName(vid.EUT_MODEL_VIEW_MATRIX),
-	ModelMatrix			= vid.getUniformReadableName(vid.EUT_MODEL_MATRIX),
-	NormalMatrix		= vid.getUniformReadableName(vid.EUT_NORMAL_MATRIX),
-	Tex =
-	{
-		vid.getUniformReadableName(vid.EUT_TEXTURE0),
-		vid.getUniformReadableName(vid.EUT_TEXTURE1),
-		vid.getUniformReadableName(vid.EUT_TEXTURE2),
-		vid.getUniformReadableName(vid.EUT_TEXTURE3),
-	},
-	TexMatrix =
-	{
-		vid.getUniformReadableName(vid.EUT_TEXTURE_MATRIX0),
-		vid.getUniformReadableName(vid.EUT_TEXTURE_MATRIX1),
-		vid.getUniformReadableName(vid.EUT_TEXTURE_MATRIX2),
-		vid.getUniformReadableName(vid.EUT_TEXTURE_MATRIX3),
-	},
-	FogParams = vid.getUniformReadableName(vid.EUT_FOG_PARAMS),
-	FogColor = vid.getUniformReadableName(vid.EUT_FOG_COLOR),
-}
-
-VARY_COL   = 1
-VARY_SPEC  = 2
-VARY_TC0   = 3
-VARY_TC1   = 4
-VARY_TC2   = 5
-VARY_NRM   = 6
-VARY_EYE   = 7
-VARY_POS   = 8
-VARY_LVEC0 = 9
-VARY_LVEC1 = 10
-VARY_LVEC2 = 11
-
-Varyings =
-{
-	[VARY_COL  ] = "vCol",
-	[VARY_SPEC ] = "vSpec",
-	[VARY_TC0  ] = "vTC0",
-	[VARY_TC1  ] = "vTC1",
-	[VARY_TC2  ] = "vTC2",
-	[VARY_NRM  ] = "vNrm",
-	[VARY_EYE  ] = "vEye",
-	[VARY_POS  ] = "vPos",
-	[VARY_LVEC0] = "vLVec0",
-	[VARY_LVEC1] = "vLVec1",
-	[VARY_LVEC2] = "vLVec2",
-}
-
-Attribs =
-{
-	Position  = vid.getAttribReadableName(vid.EAT_POSITION),
-	Normal    = vid.getAttribReadableName(vid.EAT_NORMAL  ),
-	Color     = vid.getAttribReadableName(vid.EAT_COLOR   ),
-	TCoord0   = vid.getAttribReadableName(vid.EAT_TCOORD0 ),
-	TCoord1   = vid.getAttribReadableName(vid.EAT_TCOORD1 ),
-	Tangent   = vid.getAttribReadableName(vid.EAT_TANGENT ),
-	Binormal  = vid.getAttribReadableName(vid.EAT_BINORMAL),
-}
-
-Tokens =
-{
-	Tangent = "T",
-	Binormal= "B",
-	Normal  = "N",
-}
-
-TexFlags =
-{
-	vid.EUF_TEXTURE0,
-	vid.EUF_TEXTURE1,
-	vid.EUF_TEXTURE2,
-	vid.EUF_TEXTURE3,
-}
-
-TexMatrixFlags =
-{
-	vid.EUF_TEXTURE_MATRIX0,
-	vid.EUF_TEXTURE_MATRIX1,
-	vid.EUF_TEXTURE_MATRIX2,
-	vid.EUF_TEXTURE_MATRIX3,
-}
-
-function HasNormal(vtype)
-	local components = vid.getVertexComponents(vtype)
-    if bit.band(components, vid.EVC_NRM) ~= 0 then
-		return true
+function FetchTexColTbl(pass, textype)
+	local texColTbl = {}
+	local tblIdx = 1
+	for i = 0, vid.MY_MATERIAL_MAX_LAYERS-1 do
+		local texture = pass.Layers[i]:getTexture()
+		local rgb_scale =  pass.Layers[i]:getTexRGBScale()
+		if texture ~= nil and pass.Layers[i]:getType() == textype then
+			local colstr = ""
+			if rgb_scale == 2 then
+				colstr = string.format("VEC4(tcol%d.rgb*2.0,tcol%d.a)", i, i)
+			elseif rgb_scale == 3 then
+				colstr = string.format("VEC4(tcol%d.rgb*4.0,tcol%d.a)", i, i)
+			else
+				colstr = string.format("tcol%d", i)
+			end
+			texColTbl[tblIdx] = colstr
+			tblIdx = tblIdx + 1
+		end
 	end
-	return false
+	return texColTbl
 end
 
-function HasTBN(vtype)
-	local components = vid.getVertexComponents(vtype)
-    if bit.band(components, vid.EVC_TBN) ~= 0 then
-		return true
-	end
-	return false
-end
-
-function HasColor(vtype)
-	local components = vid.getVertexComponents(vtype)
-    if bit.band(components, vid.EVC_COL) ~= 0 then
-		return true
-	end
-	return false
-end
-
-function IsFogging(pass)
-	if pass:getFlag(vid.EMF_FOG_ENABLE) then
-		return true
-	end
-	return false
-end
-
-function IsLighting(pass, lightcnt)
-	if lightcnt == nil then
-		return false
-	end
-	if lightcnt < 1 then
-		return false
-	end
-	if pass:isLighting() then
-		return true
-	end
-	return false
-end
-
-function AppendDefines(vsh,vtype, pass, perpixel, lightcnt, uniforms)
-
+function AppendDefines(info, vsh)
 	local text = ""
-	local hasNMap = HasNMap(pass)
-	local fogging = IsFogging(pass)
+	local uniforms = 0
+	if vsh then
+		uniforms = info.Uniforms.VertMask
+	else
+		uniforms = info.Uniforms.FragMask
+	end
 
 	if MyDriver:getDriverFamily() == vid.EDF_OPENGL then
 		text = text.."#define FLOAT float\n"
@@ -198,13 +90,13 @@ function AppendDefines(vsh,vtype, pass, perpixel, lightcnt, uniforms)
 		text = text.."\n"
 	end
 
-	if hasNMap and not vsh then
+	if info.hasNMap and not vsh then
 		text = text.."#define PARALAX_SCALE 0.03\n"
 		text = text.."#define PARALAX_BIAS -PARALAX_SCALE/2.0\n"
 		text = text.."\n"
 	end
 
-	if fogging then
+	if info.fogging then
 		text = text.."#define FOG_START(fog)    fog.x\n"
 		text = text.."#define FOG_END(fog)      fog.y\n"
 		text = text.."#define FOG_DENSITY(fog)  fog.z\n"
@@ -214,8 +106,9 @@ function AppendDefines(vsh,vtype, pass, perpixel, lightcnt, uniforms)
 	return text
 end
 
-function AppendAttributes(attribs)
+function AppendAttributes(info)
 	local text=""
+	local attribs = info.Attribs
 	local aParams = attribs.Params
 	local aMask = attribs.Mask
 	local aDecl = "ATTR "
@@ -227,10 +120,14 @@ function AppendAttributes(attribs)
 	return text
 end
 
-function AppendUniforms(uniforms, lightcnt)
-
+function AppendUniforms(info, vsh)
 	local text = ""
-	local ogl = MyDriver:getDriverFamily() == vid.EDF_OPENGL
+	local uniforms = 0
+	if vsh then
+		uniforms = info.Uniforms.VertMask
+	else
+		uniforms = info.Uniforms.FragMask
+	end
 	
 	if bit.band(uniforms, vid.EUF_MODEL_VIEW_PROJ_MATRIX) ~= 0 then
 		text = text.."UNI MAT4 "..Uniforms.ModelViewProjMatrix..";\n"
@@ -254,15 +151,15 @@ function AppendUniforms(uniforms, lightcnt)
 		text = text.."UNI FLOAT "..Uniforms.MatShininess..";\n"
 	end
 	if bit.band(uniforms, vid.EUF_LIGHTING) ~= 0 then
-		if lightcnt == 1 then
+		if info.lightcnt == 1 then
 			text = text.."UNI MAT4 "..Uniforms.Lighting..";\n"
 		else
-			text = text.."UNI MAT4 "..Uniforms.Lighting.."["..lightcnt.."];\n"
+			text = text.."UNI MAT4 "..Uniforms.Lighting.."["..info.lightcnt.."];\n"
 		end
 	end
 	for i = 0, vid.MY_MATERIAL_MAX_LAYERS-1 do
 		if bit.band(uniforms, TexFlags[i+1]) ~=0 then
-			if ogl then
+			if info.ogl then
 				text = text..string.format("UNI SAMP2D "..Uniforms.Tex[i+1]..";\n")
 			else
 				text = text..string.format("UNI SAMP2D "..Uniforms.Tex[i+1].." : register(s%d);\n", i)
@@ -301,9 +198,9 @@ function AppendVaryingColorSpec(n)
 	return string.format(" : COLOR%d", n);
 end
 
-function AppendVaryings(varyings)
+function AppendVaryings(info)
 	local text = ""
-	for k, v in pairs(varyings) do
+	for k, v in pairs(info.Varyings) do
 		text = text..string.format("VARY "..v.Type.." "..v.VarName..v.Spec..";\n")
 	end
 	return text
@@ -345,11 +242,8 @@ function AppendMaterialEmissive()
 	return text
 end
 
-function AppendLighting(pixel, vtype, pass, perpixel, lightcnt, varyings)
-
+function AppendLighting(info, vsh, pass)
 	local text = "\n"
-	local hasAttenMap	= HasMap(pass, vid.ETLT_ATTENUATION_MAP)
-	local hasNMap = HasNMap(pass)
 	
 	text = text..AppendMaterialDiffuse()
 	text = text.."    VEC4 mAmb = M_AMB("..Uniforms.MatColors..");\n"
@@ -360,10 +254,10 @@ function AppendLighting(pixel, vtype, pass, perpixel, lightcnt, varyings)
 	text = text.."    VEC4 color = VEC4(0.0, 0.0, 0.0, mDif.a);\n"
 	text = text.."    color.rgb = "..Uniforms.GlobalAmbientColor..".rgb * mAmb.rgb + mEmis.rgb;\n"
 	if pass:getLightingMode() ~= vid.ELM_NONE then
-		for i = 0, lightcnt - 1 do
+		for i = 0, info.lightcnt - 1 do
 			text = text..string.format("    // lighting from Light %d\n", i)
 			text = text.."    {\n"
-			if lightcnt == 1 then
+			if info.lightcnt == 1 then
 				text = text..string.format("        VEC4 lDif  = L_DIF("..Uniforms.Lighting..");\n")
 				text = text..string.format("        VEC4 lAmb  = L_AMB("..Uniforms.Lighting..");\n")
 				text = text..string.format("        VEC4 lSpec = L_SPEC("..Uniforms.Lighting..");\n")
@@ -375,16 +269,15 @@ function AppendLighting(pixel, vtype, pass, perpixel, lightcnt, varyings)
 				text = text..string.format("        VEC4 lSpec = L_SPEC("..Uniforms.Lighting.."[%d]);\n", i)
 				text = text..string.format("        VEC3 lPos  = L_POS("..Uniforms.Lighting.."[%d]);\n", i)
 				text = text..string.format("        FLOAT lR  = L_R("..Uniforms.Lighting.."[%d]);\n", i)
-
 			end
-			if perpixel and HasTBN(vtype) and hasNMap then
+			if info.perpixel and HasTBN(info.vtype) and info.hasNMap then
 				if i < 3 then
-					text = text.."        VEC3 lVec = normalize("..varyings[VARY_LVEC0 + i]._VarName..".xyz);\n"
+					text = text.."        VEC3 lVec = normalize("..info.Varyings[VARY_LVEC0 + i]._VarName..".xyz);\n"
 				else
 					text = text.."        VEC3 lVec = normalize(VEC3("..
-						varyings[VARY_LVEC0]._VarName..".w, "..
-						varyings[VARY_LVEC1]._VarName..".w, "..
-						varyings[VARY_LVEC2]._VarName..".w));\n"
+						info.Varyings[VARY_LVEC0]._VarName..".w, "..
+						info.Varyings[VARY_LVEC1]._VarName..".w, "..
+						info.Varyings[VARY_LVEC2]._VarName..".w));\n"
 				end
 				text = text.."        FLOAT lDist = length(lPos - position.xyz);\n"
 			else
@@ -402,7 +295,7 @@ function AppendLighting(pixel, vtype, pass, perpixel, lightcnt, varyings)
 			text = text.."    }\n"
 		end
 	end
-	if pixel and hasAttenMap then
+	if not vsh and info.hasAttenMap then
 		text = text.."    color *= tatten;\n"
 		text = text.."    specular *= tatten.rgb;\n"
 	end
@@ -410,532 +303,138 @@ function AppendLighting(pixel, vtype, pass, perpixel, lightcnt, varyings)
 	return text
 end
 
-function FetchTexColTbl(pass, textype)
-	local texColTbl = {}
-	local tblIdx = 1
-	for i = 0, vid.MY_MATERIAL_MAX_LAYERS-1 do
-		local texture = pass.Layers[i]:getTexture()
-		local rgb_scale =  pass.Layers[i]:getTexRGBScale()
-		if texture ~= nil and pass.Layers[i]:getType() == textype then
-			local colstr = ""
-			if rgb_scale == 2 then
-				colstr = string.format("VEC4(tcol%d.rgb*2.0,tcol%d.a)", i, i)
-			elseif rgb_scale == 3 then
-				colstr = string.format("VEC4(tcol%d.rgb*4.0,tcol%d.a)", i, i)
-			else
-				colstr = string.format("tcol%d", i)
-			end
-			texColTbl[tblIdx] = colstr
-			tblIdx = tblIdx + 1
-		end
-	end
-	return texColTbl
-end
-
-local function GetAttribParams(atype, specIdx)
-	local adecl = {
-		[vid.EAT_POSITION+1] = "VEC4",
-		[vid.EAT_NORMAL+1]   = "VEC3",
-		[vid.EAT_COLOR+1]    = "VEC4",
-		[vid.EAT_TCOORD0+1]  = "VEC2",
-		[vid.EAT_TCOORD1+1]  = "VEC2",
-		[vid.EAT_TANGENT+1]  = "VEC3",
-		[vid.EAT_BINORMAL+1] = "VEC3",
-	}
-	local aspecDX = {
-		[vid.EAT_POSITION+1] = " : POSITION%s",
-		[vid.EAT_NORMAL+1]   = " : NORMAL%s",
-		[vid.EAT_COLOR+1]    = " : COLOR%s",
-		[vid.EAT_TCOORD0+1]  = " : TEXCOORD%s",
-		[vid.EAT_TCOORD1+1]  = " : TEXCOORD%s",
-		[vid.EAT_TANGENT+1]  = " : TANGENT%s",
-		[vid.EAT_BINORMAL+1] = " : BINORMAL%s",
-	}
-	local idxStr = ""
-	if specIdx ~= nil then
-		idxStr = tostring(specIdx)
-	end
-	local aspec = ""
-	if MyDriver:getDriverFamily() == vid.EDF_DIRECTX then
-		aspec = string.format(aspecDX[atype+1], idxStr)
-	end
-	local aparams = {
-		Mask = vid.getAttribFlag(atype),
-		Type = adecl[atype+1],
-		Name = vid.getAttribReadableName(atype),
-		Spec = aspec,
-	}
-	return aparams
-end
-
-function GenInfo(vtype, pass, perpixel, lightcnt)
-	local vsh	= ""
-	local psh	= ""
-	local light = IsLighting(pass, lightcnt)
-	local vnormal = HasNormal(vtype)
-	local vcolor = HasColor(vtype)
-	local mcolor = IsCustomVertexColor(vtype, pass)
-	local hasNMap = HasNMap(pass)
-	local fogging = IsFogging(pass)
-	local vertUniforms = vid.EUF_NONE
-	local fragUniforms = vid.EUF_NONE
-	local attribs = 0
-	local attribParams = {}
-	local components = vid.getVertexComponents(vtype)
-
-	ShaderGenInfo = {}
-
-	-- attributes
-
-	ShaderGenInfo.Attribs = {}
-
-	local atype = vid.EAT_POSITION
-	attribParams[atype] = GetAttribParams(atype)
-	attribs = bit.bor(attribs, attribParams[atype].Mask)
-
-	if bit.band(components, vid.EVC_NRM) ~= 0 then
-		atype = vid.EAT_NORMAL
-		attribParams[atype] = GetAttribParams(atype)
-		attribs = bit.bor(attribs, attribParams[atype].Mask)
-	end
-	if bit.band(components, vid.EVC_COL) ~= 0 then
-		atype = vid.EAT_COLOR
-		attribParams[atype] = GetAttribParams(atype, 0)
-		attribs = bit.bor(attribs, attribParams[atype].Mask)
-	end
-	local ti = 0
-	if bit.band(components, vid.EVC_TC0) ~= 0 then
-		atype = vid.EAT_TCOORD0
-		attribParams[atype] = GetAttribParams(atype, ti)
-		attribs = bit.bor(attribs, attribParams[atype].Mask)
-		ti = ti + 1
-	end
-	if bit.band(components, vid.EVC_TC1) ~= 0 then
-		atype = vid.EAT_TCOORD1
-		attribParams[atype] = GetAttribParams(atype, ti)
-		attribs = bit.bor(attribs, attribParams[atype].Mask)
-		ti = ti + 1
-	end
-	if bit.band(components, vid.EVC_TBN) ~= 0 then
-		atype = vid.EAT_TANGENT
-		attribParams[atype] = GetAttribParams(atype)
-		attribs = bit.bor(attribs, attribParams[atype].Mask)
-		atype = vid.EAT_BINORMAL
-		attribParams[atype] = GetAttribParams(atype)
-		attribs = bit.bor(attribs, attribParams[atype].Mask)
-	end
-
-	ShaderGenInfo.Attribs.Mask = attribs
-	ShaderGenInfo.Attribs.Params = attribParams
-
-	-- tcoords
-
-	ShaderGenInfo.TCoords = {}
-
-	-- Vertex
-	local ti = 0
-	for i = 0, vid.MY_MATERIAL_MAX_LAYERS-1 do
-		local texture = pass.Layers[i]:getTexture()
-		if texture ~= nil and (pass.Layers[i]:getType() ~= vid.ETLT_NORMAL_MAP or perpixel) then
-			local animated = false
-			local tchnl = pass.Layers[i]:getTexCoordChannel()
-			if (tchnl==1 and bit.band(ShaderGenInfo.Attribs.Mask, vid.EAF_TCOORD1)==0)
-				 then
-				tchnl=0
-			end
-			ShaderGenInfo.TCoords[ti + 1] = {}
-			ShaderGenInfo.TCoords[ti + 1].VarName = string.format("tc%d", i)
-			ShaderGenInfo.TCoords[ti + 1].LayerIdx = i
-			ShaderGenInfo.TCoords[ti + 1].TChnl = -1
-			if pass.Layers[i]:getTexCoordGen() == vid.ETCGT_ENVIRONMENT_MAPPING then
-				if ShaderGenInfo.TCoords.TCEnv == nil then
-					local text = ""
-					text = text.."    // sphere map tcoords\n"
-					text = text.."    VEC3 r = reflect(-eyeVec, "..Tokens.Normal..");\n"
-					text = text.."    FLOAT m = 2.0 * sqrt(r.x*r.x + r.y*r.y + (r.z+1.0)*(r.z+1.0));\n"
-					text = text..string.format("    VEC4 tcenv = VEC4(r.xy/m + 0.5, 1.0, 1.0);\n\n")
-					ShaderGenInfo.TCoords.EnvGen = text
-				end
-				ShaderGenInfo.TCoords[ti + 1].VertPreVar = nil
-				ShaderGenInfo.TCoords[ti + 1].VertVarValue = "tcenv"
-			elseif pass.Layers[i]:getTexCoordGen() == vid.ETCGT_MANUAL_MAPPING then
-				ShaderGenInfo.TCoords[ti + 1].VertPreVar = nil
-				if tchnl==0 and bit.band(ShaderGenInfo.Attribs.Mask, vid.EAF_TCOORD0)==0 then
-					ShaderGenInfo.TCoords[ti + 1].VertVarValue = "VEC4(0.0, 0.0, 1.0, 1.0)"
-				else
-					local tcoord = "TCoord"..tostring(tchnl)
-					ShaderGenInfo.TCoords[ti + 1].VertVarValue = "VEC4(VS_IN("..Attribs[tcoord]..").xy, 1.0, 1.0)"
-					ShaderGenInfo.TCoords[ti + 1].TChnl = tchnl
-				end
-			elseif pass.Layers[i]:getTexCoordGen() == vid.ETCGT_PROJECTED_MAPPING then
-				local text = ""
-				text = text.."    // calculating texture coords for projected mapping\n"
-				if pass.Layers[i]:isTexCoordAnimated() then
-					text = text.."    // and animating texture coords (translate/scale/rotate)\n"
-					animated = true
-				end
-				ShaderGenInfo.TCoords[ti + 1].VertPreVar = text
-				ShaderGenInfo.TCoords[ti + 1].VertVarValue = string.format("MUL(MUL(vertex,%s),%s)",
-					Uniforms.ModelMatrix, Uniforms.TexMatrix[i+1])
-			end
-			if pass.Layers[i]:isTexCoordAnimated() and not animated then
-				local text = ""
-				text = text.."    // animating texture coords (translate/scale/rotate)\n"
-				text = text..string.format("    tc%d = MUL(tc%d,%s);\n", i, i, Uniforms.TexMatrix[i+1])
-				ShaderGenInfo.TCoords[ti + 1].VertPostVar = text
-			end
-			ti = ti + 1
-		end
-	end
-	
-	for i = 1, table.getn(ShaderGenInfo.TCoords) do
-		local tchnl = ShaderGenInfo.TCoords[i].TChnl
-		local idx = ShaderGenInfo.TCoords[i].LayerIdx
-		if pass.Layers[idx]:getType() == vid.ETLT_NORMAL_MAP then
-			if not perpixel then
-				ShaderGenInfo.TCoords[i].VarName = nil
-			elseif not light then
-				local used = 0
-				for j = 1, table.getn(ShaderGenInfo.TCoords) do
-					if i ~= j and tchnl ~= -1 and tchnl == ShaderGenInfo.TCoords[j].TChnl then
-						used = used + 1
-					end
-				end
-				if used == 0 then
-					ShaderGenInfo.TCoords[i].VarName = nil
-				end
-			end
-		end
-	end
-	
-	for i = 1, table.getn(ShaderGenInfo.TCoords) do
-		if ShaderGenInfo.TCoords[i].VarName ~= nil then
-			for j = i + 1, table.getn(ShaderGenInfo.TCoords) do
-				if (ShaderGenInfo.TCoords[j].VertValueRefIdx == nil)
-						and (ShaderGenInfo.TCoords[i].VertVarValue == ShaderGenInfo.TCoords[j].VertVarValue) then
-					ShaderGenInfo.TCoords[j].VertValueRefIdx = i
-				end
-			end
-		end
-	end
-
-	-- uniforms
-
-	ShaderGenInfo.Uniforms = {}
-
-	vertUniforms = bit.bor(vertUniforms,
-		vid.EUF_MODEL_VIEW_PROJ_MATRIX)
-		
-	if IsNeedNormal(vtype, pass, lightcnt) then
-		vertUniforms = bit.bor(vertUniforms,
-			vid.EUF_MODEL_VIEW_MATRIX)
-			
-		vertUniforms = bit.bor(vertUniforms,
-			vid.EUF_NORMAL_MATRIX)
-		if light then
-			if perpixel then
-				fragUniforms = bit.bor(fragUniforms,
-					vid.EUF_GLOBAL_AMBIENT_COLOR,
-					vid.EUF_MATERIAL_COLORS, vid.EUF_MATERIAL_SHININESS,
-					vid.EUF_LIGHTING)
-				if HasTBN(vtype) then
-					vertUniforms = bit.bor(vertUniforms,
-						vid.EUF_LIGHTING)
-				end
-			else
-				vertUniforms = bit.bor(vertUniforms,
-					vid.EUF_GLOBAL_AMBIENT_COLOR,
-					vid.EUF_MATERIAL_COLORS, vid.EUF_MATERIAL_SHININESS,
-					vid.EUF_LIGHTING)
-			end
-		end
-	elseif hasNMap then
-		vertUniforms = bit.bor(vertUniforms,
-			vid.EUF_MODEL_VIEW_MATRIX)
-	elseif fogging then
-		vertUniforms = bit.bor(vertUniforms,
-			vid.EUF_MODEL_VIEW_MATRIX)
-	end
-	
-	if mcolor then
-		vertUniforms = bit.bor(vertUniforms,
-			vid.EUF_MATERIAL_COLORS)
-	end
-
-	for i = 1, table.getn(ShaderGenInfo.TCoords) do
-		local idx = ShaderGenInfo.TCoords[i].LayerIdx
-		if ShaderGenInfo.TCoords[i].VarName ~= nil then
-			local texture = pass.Layers[idx]:getTexture()
-			if texture ~= nil then
-				if pass.Layers[idx]:getType() ~= vid.ETLT_NORMAL_MAP or perpixel then
-					fragUniforms = bit.bor(fragUniforms, TexFlags[idx+1])
-					if pass.Layers[idx]:isTexCoordAnimated() then
-						vertUniforms = bit.bor(vertUniforms,
-							TexMatrixFlags[idx+1])
-					end
-					if pass.Layers[idx]:getTexCoordGen() == vid.ETCGT_PROJECTED_MAPPING then
-						vertUniforms = bit.bor(vertUniforms,
-							TexMatrixFlags[idx+1], vid.EUF_MODEL_MATRIX)
-					end
-				end
-			end
-		end
-	end
-
-	if fogging then
-		fragUniforms = bit.bor(fragUniforms,
-			vid.EUF_FOG_PARAMS)
-		fragUniforms = bit.bor(fragUniforms,
-			vid.EUF_FOG_COLOR)
-	end
-
-	ShaderGenInfo.Uniforms.VertMask = vertUniforms
-	ShaderGenInfo.Uniforms.FragMask = fragUniforms
-	ShaderGenInfo.Uniforms.Mask = bit.bor(ShaderGenInfo.Uniforms.VertMask, ShaderGenInfo.Uniforms.FragMask)
-
-	-- varyings
-
-	local varyings = {}
-
-	if vcolor or (light and vnormal and perpixel == false) or mcolor then
-		local v = {}
-		v.Type = "VEC4"	
-		v.VarName = Varyings[VARY_COL]
-		v.Spec = AppendVaryingColorSpec(0)
-		varyings[VARY_COL] = v
-	end	
-	if light and vnormal and perpixel == false then
-		local v = {}
-		v.Type = "VEC3"	
-		v.VarName = Varyings[VARY_SPEC]
-		v.Spec = AppendVaryingColorSpec(1)
-		varyings[VARY_SPEC] = v
-	end	
-
-	local need_pos = false
-	if fogging then
-		need_pos = true
-	end
-
-	local tii = 0
-
-	for i = 1, table.getn(ShaderGenInfo.TCoords) do
-		if ShaderGenInfo.TCoords[i].VarName then
-			if ShaderGenInfo.TCoords[i].VertValueRefIdx == nil then
-				local v = {}
-				v.Type = "VEC4"	
-				v.VarName = Varyings[VARY_TC0 + tii]
-				v.Spec = AppendVaryingVectorSpec(tii)
-				varyings[VARY_TC0 + tii] = v
-				tii = tii + 1
-			end
-		end
-	end
-
-	if light and vnormal and perpixel then
-		if hasNMap == false then
-			local v = {}
-			v.Type = "VEC3"	
-			v.VarName = Varyings[VARY_NRM]
-			v.Spec = AppendVaryingVectorSpec(tii)
-			varyings[VARY_NRM] = v
-			tii = tii + 1
-		end
-		local v = {}
-		v.Type = "VEC3"	
-		v.VarName = Varyings[VARY_EYE]
-		v.Spec = AppendVaryingVectorSpec(tii)
-		varyings[VARY_EYE] = v
-		tii = tii + 1
-		need_pos = true
-	elseif hasNMap and perpixel then
-		local v = {}
-		v.Type = "VEC3"	
-		v.VarName = Varyings[VARY_EYE]
-		v.Spec = AppendVaryingVectorSpec(tii)
-		varyings[VARY_EYE] = v
-		tii = tii + 1
-	end
-
-	if need_pos then
-		local v = {}
-		v.Type = "VEC4"	
-		v.VarName = Varyings[VARY_POS]
-		v.Spec = AppendVaryingVectorSpec(tii)
-		varyings[VARY_POS] = v
-		tii = tii + 1
-	end
-
-	if light and hasNMap and HasTBN(vtype) and perpixel then
-		if pass:getLightingMode() ~= vid.ELM_NONE then
-			for i = 0, lightcnt - 1 do
-				if i < 3 then
-					local v = {}
-					v.Type = "VEC4"	
-					v.VarName = Varyings[VARY_LVEC0 + i]
-					v.Spec = AppendVaryingVectorSpec(tii)
-					varyings[VARY_LVEC0 + i] = v
-					tii = tii + 1
-				end
-			end
-		end
-	end
-
-	for k, v in pairs(varyings) do
-		v._VarName = "_"..v.VarName
-	end
-
-	ShaderGenInfo.Varyings = varyings
-
-	-- Pixel TCoords
-	local ti = 0
-	for i = 1, table.getn(ShaderGenInfo.TCoords) do
-		if ShaderGenInfo.TCoords[i].VarName ~= nil then
-			local text = ""
-			local idx = ShaderGenInfo.TCoords[i].LayerIdx
-			if ShaderGenInfo.TCoords[i].VertValueRefIdx == nil then
-				if ti < 3 then
-					text = text.."VEC2("..varyings[VARY_TC0 + ti]._VarName..".xy)"
-				else
-					text = text.."VEC2("..
-						varyings[VARY_TC0]._VarName..".w, "..
-						varyings[VARY_TC1]._VarName..".w)"
-				end
-				ti = ti + 1
-			else
-				text = text..ShaderGenInfo.TCoords[ShaderGenInfo.TCoords[i].VertValueRefIdx].VarName
-			end
-			ShaderGenInfo.TCoords[i].FragVarValue = text
-			if pass.Layers[idx]:getType() == vid.ETLT_NORMAL_MAP and ShaderGenInfo.TCoords.Paralax == nil then
-				local tchnl = ShaderGenInfo.TCoords[i].TChnl
-				local text = ""
-				text = text.."    // texcoord offset (paralax effect)\n"
-				text = text.."    FLOAT height = PARALAX_SCALE * (TEX2D("..
-					Uniforms.Tex[idx + 1]..", "..ShaderGenInfo.TCoords[i].VarName..").a) + PARALAX_BIAS;\n"
-				for j = 1, table.getn(ShaderGenInfo.TCoords) do
-					if i ~= j and tchnl ~= -1 and tchnl == ShaderGenInfo.TCoords[j].TChnl then
-						text = text.."    "..ShaderGenInfo.TCoords[j].VarName.." += VEC2(eyeVec.x,-eyeVec.y) * height;\n"
-					end
-				end
-				ShaderGenInfo.TCoords.Paralax = text
-			end
-		end
-	end
-
-end
-
-function AppendVertShaderBody(vtype, pass, perpixel, lightcnt, uniforms, attribs, varyings)
-
+function AppendVertShaderBody(info, pass)
 	local text = ""
-	local light = IsLighting(pass, lightcnt)
-	local vnormal = HasNormal(vtype)
-	local vcolor = HasColor(vtype)
-	local mcolor = IsCustomVertexColor(vtype, pass)
-	local tcnum = GetTexCoordNum(vtype)
-	local tnum = GetTexNum(pass)
-	local hasNMap = HasNMap(pass)
-	local fogging = IsFogging(pass)
-	local hasSplatMap	= HasMap(pass, vid.ETLT_SPLATTING_MAP)
 
-	text = text..AppendVaryingsOutVars(varyings)
+	text = text..AppendVaryingsOutVars(info.Varyings)
 	text = text.."\n"
 
 	text = text.."    VEC4 vertex = VS_IN("..Attribs.Position..");\n"
 	text = text.."    VEC4 positionMVP = MUL(vertex,"..Uniforms.ModelViewProjMatrix..");\n"
 	text = text.."\n"
 
-	if IsNeedNormal(vtype, pass, lightcnt) then
+	local normalDefined = false
+
+	if IsNeedNormal(info.vtype, pass, info.lightcnt) then
 		text = text.."    VEC4 position = MUL(vertex,"..Uniforms.ModelViewMatrix..");\n"
 		text = text.."    VEC3 eyeVec = -position.xyz;\n"
 		text = text.."    VEC3 "..Tokens.Normal.." = VS_IN("..Attribs.Normal..");\n"
 		text = text.."    "..Tokens.Normal.." = MUL("..Tokens.Normal..","..Uniforms.NormalMatrix..");\n\n"
-		if not perpixel then
+		if not info.perpixel then
 			text = text.."    "..Tokens.Normal.." = normalize(N);\n"
 			text = text.."    eyeVec = normalize(eyeVec);\n"
 		end
-	elseif hasNMap then
+		normalDefined = true
+	elseif info.hasNMap then
 		text = text.."    VEC4 position = MUL(vertex,"..Uniforms.ModelViewMatrix..");\n"
 		text = text.."    VEC3 eyeVec = -position.xyz;\n"
-	elseif fogging then
+	elseif info.fogging then
 		text = text.."    VEC4 position = MUL(vertex,"..Uniforms.ModelViewMatrix..");\n"
 	end
+
+	if info.isDS and not normalDefined then
+		if info.vnormal then
+			text = text.."    VEC3 "..Tokens.Normal.." = VS_IN("..Attribs.Normal..");\n"
+			text = text.."    "..Tokens.Normal.." = MUL("..Tokens.Normal..","..Uniforms.NormalMatrix..");\n\n"
+		else
+			text = text.."    VEC3 "..Tokens.Normal.." = VEC3(0., 1., 0.);\n"
+		end
+	end
 	
-	if light and vnormal and perpixel == false then
-		text = text..AppendLighting(false, vtype, pass, perpixel, lightcnt, varyings)
-		text = text.."    "..varyings[VARY_SPEC]._VarName.." = specular;\n"
-	elseif mcolor then
+	if info.light and info.vnormal and info.perpixel == false then
+		text = text..AppendLighting(info, true, pass)
+		text = text.."    "..info.Varyings[VARY_SPEC]._VarName.." = specular;\n"
+	elseif info.mcolor then
 		text = text..AppendMaterialDiffuse()
 		text = text..AppendMaterialEmissive()
 	end
 
-	if vnormal and perpixel then
-		if HasTBN(vtype) and hasNMap then
+	local normalPassed = false
+
+	if info.vnormal and info.perpixel then
+		if HasTBN(info.vtype) and info.hasNMap then
 			text = text.."    VEC3 "..Tokens.Tangent.." = VS_IN("..Attribs.Tangent..").xyz;\n"
 			text = text.."    VEC3 "..Tokens.Binormal.." = VS_IN("..Attribs.Binormal..").xyz;\n"
 			text = text.."    "..Tokens.Tangent.."  = MUL("..Tokens.Tangent..","..Uniforms.NormalMatrix..");\n"
 			text = text.."    "..Tokens.Binormal.." = MUL("..Tokens.Binormal..","..Uniforms.NormalMatrix..");\n"
-			text = text.."    "..varyings[VARY_EYE]._VarName..
+			text = text.."    "..info.Varyings[VARY_EYE]._VarName..
 				" = VEC3(dot(eyeVec, "..Tokens.Tangent.."), dot(eyeVec, "..Tokens.Binormal.."), dot(eyeVec, "..Tokens.Normal.."));\n"
 			if pass:getLightingMode() ~= vid.ELM_NONE then
 				text = text..string.format("    // transforming lights into TBN space\n")
-				for i = 0, lightcnt - 1 do
+				for i = 0, info.lightcnt - 1 do
 					text = text..string.format("    { // Light %d\n", i)
-					if lightcnt == 1 then
+					if info.lightcnt == 1 then
 						text = text..string.format("        VEC3 lVec = L_POS("..Uniforms.Lighting..") - position.xyz;\n")
 					else
 						text = text..string.format("        VEC3 lVec = L_POS("..Uniforms.Lighting.."[%d]) - position.xyz;\n", i)
 					end
 					if i < 3 then
-						text = text.."        "..varyings[VARY_LVEC0 + i]._VarName..
+						text = text.."        "..info.Varyings[VARY_LVEC0 + i]._VarName..
 							" = VEC4(dot(lVec, "..Tokens.Tangent.."), dot(lVec, "..Tokens.Binormal.."), dot(lVec, "..Tokens.Normal.."), 0.0);\n"
 					else					
-						text = text.."        "..varyings[VARY_LVEC0]._VarName..".w = dot(lVec, "..Tokens.Tangent..");\n"
-						text = text.."        "..varyings[VARY_LVEC1]._VarName..".w = dot(lVec, "..Tokens.Binormal..");\n"
-						text = text.."        "..varyings[VARY_LVEC2]._VarName..".w = dot(lVec, "..Tokens.Normal..");\n"
+						text = text.."        "..info.Varyings[VARY_LVEC0]._VarName..".w = dot(lVec, "..Tokens.Tangent..");\n"
+						text = text.."        "..info.Varyings[VARY_LVEC1]._VarName..".w = dot(lVec, "..Tokens.Binormal..");\n"
+						text = text.."        "..info.Varyings[VARY_LVEC2]._VarName..".w = dot(lVec, "..Tokens.Normal..");\n"
 					end
 					text = text.."    }\n"					
 				end
 			end
-		elseif light or hasNMap then
-			text = text.."    "..varyings[VARY_EYE]._VarName.." = eyeVec;\n"
+		elseif info.light or info.hasNMap then
+			text = text.."    "..info.Varyings[VARY_EYE]._VarName.." = eyeVec;\n"
 		end
-		if light then
-			if hasNMap == false then
-				text = text.."    "..varyings[VARY_NRM]._VarName.." = "..Tokens.Normal..";\n"
+		if info.light then
+			if info.hasNMap == false then
+				text = text.."    "..info.Varyings[VARY_NORM]._VarName.." = "..Tokens.Normal..";\n"
+				normalPassed = true
 			end
-			text = text.."    "..varyings[VARY_POS]._VarName.." = position;\n"
-		elseif fogging then
-			text = text.."    "..varyings[VARY_POS]._VarName.." = position;\n"
+			text = text.."    "..info.Varyings[VARY_POS]._VarName.." = position;\n"
+		elseif info.fogging then
+			text = text.."    "..info.Varyings[VARY_POS]._VarName.." = position;\n"
 		end
-	elseif fogging then
-		text = text.."    "..varyings[VARY_POS]._VarName.." = position;\n"
+	elseif info.fogging then
+		text = text.."    "..info.Varyings[VARY_POS]._VarName.." = position;\n"
 	end
-	if vcolor then
-		if light and vnormal and perpixel == false then
-			text = text.."    "..varyings[VARY_COL]._VarName.." = VS_IN("..Attribs.Color..") * color;\n"
+	if info.vcolor then
+		if info.light and info.vnormal and info.perpixel == false then
+			text = text.."    "..info.Varyings[VARY_COL]._VarName.." = VS_IN("..Attribs.Color..") * color;\n"
 		else
-			text = text.."    "..varyings[VARY_COL]._VarName.." = VS_IN("..Attribs.Color..");\n"
+			text = text.."    "..info.Varyings[VARY_COL]._VarName.." = VS_IN("..Attribs.Color..");\n"
 		end
-	elseif light and vnormal and perpixel == false then
-		text = text.."    "..varyings[VARY_COL]._VarName.." = color;\n"
-	elseif mcolor then
-		text = text.."    "..varyings[VARY_COL]._VarName.." = VEC4(mEmis.rgb, mDif.a);\n"
+	elseif info.light and info.vnormal and info.perpixel == false then
+		text = text.."    "..info.Varyings[VARY_COL]._VarName.." = color;\n"
+	elseif info.mcolor then
+		text = text.."    "..info.Varyings[VARY_COL]._VarName.." = VEC4(mEmis.rgb, mDif.a);\n"
 	end
+
+	if info.isDS then
+		if info.Varyings[VARY_TANG] ~= nil then
+			text = text.."    "..info.Varyings[VARY_TANG]._VarName.." = "..Tokens.Tangent..";\n"
+		end
+		if info.Varyings[VARY_BINORM] ~= nil then
+			text = text.."    "..info.Varyings[VARY_BINORM]._VarName.." = "..Tokens.Binormal..";\n"
+		end
+		if not normalPassed then
+			if info.Varyings[VARY_NORM] ~= nil then
+				text = text.."    "..info.Varyings[VARY_NORM]._VarName.." = "..Tokens.Normal..";\n"
+			end
+		end
+	end
+
 	text = text.."\n"
 
-	if ShaderGenInfo.TCoords.EnvGen ~= nil then
-		text = text .. ShaderGenInfo.TCoords.EnvGen
+	if info.TCoords.EnvGen ~= nil then
+		text = text .. info.TCoords.EnvGen
 	end
 	
-	for i = 1, table.getn(ShaderGenInfo.TCoords) do
-		if ShaderGenInfo.TCoords[i].VarName ~= nil then
-			if ShaderGenInfo.TCoords[i].VertValueRefIdx == nil then
-				if ShaderGenInfo.TCoords[i].VertPreVar ~= nil then
-					text = text..ShaderGenInfo.TCoords[i].VertPreVar
+	for i = 1, table.getn(info.TCoords) do
+		if info.TCoords[i].VarName ~= nil then
+			if info.TCoords[i].VertValueRefIdx == nil then
+				if info.TCoords[i].VertPreVar ~= nil then
+					text = text..info.TCoords[i].VertPreVar
 				end
-				text = text.."    VEC4 "..ShaderGenInfo.TCoords[i].VarName.." = "..ShaderGenInfo.TCoords[i].VertVarValue..";\n"
-				if ShaderGenInfo.TCoords[i].VertPostVar ~= nil then
-					text = text..ShaderGenInfo.TCoords[i].VertPostVar
+				text = text.."    VEC4 "..info.TCoords[i].VarName.." = "..info.TCoords[i].VertVarValue..";\n"
+				if info.TCoords[i].VertPostVar ~= nil then
+					text = text..info.TCoords[i].VertPostVar
 				end
 			end
 		end
@@ -943,14 +442,14 @@ function AppendVertShaderBody(vtype, pass, perpixel, lightcnt, uniforms, attribs
 	text = text.."\n"
 
 	local ti = 0
-	for i = 1, table.getn(ShaderGenInfo.TCoords) do
-		if ShaderGenInfo.TCoords[i].VarName ~= nil then
-			if ShaderGenInfo.TCoords[i].VertValueRefIdx == nil then
+	for i = 1, table.getn(info.TCoords) do
+		if info.TCoords[i].VarName ~= nil then
+			if info.TCoords[i].VertValueRefIdx == nil then
 				if ti < 3 then
-					text = text.."    "..varyings[VARY_TC0 + ti]._VarName.." = VEC4("..ShaderGenInfo.TCoords[i].VarName..".xy, 0.0, 0.0);\n"
+					text = text.."    "..info.Varyings[VARY_TC0 + ti]._VarName.." = VEC4("..info.TCoords[i].VarName..".xy, 0.0, 0.0);\n"
 				else
-					text = text.."    "..varyings[VARY_TC0]._VarName..".w = tc3.x;\n"
-					text = text.."    "..varyings[VARY_TC1]._VarName..".w = tc3.y;\n"
+					text = text.."    "..info.Varyings[VARY_TC0]._VarName..".w = tc3.x;\n"
+					text = text.."    "..info.Varyings[VARY_TC1]._VarName..".w = tc3.y;\n"
 				end
 				ti = ti + 1
 			end
@@ -958,64 +457,54 @@ function AppendVertShaderBody(vtype, pass, perpixel, lightcnt, uniforms, attribs
 	end
 	text = text.."\n"
 
-	text = text..AppendVaryingsOut(varyings)
+	text = text..AppendVaryingsOut(info.Varyings)
 	text = text.."\n"
 
 	return text
 end
 
-function AppendPixelShaderBody(vtype, pass, perpixel, lightcnt, uniforms, attribs, varyings)
-
+function AppendPixelShaderBody(info, pass)
 	local text = ""
-	local light = IsLighting(pass, lightcnt)
-	local vnormal = HasNormal(vtype)
-	local vcolor = HasColor(vtype)
-	local mcolor = IsCustomVertexColor(vtype, pass)
-	local tcnum = GetTexCoordNum(vtype)
-	local tnum = GetTexNum(pass)
-	local hasNMap		= HasMap(pass, vid.ETLT_NORMAL_MAP)
-	local hasAttenMap	= HasMap(pass, vid.ETLT_ATTENUATION_MAP)
-	local hasLightMap	= HasMap(pass, vid.ETLT_LIGHT_MAP)
-	local hasDiffMap	= HasMap(pass, vid.ETLT_DIFFUSE_MAP)
-	local hasSplatMap	= HasMap(pass, vid.ETLT_SPLATTING_MAP)
-	local fogging = IsFogging(pass)
 	
-	text = text..AppendVaryingsInVars(varyings)
+	text = text..AppendVaryingsInVars(info.Varyings)
 	text = text.."\n"
 
-	if light or hasNMap then 
-		if vnormal and perpixel then
-			if light then
-				text = text.."    VEC3 position = "..varyings[VARY_POS]._VarName..".xyz;\n"
+	if info.light or info.hasNMap then 
+		if info.vnormal and info.perpixel then
+			if info.light then
+				text = text.."    VEC3 position = "..info.Varyings[VARY_POS]._VarName..".xyz;\n"
 			end
-			text = text.."    VEC3 eyeVec = normalize("..varyings[VARY_EYE]._VarName..");\n"
+			text = text.."    VEC3 eyeVec = normalize("..info.Varyings[VARY_EYE]._VarName..");\n"
 			text = text.."\n"
 		end
 	end
 
-	for i = 1, table.getn(ShaderGenInfo.TCoords) do
-		if ShaderGenInfo.TCoords[i].VarName ~= nil then
-			text = text.."    VEC2 "..ShaderGenInfo.TCoords[i].VarName.." = "..ShaderGenInfo.TCoords[i].FragVarValue..";\n"
+	for i = 1, table.getn(info.TCoords) do
+		if info.TCoords[i].VarName ~= nil then
+			text = text.."    VEC2 "..info.TCoords[i].VarName.." = "..info.TCoords[i].FragVarValue..";\n"
 		end
 	end
 	text = text.."\n"
 	
-	if ShaderGenInfo.TCoords.Paralax ~= nil then
-		text = text..ShaderGenInfo.TCoords.Paralax
+	if info.TCoords.Paralax ~= nil then
+		text = text..info.TCoords.Paralax
 		text = text.."\n"
 	end
 
-	for i = 1, table.getn(ShaderGenInfo.TCoords) do
-		if ShaderGenInfo.TCoords[i].VarName ~= nil then
-			local idx = ShaderGenInfo.TCoords[i].LayerIdx
-			if light or pass.Layers[idx]:getType() ~= vid.ETLT_NORMAL_MAP then
+	for i = 1, table.getn(info.TCoords) do
+		if info.TCoords[i].VarName ~= nil then
+			local idx = info.TCoords[i].LayerIdx
+			if info.light or pass.Layers[idx]:getType() ~= vid.ETLT_NORMAL_MAP then
 				local tcol = ""
 				if pass.Layers[idx]:getType() == vid.ETLT_NORMAL_MAP then
 					tcol = "tnmap"
 				else
 					tcol = string.format("tcol%d", idx)
 				end
-				text = text.."    VEC4 "..tcol.." = TEX2D("..Uniforms.Tex[idx+1]..", "..ShaderGenInfo.TCoords[i].VarName..");\n"
+				text = text.."    VEC4 "..tcol.." = TEX2D("..Uniforms.Tex[idx+1]..", "..info.TCoords[i].VarName..");\n"
+			elseif info.isDS and info.hasNMap then
+				local tcol = "tnmap"
+				text = text.."    VEC4 "..tcol.." = TEX2D("..Uniforms.Tex[idx+1]..", "..info.TCoords[i].VarName..");\n"
 			end
 		end
 	end
@@ -1092,140 +581,83 @@ function AppendPixelShaderBody(vtype, pass, perpixel, lightcnt, uniforms, attrib
 		end
 		text = text.."\n"
 	end
-	
-	if light and vnormal then
-		if perpixel then
-			if hasNMap then
+
+	if info.isDS then
+		local N = Tokens.Normal
+		local vN = info.Varyings[VARY_NORM]._VarName
+		if info.hasNMap then
+			local vT = info.Varyings[VARY_TANG]._VarName
+			local vB = info.Varyings[VARY_BINORM]._VarName
+			text = text.."    VEC3 "..N.." = normalize((tnmap*2.0-1.0).xyz);\n"
+			text = text.."    "..vT.." = normalize("..vT..");\n"
+			text = text.."    "..vB.." = normalize("..vB..");\n"
+			text = text.."    "..vN.." = normalize("..vN..");\n"
+			text = text.."    "..N.." = VEC3(dot("..N..","..vT.."), dot("..N..","..vB.."), dot("..N..","..vN.."));\n"
+		text = text.."    "..N.." *= 0.001;\n"
+		text = text.."    "..N.." += tnmap.xyz;\n"
+		else
+			text = text.."    VEC3 "..N.." = normalize("..vN..");\n"
+		end
+		--text = text.."    "..N.." = (N + 1.) / 2.;\n"
+		text = text.."\n"	
+	elseif info.light and info.vnormal then
+		if info.perpixel then
+			if info.hasNMap then
 				text = text.."    VEC3 "..Tokens.Normal.." = normalize((tnmap*2.0-1.0).xyz);\n"
 			else
-				text = text.."    VEC3 "..Tokens.Normal.." = normalize("..varyings[VARY_NRM]._VarName..");\n"
-			end		
-			text = text..AppendLighting(true, vtype, pass, perpixel, lightcnt, varyings)
+				text = text.."    VEC3 "..Tokens.Normal.." = normalize("..info.Varyings[VARY_NORM]._VarName..");\n"
+			end
+			text = text..AppendLighting(info, false, pass)
 		else
-			text = text.."    VEC3 specular = "..varyings[VARY_SPEC]._VarName..";\n"
+			text = text.."    VEC3 specular = "..info.Varyings[VARY_SPEC]._VarName..";\n"
 			text = text.."\n"
 		end
 	end
 
-	if hasDiffMap or hasLightMap or hasAttenMap then
-		if hasAttenMap then
+	if info.hasDiffMap or info.hasLightMap or info.hasAttenMap then
+		if info.hasAttenMap then
 			text = text.."    PS_OUT(FragData,0) = tatten;\n"
 		end
-		if hasDiffMap or hasLightMap then
-			if hasAttenMap == false then
+		if info.hasDiffMap or info.hasLightMap then
+			if info.hasAttenMap == false then
 				text = text.."    PS_OUT(FragData,0) = tcol;\n"
 			else
 				text = text.."    PS_OUT(FragData,0) *= tcol;\n"
 			end
 		end
-		if vcolor or mcolor or (light and vnormal and perpixel == false) then
-			text = text.."    PS_OUT(FragData,0) *= "..varyings[VARY_COL]._VarName..";\n"
+		if info.vcolor or info.mcolor or (info.light and info.vnormal and info.perpixel == false) then
+			text = text.."    PS_OUT(FragData,0) *= "..info.Varyings[VARY_COL]._VarName..";\n"
 		end
-	elseif vcolor or mcolor then
-		text = text.."    PS_OUT(FragData,0) = "..varyings[VARY_COL]._VarName..";\n"
+	elseif info.vcolor or info.mcolor then
+		text = text.."    PS_OUT(FragData,0) = "..info.Varyings[VARY_COL]._VarName..";\n"
 	else
   		text = text.."    PS_OUT(FragData,0) = VEC4(1.0,1.0,1.0,1.0);\n"
 	end
-	if light and vnormal and perpixel then
+	if info.light and info.vnormal and info.perpixel then
 		text = text.."    PS_OUT(FragData,0) *= color;\n"
 	end
-	if light and vnormal then
+	if info.light and info.vnormal then
 		text = text.."    PS_OUT(FragData,0).rgb += specular;\n"
 	end
 	text = text.."\n"
 
-	if fogging then
-		text = text.."    // fogging\n"
-		text = text.."    FLOAT fdepth = "..varyings[VARY_POS]._VarName..".z / "..varyings[VARY_POS]._VarName..".w;\n"
+	if info.fogging then
+		text = text.."    // fog\n"
+		text = text.."    FLOAT fdepth = "..info.Varyings[VARY_POS]._VarName..".z / "..info.Varyings[VARY_POS]._VarName..".w;\n"
 		text = text.."    FLOAT fstart = FOG_START("..Uniforms.FogParams..");\n"
 		text = text.."    FLOAT fend = FOG_END("..Uniforms.FogParams..");\n"
 		text = text.."    FLOAT fog = clamp((fend - fdepth) / (fend - fstart), 0., 1.);\n"
-		text = text.."    PS_OUT(FragData,0).rgb = MIX("..Uniforms.FogColor.."*PS_OUT(FragData,0).a, PS_OUT(FragData,0).rgb, fog);\n"
 		text = text.."\n"
+		text = text.."    PS_OUT(FragData,0).rgb = MIX("..Uniforms.FogColor.."*PS_OUT(FragData,0).a, PS_OUT(FragData,0).rgb, fog);\n"
+	end
+
+	if info.isDS then
+		if info.Varyings[VARY_NORM] ~= nil then
+			text = text.."\n"
+			text = text.."    PS_OUT(FragData,1).rgb *= 0.001;\n"
+			text = text.."    PS_OUT(FragData,1).rgb += "..Tokens.Normal..".xyz;\n"
+		end
 	end
 	
 	return text
-end
-		
-function GetTexCoordNum(vertex_type)
-    if vertex_type == vid.EVT_SIMPLE or
-		vertex_type == vid.EVT_SIMPLE_COLOURED then
-		return 0
-	elseif vertex_type == vid.EVT_1TCOORDS or
-		vertex_type == vid.EVT_1TCOORDS_COLOURED or
-		vertex_type == vid.EVT_1TCOORDS_TBN or
-		vertex_type == vid.EVT_1TCOORDS_TBN_COLOURED or
-		vertex_type == vid.EVT_1TCOORDS_RHW_COLOURED then
-		return 1
-	elseif vertex_type == vid.EVT_2TCOORDS or
-		vertex_type == vid.EVT_2TCOORDS_COLOURED or
-		vertex_type == vid.EVT_2TCOORDS_TBN or
-		vertex_type == vid.EVT_2TCOORDS_TBN_COLOURED then
-		return 2
-	end
-	return 0
-end
-
-function  HasMap(pass, textype)
-	for i = 0, vid.MY_MATERIAL_MAX_LAYERS-1 do
-		local texture = pass.Layers[i]:getTexture()
-		if texture ~= nil and pass.Layers[i]:getType() == textype then
-			return true
-		end
-	end
-	return false
-end
-
-function HasNMap(pass)
-	for i = 0, vid.MY_MATERIAL_MAX_LAYERS-1 do
-		local texture = pass.Layers[i]:getTexture()
-		if texture ~= nil and pass.Layers[i]:getType() == vid.ETLT_NORMAL_MAP then
-			return true
-		end
-	end
-	return false
-end
-
-function IsCustomVertexColor(vtype, pass)
-	local vcolor = HasColor(vtype)
-	if vcolor then
-		return false
-	end
-	if pass:getColorGen() ~= vid.ECGT_VERTEX or pass:getAlphaGen() ~= vid.EAGT_VERTEX then
-		return true
-	end
-	return false
-end
-
-function IsNeedNormal(vtype, pass, lightcnt)
-	local light = IsLighting(pass, lightcnt)
-	local vnormal = HasNormal(vtype)
-	if not vnormal then
-		return false
-	end
-	if light then
-		return true
-	end
-	if HasTBN(vtype) and HasNMap(pass) then
-		return true
-	end
-	for i = 0, vid.MY_MATERIAL_MAX_LAYERS-1 do
-		local texture = pass.Layers[i]:getTexture()
-		if texture ~= nil and pass.Layers[i]:getTexCoordGen() ==
-			vid.ETCGT_ENVIRONMENT_MAPPING then
-			return true
-		end
-	end	
-	return false
-end
-
-function GetTexNum(pass)
-	local texnum = 0
-    for i = 0, vid.MY_MATERIAL_MAX_LAYERS-1 do
-		local texture = pass.Layers[i]:getTexture()
-		if texture ~= nil  then
-			texnum = texnum + 1
-		end
-	end	
-	return texnum
 end

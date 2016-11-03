@@ -1,4 +1,5 @@
 
+require "shadergen/shadergen_info"
 require "shadergen/shadergen_common"
 require "shadergen/shadergen_glsl12"
 require "shadergen/shadergen_hlsl20"
@@ -50,8 +51,6 @@ local _ShaderGen =
 		GenPixelShader	= HLSL20GenPixelShader,
 	},
 }
-
-ShaderGenInfo = {}
 
 local function _GenShaderHeader()
 	local text = ""
@@ -110,21 +109,19 @@ local function _ShaderGenGetSourcesFor(vertex_type, render_pass, lights_count)
 		if lights_count > SHADERGEN_MAX_LIGHTS_COUNT then
 			lights_count = SHADERGEN_MAX_LIGHTS_COUNT
 		end
-		GenInfo(vertex_type, render_pass, perpixel, lights_count)
+		local info = ShaderGenInfo(vertex_type, render_pass, perpixel, lights_count)
 		sources.Tag = ShaderGen.getCurrentTag()
 		sources.LightsCount = lights_count
-		sources.Uniforms = ShaderGenInfo.Uniforms.Mask
-		sources.Attributes  = ShaderGenInfo.Attribs.Mask
+		sources.Uniforms = info.Uniforms.Mask
+		sources.Attributes  = info.Attribs.Mask
 		sources.Vertex = {}
 		sources.Vertex.Ver = _ShaderGen[driver_type].VertexShaderVer
 		sources.Vertex.Source = _GenShaderHeader().._ShaderGen[driver_type].GenVertexShader(
-			vertex_type, render_pass, perpixel, lights_count,
-			ShaderGenInfo.Uniforms.VertMask, ShaderGenInfo.Attribs, ShaderGenInfo.Varyings)
+			info, render_pass)
 		sources.Pixel = {}
 		sources.Pixel.Ver = _ShaderGen[driver_type].PixelShaderVer
 		sources.Pixel.Source = _GenShaderHeader().._ShaderGen[driver_type].GenPixelShader(
-			vertex_type, render_pass, perpixel, lights_count,
-			ShaderGenInfo.Uniforms.FragMask, ShaderGenInfo.Attribs, ShaderGenInfo.Varyings)
+			info, render_pass)
 	end
 	return sources
 end
