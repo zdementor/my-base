@@ -18,7 +18,7 @@ function HLSL20GenVertexShader(info, pass)
 	text = text.."{\n"
 	text = text.."    VS_OUTPUT output;\n\n"
 	text = text..AppendVertShaderBody(info, pass)
-	text = text.."    output.PositionMVP  = positionMVP;\n"
+	text = text.."    output.PositionMVP = "..Tokens.PositionMVP..";\n"
 	text = text.."    return output;\n"	
 	text = text.."}\n"
 	
@@ -38,7 +38,7 @@ function HLSL20GenPixelShader(info, pass)
 	text = text.."struct PS_OUTPUT\n"
 	text = text.."{\n"
 	text = text.."    VEC4 FragData0 : COLOR0;\n"
-	if IsDS() then
+	if info.isDS then
 		text = text.."    VEC4 FragData1 : COLOR0;\n"
 	end
 	text = text.."};\n\n"	

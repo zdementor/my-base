@@ -182,68 +182,72 @@ function AppendUniforms(info, vsh)
 	return text
 end
 
-function AppendVaryingVectorSpec(n)
-	local ogl = MyDriver:getDriverFamily() == vid.EDF_OPENGL
-	if ogl then
-		return ""
-	end
-	return string.format(" : TEXCOORD%d", n);
-end
-
-function AppendVaryingColorSpec(n)
-	local ogl = MyDriver:getDriverFamily() == vid.EDF_OPENGL
-	if ogl then
-		return ""
-	end
-	return string.format(" : COLOR%d", n);
-end
-
 function AppendVaryings(info)
 	local text = ""
-	for k, v in pairs(info.Varyings) do
-		text = text..string.format("VARY "..v.Type.." "..v.VarName..v.Spec..";\n")
+	local colIdx = 0
+	local tcIdx = 0
+	for i = 1, VARY_COUNT - 1 do
+		local v = info.Varyings[i]
+		if v ~= nil then
+			local spec = ""
+			if not info.ogl then
+				if i == VARY_COL or i == VARY_SPEC then
+					spec = string.format(" : COLOR%d", colIdx);
+					colIdx = colIdx + 1
+				else
+					spec = string.format(" : TEXCOORD%d", tcIdx);
+					tcIdx = tcIdx + 1
+				end
+			end
+			text = text..string.format("VARY "..v.Type.." "..v.VarName..spec..";\n")
+		end
 	end
 	return text
 end
 
 function AppendVaryingsOutVars(varyings)
 	local text = ""
-	for k, v in pairs(varyings) do
-		text = text..string.format("    "..v.Type.." "..v._VarName..";\n")
+	for i = 1, VARY_COUNT - 1 do
+		local v = varyings[i]
+		if v ~= nil then
+			text = text..string.format("    "..v.Type.." "..v._VarName..";\n")
+		end
 	end
 	return text
 end
 
 function AppendVaryingsOut(varyings)
 	local text = ""
-	for k, v in pairs(varyings) do
-		text = text..string.format("    VS_OUT("..v.VarName..") = "..v._VarName..";\n")
+	for i = 1, VARY_COUNT - 1 do
+		local v = varyings[i]
+		if v ~= nil then
+			text = text..string.format("    VS_OUT("..v.VarName..") = "..v._VarName..";\n")
+		end
 	end
 	return text
 end
 
 function AppendVaryingsInVars(varyings)
 	local text = ""
-	for k, v in pairs(varyings) do
-		text = text..string.format("    "..v.Type.." "..v._VarName.." = PS_IN("..v.VarName..");\n")
+	for i = 1, VARY_COUNT - 1 do
+		local v = varyings[i]
+		if v ~= nil then
+			text = text..string.format("    "..v.Type.." "..v._VarName.." = PS_IN("..v.VarName..");\n")
+		end
 	end
 	return text
 end
 
 function AppendMaterialDiffuse()
-	local text = ""
-	text = text.."    VEC4 mDif = M_DIF("..Uniforms.MatColors..");\n"
-	return text
+	return "    VEC4 mDif = M_DIF("..Uniforms.MatColors..");\n"
 end
 
 function AppendMaterialEmissive()
-	local text = ""
-	text = text.."    VEC4 mEmis = M_EMIS("..Uniforms.MatColors..");\n"
-	return text
+	return "    VEC4 mEmis = M_EMIS("..Uniforms.MatColors..");\n"
 end
 
 function AppendLighting(info, vsh, pass)
-	local text = "\n"
+	local text = ""
 	
 	text = text..AppendMaterialDiffuse()
 	text = text.."    VEC4 mAmb = M_AMB("..Uniforms.MatColors..");\n"
@@ -279,9 +283,9 @@ function AppendLighting(info, vsh, pass)
 						info.Varyings[VARY_LVEC1]._VarName..".w, "..
 						info.Varyings[VARY_LVEC2]._VarName..".w));\n"
 				end
-				text = text.."        FLOAT lDist = length(lPos - position.xyz);\n"
+				text = text.."        FLOAT lDist = length(lPos - "..Tokens.Position..".xyz);\n"
 			else
-				text = text.."        VEC3 lVec = lPos - position.xyz;\n"
+				text = text.."        VEC3 lVec = lPos - "..Tokens.Position..".xyz;\n"
 				text = text.."        FLOAT lDist = length(lVec);\n"
 				text = text..string.format("        lVec = normalize(lVec);\n")
 			end
@@ -310,14 +314,14 @@ function AppendVertShaderBody(info, pass)
 	text = text.."\n"
 
 	text = text.."    VEC4 vertex = VS_IN("..Attribs.Position..");\n"
-	text = text.."    VEC4 positionMVP = MUL(vertex,"..Uniforms.ModelViewProjMatrix..");\n"
+	text = text.."    VEC4 "..Tokens.PositionMVP.." = MUL(vertex,"..Uniforms.ModelViewProjMatrix..");\n"
 	text = text.."\n"
 
 	local normalDefined = false
 
 	if IsNeedNormal(info.vtype, pass, info.lightcnt) then
-		text = text.."    VEC4 position = MUL(vertex,"..Uniforms.ModelViewMatrix..");\n"
-		text = text.."    VEC3 eyeVec = -position.xyz;\n"
+		text = text.."    VEC4 "..Tokens.Position.." = MUL(vertex,"..Uniforms.ModelViewMatrix..");\n"
+		text = text.."    VEC3 eyeVec = -"..Tokens.Position..".xyz;\n"
 		text = text.."    VEC3 "..Tokens.Normal.." = VS_IN("..Attribs.Normal..");\n"
 		text = text.."    "..Tokens.Normal.." = MUL("..Tokens.Normal..","..Uniforms.NormalMatrix..");\n\n"
 		if not info.perpixel then
@@ -326,10 +330,10 @@ function AppendVertShaderBody(info, pass)
 		end
 		normalDefined = true
 	elseif info.hasNMap then
-		text = text.."    VEC4 position = MUL(vertex,"..Uniforms.ModelViewMatrix..");\n"
-		text = text.."    VEC3 eyeVec = -position.xyz;\n"
+		text = text.."    VEC4 "..Tokens.Position.." = MUL(vertex,"..Uniforms.ModelViewMatrix..");\n"
+		text = text.."    VEC3 eyeVec = -"..Tokens.Position..".xyz;\n"
 	elseif info.fogging then
-		text = text.."    VEC4 position = MUL(vertex,"..Uniforms.ModelViewMatrix..");\n"
+		text = text.."    VEC4 "..Tokens.Position.." = MUL(vertex,"..Uniforms.ModelViewMatrix..");\n"
 	end
 
 	if info.isDS and not normalDefined then
@@ -342,6 +346,7 @@ function AppendVertShaderBody(info, pass)
 	end
 	
 	if info.light and info.vnormal and info.perpixel == false then
+		text = text.."\n"
 		text = text..AppendLighting(info, true, pass)
 		text = text.."    "..info.Varyings[VARY_SPEC]._VarName.." = specular;\n"
 	elseif info.mcolor then
@@ -360,13 +365,13 @@ function AppendVertShaderBody(info, pass)
 			text = text.."    "..info.Varyings[VARY_EYE]._VarName..
 				" = VEC3(dot(eyeVec, "..Tokens.Tangent.."), dot(eyeVec, "..Tokens.Binormal.."), dot(eyeVec, "..Tokens.Normal.."));\n"
 			if pass:getLightingMode() ~= vid.ELM_NONE then
-				text = text..string.format("    // transforming lights into TBN space\n")
+				text = text..string.format("    // transforming into TBN space\n")
 				for i = 0, info.lightcnt - 1 do
 					text = text..string.format("    { // Light %d\n", i)
 					if info.lightcnt == 1 then
-						text = text..string.format("        VEC3 lVec = L_POS("..Uniforms.Lighting..") - position.xyz;\n")
+						text = text..string.format("        VEC3 lVec = L_POS("..Uniforms.Lighting..") - "..Tokens.Position..".xyz;\n")
 					else
-						text = text..string.format("        VEC3 lVec = L_POS("..Uniforms.Lighting.."[%d]) - position.xyz;\n", i)
+						text = text..string.format("        VEC3 lVec = L_POS("..Uniforms.Lighting.."[%d]) - "..Tokens.Position..".xyz;\n", i)
 					end
 					if i < 3 then
 						text = text.."        "..info.Varyings[VARY_LVEC0 + i]._VarName..
@@ -387,12 +392,12 @@ function AppendVertShaderBody(info, pass)
 				text = text.."    "..info.Varyings[VARY_NORM]._VarName.." = "..Tokens.Normal..";\n"
 				normalPassed = true
 			end
-			text = text.."    "..info.Varyings[VARY_POS]._VarName.." = position;\n"
+			text = text.."    "..info.Varyings[VARY_POS]._VarName.." = "..Tokens.Position..";\n"
 		elseif info.fogging then
-			text = text.."    "..info.Varyings[VARY_POS]._VarName.." = position;\n"
+			text = text.."    "..info.Varyings[VARY_POS]._VarName.." = "..Tokens.Position..";\n"
 		end
 	elseif info.fogging then
-		text = text.."    "..info.Varyings[VARY_POS]._VarName.." = position;\n"
+		text = text.."    "..info.Varyings[VARY_POS]._VarName.." = "..Tokens.Position..";\n"
 	end
 	if info.vcolor then
 		if info.light and info.vnormal and info.perpixel == false then
@@ -419,13 +424,13 @@ function AppendVertShaderBody(info, pass)
 			end
 		end
 	end
-
 	text = text.."\n"
-
-	if info.TCoords.EnvGen ~= nil then
-		text = text .. info.TCoords.EnvGen
-	end
 	
+	if info.TCoords.VertPreVars ~= nil then
+		text = text..info.TCoords.VertPreVars
+		text = text.."\n"
+	end
+
 	for i = 1, table.getn(info.TCoords) do
 		if info.TCoords[i].VarName ~= nil then
 			if info.TCoords[i].VertValueRefIdx == nil then
@@ -440,6 +445,11 @@ function AppendVertShaderBody(info, pass)
 		end
 	end
 	text = text.."\n"
+
+	if info.TCoords.VertPostVars ~= nil then
+		text = text..info.TCoords.VertPostVars
+		text = text.."\n"
+	end
 
 	local ti = 0
 	for i = 1, table.getn(info.TCoords) do
@@ -472,7 +482,7 @@ function AppendPixelShaderBody(info, pass)
 	if info.light or info.hasNMap then 
 		if info.vnormal and info.perpixel then
 			if info.light then
-				text = text.."    VEC3 position = "..info.Varyings[VARY_POS]._VarName..".xyz;\n"
+				text = text.."    VEC3 "..Tokens.Position.." = "..info.Varyings[VARY_POS]._VarName..".xyz;\n"
 			end
 			text = text.."    VEC3 eyeVec = normalize("..info.Varyings[VARY_EYE]._VarName..");\n"
 			text = text.."\n"
@@ -486,9 +496,30 @@ function AppendPixelShaderBody(info, pass)
 	end
 	text = text.."\n"
 	
-	if info.TCoords.Paralax ~= nil then
-		text = text..info.TCoords.Paralax
-		text = text.."\n"
+	local ti = 0
+	for i = 1, table.getn(info.TCoords) do
+		local paralax = nil
+		if info.TCoords[i].VarName ~= nil then
+			local idx = info.TCoords[i].LayerIdx
+			if pass.Layers[idx]:getType() == vid.ETLT_NORMAL_MAP then
+				local tchnl = info.TCoords[i].TChnl
+				for j = 1, table.getn(info.TCoords) do
+					if i ~= j and tchnl ~= -1 and tchnl == info.TCoords[j].TChnl then
+						paralax = ""
+						paralax = paralax.."    // texcoord offset (paralax effect)\n"
+						paralax = paralax.."    FLOAT height = PARALAX_SCALE * (TEX2D("..
+							Uniforms.Tex[idx + 1]..", "..info.TCoords[i].VarName..").a) + PARALAX_BIAS;\n"
+						paralax = paralax.."    "..info.TCoords[j].VarName.." += VEC2(eyeVec.x,-eyeVec.y) * height;\n"
+						break
+					end
+				end
+			end
+		end
+		if paralax ~= nil then
+			text = text..paralax
+			text = text.."\n"
+			break
+		end
 	end
 
 	for i = 1, table.getn(info.TCoords) do
@@ -607,6 +638,7 @@ function AppendPixelShaderBody(info, pass)
 			else
 				text = text.."    VEC3 "..Tokens.Normal.." = normalize("..info.Varyings[VARY_NORM]._VarName..");\n"
 			end
+			text = text.."\n"
 			text = text..AppendLighting(info, false, pass)
 		else
 			text = text.."    VEC3 specular = "..info.Varyings[VARY_SPEC]._VarName..";\n"

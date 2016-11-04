@@ -40,6 +40,7 @@ VARY_EYE   = 10
 VARY_LVEC0 = 11
 VARY_LVEC1 = 12
 VARY_LVEC2 = 13
+VARY_COUNT = 14
 
 Varyings =
 {
@@ -74,6 +75,8 @@ Tokens =
 	Tangent = "T",
 	Binormal= "B",
 	Normal  = "N",
+	Position = "pos",
+	PositionMVP = "posMVP",
 }
 
 TexFlags =
@@ -114,11 +117,6 @@ function HasColor(vtype)
 		return true
 	end
 	return false
-end
-
-function IsDS()
-	local deferred = MyDriver:getRenderPath() == vid.ERP_DEFERRED_SHADING
-	return deferred
 end
 
 function IsFogging(pass)
@@ -272,6 +270,7 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 	local hasTBN = HasTBN(vtype)
 	local fogging = IsFogging(pass)
 	local components = vid.getVertexComponents(vtype)
+	local isDS = MyDriver:getRenderPath() == vid.ERP_DEFERRED_SHADING
 
 	local vertUniforms = vid.EUF_NONE
 	local fragUniforms = vid.EUF_NONE
@@ -281,23 +280,23 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 	local info = {}
 	info.vtype = vtype
 	info.perpixel = perpixel
-	info.light = IsLighting(pass, lightcnt)
+	info.light = light
 	info.lightcnt = lightcnt
-	info.vnormal = HasNormal(vtype)
-	info.vcolor = HasColor(vtype)
-	info.mcolor = IsCustomVertexColor(vtype, pass)
-	info.hasNMap = HasNMap(pass)
-	info.hasTBN = HasTBN(vtype)
+	info.vnormal = vnormal
+	info.vcolor = vcolor
+	info.mcolor = mcolor
+	info.hasNMap = hasNMap
+	info.hasTBN = hasTBN
 	info.hasAttenMap = HasMap(pass, vid.ETLT_ATTENUATION_MAP)
 	info.hasLightMap = HasMap(pass, vid.ETLT_LIGHT_MAP)
 	info.hasDiffMap  = HasMap(pass, vid.ETLT_DIFFUSE_MAP)
 	info.hasSplatMap = HasMap(pass, vid.ETLT_SPLATTING_MAP)
-	info.fogging = IsFogging(pass)
-	info.components = vid.getVertexComponents(vtype)
+	info.fogging = fogging
+	info.components = components
 	info.ogl = MyDriver:getDriverFamily() == vid.EDF_OPENGL
 	info.tcnum = GetTexCoordNum(vtype)
 	info.tnum = GetTexNum(pass)
-	info.isDS = IsDS()
+	info.isDS = isDS
 
 	-- attributes
 
@@ -347,6 +346,7 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 	info.TCoords = {}
 
 	-- Vertex
+	local envGenText = nil
 	local ti = 0
 	for i = 0, vid.MY_MATERIAL_MAX_LAYERS-1 do
 		local texture = pass.Layers[i]:getTexture()
@@ -362,15 +362,15 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 			info.TCoords[ti + 1].LayerIdx = i
 			info.TCoords[ti + 1].TChnl = -1
 			if pass.Layers[i]:getTexCoordGen() == vid.ETCGT_ENVIRONMENT_MAPPING then
-				if info.TCoords.TCEnv == nil then
-					local text = ""
-					text = text.."    // sphere map tcoords\n"
-					text = text.."    VEC3 r = reflect(-eyeVec, "..Tokens.Normal..");\n"
-					text = text.."    FLOAT m = 2.0 * sqrt(r.x*r.x + r.y*r.y + (r.z+1.0)*(r.z+1.0));\n"
-					text = text..string.format("    VEC4 tcenv = VEC4(r.xy/m + 0.5, 1.0, 1.0);\n\n")
-					info.TCoords.EnvGen = text
+				local text = ""
+				if envGenText == nil then
+					envGenText = ""
+					envGenText = envGenText.."    // sphere maping\n"
+					envGenText = envGenText.."    VEC3 r = reflect(-eyeVec, "..Tokens.Normal..");\n"
+					envGenText = envGenText.."    FLOAT m = 2.0 * sqrt(r.x*r.x + r.y*r.y + (r.z+1.0)*(r.z+1.0));\n"
+					envGenText = envGenText.."    VEC4 tcenv = VEC4(r.xy/m + 0.5, 1.0, 1.0);\n"
 				end
-				info.TCoords[ti + 1].VertPreVar = nil
+				info.TCoords[ti + 1].VertPreVar = text
 				info.TCoords[ti + 1].VertVarValue = "tcenv"
 			elseif pass.Layers[i]:getTexCoordGen() == vid.ETCGT_MANUAL_MAPPING then
 				info.TCoords[ti + 1].VertPreVar = nil
@@ -383,9 +383,9 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 				end
 			elseif pass.Layers[i]:getTexCoordGen() == vid.ETCGT_PROJECTED_MAPPING then
 				local text = ""
-				text = text.."    // calculating texture coords for projected mapping\n"
+				text = text.."    // projected mapping\n"
 				if pass.Layers[i]:isTexCoordAnimated() then
-					text = text.."    // and animating texture coords (translate/scale/rotate)\n"
+					text = text.."    // animating tex coords (translate/scale/rotate)\n"
 					animated = true
 				end
 				info.TCoords[ti + 1].VertPreVar = text
@@ -394,13 +394,17 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 			end
 			if pass.Layers[i]:isTexCoordAnimated() and not animated then
 				local text = ""
-				text = text.."    // animating texture coords (translate/scale/rotate)\n"
+				text = text.."    // animating tex coords (translate/scale/rotate)\n"
 				text = text..string.format("    tc%d = MUL(tc%d,%s);\n", i, i, Uniforms.TexMatrix[i+1])
 				info.TCoords[ti + 1].VertPostVar = text
 			end
 			ti = ti + 1
 		end
 	end
+	if envGenText then
+		info.TCoords.VertPreVars = envGenText
+	end
+	info.TCoords.VertPostVars = nil
 	
 	for i = 1, table.getn(info.TCoords) do
 		local tchnl = info.TCoords[i].TChnl
@@ -471,7 +475,7 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 			vid.EUF_MODEL_VIEW_MATRIX)
 	end
 
-	if IsDS() and vnormal then
+	if isDS and vnormal then
 		vertUniforms = bit.bor(vertUniforms,
 			vid.EUF_NORMAL_MATRIX)
 	end
@@ -520,14 +524,12 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 		local v = {}
 		v.Type = "VEC4"	
 		v.VarName = Varyings[VARY_COL]
-		v.Spec = AppendVaryingColorSpec(0)
 		varyings[VARY_COL] = v
 	end	
 	if light and vnormal and perpixel == false then
 		local v = {}
 		v.Type = "VEC3"	
 		v.VarName = Varyings[VARY_SPEC]
-		v.Spec = AppendVaryingColorSpec(1)
 		varyings[VARY_SPEC] = v
 	end	
 
@@ -544,7 +546,6 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 				local v = {}
 				v.Type = "VEC4"	
 				v.VarName = Varyings[VARY_TC0 + tii]
-				v.Spec = AppendVaryingVectorSpec(tii)
 				varyings[VARY_TC0 + tii] = v
 				tii = tii + 1
 			end
@@ -556,57 +557,43 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 			local v = {}
 			v.Type = "VEC3"	
 			v.VarName = Varyings[VARY_NORM]
-			v.Spec = AppendVaryingVectorSpec(tii)
 			varyings[VARY_NORM] = v
-			tii = tii + 1
 		end
 		local v = {}
 		v.Type = "VEC3"	
 		v.VarName = Varyings[VARY_EYE]
-		v.Spec = AppendVaryingVectorSpec(tii)
 		varyings[VARY_EYE] = v
-		tii = tii + 1
 		need_pos = true
 	elseif hasNMap and perpixel then
 		local v = {}
 		v.Type = "VEC3"	
 		v.VarName = Varyings[VARY_EYE]
-		v.Spec = AppendVaryingVectorSpec(tii)
 		varyings[VARY_EYE] = v
-		tii = tii + 1
 	end
 
 	if need_pos then
 		local v = {}
 		v.Type = "VEC4"	
 		v.VarName = Varyings[VARY_POS]
-		v.Spec = AppendVaryingVectorSpec(tii)
 		varyings[VARY_POS] = v
-		tii = tii + 1
 	end
 
-	if IsDS() then
+	if isDS then
 		if hasNMap and hasTBN then
 			local v = {}
 			v.Type = "VEC3"	
 			v.VarName = Varyings[VARY_TANG]
-			v.Spec = AppendVaryingVectorSpec(tii)
 			varyings[VARY_TANG] = v
-			tii = tii + 1
 			v = {}
 			v.Type = "VEC3"	
 			v.VarName = Varyings[VARY_BINORM]
-			v.Spec = AppendVaryingVectorSpec(tii)
 			varyings[VARY_BINORM] = v
-			tii = tii + 1
 		end
 		if varyings[VARY_NORM] == nil then
 			local v = {}
 			v.Type = "VEC3"	
 			v.VarName = Varyings[VARY_NORM]
-			v.Spec = AppendVaryingVectorSpec(tii)
 			varyings[VARY_NORM] = v
-			tii = tii + 1
 		end
 	end
 
@@ -617,9 +604,7 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 					local v = {}
 					v.Type = "VEC4"	
 					v.VarName = Varyings[VARY_LVEC0 + i]
-					v.Spec = AppendVaryingVectorSpec(tii)
 					varyings[VARY_LVEC0 + i] = v
-					tii = tii + 1
 				end
 			end
 		end
@@ -650,19 +635,6 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 				text = text..info.TCoords[info.TCoords[i].VertValueRefIdx].VarName
 			end
 			info.TCoords[i].FragVarValue = text
-			if pass.Layers[idx]:getType() == vid.ETLT_NORMAL_MAP and info.TCoords.Paralax == nil then
-				local tchnl = info.TCoords[i].TChnl
-				local text = ""
-				text = text.."    // texcoord offset (paralax effect)\n"
-				text = text.."    FLOAT height = PARALAX_SCALE * (TEX2D("..
-					Uniforms.Tex[idx + 1]..", "..info.TCoords[i].VarName..").a) + PARALAX_BIAS;\n"
-				for j = 1, table.getn(info.TCoords) do
-					if i ~= j and tchnl ~= -1 and tchnl == info.TCoords[j].TChnl then
-						text = text.."    "..info.TCoords[j].VarName.." += VEC2(eyeVec.x,-eyeVec.y) * height;\n"
-					end
-				end
-				info.TCoords.Paralax = text
-			end
 		end
 	end
 

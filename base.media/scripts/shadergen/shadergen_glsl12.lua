@@ -12,7 +12,7 @@ function GLSL12GenVertexShader(info, pass)
 	text = text.."void main(void)\n"
 	text = text.."{\n"
 	text = text..AppendVertShaderBody(info, pass)
-	text = text.."    gl_Position = positionMVP;\n"	
+	text = text.."    gl_Position = "..Tokens.PositionMVP..";\n"	
 	text = text.."}\n"
 
 	return text
