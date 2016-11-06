@@ -109,6 +109,7 @@
 #define GL_EXT_texture_compression_s3tc 1
 #define GL_SGIS_generate_mipmap 1
 #define GL_ARB_texture_float 1
+#define GL_ARB_half_float_pixel 1
 #define GL_ARB_framebuffer_object 1
 #define GL_ARB_texture_non_power_of_two 1
 #define GL_ARB_vertex_array_object 1

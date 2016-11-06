@@ -1675,6 +1675,68 @@ void COpenGLDriver::render2DRect(const SMaterial &material,
 
 //---------------------------------------------------------------------------
 
+void COpenGLDriver::render2DRectWithLight(const SMaterial &material,
+	const core::rectf &drawRect, const core::rectf &texRect,
+	u32 enabledLight)
+{
+	// Recalculate draw Rectangle
+	// from normalized Screen space to identity Rasterizator space
+	// (0, 0) 0---1 (1, 0)             (-1, 1) 0---1 ( 1, 1)
+	//        | \ |           ---->            | \ |
+	// (0, 1) 3---2 (1, 1)             (-1,-1) 3---2 ( 1,-1)
+	f32 drawLeft   = drawRect.UpperLeftCorner.X * 2.f - 1.f;
+	f32 drawTop    =(drawRect.UpperLeftCorner.Y * 2.f - 1.f) * (-1);
+	f32 drawRight  = drawRect.LowerRightCorner.X * 2.f - 1.f;
+	f32 drawBottom =(drawRect.LowerRightCorner.Y * 2.f - 1.f) * (-1);
+
+	vid::S3DVertex1TCoords vertices[] =
+	{
+		S3DVertex1TCoords(drawLeft,  drawTop,    0, 0, 0, 0, texRect.Left,  texRect.Top),
+		S3DVertex1TCoords(drawRight, drawTop,    0, 0, 0, 0, texRect.Right,	texRect.Top),
+		S3DVertex1TCoords(drawRight, drawBottom, 0, 0, 0, 0, texRect.Right,	texRect.Bottom),
+		S3DVertex1TCoords(drawLeft,  drawBottom, 0, 0, 0, 0, texRect.Left,  texRect.Bottom),
+	};
+
+	if (getRenderTarget())
+	{
+		vertices[1] = S3DVertex1TCoords(drawLeft,  drawBottom, 0, 0, 0, 0, texRect.Left,  texRect.Bottom);
+		vertices[3] = S3DVertex1TCoords(drawRight, drawTop,    0, 0, 0, 0, texRect.Right,	texRect.Top);
+	}
+
+	// store initial render states
+	bool stencil = _isStencilEnabled();
+	core::matrix4 matModel = getTransform(ETS_MODEL);
+	core::matrix4 matView = getTransform(ETS_VIEW);
+	core::matrix4 matProj = getTransform(ETS_PROJ);
+
+	// identity Rasterizator space
+	core::matrix4 m;
+	setTransform(ETS_MODEL, m);
+	setTransform(ETS_VIEW, m);
+	setTransform(ETS_PROJ, m);
+
+	// seet render states
+	_disableStencil();
+
+	// draw
+	COpenGLRenderArray<vid::S3DVertex1TCoords, u16> rbuf(
+		this,
+		vertices, sizeof(vertices) / sizeof(*vertices),
+		NULL, 0,
+		vid::EDPT_TRIANGLE_FAN,
+		false);
+	renderBufferWithLight(&rbuf, material, enabledLight);
+
+	// restore modified states
+	if (stencil)
+		_enableStencil();
+	setTransform(ETS_MODEL, matModel);
+	setTransform(ETS_VIEW, matView);
+	setTransform(ETS_PROJ, matProj);
+}
+
+//---------------------------------------------------------------------------
+
 CNullGPUProgram* COpenGLDriver::_createGPUProgram(u32 uniforms, u32 attributes, u32 lightcnt,
 	E_VERTEX_SHADER_VERSION vertex_shader_ver, const c8 *vertex_shader,
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader)

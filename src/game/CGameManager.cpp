@@ -818,9 +818,6 @@ bool CGameManager::loadGameScene(const c8* filename)
 	stopGame();
 	stopAllSoundTracks();
 
-	vid::E_RENDER_PATH rend_path = VIDEO_DRIVER.getRenderPath();
-	VIDEO_DRIVER.setRenderPath(vid::ERP_FORWARD_RENDERING);
-
 	if (m_CallbackBeforeLoadScene)
 		m_CallbackBeforeLoadScene();
 	SCRIPT_MANAGER.runScriptCallback(
@@ -850,8 +847,6 @@ bool CGameManager::loadGameScene(const c8* filename)
 		scr::ESCT_ON_AFTER_LOAD_SCENE, (bool*)NULL);
 	SCRIPT_MANAGER.runScriptCallback(
 		scr::ESCT_SCENE_EDITOR_ON_AFTER_LOAD_SCENE, (bool*)NULL);
-
-	VIDEO_DRIVER.setRenderPath(rend_path);
 
 	return res;
 }

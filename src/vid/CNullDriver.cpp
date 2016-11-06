@@ -256,9 +256,10 @@ void CNullDriver::clearGPUProgramHash()
 {
 	_bindGPUProgram(NULL);
 	 m_GPUPrograms.clear();
-	for (u32 i = 0; i < E_VERTEX_TYPE_COUNT; i++)
-		for (u32 j = 0; j <= PRL_MAX_SHADER_LIGHTS; j++)
-			m_GPUProgramsHash[i][j].clear();
+ 	for (u32 k = 0; k < E_RENDER_PATH_COUNT; k++)
+		for (u32 i = 0; i < E_VERTEX_TYPE_COUNT; i++)
+			for (u32 j = 0; j <= PRL_MAX_SHADER_LIGHTS; j++)
+				m_GPUProgramsHash[k][i][j].clear();
 	m_GPUProgramsHashByContent.clear();
 	m_GPUProgramsHashByFileName.clear();
 	m_GPUProgramsHashFileNames.clear();
@@ -348,12 +349,6 @@ bool CNullDriver::_initDriver(SExposedVideoData &out_video_data)
 
 void CNullDriver::setRenderPath(E_RENDER_PATH renderPath)
 {
-	if (renderPath != m_RenderPath)
-	{
-		clearGPUProgramHash();
-		LOGGER.logInfo("Use '%s' render path.",
-			getRenderPathReadableName(renderPath));
-	}
 	m_RenderPath = renderPath;
 }
 
@@ -2877,6 +2872,52 @@ void CNullDriver::_renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass)
 
 //---------------------------------------------------------------------------
 
+void CNullDriver::renderBufferWithLight(IRenderBuffer *rbuf, const SMaterial &mat, u32 enabledLight)
+{
+	if (!((CNullRenderBuffer*)rbuf)->bind())
+	{
+		LOGGER.logErr(__FUNCTION__ ": Can not bind buffer to render!");
+		return;
+	}
+
+	u32 pCnt = mat.getPassesCount();
+	for (u32 p = 0; p < pCnt; p++)
+		_renderBuffer(rbuf, mat.getPass(p), enabledLight);
+
+	((CNullRenderBuffer*)rbuf)->unbind();
+}
+
+//---------------------------------------------------------------------------
+
+void CNullDriver::_renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass, u32 enabledLight)
+{
+	u32 lsize = getDynamicLightsCount();
+	u64 lBits = m_LightsBits;
+
+	if (enabledLight >= lsize)
+		return;
+
+	m_LightsBits  = u64(1 << enabledLight);
+	applyDynamicLights();
+
+	setRenderPass(pass);
+	_setVertexType(rbuf->getVertices()->getType());
+	_setRenderStates();
+
+	((CNullRenderBuffer*)rbuf)->render();
+
+	m_TrianglesDrawn += rbuf->getPrimitiveCount();
+	m_DIPsDrawn++;
+
+	if (m_LightsBits != lBits)
+	{
+		m_LightsBits = lBits;
+		applyDynamicLights();
+	}
+}
+
+//---------------------------------------------------------------------------
+
 void CNullDriver::_renderStencilVolume(IRenderBuffer *rbuf, const SRenderPass &pass, bool zfail)
 {
 	m_TrianglesDrawn += (m_TwoSidedStencil ? 1 : 2) * rbuf->getPrimitiveCount();
@@ -3130,7 +3171,7 @@ void CNullDriver::_renderDeferred(E_RENDER_PASS pass)
 
 						// setup lighting
 						_applyDynamicLights(
-							NULL, 0, 0);
+							NULL, 0, -1);
 
 						// setup transformation
 						setTransform(ETS_MODEL, rpool.Transform);
@@ -3338,7 +3379,6 @@ bool CNullDriver::isRendering()
 
 //---------------------------------------------------------------------------
 
-//! returns the maximal amount of dynamic lights the device can handle
 const u32& CNullDriver::getDynamicLightsMaximalAmount() const
 {
     return m_MaxLights;
@@ -3346,8 +3386,6 @@ const u32& CNullDriver::getDynamicLightsMaximalAmount() const
 
 //---------------------------------------------------------------------------
 
-//! Returns current amount of dynamic lights set
-//! \return Current amount of dynamic lights set
 s32 CNullDriver::getDynamicLightsCount()
 {
     return m_Lights.size();
@@ -3355,7 +3393,6 @@ s32 CNullDriver::getDynamicLightsCount()
 
 //---------------------------------------------------------------------------
 
-//! deletes all dynamic lights there are
 void CNullDriver::deleteAllDynamicLights()
 {
 	m_LastEnabledLightsCount = -1;
@@ -3364,7 +3401,7 @@ void CNullDriver::deleteAllDynamicLights()
 }
 
 //---------------------------------------------------------------------------
-//! adds a dynamic light
+
 void CNullDriver::addDynamicLight(const SLight& light)
 {
 	if (light.Type == ELT_POINT && light.Radius<=0)
@@ -3374,10 +3411,6 @@ void CNullDriver::addDynamicLight(const SLight& light)
 
 //---------------------------------------------------------------------------
 
-//! Returns light data which was previously set with IVideDriver::addDynamicLight().
-//! \param idx: Zero based index of the light. Must be greater than 0 and smaller
-//! than IVideoDriver()::getDynamicLightsCount.
-//! \return Light data.
 const SLight& CNullDriver::getDynamicLight(s32 idx)
 {
     if (idx<0 || idx>=(s32)m_Lights.size())
@@ -3388,7 +3421,6 @@ const SLight& CNullDriver::getDynamicLight(s32 idx)
 
 //---------------------------------------------------------------------------
 
-//!  setting dynamic light params
 void CNullDriver::setDynamicLight(s32 idx, const SLight & light)
 {
 	if (idx < 0 || idx >= (s32)m_Lights.size())
@@ -3398,7 +3430,6 @@ void CNullDriver::setDynamicLight(s32 idx, const SLight & light)
 
 //---------------------------------------------------------------------------
 
-//! enabling/disabling dynamic light 
 void CNullDriver::setDynamicLightEnabled(s32 idx, bool enabled)
 {
 	if (idx < 0 || idx >= (s32)m_Lights.size())
@@ -3412,7 +3443,6 @@ void CNullDriver::setDynamicLightEnabled(s32 idx, bool enabled)
 
 //---------------------------------------------------------------------------
 
-//! return enabling/disabling flag of dynamic light 
 bool CNullDriver::isDynamicLightEnabled(s32 idx)
 {
 	if (idx < 0 || idx >= (s32)m_Lights.size())
@@ -3555,8 +3585,10 @@ const core::stringc& CNullDriver::_getShaderName(
 	const c8 *tag)
 {
 	static core::stringc name;
-	name.sprintf("%s-%s-%s", _getGPUProgramName(vertex_type, pass, lightcnt).c_str(),
-		getDriverTypeName(getDriverType()), tag);
+	name.sprintf("%s-%s-%s-%s", _getGPUProgramName(vertex_type, pass, lightcnt).c_str(),
+		getDriverTypeName(getDriverType()),
+		getRenderPathShortName(m_RenderPath),
+		tag);
 	return name;
 }
 
@@ -3565,18 +3597,20 @@ const core::stringc& CNullDriver::_getShaderName(
 void _writeShader(io::IXMLWriter *xml_file,
 	const core::array <SGPUProgramShaderInfo> &shaders)
 {
-	static core::stringw uniforms_strw, attributes_strw, driver_strw;
+	static core::stringw uniforms_strw, attributes_strw, driver_strw, rpath_strw;
 	for (u32 i = 0; i < shaders.size(); i++)
 	{
 		if (shaders[i].Driver == vid::EDT_NULL)
 			continue;
 		driver_strw = getDriverTypeName(shaders[i].Driver);
+		rpath_strw = getRenderPathName(shaders[i].RenderPath);
 		uniforms_strw.sprintf("%d", shaders[i].Uniforms);
 		attributes_strw.sprintf("%d", shaders[i].Attributes);
 		core::stringc vertex_fname = core::extractFileName(shaders[i].VertexFileName);
 		core::stringc pixel_fname = core::extractFileName(shaders[i].PixelFileName);
 		xml_file->writeElement(L"Shader", true,
 			L"driver", driver_strw.c_str(),
+			L"rend_path", rpath_strw.c_str(),
 			L"tag", core::stringw(shaders[i].Tag.c_str()).c_str(),
 			L"uniforms", uniforms_strw.c_str(),
 			L"attributes", attributes_strw.c_str(),
@@ -3667,6 +3701,10 @@ bool _loadGPUProgramFile(const c8 *file_name, const c8 *tag,
 				(L"driver",
 				vid::DriverTypeName, vid::E_DRIVER_TYPE_COUNT,
 				vid::EDT_NULL);
+			e.RenderPath = (E_RENDER_PATH)xml_file->getAttributeValueAsIndexInArray
+				(L"rend_path",
+				vid::RenderPathName, vid::E_RENDER_PATH_COUNT,
+				vid::ERP_FORWARD_RENDERING);
 
 			e.Tag = xml_file->getAttributeValue(L"tag");
 			if (!tag || e.Tag == tag)
@@ -3792,6 +3830,7 @@ bool appendGPUProgramInfo(const SGPUProgramInfo *prog_info,
 	u32                     uniforms,
 	u32                     attributes,
     E_DRIVER_TYPE           driver,
+	E_RENDER_PATH           rend_path,
 	const c8                *tag,
 	E_VERTEX_SHADER_VERSION vertex_ver,
 	const c8                *vertex_file_name,
@@ -3804,6 +3843,7 @@ bool appendGPUProgramInfo(const SGPUProgramInfo *prog_info,
 	shader_info.Uniforms       = uniforms;
 	shader_info.Attributes     = attributes;
 	shader_info.Driver         = driver;
+	shader_info.RenderPath     = rend_path;
 	shader_info.Tag            = tag;
 	shader_info.VertexVer      = vertex_ver;
 	shader_info.VertexFileName = vertex_file_name;
@@ -3813,7 +3853,8 @@ bool appendGPUProgramInfo(const SGPUProgramInfo *prog_info,
 	for (u32 i = 0; i < _ProgramInfo.TaggedShaders.size(); i++)
 	{
 		if (_ProgramInfo.TaggedShaders[i].Tag == tag
-				&& _ProgramInfo.TaggedShaders[i].Driver == driver)
+				&& _ProgramInfo.TaggedShaders[i].Driver == driver
+				&& _ProgramInfo.TaggedShaders[i].RenderPath == rend_path)
 		{
 			_ProgramInfo.TaggedShaders[i] = shader_info;
 			return true;
@@ -3891,7 +3932,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 				lightcnt : PRL_MAX_SHADER_LIGHTS;
 
 		u64 hash = pass.getHashGPU();
-		program = (SGPUProgram*)m_GPUProgramsHash[vertex_type][lightcnt].get_value(hash);
+		program = (SGPUProgram*)m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].get_value(hash);
 		if (program)
 		{
 			LOGGER.logErr("Possibble hash conflict, same GPU program already exists "
@@ -3916,7 +3957,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 		program = (SGPUProgram*)m_GPUProgramsHashByContent.get_value(keyname);
 		if (program)
 		{
-			m_GPUProgramsHash[vertex_type][lightcnt].set_value(hash, program);
+			m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].set_value(hash, program);
 			break;
 		}
 
@@ -3959,6 +4000,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 			
 			SGPUProgramShaderInfo e;
 			e.Driver	     = getDriverType();
+			e.RenderPath     = m_RenderPath;
 			e.Uniforms	     = uniforms;
 			e.Attributes     = attributes;
 			e.VertexVer      = vertex_shader_ver;
@@ -3970,7 +4012,8 @@ IGPUProgram* CNullDriver::addGPUProgram(
 			bool has_entry_already = false;
 			for (u32 i = 0; i < prog_info->TaggedShadersCount; i++)
 			{
-				if (e.Driver == prog_info->TaggedShaders[i].Driver)
+				if (e.Driver == prog_info->TaggedShaders[i].Driver
+						&& e.RenderPath == prog_info->TaggedShaders[i].RenderPath)
 				{
 					has_entry_already = true;
 					break;
@@ -3979,7 +4022,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 			if (!has_entry_already)
 			{
 				if (appendGPUProgramInfo(prog_info,
-						e.Uniforms, e.Attributes, e.Driver, e.Tag.c_str(),
+						e.Uniforms, e.Attributes, e.Driver, e.RenderPath, e.Tag.c_str(),
 						e.VertexVer, e.VertexFileName.c_str(),
 						e.PixelVer, e.PixelFileName.c_str()))
 					writeGPUProgramInfo(gpu_file_name.c_str(), prog_info);
@@ -3995,7 +4038,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 		}
 		program = new SGPUProgram(gpu_prog, gpu_file_name_c);
 		m_GPUPrograms.push_back(program->Program);
-		m_GPUProgramsHash[vertex_type][lightcnt].set_value(hash, program);
+		m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].set_value(hash, program);
 		m_GPUProgramsHashByContent.set_value(keyname, program);
 		program->drop();
 	}
@@ -4079,7 +4122,7 @@ IGPUProgram* CNullDriver::getGPUProgram(
 
 	u64 hash = pass.getHashGPU();
 	SGPUProgram *program =
-		(SGPUProgram*)m_GPUProgramsHash[vertex_type][lightcnt].get_value(hash);
+		(SGPUProgram*)m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].get_value(hash);
 	gpu_prog = program ? program->Program : NULL;
 	if (!gpu_prog)
 	{			
@@ -4087,7 +4130,7 @@ IGPUProgram* CNullDriver::getGPUProgram(
 		if (SCRIPT_MANAGER.runScriptCallback(scr::ESCT_GEN_GPU_PROGRAM, &res,
 				vertex_type, (void*)&pass, lightcnt))
 		{
-			program = (SGPUProgram*)m_GPUProgramsHash[vertex_type][lightcnt].get_value(hash);
+			program = (SGPUProgram*)m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].get_value(hash);
 			gpu_prog = program ? program->Program : NULL;
 			if (!gpu_prog)
 				LOGGER.logErr("Can't add GPU program "
@@ -4107,7 +4150,8 @@ IGPUProgram* CNullDriver::getGPUProgram(
 		return NULL;
 	lightcnt = lightcnt <= PRL_MAX_SHADER_LIGHTS ?
 		lightcnt : PRL_MAX_SHADER_LIGHTS;
-	SGPUProgram *program = (SGPUProgram*)m_GPUProgramsHash[vertex_type][lightcnt].get_value(hash);
+	SGPUProgram *program =
+		(SGPUProgram*)m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].get_value(hash);
 	IGPUProgram *gpu_prog = program ? program->Program : NULL;
 	return gpu_prog;
 }
@@ -4168,7 +4212,8 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 		u32 attributes = 0;
 		for (u32 i = 0; i < shadersp->size(); i++)
 		{
-			if ((*shadersp)[i].Driver == getDriverType())
+			if ((*shadersp)[i].Driver == getDriverType()
+					&& (*shadersp)[i].RenderPath == m_RenderPath)
 			{
 				vsh_ver	  = (*shadersp)[i].VertexVer;
 				psh_ver	  = (*shadersp)[i].PixelVer;
@@ -4239,7 +4284,7 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 						//hash != (u64)0 &&
 						lights != (u32)-1)
 				{
-					program = (SGPUProgram*)m_GPUProgramsHash[vertex_type][lights].get_value(hash);
+					program = (SGPUProgram*)m_GPUProgramsHash[m_RenderPath][vertex_type][lights].get_value(hash);
 					if (program && !reload_if_exists)
 						break;
 				}
@@ -4263,7 +4308,7 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 							hash != (u64)-1 &&
 							//hash != (u64)0 &&
 							lights != (u32)-1)
-						m_GPUProgramsHash[vertex_type][lights].set_value(hash, program);
+						m_GPUProgramsHash[m_RenderPath][vertex_type][lights].set_value(hash, program);
 				}
 			}
 			while (0);
@@ -4327,7 +4372,7 @@ bool CNullDriver::_bindGPUProgram(IGPUProgram* gpu_prog)
 		res = gpu_prog->setUniformfv(EUT_MODEL_MATRIX,
 			Matrices[ETS_MODEL].pointer(), 16 * sizeof(f32)) && res;
 	}
-	if (mask & EUF_NORMAL_MATRIX)
+	if (mask & EUF_MODEL_VIEW_MATRIX_3X3)
 	{
 		f32 *mvm = m_ModelViewMatrix.pointer();
 		f32 nm[9] =
@@ -4336,7 +4381,19 @@ bool CNullDriver::_bindGPUProgram(IGPUProgram* gpu_prog)
 			mvm[4], mvm[5], mvm[6],
 			mvm[8], mvm[9], mvm[10],
 		};
-		res = gpu_prog->setUniformfv(EUT_NORMAL_MATRIX,
+		res = gpu_prog->setUniformfv(EUT_MODEL_VIEW_MATRIX_3X3,
+			nm, sizeof(nm)) && res;
+	}
+	if (mask & EUF_MODEL_MATRIX_3X3)
+	{
+		f32 *mvm = Matrices[ETS_MODEL].pointer();
+		f32 nm[9] =
+		{
+			mvm[0], mvm[1], mvm[2],
+			mvm[4], mvm[5], mvm[6],
+			mvm[8], mvm[9], mvm[10],
+		};
+		res = gpu_prog->setUniformfv(EUT_MODEL_MATRIX_3X3,
 			nm, sizeof(nm)) && res;
 	}
 

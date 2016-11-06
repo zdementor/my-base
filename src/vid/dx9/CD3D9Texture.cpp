@@ -133,6 +133,7 @@ bool CD3D9Texture::createHardwareTexture(bool renderTarget)
 	switch (m_ColorFormat)
 	{
 	case img::ECF_A8R8G8B8:
+	case img::ECF_A8B8G8R8:
 		format = D3DFMT_A8R8G8B8;
 		break;
 	case img::ECF_R8G8B8:
@@ -156,12 +157,21 @@ bool CD3D9Texture::createHardwareTexture(bool renderTarget)
 	case img::ECF_LUMINANCE16:
 		format = D3DFMT_L16;
 		break;
+	case img::ECF_A16B16G16R16:
+		format = D3DFMT_A16B16G16R16;
+		break;
 	case img::ECF_DEPTH24_STENCIL8:
 		format = FOURCC_INTZ;
 		usage = D3DUSAGE_DEPTHSTENCIL;
 		break;
 	case img::ECF_LUMINANCE32F:
 		format = D3DFMT_R32F;
+		break;
+	case img::ECF_A16B16G16R16F:
+		format = D3DFMT_A16B16G16R16F;
+		break;
+	case img::ECF_A32B32G32R32F:
+		format = D3DFMT_A32B32G32R32F;
 		break;
 	default:
 		LOGGER.logErr("Unsupported D3D hardware texture format %s.",

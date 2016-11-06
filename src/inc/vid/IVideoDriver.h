@@ -337,6 +337,9 @@ public:
 	//! Immediate rendering
 	virtual void render2DRect(const SMaterial &material,
 		const core::rectf &drawRect, const core::rectf &texRect) = 0;
+	virtual void render2DRectWithLight(const SMaterial &material,
+		const core::rectf &drawRect, const core::rectf &texRect,
+		u32 enabledLight) = 0;
 
 	//! sets texture filtering mode
 	virtual void setTextureFilter(E_TEXTURE_FILTER textureFilter) = 0;
@@ -674,6 +677,7 @@ public:
 	//! Immediately draw render buffer
 	virtual void renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass) = 0;
 	virtual void renderBuffer(IRenderBuffer *rbuf, const SMaterial &mat) = 0;
+	virtual void renderBufferWithLight(IRenderBuffer *rbuf, const SMaterial &mat, u32 enabledLight) = 0;
 
 	virtual f64 getFrameCurrentRenderTimeSec() = 0;
 	virtual f64 getFrameFilteredRenderTimeSec() = 0;

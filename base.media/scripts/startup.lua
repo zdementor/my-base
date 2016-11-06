@@ -164,7 +164,11 @@ end
 
 function CreateMainRT(width, height)
 
-	local colorRTFmts = { img.ECF_A8R8G8B8, }
+	local colorRTFmts = {
+		img.ECF_A8R8G8B8,
+--		img.ECF_A8R8G8B8,
+--		img.ECF_A32B32G32R32F,
+		}
 	local depthFmt = img.ECF_DEPTH24_STENCIL8
 
 	return CreateRT(width, height, colorRTFmts, depthFmt)
@@ -201,7 +205,9 @@ function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 
 	RereadSingletons()
 
-	if MyDriver:queryFeature(vid.EVDF_RENDER_TO_TARGET) then
+	if MyDriver:queryFeature(vid.EVDF_RENDER_TO_TARGET)
+			and not MyDevice:getDeviceFlagValue(dev.EDCF_USE_FFP) then
+
 		LOG_INFO("Creating Main Render Target...")
 		MyLogger:increaseFormatLevel()	
 
@@ -210,7 +216,6 @@ function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 		MyLogger:decreaseFormatLevel()
 		if MyRT ~= nil then
 			LOG_INFO("Main Render Target created.")
-			--MyDriver:setRenderPath(vid.ERP_DEFERRED_SHADING)
 		else
 			LOG_INFO("Can not create Main Render Target, fallback to the default render buffer.")
 		end

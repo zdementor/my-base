@@ -187,8 +187,8 @@ void CD3D9RenderTarget::_bindMainRT()
 	IDirect3DSurface9 *mainRTSurf = m_D3DDriver->_getMainRenderTargetSurface();
 	IDirect3DSurface9 *mainDSSurf = m_D3DDriver->_getMainDepthStencilSurface();
 
-	if (mainRTSurf)
-		pd3dDevice->SetRenderTarget( 0, mainRTSurf);
+	for (u32 no = 0; no < MY_MAX_COLOR_ATTACHMENTS; no++)
+		pd3dDevice->SetRenderTarget(no, no == 0 ? mainRTSurf : NULL);
 	if (mainDSSurf)
 		pd3dDevice->SetDepthStencilSurface(mainDSSurf);
 }

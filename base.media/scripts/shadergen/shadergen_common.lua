@@ -138,8 +138,11 @@ function AppendUniforms(info, vsh)
 	if bit.band(uniforms, vid.EUF_MODEL_MATRIX) ~= 0 then
 		text = text.."UNI MAT4 "..Uniforms.ModelMatrix..";\n"
 	end
-	if bit.band(uniforms, vid.EUF_NORMAL_MATRIX) ~= 0 then
-		text = text.."UNI MAT3 "..Uniforms.NormalMatrix..";\n"
+	if bit.band(uniforms, vid.EUF_MODEL_VIEW_MATRIX_3X3) ~= 0 then
+		text = text.."UNI MAT3 "..Uniforms.ModelViewMatrix3x3..";\n"
+	end
+	if bit.band(uniforms, vid.EUF_MODEL_MATRIX_3X3) ~= 0 then
+		text = text.."UNI MAT3 "..Uniforms.ModelMatrix3x3..";\n"
 	end
 	if bit.band(uniforms, vid.EUF_GLOBAL_AMBIENT_COLOR) ~= 0 then
 		text = text.."UNI VEC4 "..Uniforms.GlobalAmbientColor..";\n"
@@ -319,27 +322,34 @@ function AppendVertShaderBody(info, pass)
 
 	local normalDefined = false
 
+	local normMatrix = Uniforms.ModelViewMatrix3x3
+	local posMatrix = Uniforms.ModelViewMatrix
+	if info.isDS then
+		normMatrix = Uniforms.ModelMatrix3x3
+		posMatrix = Uniforms.ModelMatrix
+	end
+
 	if IsNeedNormal(info.vtype, pass, info.lightcnt) then
-		text = text.."    VEC4 "..Tokens.Position.." = MUL(vertex,"..Uniforms.ModelViewMatrix..");\n"
+		text = text.."    VEC4 "..Tokens.Position.." = MUL(vertex,"..posMatrix..");\n"
 		text = text.."    VEC3 eyeVec = -"..Tokens.Position..".xyz;\n"
 		text = text.."    VEC3 "..Tokens.Normal.." = VS_IN("..Attribs.Normal..");\n"
-		text = text.."    "..Tokens.Normal.." = MUL("..Tokens.Normal..","..Uniforms.NormalMatrix..");\n\n"
+		text = text.."    "..Tokens.Normal.." = MUL("..Tokens.Normal..","..normMatrix..");\n\n"
 		if not info.perpixel then
 			text = text.."    "..Tokens.Normal.." = normalize(N);\n"
 			text = text.."    eyeVec = normalize(eyeVec);\n"
 		end
 		normalDefined = true
 	elseif info.hasNMap then
-		text = text.."    VEC4 "..Tokens.Position.." = MUL(vertex,"..Uniforms.ModelViewMatrix..");\n"
+		text = text.."    VEC4 "..Tokens.Position.." = MUL(vertex,"..posMatrix..");\n"
 		text = text.."    VEC3 eyeVec = -"..Tokens.Position..".xyz;\n"
-	elseif info.fogging then
-		text = text.."    VEC4 "..Tokens.Position.." = MUL(vertex,"..Uniforms.ModelViewMatrix..");\n"
+	elseif info.Varyings[VARY_POS] ~= nil then
+		text = text.."    VEC4 "..Tokens.Position.." = MUL(vertex,"..posMatrix..");\n"
 	end
 
 	if info.isDS and not normalDefined then
 		if info.vnormal then
 			text = text.."    VEC3 "..Tokens.Normal.." = VS_IN("..Attribs.Normal..");\n"
-			text = text.."    "..Tokens.Normal.." = MUL("..Tokens.Normal..","..Uniforms.NormalMatrix..");\n\n"
+			text = text.."    "..Tokens.Normal.." = MUL("..Tokens.Normal..","..normMatrix..");\n\n"
 		else
 			text = text.."    VEC3 "..Tokens.Normal.." = VEC3(0., 1., 0.);\n"
 		end
@@ -360,8 +370,8 @@ function AppendVertShaderBody(info, pass)
 		if HasTBN(info.vtype) and info.hasNMap then
 			text = text.."    VEC3 "..Tokens.Tangent.." = VS_IN("..Attribs.Tangent..").xyz;\n"
 			text = text.."    VEC3 "..Tokens.Binormal.." = VS_IN("..Attribs.Binormal..").xyz;\n"
-			text = text.."    "..Tokens.Tangent.."  = MUL("..Tokens.Tangent..","..Uniforms.NormalMatrix..");\n"
-			text = text.."    "..Tokens.Binormal.." = MUL("..Tokens.Binormal..","..Uniforms.NormalMatrix..");\n"
+			text = text.."    "..Tokens.Tangent.."  = MUL("..Tokens.Tangent..","..normMatrix..");\n"
+			text = text.."    "..Tokens.Binormal.." = MUL("..Tokens.Binormal..","..normMatrix..");\n"
 			text = text.."    "..info.Varyings[VARY_EYE]._VarName..
 				" = VEC3(dot(eyeVec, "..Tokens.Tangent.."), dot(eyeVec, "..Tokens.Binormal.."), dot(eyeVec, "..Tokens.Normal.."));\n"
 			if pass:getLightingMode() ~= vid.ELM_NONE then
@@ -387,17 +397,6 @@ function AppendVertShaderBody(info, pass)
 		elseif info.light or info.hasNMap then
 			text = text.."    "..info.Varyings[VARY_EYE]._VarName.." = eyeVec;\n"
 		end
-		if info.light then
-			if info.hasNMap == false then
-				text = text.."    "..info.Varyings[VARY_NORM]._VarName.." = "..Tokens.Normal..";\n"
-				normalPassed = true
-			end
-			text = text.."    "..info.Varyings[VARY_POS]._VarName.." = "..Tokens.Position..";\n"
-		elseif info.fogging then
-			text = text.."    "..info.Varyings[VARY_POS]._VarName.." = "..Tokens.Position..";\n"
-		end
-	elseif info.fogging then
-		text = text.."    "..info.Varyings[VARY_POS]._VarName.." = "..Tokens.Position..";\n"
 	end
 	if info.vcolor then
 		if info.light and info.vnormal and info.perpixel == false then
@@ -411,17 +410,26 @@ function AppendVertShaderBody(info, pass)
 		text = text.."    "..info.Varyings[VARY_COL]._VarName.." = VEC4(mEmis.rgb, mDif.a);\n"
 	end
 
-	if info.isDS then
+	if info.Varyings[VARY_POS] ~= nil then
+		text = text.."    "..info.Varyings[VARY_POS]._VarName.." = "..Tokens.Position..";\n"
+	end
+	if info.Varyings[VARY_TANG] ~= nil
+			and info.Varyings[VARY_BINORM] ~= nil
+			and info.Varyings[VARY_NORM] ~= nil then
+		text = text.."    MAT3 tbn = MAT3("..Tokens.Tangent..","..Tokens.Binormal..","..Tokens.Normal..");\n"
+		text = text.."    tbn = transpose(tbn);\n"
+		text = text.."    "..info.Varyings[VARY_TANG]._VarName.." = tbn[0];\n"
+		text = text.."    "..info.Varyings[VARY_BINORM]._VarName.." = tbn[1];\n"
+		text = text.."    "..info.Varyings[VARY_NORM]._VarName.." = tbn[2];\n"
+	else
 		if info.Varyings[VARY_TANG] ~= nil then
-			text = text.."    "..info.Varyings[VARY_TANG]._VarName.." = "..Tokens.Tangent..";\n"
+			text = text.."    "..info.Varyings[VARY_TANG]._VarName.." = "..Tokens.Tangent.."; //asd\n"
 		end
 		if info.Varyings[VARY_BINORM] ~= nil then
-			text = text.."    "..info.Varyings[VARY_BINORM]._VarName.." = "..Tokens.Binormal..";\n"
+			text = text.."    "..info.Varyings[VARY_BINORM]._VarName.." = "..Tokens.Binormal..";\n"			
 		end
-		if not normalPassed then
-			if info.Varyings[VARY_NORM] ~= nil then
-				text = text.."    "..info.Varyings[VARY_NORM]._VarName.." = "..Tokens.Normal..";\n"
-			end
+		if info.Varyings[VARY_NORM] ~= nil then
+			text = text.."    "..info.Varyings[VARY_NORM]._VarName.." = "..Tokens.Normal..";\n"
 		end
 	end
 	text = text.."\n"
@@ -586,7 +594,7 @@ function AppendPixelShaderBody(info, pass)
 	end
 
 	if table.getn(lmapTbl) > 0 then
-		text = text.."    //lightmapping\n"
+		text = text.."    // lightmapping\n"
 		text = text.."    tcol *= "
 		for n = 1, table.getn(lmapTbl) do
 			text = text..lmapTbl[n]
@@ -619,17 +627,18 @@ function AppendPixelShaderBody(info, pass)
 		if info.hasNMap then
 			local vT = info.Varyings[VARY_TANG]._VarName
 			local vB = info.Varyings[VARY_BINORM]._VarName
-			text = text.."    VEC3 "..N.." = normalize((tnmap*2.0-1.0).xyz);\n"
-			text = text.."    "..vT.." = normalize("..vT..");\n"
-			text = text.."    "..vB.." = normalize("..vB..");\n"
-			text = text.."    "..vN.." = normalize("..vN..");\n"
+			text = text.."    VEC3 "..N.." = (tnmap*2.0-1.0).xyz;\n"
 			text = text.."    "..N.." = VEC3(dot("..N..","..vT.."), dot("..N..","..vB.."), dot("..N..","..vN.."));\n"
-		text = text.."    "..N.." *= 0.001;\n"
-		text = text.."    "..N.." += tnmap.xyz;\n"
+			text = text.."    "..N.." = normalize("..N..");\n"
+			text = text.."    "..N.." = (N + 1.) / 2.;\n"
 		else
 			text = text.."    VEC3 "..N.." = normalize("..vN..");\n"
+			text = text.."    "..N.." = (N + 1.) / 2.;\n"
 		end
-		--text = text.."    "..N.." = (N + 1.) / 2.;\n"
+		text = text.."    VEC4 mDif = M_DIF("..Uniforms.MatColors..");\n"
+		text = text.."    VEC4 mAmb = M_AMB("..Uniforms.MatColors..");\n"
+		text = text.."    VEC4 color = mDif;\n"
+
 		text = text.."\n"	
 	elseif info.light and info.vnormal then
 		if info.perpixel then
@@ -665,31 +674,37 @@ function AppendPixelShaderBody(info, pass)
 	else
   		text = text.."    PS_OUT(FragData,0) = VEC4(1.0,1.0,1.0,1.0);\n"
 	end
-	if info.light and info.vnormal and info.perpixel then
+	if info.light and info.vnormal and info.perpixel or info.isDS then
 		text = text.."    PS_OUT(FragData,0) *= color;\n"
 	end
 	if info.light and info.vnormal then
 		text = text.."    PS_OUT(FragData,0).rgb += specular;\n"
 	end
-	text = text.."\n"
 
 	if info.fogging then
+		text = text.."\n"
 		text = text.."    // fog\n"
 		text = text.."    FLOAT fdepth = "..info.Varyings[VARY_POS]._VarName..".z / "..info.Varyings[VARY_POS]._VarName..".w;\n"
 		text = text.."    FLOAT fstart = FOG_START("..Uniforms.FogParams..");\n"
 		text = text.."    FLOAT fend = FOG_END("..Uniforms.FogParams..");\n"
 		text = text.."    FLOAT fog = clamp((fend - fdepth) / (fend - fstart), 0., 1.);\n"
-		text = text.."\n"
 		text = text.."    PS_OUT(FragData,0).rgb = MIX("..Uniforms.FogColor.."*PS_OUT(FragData,0).a, PS_OUT(FragData,0).rgb, fog);\n"
 	end
 
 	if info.isDS then
 		if info.Varyings[VARY_NORM] ~= nil then
 			text = text.."\n"
-			text = text.."    PS_OUT(FragData,1).rgb *= 0.001;\n"
-			text = text.."    PS_OUT(FragData,1).rgb += "..Tokens.Normal..".xyz;\n"
+			text = text.."    PS_OUT(FragData,1) = VEC4("..Tokens.Normal..".rgb, PS_OUT(FragData,0).a);\n"
+		end
+		if info.Varyings[VARY_POS] ~= nil then
+			text = text.."\n"
+			text = text.."    PS_OUT(FragData,2) = VEC4("..
+				info.Varyings[VARY_POS]._VarName..".xyz,"..
+				"1."..
+				");\n"
 		end
 	end
+	text = text.."\n"
 	
 	return text
 end

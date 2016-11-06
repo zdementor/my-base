@@ -218,6 +218,9 @@ public:
 
 	virtual void render2DRect(const SMaterial &material,
 		const core::rectf &drawRect, const core::rectf &texRect) {}
+	virtual void render2DRectWithLight(const SMaterial &material,
+		const core::rectf &drawRect, const core::rectf &texRect,
+		u32 enabledLight) {}
 
 	virtual void setTextureFilter(E_TEXTURE_FILTER textureFilter);
 
@@ -474,6 +477,7 @@ public:
 
 	virtual void renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass);
 	virtual void renderBuffer(IRenderBuffer *rbuf, const SMaterial &mat);
+	virtual void renderBufferWithLight(IRenderBuffer *rbuf, const SMaterial &mat, u32 enabledLight);
 
 	virtual f64 getFrameCurrentRenderTimeSec();
 	virtual f64 getFrameFilteredRenderTimeSec();
@@ -573,6 +577,7 @@ protected:
 	void _renderLightedRenderPools(core::array <SRenderPool*> & rpools);
 
 	void _renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass);
+	void _renderBuffer(IRenderBuffer *rbuf, const SRenderPass &pass, u32 enabledLight);
 
 	virtual void _renderStencilVolume(IRenderBuffer *rbuf, const SRenderPass &pass, bool zfail);
 
@@ -792,10 +797,9 @@ protected:
 		const c8 *file_name, const c8 *tag,
 		bool reload_if_exists, bool additional_logging, bool return_any_if_no_tagged);
 
-	core::array <IGPUProgram*> m_GPUPrograms;
-	core::hash_table <u64,				IUnknown*> m_GPUProgramsHash[E_VERTEX_TYPE_COUNT][PRL_MAX_SHADER_LIGHTS + 1];
-	core::hash_table <core::stringc,	IUnknown*> m_GPUProgramsHashByContent, m_GPUProgramsHashByFileName;
-
+	core::array      <IGPUProgram*>   m_GPUPrograms;
+	core::hash_table <u64, IUnknown*> m_GPUProgramsHash[E_RENDER_PATH_COUNT][E_VERTEX_TYPE_COUNT][PRL_MAX_SHADER_LIGHTS + 1];
+	core::hash_table <core::stringc, IUnknown*> m_GPUProgramsHashByContent, m_GPUProgramsHashByFileName;
 	core::hash_table <IGPUProgram*, core::stringc> m_GPUProgramsHashFileNames;
 
 	u32 m_ColorMask;

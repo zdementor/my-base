@@ -90,6 +90,9 @@ public:
 
 	virtual void render2DRect(const SMaterial &material,
 		const core::rectf &drawRect, const core::rectf &texRect);
+	virtual void render2DRectWithLight(const SMaterial &material,
+		const core::rectf &drawRect, const core::rectf &texRect,
+		u32 enabledLight);
 
 	virtual bool _bindGPUProgram(IGPUProgram *gpu_prog);
 

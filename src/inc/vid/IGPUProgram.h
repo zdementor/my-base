@@ -25,6 +25,7 @@ struct SGPUProgramShaderInfo
 	u32                     Uniforms;
 	u32                     Attributes;
     E_DRIVER_TYPE           Driver;
+	E_RENDER_PATH           RenderPath;
 	core::stringc           Tag;
 	E_VERTEX_SHADER_VERSION VertexVer;
 	core::stringc           VertexFileName;
@@ -105,6 +106,7 @@ __MY_VID_LIB_API__ bool appendGPUProgramInfo(const SGPUProgramInfo *prog_info,
 	u32                     uniforms,
 	u32                     attributes,
     E_DRIVER_TYPE           driver,
+	E_RENDER_PATH           rend_path,
 	const c8                *tag,
 	E_VERTEX_SHADER_VERSION vertex_ver,
 	const c8                *vertex_file_name,

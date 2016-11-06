@@ -1023,6 +1023,7 @@ void CSceneManager::preRenderScene()
 	vid::SLight light0;
 	light0.Type = vid::ELT_DIRECTIONAL;
 	m_Driver.addDynamicLight(light0);
+	m_Driver.setDynamicLightEnabled(0, false);
 
 	// second light for global directional lighting
 	const SLight &global_light = m_Driver.getGlobalLightParams();

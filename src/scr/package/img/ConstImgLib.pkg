@@ -36,11 +36,20 @@ enum E_COLOR_FORMAT
 	//! Luminance formats (for the heightmaps)
 	ECF_LUMINANCE16,
 
+	//! 16 bit per channel format
+	ECF_A16B16G16R16,
+
 	//! Depth formats
 	ECF_DEPTH24_STENCIL8,
 
 	//! Single channel 32 bit float format
 	ECF_LUMINANCE32F,
+
+	//! 16 bit per channel float format
+	ECF_A16B16G16R16F,
+
+	//! 32 bit per channel float format
+	ECF_A32B32G32R32F,
 
 	E_COLOR_FORMAT_COUNT
 };

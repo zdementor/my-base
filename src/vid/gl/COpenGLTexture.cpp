@@ -175,6 +175,11 @@ bool COpenGLTexture::createHardwareTexture(bool renderTarget)
 		m_PixelFormat	= GL_LUMINANCE;
 		m_PixelType		= GL_UNSIGNED_SHORT;
 		break;
+	case img::ECF_A16B16G16R16:
+		m_InternalFormat= GL_RGBA16;
+		m_PixelFormat	= GL_RGBA;
+		m_PixelType		= GL_UNSIGNED_SHORT;
+		break;
 #ifdef GL_ARB_framebuffer_object
 	case img::ECF_DEPTH24_STENCIL8:
 		m_InternalFormat= GL_DEPTH24_STENCIL8;
@@ -186,6 +191,18 @@ bool COpenGLTexture::createHardwareTexture(bool renderTarget)
 	case img::ECF_LUMINANCE32F:
 		m_InternalFormat= GL_LUMINANCE32F_ARB;
 		m_PixelFormat	= GL_LUMINANCE;
+		m_PixelType		= GL_FLOAT;
+		break;
+#ifdef GL_ARB_texture_float
+	case img::ECF_A16B16G16R16F:
+		m_InternalFormat= GL_RGBA16F_ARB;
+		m_PixelFormat	= GL_RGBA;
+		m_PixelType		= GL_HALF_FLOAT_ARB;
+		break;
+#endif
+	case img::ECF_A32B32G32R32F:
+		m_InternalFormat= GL_RGBA32F_ARB;
+		m_PixelFormat	= GL_RGBA;
 		m_PixelType		= GL_FLOAT;
 		break;
 #endif

@@ -37,9 +37,10 @@ function HLSL20GenPixelShader(info, pass)
 	text = text.."};\n\n"
 	text = text.."struct PS_OUTPUT\n"
 	text = text.."{\n"
-	text = text.."    VEC4 FragData0 : COLOR0;\n"
+	text = text.."VEC4 FragData0 : COLOR0;\n"
 	if info.isDS then
-		text = text.."    VEC4 FragData1 : COLOR0;\n"
+		text = text.."VEC4 FragData1 : COLOR1;\n"
+		text = text.."VEC4 FragData2 : COLOR2;\n"
 	end
 	text = text.."};\n\n"	
 	text = text.."PS_OUTPUT main(PS_INPUT input)\n"

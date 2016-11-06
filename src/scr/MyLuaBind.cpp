@@ -1,6 +1,6 @@
 /*
 ** Lua binding: MyLuaBind
-** Generated automatically by tolua++-1.0.92 on 11/01/16 15:39:15.
+** Generated automatically by tolua++-1.0.92 on 11/06/16 20:13:09.
 */
 
 #ifndef __cplusplus
@@ -47394,6 +47394,45 @@ static int tolua_MyLuaBind_vid_IVideoDriver_render2DRect00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: render2DRectWithLight of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_render2DRectWithLight00
+static int tolua_MyLuaBind_vid_IVideoDriver_render2DRectWithLight00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,2,"const vid::SMaterial",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,3,"const core::rectf",0,&tolua_err) ||
+ !tolua_isusertype(tolua_S,4,"const core::rectf",0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,5,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,6,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+  const vid::SMaterial* material = ((const vid::SMaterial*)  tolua_tousertype(tolua_S,2,0));
+  const core::rectf* drawRect = ((const core::rectf*)  tolua_tousertype(tolua_S,3,0));
+  const core::rectf* texRect = ((const core::rectf*)  tolua_tousertype(tolua_S,4,0));
+  unsigned enabledLight = ((unsigned)  tolua_tonumber(tolua_S,5,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'render2DRectWithLight'",NULL);
+#endif
+ {
+  self->render2DRectWithLight(*material,*drawRect,*texRect,enabledLight);
+ }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'render2DRectWithLight'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: makeScreenShotTexture of class  vid::IVideoDriver */
 #ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_makeScreenShotTexture00
 static int tolua_MyLuaBind_vid_IVideoDriver_makeScreenShotTexture00(lua_State* tolua_S)
@@ -47707,6 +47746,40 @@ static int tolua_MyLuaBind_vid_IVideoDriver_getDynamicLightsCount00(lua_State* t
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'getDynamicLightsCount'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: getDynamicLight of class  vid::IVideoDriver */
+#ifndef TOLUA_DISABLE_tolua_MyLuaBind_vid_IVideoDriver_getDynamicLight00
+static int tolua_MyLuaBind_vid_IVideoDriver_getDynamicLight00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+ !tolua_isusertype(tolua_S,1,"vid::IVideoDriver",0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+ goto tolua_lerror;
+ else
+#endif
+ {
+  vid::IVideoDriver* self = (vid::IVideoDriver*)  tolua_tousertype(tolua_S,1,0);
+  int idx = ((int)  tolua_tonumber(tolua_S,2,0));
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getDynamicLight'",NULL);
+#endif
+ {
+  const vid::SLight& tolua_ret = (const vid::SLight&)  self->getDynamicLight(idx);
+ tolua_pushusertype(tolua_S,(void*)&tolua_ret,"const vid::SLight");
+ }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getDynamicLight'.",&tolua_err);
  return 0;
 #endif
 }
@@ -54974,6 +55047,36 @@ static int tolua_set_vid__SGPUProgramShaderInfo_Driver(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* get function: RenderPath of class  vid::SGPUProgramShaderInfo */
+#ifndef TOLUA_DISABLE_tolua_get_vid__SGPUProgramShaderInfo_RenderPath
+static int tolua_get_vid__SGPUProgramShaderInfo_RenderPath(lua_State* tolua_S)
+{
+  vid::SGPUProgramShaderInfo* self = (vid::SGPUProgramShaderInfo*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ if (!self) tolua_error(tolua_S,"invalid 'self' in accessing variable 'RenderPath'",NULL);
+#endif
+ tolua_pushnumber(tolua_S,(lua_Number)self->RenderPath);
+ return 1;
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* set function: RenderPath of class  vid::SGPUProgramShaderInfo */
+#ifndef TOLUA_DISABLE_tolua_set_vid__SGPUProgramShaderInfo_RenderPath
+static int tolua_set_vid__SGPUProgramShaderInfo_RenderPath(lua_State* tolua_S)
+{
+  vid::SGPUProgramShaderInfo* self = (vid::SGPUProgramShaderInfo*)  tolua_tousertype(tolua_S,1,0);
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (!self) tolua_error(tolua_S,"invalid 'self' in accessing variable 'RenderPath'",NULL);
+ if (!tolua_isnumber(tolua_S,2,0,&tolua_err))
+ tolua_error(tolua_S,"#vinvalid type in variable assignment.",&tolua_err);
+#endif
+  self->RenderPath = ((vid::E_RENDER_PATH) (int)  tolua_tonumber(tolua_S,2,0))
+;
+ return 0;
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* get function: VertexVer of class  vid::SGPUProgramShaderInfo */
 #ifndef TOLUA_DISABLE_tolua_get_vid__SGPUProgramShaderInfo_VertexVer
 static int tolua_get_vid__SGPUProgramShaderInfo_VertexVer(lua_State* tolua_S)
@@ -55742,12 +55845,13 @@ static int tolua_MyLuaBind_vid_appendGPUProgramInfo00(lua_State* tolua_S)
  !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
  !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
  !tolua_isnumber(tolua_S,4,0,&tolua_err) ||
- !tolua_isstring(tolua_S,5,0,&tolua_err) ||
- !tolua_isnumber(tolua_S,6,0,&tolua_err) ||
- !tolua_isstring(tolua_S,7,0,&tolua_err) ||
- !tolua_isnumber(tolua_S,8,0,&tolua_err) ||
- !tolua_isstring(tolua_S,9,0,&tolua_err) ||
- !tolua_isnoobj(tolua_S,10,&tolua_err)
+ !tolua_isnumber(tolua_S,5,0,&tolua_err) ||
+ !tolua_isstring(tolua_S,6,0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,7,0,&tolua_err) ||
+ !tolua_isstring(tolua_S,8,0,&tolua_err) ||
+ !tolua_isnumber(tolua_S,9,0,&tolua_err) ||
+ !tolua_isstring(tolua_S,10,0,&tolua_err) ||
+ !tolua_isnoobj(tolua_S,11,&tolua_err)
  )
  goto tolua_lerror;
  else
@@ -55757,13 +55861,14 @@ static int tolua_MyLuaBind_vid_appendGPUProgramInfo00(lua_State* tolua_S)
   unsigned uniforms = ((unsigned)  tolua_tonumber(tolua_S,2,0));
   unsigned attributes = ((unsigned)  tolua_tonumber(tolua_S,3,0));
   vid::E_DRIVER_TYPE driver = ((vid::E_DRIVER_TYPE) (int)  tolua_tonumber(tolua_S,4,0));
-  const char* tag = ((const char*)  tolua_tostring(tolua_S,5,0));
-  vid::E_VERTEX_SHADER_VERSION vertex_ver = ((vid::E_VERTEX_SHADER_VERSION) (int)  tolua_tonumber(tolua_S,6,0));
-  const char* vertex_file_name = ((const char*)  tolua_tostring(tolua_S,7,0));
-  vid::E_PIXEL_SHADER_VERSION pixel_ver = ((vid::E_PIXEL_SHADER_VERSION) (int)  tolua_tonumber(tolua_S,8,0));
-  const char* pixel_file_name = ((const char*)  tolua_tostring(tolua_S,9,0));
+  vid::E_RENDER_PATH rend_path = ((vid::E_RENDER_PATH) (int)  tolua_tonumber(tolua_S,5,0));
+  const char* tag = ((const char*)  tolua_tostring(tolua_S,6,0));
+  vid::E_VERTEX_SHADER_VERSION vertex_ver = ((vid::E_VERTEX_SHADER_VERSION) (int)  tolua_tonumber(tolua_S,7,0));
+  const char* vertex_file_name = ((const char*)  tolua_tostring(tolua_S,8,0));
+  vid::E_PIXEL_SHADER_VERSION pixel_ver = ((vid::E_PIXEL_SHADER_VERSION) (int)  tolua_tonumber(tolua_S,9,0));
+  const char* pixel_file_name = ((const char*)  tolua_tostring(tolua_S,10,0));
  {
-  bool tolua_ret = (bool)  vid::appendGPUProgramInfo(prog_info,uniforms,attributes,driver,tag,vertex_ver,vertex_file_name,pixel_ver,pixel_file_name);
+  bool tolua_ret = (bool)  vid::appendGPUProgramInfo(prog_info,uniforms,attributes,driver,rend_path,tag,vertex_ver,vertex_file_name,pixel_ver,pixel_file_name);
  tolua_pushboolean(tolua_S,(bool)tolua_ret);
  }
  }
@@ -59827,8 +59932,11 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"ECF_DXT3",img::ECF_DXT3);
   tolua_constant(tolua_S,"ECF_DXT5",img::ECF_DXT5);
   tolua_constant(tolua_S,"ECF_LUMINANCE16",img::ECF_LUMINANCE16);
+  tolua_constant(tolua_S,"ECF_A16B16G16R16",img::ECF_A16B16G16R16);
   tolua_constant(tolua_S,"ECF_DEPTH24_STENCIL8",img::ECF_DEPTH24_STENCIL8);
   tolua_constant(tolua_S,"ECF_LUMINANCE32F",img::ECF_LUMINANCE32F);
+  tolua_constant(tolua_S,"ECF_A16B16G16R16F",img::ECF_A16B16G16R16F);
+  tolua_constant(tolua_S,"ECF_A32B32G32R32F",img::ECF_A32B32G32R32F);
   tolua_constant(tolua_S,"E_COLOR_FORMAT_COUNT",img::E_COLOR_FORMAT_COUNT);
   tolua_function(tolua_S,"getColorFormatName",tolua_MyLuaBind_img_getColorFormatName00);
   tolua_function(tolua_S,"getBitsPerPixelFromFormat",tolua_MyLuaBind_img_getBitsPerPixelFromFormat00);
@@ -60033,7 +60141,8 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"EUT_MODEL_VIEW_PROJ_MATRIX",vid::EUT_MODEL_VIEW_PROJ_MATRIX);
   tolua_constant(tolua_S,"EUT_MODEL_VIEW_MATRIX",vid::EUT_MODEL_VIEW_MATRIX);
   tolua_constant(tolua_S,"EUT_MODEL_MATRIX",vid::EUT_MODEL_MATRIX);
-  tolua_constant(tolua_S,"EUT_NORMAL_MATRIX",vid::EUT_NORMAL_MATRIX);
+  tolua_constant(tolua_S,"EUT_MODEL_VIEW_MATRIX_3X3",vid::EUT_MODEL_VIEW_MATRIX_3X3);
+  tolua_constant(tolua_S,"EUT_MODEL_MATRIX_3X3",vid::EUT_MODEL_MATRIX_3X3);
   tolua_constant(tolua_S,"EUT_GLOBAL_AMBIENT_COLOR",vid::EUT_GLOBAL_AMBIENT_COLOR);
   tolua_constant(tolua_S,"EUT_MATERIAL_COLORS",vid::EUT_MATERIAL_COLORS);
   tolua_constant(tolua_S,"EUT_MATERIAL_SHININESS",vid::EUT_MATERIAL_SHININESS);
@@ -60054,7 +60163,8 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"EUF_MODEL_VIEW_PROJ_MATRIX",vid::EUF_MODEL_VIEW_PROJ_MATRIX);
   tolua_constant(tolua_S,"EUF_MODEL_VIEW_MATRIX",vid::EUF_MODEL_VIEW_MATRIX);
   tolua_constant(tolua_S,"EUF_MODEL_MATRIX",vid::EUF_MODEL_MATRIX);
-  tolua_constant(tolua_S,"EUF_NORMAL_MATRIX",vid::EUF_NORMAL_MATRIX);
+  tolua_constant(tolua_S,"EUF_MODEL_VIEW_MATRIX_3X3",vid::EUF_MODEL_VIEW_MATRIX_3X3);
+  tolua_constant(tolua_S,"EUF_MODEL_MATRIX_3X3",vid::EUF_MODEL_MATRIX_3X3);
   tolua_constant(tolua_S,"EUF_GLOBAL_AMBIENT_COLOR",vid::EUF_GLOBAL_AMBIENT_COLOR);
   tolua_constant(tolua_S,"EUF_MATERIAL_COLORS",vid::EUF_MATERIAL_COLORS);
   tolua_constant(tolua_S,"EUF_MATERIAL_SHININESS",vid::EUF_MATERIAL_SHININESS);
@@ -62396,6 +62506,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
    tolua_function(tolua_S,"setBackgroundColor",tolua_MyLuaBind_vid_IVideoDriver_setBackgroundColor00);
    tolua_function(tolua_S,"getBackgroundColor",tolua_MyLuaBind_vid_IVideoDriver_getBackgroundColor00);
    tolua_function(tolua_S,"render2DRect",tolua_MyLuaBind_vid_IVideoDriver_render2DRect00);
+   tolua_function(tolua_S,"render2DRectWithLight",tolua_MyLuaBind_vid_IVideoDriver_render2DRectWithLight00);
    tolua_function(tolua_S,"makeScreenShotTexture",tolua_MyLuaBind_vid_IVideoDriver_makeScreenShotTexture00);
    tolua_function(tolua_S,"makeScreenShotImage",tolua_MyLuaBind_vid_IVideoDriver_makeScreenShotImage00);
    tolua_function(tolua_S,"beginRendering",tolua_MyLuaBind_vid_IVideoDriver_beginRendering00);
@@ -62406,6 +62517,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
    tolua_function(tolua_S,"isRendering",tolua_MyLuaBind_vid_IVideoDriver_isRendering00);
    tolua_function(tolua_S,"getDynamicLightsMaximalAmount",tolua_MyLuaBind_vid_IVideoDriver_getDynamicLightsMaximalAmount00);
    tolua_function(tolua_S,"getDynamicLightsCount",tolua_MyLuaBind_vid_IVideoDriver_getDynamicLightsCount00);
+   tolua_function(tolua_S,"getDynamicLight",tolua_MyLuaBind_vid_IVideoDriver_getDynamicLight00);
    tolua_function(tolua_S,"getScreenSize",tolua_MyLuaBind_vid_IVideoDriver_getScreenSize00);
    tolua_function(tolua_S,"getCurrentFPS",tolua_MyLuaBind_vid_IVideoDriver_getCurrentFPS00);
    tolua_function(tolua_S,"getAverageFPS",tolua_MyLuaBind_vid_IVideoDriver_getAverageFPS00);
@@ -62699,6 +62811,7 @@ int tolua_MyLuaBind_open (lua_State* tolua_S)
    tolua_variable(tolua_S,"Uniforms",tolua_get_vid__SGPUProgramShaderInfo_Uniforms,tolua_set_vid__SGPUProgramShaderInfo_Uniforms);
    tolua_variable(tolua_S,"Attributes",tolua_get_vid__SGPUProgramShaderInfo_Attributes,tolua_set_vid__SGPUProgramShaderInfo_Attributes);
    tolua_variable(tolua_S,"Driver",tolua_get_vid__SGPUProgramShaderInfo_Driver,tolua_set_vid__SGPUProgramShaderInfo_Driver);
+   tolua_variable(tolua_S,"RenderPath",tolua_get_vid__SGPUProgramShaderInfo_RenderPath,tolua_set_vid__SGPUProgramShaderInfo_RenderPath);
    tolua_variable(tolua_S,"VertexVer",tolua_get_vid__SGPUProgramShaderInfo_VertexVer,tolua_set_vid__SGPUProgramShaderInfo_VertexVer);
    tolua_variable(tolua_S,"PixelVer",tolua_get_vid__SGPUProgramShaderInfo_PixelVer,tolua_set_vid__SGPUProgramShaderInfo_PixelVer);
    tolua_function(tolua_S,"getTag",tolua_MyLuaBind_vid_SGPUProgramShaderInfo_getTag00);

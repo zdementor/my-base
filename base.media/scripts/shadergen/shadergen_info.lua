@@ -8,7 +8,8 @@ Uniforms =
 	ModelViewProjMatrix	= vid.getUniformReadableName(vid.EUT_MODEL_VIEW_PROJ_MATRIX),
 	ModelViewMatrix		= vid.getUniformReadableName(vid.EUT_MODEL_VIEW_MATRIX),
 	ModelMatrix			= vid.getUniformReadableName(vid.EUT_MODEL_MATRIX),
-	NormalMatrix		= vid.getUniformReadableName(vid.EUT_NORMAL_MATRIX),
+	ModelViewMatrix3x3	= vid.getUniformReadableName(vid.EUT_MODEL_VIEW_MATRIX_3X3),
+	ModelMatrix3x3		= vid.getUniformReadableName(vid.EUT_MODEL_MATRIX_3X3),
 	Tex =
 	{
 		vid.getUniformReadableName(vid.EUT_TEXTURE0),
@@ -401,7 +402,7 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 			ti = ti + 1
 		end
 	end
-	if envGenText then
+	if envGenText ~= nil then
 		info.TCoords.VertPreVars = envGenText
 	end
 	info.TCoords.VertPostVars = nil
@@ -437,85 +438,6 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 		end
 	end
 
-	-- uniforms
-
-	info.Uniforms = {}
-
-	vertUniforms = bit.bor(vertUniforms,
-		vid.EUF_MODEL_VIEW_PROJ_MATRIX)
-		
-	if IsNeedNormal(vtype, pass, lightcnt) then
-		vertUniforms = bit.bor(vertUniforms,
-			vid.EUF_MODEL_VIEW_MATRIX)
-			
-		vertUniforms = bit.bor(vertUniforms,
-			vid.EUF_NORMAL_MATRIX)
-		if light then
-			if perpixel then
-				fragUniforms = bit.bor(fragUniforms,
-					vid.EUF_GLOBAL_AMBIENT_COLOR,
-					vid.EUF_MATERIAL_COLORS, vid.EUF_MATERIAL_SHININESS,
-					vid.EUF_LIGHTING)
-				if HasTBN(vtype) then
-					vertUniforms = bit.bor(vertUniforms,
-						vid.EUF_LIGHTING)
-				end
-			else
-				vertUniforms = bit.bor(vertUniforms,
-					vid.EUF_GLOBAL_AMBIENT_COLOR,
-					vid.EUF_MATERIAL_COLORS, vid.EUF_MATERIAL_SHININESS,
-					vid.EUF_LIGHTING)
-			end
-		end
-	elseif hasNMap then
-		vertUniforms = bit.bor(vertUniforms,
-			vid.EUF_MODEL_VIEW_MATRIX)
-	elseif fogging then
-		vertUniforms = bit.bor(vertUniforms,
-			vid.EUF_MODEL_VIEW_MATRIX)
-	end
-
-	if isDS and vnormal then
-		vertUniforms = bit.bor(vertUniforms,
-			vid.EUF_NORMAL_MATRIX)
-	end
-	
-	if mcolor then
-		vertUniforms = bit.bor(vertUniforms,
-			vid.EUF_MATERIAL_COLORS)
-	end
-
-	for i = 1, table.getn(info.TCoords) do
-		local idx = info.TCoords[i].LayerIdx
-		if info.TCoords[i].VarName ~= nil then
-			local texture = pass.Layers[idx]:getTexture()
-			if texture ~= nil then
-				if pass.Layers[idx]:getType() ~= vid.ETLT_NORMAL_MAP or perpixel then
-					fragUniforms = bit.bor(fragUniforms, TexFlags[idx+1])
-					if pass.Layers[idx]:isTexCoordAnimated() then
-						vertUniforms = bit.bor(vertUniforms,
-							TexMatrixFlags[idx+1])
-					end
-					if pass.Layers[idx]:getTexCoordGen() == vid.ETCGT_PROJECTED_MAPPING then
-						vertUniforms = bit.bor(vertUniforms,
-							TexMatrixFlags[idx+1], vid.EUF_MODEL_MATRIX)
-					end
-				end
-			end
-		end
-	end
-
-	if fogging then
-		fragUniforms = bit.bor(fragUniforms,
-			vid.EUF_FOG_PARAMS)
-		fragUniforms = bit.bor(fragUniforms,
-			vid.EUF_FOG_COLOR)
-	end
-
-	info.Uniforms.VertMask = vertUniforms
-	info.Uniforms.FragMask = fragUniforms
-	info.Uniforms.Mask = bit.bor(info.Uniforms.VertMask, info.Uniforms.FragMask)
-
 	-- varyings
 
 	local varyings = {}
@@ -534,7 +456,7 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 	end	
 
 	local need_pos = false
-	if fogging then
+	if fogging or isDS then
 		need_pos = true
 	end
 
@@ -580,14 +502,18 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 
 	if isDS then
 		if hasNMap and hasTBN then
-			local v = {}
-			v.Type = "VEC3"	
-			v.VarName = Varyings[VARY_TANG]
-			varyings[VARY_TANG] = v
-			v = {}
-			v.Type = "VEC3"	
-			v.VarName = Varyings[VARY_BINORM]
-			varyings[VARY_BINORM] = v
+			if varyings[VARY_TANG] == nil then
+				local v = {}
+				v.Type = "VEC3"	
+				v.VarName = Varyings[VARY_TANG]
+				varyings[VARY_TANG] = v
+			end
+			if varyings[VARY_BINORM] == nil then
+				local v = {}
+				v.Type = "VEC3"	
+				v.VarName = Varyings[VARY_BINORM]
+				varyings[VARY_BINORM] = v
+			end
 		end
 		if varyings[VARY_NORM] == nil then
 			local v = {}
@@ -615,6 +541,95 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 	end
 
 	info.Varyings = varyings
+
+	-- uniforms
+
+	info.Uniforms = {}
+
+	vertUniforms = bit.bor(vertUniforms,
+		vid.EUF_MODEL_VIEW_PROJ_MATRIX)
+	
+	if IsNeedNormal(vtype, pass, lightcnt) then
+		if light then
+			if perpixel then
+				fragUniforms = bit.bor(fragUniforms,
+					vid.EUF_GLOBAL_AMBIENT_COLOR,
+					vid.EUF_MATERIAL_COLORS, vid.EUF_MATERIAL_SHININESS,
+					vid.EUF_LIGHTING)
+				if HasTBN(vtype) then
+					vertUniforms = bit.bor(vertUniforms,
+						vid.EUF_LIGHTING)
+				end
+			else
+				vertUniforms = bit.bor(vertUniforms,
+					vid.EUF_GLOBAL_AMBIENT_COLOR,
+					vid.EUF_MATERIAL_COLORS, vid.EUF_MATERIAL_SHININESS,
+					vid.EUF_LIGHTING)
+			end
+		end
+	end
+
+	if isDS then
+		fragUniforms = bit.bor(fragUniforms,
+			vid.EUF_MATERIAL_COLORS)
+	end
+
+	if varyings[VARY_POS] ~= nil  or varyings[VARY_EYE] ~= nil then
+		if isDS then
+			vertUniforms = bit.bor(vertUniforms,
+				vid.EUF_MODEL_MATRIX)
+		else
+			vertUniforms = bit.bor(vertUniforms,
+				vid.EUF_MODEL_VIEW_MATRIX)
+		end
+	end
+
+	if info.vnormal	and (varyings[VARY_NORM] ~= nil
+			or varyings[VARY_EYE] ~= nil or envGenText ~= nil) then
+		if isDS then
+			vertUniforms = bit.bor(vertUniforms,
+				vid.EUF_MODEL_MATRIX_3X3)
+		else
+			vertUniforms = bit.bor(vertUniforms,
+				vid.EUF_MODEL_VIEW_MATRIX_3X3)
+		end
+	end
+	
+	if mcolor then
+		vertUniforms = bit.bor(vertUniforms,
+			vid.EUF_MATERIAL_COLORS)
+	end
+
+	for i = 1, table.getn(info.TCoords) do
+		local idx = info.TCoords[i].LayerIdx
+		if info.TCoords[i].VarName ~= nil then
+			local texture = pass.Layers[idx]:getTexture()
+			if texture ~= nil then
+				if pass.Layers[idx]:getType() ~= vid.ETLT_NORMAL_MAP or perpixel then
+					fragUniforms = bit.bor(fragUniforms, TexFlags[idx+1])
+					if pass.Layers[idx]:isTexCoordAnimated() then
+						vertUniforms = bit.bor(vertUniforms,
+							TexMatrixFlags[idx+1])
+					end
+					if pass.Layers[idx]:getTexCoordGen() == vid.ETCGT_PROJECTED_MAPPING then
+						vertUniforms = bit.bor(vertUniforms,
+							TexMatrixFlags[idx+1], vid.EUF_MODEL_MATRIX)
+					end
+				end
+			end
+		end
+	end
+
+	if fogging then
+		fragUniforms = bit.bor(fragUniforms,
+			vid.EUF_FOG_PARAMS)
+		fragUniforms = bit.bor(fragUniforms,
+			vid.EUF_FOG_COLOR)
+	end
+
+	info.Uniforms.VertMask = vertUniforms
+	info.Uniforms.FragMask = fragUniforms
+	info.Uniforms.Mask = bit.bor(info.Uniforms.VertMask, info.Uniforms.FragMask)
 
 	-- Pixel TCoords
 	local ti = 0

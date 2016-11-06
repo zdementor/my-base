@@ -50,11 +50,20 @@ enum E_COLOR_FORMAT
 	//! Luminance formats (for the heightmaps)
 	ECF_LUMINANCE16,
 
+	//! 16 bit per channel format
+	ECF_A16B16G16R16,
+
 	//! Depth formats
 	ECF_DEPTH24_STENCIL8,
 
 	//! Single channel 32 bit float format
 	ECF_LUMINANCE32F,
+
+	//! 16 bit per channel float format
+	ECF_A16B16G16R16F,
+
+	//! 32 bit per channel float format
+	ECF_A32B32G32R32F,
 
 	E_COLOR_FORMAT_COUNT,
 
@@ -73,8 +82,11 @@ static const c8* ColorFormatName[E_COLOR_FORMAT_COUNT] =
     "ECF_DXT3",
 	"ECF_DXT5",
 	"ECF_LUMINANCE16",
+	"ECF_A16B16G16R16",
 	"ECF_DEPTH24_STENCIL8",
 	"ECF_LUMINANCE32F",
+	"ECF_A16B16G16R16F",
+	"ECF_A32B32G32R32F",
 };
 
 static u32 ColorFormatBitsPerPixel[E_COLOR_FORMAT_COUNT] =
@@ -89,8 +101,11 @@ static u32 ColorFormatBitsPerPixel[E_COLOR_FORMAT_COUNT] =
     0,  //ECF_DXT3
 	0,  //ECF_DXT5
 	16, //ECF_LUMINANCE16
+	64, //ECF_A16B16G16R16
 	32, //ECF_DEPTH24_STENCIL8
 	32, //ECF_LUMINANCE32F
+	64, //ECF_A16B16G16R16F
+	128,//ECF_A32B32G32R32F
 };
 
 MY_FORCEINLINE const c8* getColorFormatName(E_COLOR_FORMAT fmt)

@@ -7,6 +7,7 @@ struct SGPUProgramShaderInfo
 	unsigned                Uniforms;
 	unsigned                Attributes;
     E_DRIVER_TYPE           Driver;
+	E_RENDER_PATH           RenderPath;
 	E_VERTEX_SHADER_VERSION VertexVer;
 	E_PIXEL_SHADER_VERSION  PixelVer;
 
@@ -72,6 +73,7 @@ bool appendGPUProgramInfo(const SGPUProgramInfo *prog_info,
 	unsigned                uniforms,
 	unsigned                attributes,
     E_DRIVER_TYPE           driver,
+	E_RENDER_PATH           rend_path,
 	const char              *tag,
 	E_VERTEX_SHADER_VERSION vertex_ver,
 	const char              *vertex_file_name,

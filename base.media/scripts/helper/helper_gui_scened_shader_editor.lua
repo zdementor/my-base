@@ -231,7 +231,8 @@ local function _ScenedShaderEditorSaveCallback(full_file_name)
 		local vertex_file_name = file_name..".vsh"
 		local pixel_file_name = file_name..".psh"
 		vid.appendGPUProgramInfo(progInfo,
-			sources.Uniforms, sources.Attributes, MyDriver:getDriverType(),
+			sources.Uniforms, sources.Attributes,
+			MyDriver:getDriverType(), MyDriver:getRenderPath(),
 			sources.Tag,
 			sources.Vertex.Ver, vertex_file_name,
 			sources.Pixel.Ver, pixel_file_name)

@@ -45,6 +45,9 @@ class IVideoDriver
 	//! Immediate rendering
 	void render2DRect(const SMaterial &material,
 		const core::rectf &drawRect, const core::rectf &texRect);
+	void render2DRectWithLight(const SMaterial &material,
+		const core::rectf &drawRect, const core::rectf &texRect,
+		unsigned enabledLight);
 
     //! Makes a screenshot and stores it into a newly created texture
 	ITexture* makeScreenShotTexture();
@@ -69,6 +72,12 @@ class IVideoDriver
     //! Returns current amount of dynamic lights set
     //! \return Current amount of dynamic lights set
     int getDynamicLightsCount();
+
+	//! Returns light data
+	//! \param idx: Zero based index of the light. Must be greater than 0 and smaller
+	//! than IVideoDriver()::getDynamicLightsCount.
+	//! \return Light data.
+	const SLight& getDynamicLight(int idx);
 
     //! Returns the size of the screen or render window.
     //! \return Size of screen or render window.
