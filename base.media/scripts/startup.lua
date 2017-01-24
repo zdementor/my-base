@@ -165,13 +165,31 @@ end
 function CreateMainRT(width, height)
 
 	local colorRTFmts = {
-		img.ECF_A8R8G8B8,
---		img.ECF_A8R8G8B8,
---		img.ECF_A32B32G32R32F,
+		img.ECF_A8R8G8B8,      -- diffuse
+--		img.ECF_A8R8G8B8,      -- normal
+--		img.ECF_A32B32G32R32F, -- position
+--		img.ECF_A8R8G8B8,      -- material
 		}
 	local depthFmt = img.ECF_DEPTH24_STENCIL8
 
 	return CreateRT(width, height, colorRTFmts, depthFmt)
+end
+
+function IsDefferedRT(rt)
+	if rt == nil then
+		return false
+	end
+	local colCnt = 0
+	for i = 0, vid.MY_MAX_COLOR_ATTACHMENTS - 1 do
+		local colRT = rt:getColorTexture(i)
+		if colRT ~= nil then
+			colCnt = colCnt + 1
+		end
+	end
+	if colCnt > 1 then
+		return true
+	end
+	return false
 end
 
 function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)

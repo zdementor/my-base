@@ -263,18 +263,6 @@ bool setGLContext(MyGLWindow *win, MyGLContext *ctx)
 #endif
 		win->context = ctx;
 	}
-	else
-	{
-#if MY_PLATFORM == MY_PLATFORM_WIN32
-		if (!wglMakeCurrent(0, 0))
-		{
-			LOGGER.logWarn("wglMakeCurrent(0, 0) failed.");
-			return false;
-		}
-#else
-#	error Unimplemented!!!
-#endif
-	}
 	return true;
 }
 

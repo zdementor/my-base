@@ -51,17 +51,17 @@ COpenGLDriver::~COpenGLDriver()
 
 	SAFE_DROP(m_OpenGLHardwareOcclusionQuery);
 
-    if (m_Window)
+	if (m_Window)
 	{
 		setGLContext(m_Window, 0);
-        destroyGLWindow(m_Window);
+		destroyGLWindow(m_Window);
+		m_Window = 0;
 	}
-    if (m_Context)
-    {
-        destroyGLContext(m_Context);
-        m_Context = 0;
-    }
-	setGLContext(0, 0);
+	if (m_Context)
+	{
+		destroyGLContext(m_Context);
+		m_Context = 0;
+	}
 
 	LOGGER.logInfo("OpenGL graphic deactivated");
 }

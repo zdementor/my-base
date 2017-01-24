@@ -10,6 +10,7 @@ Uniforms =
 	ModelMatrix			= vid.getUniformReadableName(vid.EUT_MODEL_MATRIX),
 	ModelViewMatrix3x3	= vid.getUniformReadableName(vid.EUT_MODEL_VIEW_MATRIX_3X3),
 	ModelMatrix3x3		= vid.getUniformReadableName(vid.EUT_MODEL_MATRIX_3X3),
+	EyePos				= vid.getUniformReadableName(vid.EUT_EYE_POS),
 	Tex =
 	{
 		vid.getUniformReadableName(vid.EUT_TEXTURE0),
@@ -548,7 +549,7 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 
 	vertUniforms = bit.bor(vertUniforms,
 		vid.EUF_MODEL_VIEW_PROJ_MATRIX)
-	
+
 	if IsNeedNormal(vtype, pass, lightcnt) then
 		if light then
 			if perpixel then
@@ -578,6 +579,11 @@ function ShaderGenInfo(vtype, pass, perpixel, lightcnt)
 		if isDS then
 			vertUniforms = bit.bor(vertUniforms,
 				vid.EUF_MODEL_MATRIX)
+			if IsNeedNormal(vtype, pass, lightcnt)
+					or info.hasNMap then
+				vertUniforms = bit.bor(vertUniforms,
+					vid.EUF_EYE_POS)
+			end
 		else
 			vertUniforms = bit.bor(vertUniforms,
 				vid.EUF_MODEL_VIEW_MATRIX)

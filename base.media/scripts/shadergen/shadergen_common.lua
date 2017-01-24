@@ -153,6 +153,9 @@ function AppendUniforms(info, vsh)
 	if bit.band(uniforms, vid.EUF_MATERIAL_SHININESS) ~= 0 then
 		text = text.."UNI FLOAT "..Uniforms.MatShininess..";\n"
 	end
+	if bit.band(uniforms, vid.EUF_EYE_POS) ~= 0 then
+		text = text.."UNI VEC3 "..Uniforms.EyePos..";\n"
+	end
 	if bit.band(uniforms, vid.EUF_LIGHTING) ~= 0 then
 		if info.lightcnt == 1 then
 			text = text.."UNI MAT4 "..Uniforms.Lighting..";\n"
@@ -332,6 +335,9 @@ function AppendVertShaderBody(info, pass)
 	if IsNeedNormal(info.vtype, pass, info.lightcnt) then
 		text = text.."    VEC4 "..Tokens.Position.." = MUL(vertex,"..posMatrix..");\n"
 		text = text.."    VEC3 eyeVec = -"..Tokens.Position..".xyz;\n"
+		if info.isDS then
+			text = text.."    eyeVec += "..Uniforms.EyePos..";\n"
+		end
 		text = text.."    VEC3 "..Tokens.Normal.." = VS_IN("..Attribs.Normal..");\n"
 		text = text.."    "..Tokens.Normal.." = MUL("..Tokens.Normal..","..normMatrix..");\n\n"
 		if not info.perpixel then
@@ -342,6 +348,9 @@ function AppendVertShaderBody(info, pass)
 	elseif info.hasNMap then
 		text = text.."    VEC4 "..Tokens.Position.." = MUL(vertex,"..posMatrix..");\n"
 		text = text.."    VEC3 eyeVec = -"..Tokens.Position..".xyz;\n"
+		if info.isDS then
+			text = text.."    eyeVec = "..Uniforms.EyePos.."- eyeVec;\n"
+		end
 	elseif info.Varyings[VARY_POS] ~= nil then
 		text = text.."    VEC4 "..Tokens.Position.." = MUL(vertex,"..posMatrix..");\n"
 	end
@@ -354,7 +363,8 @@ function AppendVertShaderBody(info, pass)
 			text = text.."    VEC3 "..Tokens.Normal.." = VEC3(0., 1., 0.);\n"
 		end
 	end
-	
+
+		
 	if info.light and info.vnormal and info.perpixel == false then
 		text = text.."\n"
 		text = text..AppendLighting(info, true, pass)
@@ -497,16 +507,12 @@ function AppendPixelShaderBody(info, pass)
 		end
 	end
 
-	for i = 1, table.getn(info.TCoords) do
-		if info.TCoords[i].VarName ~= nil then
-			text = text.."    VEC2 "..info.TCoords[i].VarName.." = "..info.TCoords[i].FragVarValue..";\n"
-		end
-	end
-	text = text.."\n"
-	
 	local ti = 0
+	local paralax = nil
+	local paralaxTCSrc = 0
+	local paralaxTCDst = 0
+
 	for i = 1, table.getn(info.TCoords) do
-		local paralax = nil
 		if info.TCoords[i].VarName ~= nil then
 			local idx = info.TCoords[i].LayerIdx
 			if pass.Layers[idx]:getType() == vid.ETLT_NORMAL_MAP then
@@ -515,39 +521,67 @@ function AppendPixelShaderBody(info, pass)
 					if i ~= j and tchnl ~= -1 and tchnl == info.TCoords[j].TChnl then
 						paralax = ""
 						paralax = paralax.."    // texcoord offset (paralax effect)\n"
-						paralax = paralax.."    FLOAT height = PARALAX_SCALE * (TEX2D("..
-							Uniforms.Tex[idx + 1]..", "..info.TCoords[i].VarName..").a) + PARALAX_BIAS;\n"
+						paralax = paralax.."    FLOAT height = PARALAX_SCALE * TEX2D("..
+							Uniforms.Tex[idx+1]..", "..info.TCoords[i].VarName..").a + PARALAX_BIAS;\n"
 						paralax = paralax.."    "..info.TCoords[j].VarName.." += VEC2(eyeVec.x,-eyeVec.y) * height;\n"
+						paralaxTCSrc = i
+						paralaxTCDst = j
 						break
 					end
 				end
 			end
 		end
 		if paralax ~= nil then
-			text = text..paralax
-			text = text.."\n"
 			break
 		end
 	end
 
 	for i = 1, table.getn(info.TCoords) do
 		if info.TCoords[i].VarName ~= nil then
+			text = text.."    VEC2 "..info.TCoords[i].VarName.." = "..info.TCoords[i].FragVarValue..";\n"
+		end
+	end
+	text = text.."\n"
+
+	if paralax ~= nil then
+		text = text..paralax
+		text = text.."\n"
+	end
+
+	local tnmapTC = 0
+
+	for i = 1, table.getn(info.TCoords) do
+		if info.TCoords[i].VarName ~= nil then
 			local idx = info.TCoords[i].LayerIdx
-			if info.light or pass.Layers[idx]:getType() ~= vid.ETLT_NORMAL_MAP then
-				local tcol = ""
-				if pass.Layers[idx]:getType() == vid.ETLT_NORMAL_MAP then
-					tcol = "tnmap"
-				else
-					tcol = string.format("tcol%d", idx)
+			local tnmap = false
+			if pass.Layers[idx]:getType() == vid.ETLT_NORMAL_MAP then
+				if info.isDS or info.light then
+					tnmap = true
 				end
+			else
+				local tcol = string.format("tcol%d", idx)
 				text = text.."    VEC4 "..tcol.." = TEX2D("..Uniforms.Tex[idx+1]..", "..info.TCoords[i].VarName..");\n"
-			elseif info.isDS and info.hasNMap then
-				local tcol = "tnmap"
-				text = text.."    VEC4 "..tcol.." = TEX2D("..Uniforms.Tex[idx+1]..", "..info.TCoords[i].VarName..");\n"
+			end
+			if tnmap and tnmapTC == 0 then
+				tnmapTC = i
 			end
 		end
 	end
 	text = text.."\n"
+
+	if tnmapTC > 0 then
+		local i = tnmapTC
+		if paralaxTCSrc == i and paralaxTCDst > 0 then
+			local j = paralaxTCDst
+			if info.TCoords[i].FragVarValue == info.TCoords[j].VarName then
+				text = text.."    "..info.TCoords[i].VarName.." = "..info.TCoords[i].FragVarValue..";\n"
+				text = text.."\n"
+			end
+		end
+		local idx = info.TCoords[i].LayerIdx
+		text = text.."    VEC4 tnmap = TEX2D("..Uniforms.Tex[idx+1]..", "..info.TCoords[i].VarName..");\n"
+		text = text.."\n"
+	end
 
 	local splatTbl = FetchTexColTbl(pass, vid.ETLT_SPLATTING_MAP)
 	local diffTbl = FetchTexColTbl(pass, vid.ETLT_DIFFUSE_MAP)
@@ -627,7 +661,7 @@ function AppendPixelShaderBody(info, pass)
 		if info.hasNMap then
 			local vT = info.Varyings[VARY_TANG]._VarName
 			local vB = info.Varyings[VARY_BINORM]._VarName
-			text = text.."    VEC3 "..N.." = (tnmap*2.0-1.0).xyz;\n"
+			text = text.."    VEC3 "..N.." = (tnmap.xyz*2.0-1.0);\n"
 			text = text.."    "..N.." = VEC3(dot("..N..","..vT.."), dot("..N..","..vB.."), dot("..N..","..vN.."));\n"
 			text = text.."    "..N.." = normalize("..N..");\n"
 			text = text.."    "..N.." = (N + 1.) / 2.;\n"
@@ -635,10 +669,10 @@ function AppendPixelShaderBody(info, pass)
 			text = text.."    VEC3 "..N.." = normalize("..vN..");\n"
 			text = text.."    "..N.." = (N + 1.) / 2.;\n"
 		end
+		text = text.."\n"
 		text = text.."    VEC4 mDif = M_DIF("..Uniforms.MatColors..");\n"
 		text = text.."    VEC4 mAmb = M_AMB("..Uniforms.MatColors..");\n"
 		text = text.."    VEC4 color = mDif;\n"
-
 		text = text.."\n"	
 	elseif info.light and info.vnormal then
 		if info.perpixel then
@@ -680,7 +714,6 @@ function AppendPixelShaderBody(info, pass)
 	if info.light and info.vnormal then
 		text = text.."    PS_OUT(FragData,0).rgb += specular;\n"
 	end
-
 	if info.fogging then
 		text = text.."\n"
 		text = text.."    // fog\n"
@@ -694,7 +727,7 @@ function AppendPixelShaderBody(info, pass)
 	if info.isDS then
 		if info.Varyings[VARY_NORM] ~= nil then
 			text = text.."\n"
-			text = text.."    PS_OUT(FragData,1) = VEC4("..Tokens.Normal..".rgb, PS_OUT(FragData,0).a);\n"
+			text = text.."    PS_OUT(FragData,1) = VEC4("..Tokens.Normal..".rgb, 1.);\n"
 		end
 		if info.Varyings[VARY_POS] ~= nil then
 			text = text.."\n"
@@ -705,6 +738,15 @@ function AppendPixelShaderBody(info, pass)
 		end
 	end
 	text = text.."\n"
+
+	if info.isDS then
+		if table.getn(lmapTbl) > 0 then
+			text = text.."    PS_OUT(FragData,3).rgba = VEC4(0.,0.,0.,1.);\n"
+		else
+			text = text.."    PS_OUT(FragData,3).rgba = VEC4(1.,1.,1.,1.);\n"
+		end
+	end
+
 	
 	return text
 end

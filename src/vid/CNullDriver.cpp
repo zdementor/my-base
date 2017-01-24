@@ -3119,6 +3119,8 @@ void CNullDriver::_renderDeferred(E_RENDER_PASS pass)
 	if (!m_Rendering)
 		return;
 
+	setColorMask(true, true, true, true);
+
 	u32 sys_time_ms = TIMER.getSystemTime();
 
 	core::matrix4 m_proj = Matrices[ETS_PROJ];
@@ -3142,13 +3144,14 @@ void CNullDriver::_renderDeferred(E_RENDER_PASS pass)
 			switch (i)
 			{
 			case ERP_3D_SKY_PASS:
-			case ERP_3D_SOLID_PASS:
-			case ERP_3D_DIRT_PASS:
 			case ERP_3D_TRANSP_1ST_PASS:
 			case ERP_3D_TRANSP_2ND_PASS:
 			case ERP_3D_TRANSP_3RD_PASS:
 			case ERP_GUI_3D_SOLID_PASS:
 			case ERP_GUI_3D_TRANSP_PASS:
+			case ERP_3D_DIRT_PASS:
+				break;
+			case ERP_3D_SOLID_PASS:
 				{
 					// setting transformations
 					core::matrix4 m_proj_shift = m_proj;
@@ -3192,28 +3195,6 @@ void CNullDriver::_renderDeferred(E_RENDER_PASS pass)
 				break;
 			case ERP_2D_PASS:
 			case ERP_GUI_2D_PASS:
-				{
-					// zero transformations
-					setTransform(ETS_PROJ, core::matrix4());
-					setTransform(ETS_VIEW, core::matrix4());
-					setTransform(ETS_MODEL, core::matrix4());
-
-					for ( u32 j = 0; j < rp_size; j++ )
-					{
-						SRenderPool & rpool = *rpools_all[j];
-						rpool.update ( sys_time_ms );
-
-						// render geometry
-						u32 rb_size = rpool.RenderBuffers->size();
-						for ( u32 k = 0;  k < rb_size; k++ )
-						{
-							vid::IRenderBuffer *rb = (*rpool.RenderBuffers)[k];
-							const vid::SMaterial *mat = (*rpool.Materials)[k];
-	
-							renderBuffer(rb, *mat);
-						}
-					}
-				}
 				break;
 			default:
 				LOGGER.logErr("Unknown render pass %s (%d)",
