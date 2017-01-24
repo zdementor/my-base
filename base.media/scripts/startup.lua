@@ -166,9 +166,9 @@ function CreateMainRT(width, height)
 
 	local colorRTFmts = {
 		img.ECF_A8R8G8B8,      -- diffuse
---		img.ECF_A8R8G8B8,      -- normal
---		img.ECF_A32B32G32R32F, -- position
---		img.ECF_A8R8G8B8,      -- material
+		img.ECF_A8R8G8B8,      -- normal
+		img.ECF_A32B32G32R32F, -- position
+		img.ECF_A8R8G8B8,      -- material
 		}
 	local depthFmt = img.ECF_DEPTH24_STENCIL8
 
