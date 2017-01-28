@@ -741,12 +741,11 @@ function AppendPixelShaderBody(info, pass)
 
 	if info.isDS then
 		if table.getn(lmapTbl) > 0 then
-			text = text.."    PS_OUT(FragData,3).rgba = VEC4(0.,0.,0.,1.);\n"
+			text = text.."    PS_OUT(FragData,3).rgba = VEC4(0.,0.,0.,0.);\n"
 		else
 			text = text.."    PS_OUT(FragData,3).rgba = VEC4(1.,1.,1.,1.);\n"
 		end
 	end
 
-	
 	return text
 end
