@@ -95,11 +95,14 @@ end
 function CreateRT(width, height, colorRTFmts, depthFmt)
 
 	local newRT = nil
-
 	local rtOK = true
 
 	local colorRTs = {}
 	local depthRT = nil
+
+	if 	colorRTFmts == nil then
+		return newRT
+	end
 
 	for no = 1, table.getn(colorRTFmts) do
 		colorRTs[no] = MyDriver:addRenderTargetTexture(nil,
@@ -162,19 +165,6 @@ function CreateRT(width, height, colorRTFmts, depthFmt)
 	return newRT
 end
 
-function CreateMainRT(width, height)
-
-	local colorRTFmts = {
-		img.ECF_A8R8G8B8,      -- diffuse
-		img.ECF_A8R8G8B8,      -- normal
-		img.ECF_A32B32G32R32F, -- position
-		img.ECF_A8R8G8B8,      -- material
-		}
-	local depthFmt = img.ECF_DEPTH24_STENCIL8
-
-	return CreateRT(width, height, colorRTFmts, depthFmt)
-end
-
 function IsDefferedRT(rt)
 	if rt == nil then
 		return false
@@ -186,7 +176,7 @@ function IsDefferedRT(rt)
 			colCnt = colCnt + 1
 		end
 	end
-	if colCnt > 1 then
+	if colCnt == 4 then
 		return true
 	end
 	return false
@@ -224,12 +214,14 @@ function CreateDevice(driverType, winWidth, winHeight, bits, texFilter, flags)
 	RereadSingletons()
 
 	if MyDriver:queryFeature(vid.EVDF_RENDER_TO_TARGET)
-			and not MyDevice:getDeviceFlagValue(dev.EDCF_USE_FFP) then
+			and not MyDevice:getDeviceFlagValue(dev.EDCF_USE_FFP)
+			and OPTIONS.RTFormat ~= nil then
 
 		LOG_INFO("Creating Main Render Target...")
 		MyLogger:increaseFormatLevel()	
 
-		MyRT = CreateMainRT(winWidth, winHeight)
+		MyRT = CreateRT(winWidth, winHeight,
+			OPTIONS.RTFormat.Colors, OPTIONS.RTFormat.Depth)
 
 		MyLogger:decreaseFormatLevel()
 		if MyRT ~= nil then

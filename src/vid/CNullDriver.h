@@ -792,7 +792,7 @@ protected:
 	E_VERTEX_TYPE m_CurrentVertexType;
 
 	IGPUProgram* _getGPUProgramFromFile(
-		const c8 *file_name, const c8 *tag,
+		const c8 *file_name, const c8 *tag, E_RENDER_PATH renderPath,
 		bool reload_if_exists, bool additional_logging, bool return_any_if_no_tagged);
 
 	u32 m_ColorMask;

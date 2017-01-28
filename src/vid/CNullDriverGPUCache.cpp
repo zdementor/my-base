@@ -30,11 +30,13 @@ struct SCGPUCache
 	{
 		m_GPUPrograms.clear();
 	 	for (u32 k = 0; k < E_RENDER_PATH_COUNT; k++)
-		for (u32 i = 0; i < E_VERTEX_TYPE_COUNT; i++)
-			for (u32 j = 0; j <= PRL_MAX_SHADER_LIGHTS; j++)
-				m_GPUProgramsHash[k][i][j].clear();
+		{
+			for (u32 i = 0; i < E_VERTEX_TYPE_COUNT; i++)
+				for (u32 j = 0; j <= PRL_MAX_SHADER_LIGHTS; j++)
+					m_GPUProgramsHash[k][i][j].clear();
+			m_GPUProgramsHashByFileName[k].clear();
+		}
 		m_GPUProgramsHashByContent.clear();
-		m_GPUProgramsHashByFileName.clear();
 		m_GPUProgramsHashFileNames.clear();
 	}
 
@@ -43,8 +45,9 @@ struct SCGPUCache
 	core::hash_table <u64, IUnknown*>
 		m_GPUProgramsHash[E_RENDER_PATH_COUNT][E_VERTEX_TYPE_COUNT][PRL_MAX_SHADER_LIGHTS + 1];
 
-	core::hash_table <core::stringc, IUnknown*>
-		m_GPUProgramsHashByContent, m_GPUProgramsHashByFileName;
+	core::hash_table <core::stringc, IUnknown*>	m_GPUProgramsHashByContent;
+
+	core::hash_table <core::stringc, IUnknown*> m_GPUProgramsHashByFileName[E_RENDER_PATH_COUNT];
 
 	core::hash_table <IGPUProgram*, core::stringc> m_GPUProgramsHashFileNames;
 };
@@ -85,62 +88,52 @@ void CNullDriver::loadGPUProgramsFromDir(const c8 *dir, const c8 *tag, bool relo
 
 	LOGGER.increaseFormatLevel();
 
-	u32 prg_cnt = 0, prg_ovr_cnt = 0;
-
-	for (s32 f=0; f<flist->getFileCount(); f++)
-	{
-		if (flist->isDirectory(f))
-			continue;
-		core::stringc fname = flist->getFileName(f);
-		core::stringc fext = flist->getFileExt(f);
-		fext.make_lower();
-		if (strstr(fext.c_str(), MY_GPU_PROGRAM_EXT))
-			prg_ovr_cnt++;
-	}
+	u32 prg_cnt = 0, prg_cnt_old = 0;
 
 	s32 errors = 0;
 	u32 shad_cnt = 0;
-	core::stringc msg;
+	core::stringc msg, fname, fext;
 
-	f32 perc = 0.f, perc_old = 0.f;
-
-	for (s32 f=0; f<flist->getFileCount(); f++)
+	for (s32 f = 0; f < flist->getFileCount(); f++)
 	{
 		if (flist->isDirectory(f))
 			continue;
 
-		core::stringc fname = flist->getFullFileName(f);
-		core::stringc fext = flist->getFileExt(f);
+		fname = flist->getFullFileName(f);
+		fext = flist->getFileExt(f);
 		fext.make_lower();
 
 		if (strstr(fext.c_str(), MY_GPU_PROGRAM_EXT))
 		{
-			if (perc == 0.f)
+			if (prg_cnt == 0.f)
 			{
-				msg.sprintf("GPU programs (%d) - 0%%", prg_ovr_cnt);
+				msg.sprintf("GPU programs...");
 				GAME_MANAGER.showMessageBox(
 					true, "Please wait, while loading", msg.c_str());
 			}
 
-			perc = (prg_ovr_cnt > 0) ? ((prg_cnt + 1.f) / (1.f * prg_ovr_cnt)) : 0.f; 
-
-			IGPUProgram *gpu_prog = _getGPUProgramFromFile(
-				fname.c_str(), tag,
-				reload_if_exists, false, false);
-			if (gpu_prog)
+			for (u32 i = 0; i < E_RENDER_PATH_COUNT; i++)
 			{
-				prg_cnt++;
-				if (!gpu_prog->isOK())
-					errors++;
+				E_RENDER_PATH renderPath = (E_RENDER_PATH)i;
+
+				IGPUProgram *gpu_prog = _getGPUProgramFromFile(
+					fname.c_str(), tag, renderPath,
+					reload_if_exists, false, false);
+				if (gpu_prog)
+				{
+					prg_cnt++;
+					if (!gpu_prog->isOK())
+						errors++;
+				}
 			}
 
-			if (perc >= perc_old + 0.1f)
+			if (prg_cnt >= prg_cnt_old + 10)
 			{
-				msg.sprintf("GPU programs (%d) - %d%%",
-					prg_ovr_cnt, s32(100.f * perc + 0.5f));
+				msg.sprintf("GPU programs (%d)...",
+					prg_cnt);
 				GAME_MANAGER.showMessageBox(
 					true, "Please wait, while loading", msg.c_str());
-				perc_old = perc;
+				prg_cnt_old = prg_cnt;
 			}
 		}
 	}
@@ -180,10 +173,12 @@ const core::stringc& CNullDriver::_getShaderName(
 	vid::E_VERTEX_TYPE vertex_type, const SRenderPass &pass, u32 lightcnt,
 	const c8 *tag)
 {
+	const E_RENDER_PATH renderPath = m_RenderPath;
+
 	static core::stringc name;
 	name.sprintf("%s-%s-%s-%s", _getGPUProgramName(vertex_type, pass, lightcnt).c_str(),
 		getDriverTypeName(getDriverType()),
-		getRenderPathShortName(m_RenderPath),
+		getRenderPathShortName(renderPath),
 		tag);
 	return name;
 }
@@ -515,6 +510,8 @@ IGPUProgram* CNullDriver::addGPUProgram(
 	E_PIXEL_SHADER_VERSION pixel_shader_ver, const c8 *pixel_shader,
 	const c8 *tag)
 {
+	const E_RENDER_PATH renderPath = m_RenderPath;
+
 	SGPUProgram *program = NULL;
 	do
 	{
@@ -528,7 +525,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 				lightcnt : PRL_MAX_SHADER_LIGHTS;
 
 		u64 hash = pass.getHashGPU();
-		program = (SGPUProgram*)_Cache.m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].get_value(hash);
+		program = (SGPUProgram*)_Cache.m_GPUProgramsHash[renderPath][vertex_type][lightcnt].get_value(hash);
 		if (program)
 		{
 			LOGGER.logErr("Possibble hash conflict, same GPU program already exists "
@@ -553,7 +550,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 		program = (SGPUProgram*)_Cache.m_GPUProgramsHashByContent.get_value(keyname);
 		if (program)
 		{
-			_Cache.m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].set_value(hash, program);
+			_Cache.m_GPUProgramsHash[renderPath][vertex_type][lightcnt].set_value(hash, program);
 			break;
 		}
 
@@ -596,7 +593,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 			
 			SGPUProgramShaderInfo e;
 			e.Driver	     = getDriverType();
-			e.RenderPath     = m_RenderPath;
+			e.RenderPath     = renderPath;
 			e.Uniforms	     = uniforms;
 			e.Attributes     = attributes;
 			e.VertexVer      = vertex_shader_ver;
@@ -634,7 +631,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 		}
 		program = new SGPUProgram(gpu_prog, gpu_file_name_c);
 		_Cache.m_GPUPrograms.push_back(program->Program);
-		_Cache.m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].set_value(hash, program);
+		_Cache.m_GPUProgramsHash[renderPath][vertex_type][lightcnt].set_value(hash, program);
 		_Cache.m_GPUProgramsHashByContent.set_value(keyname, program);
 		program->drop();
 	}
@@ -691,6 +688,8 @@ IGPUProgram* CNullDriver::addGPUProgram(
 IGPUProgram* CNullDriver::getGPUProgram(
 	vid::E_VERTEX_TYPE vertex_type, const SRenderPass &pass, u32 lightcnt)
 {
+	const E_RENDER_PATH renderPath = m_RenderPath;
+
 	if (!m_UseShaders)
 		return NULL;
 	IGPUProgram *gpu_prog = pass.getGPUProgram();
@@ -718,7 +717,7 @@ IGPUProgram* CNullDriver::getGPUProgram(
 
 	u64 hash = pass.getHashGPU();
 	SGPUProgram *program =
-		(SGPUProgram*)_Cache.m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].get_value(hash);
+		(SGPUProgram*)_Cache.m_GPUProgramsHash[renderPath][vertex_type][lightcnt].get_value(hash);
 	gpu_prog = program ? program->Program : NULL;
 	if (!gpu_prog)
 	{			
@@ -726,7 +725,7 @@ IGPUProgram* CNullDriver::getGPUProgram(
 		if (SCRIPT_MANAGER.runScriptCallback(scr::ESCT_GEN_GPU_PROGRAM, &res,
 				vertex_type, (void*)&pass, lightcnt))
 		{
-			program = (SGPUProgram*)_Cache.m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].get_value(hash);
+			program = (SGPUProgram*)_Cache.m_GPUProgramsHash[renderPath][vertex_type][lightcnt].get_value(hash);
 			gpu_prog = program ? program->Program : NULL;
 			if (!gpu_prog)
 				LOGGER.logErr("Can't add GPU program "
@@ -742,12 +741,14 @@ IGPUProgram* CNullDriver::getGPUProgram(
 IGPUProgram* CNullDriver::getGPUProgram(
 	vid::E_VERTEX_TYPE vertex_type, u64 hash, u32 lightcnt)
 {
+	const E_RENDER_PATH renderPath = m_RenderPath;
+
 	if (!m_UseShaders)
 		return NULL;
 	lightcnt = lightcnt <= PRL_MAX_SHADER_LIGHTS ?
 		lightcnt : PRL_MAX_SHADER_LIGHTS;
 	SGPUProgram *program =
-		(SGPUProgram*)_Cache.m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].get_value(hash);
+		(SGPUProgram*)_Cache.m_GPUProgramsHash[renderPath][vertex_type][lightcnt].get_value(hash);
 	IGPUProgram *gpu_prog = program ? program->Program : NULL;
 	return gpu_prog;
 }
@@ -757,8 +758,11 @@ IGPUProgram* CNullDriver::getGPUProgram(
 IGPUProgram* CNullDriver::getGPUProgram(
 	const c8 *file_name, const c8 *tag, bool reload_if_exists)
 {
+	const E_RENDER_PATH renderPath = m_RenderPath;
+
 	IGPUProgram *gpu_prog = _getGPUProgramFromFile(
-		file_name, tag, reload_if_exists, true, true);
+		file_name, tag, renderPath,
+		reload_if_exists, true, true);
 	if (!gpu_prog)
 	{
 		LOGGER.logErr("Loading GPU program from %s",
@@ -770,13 +774,14 @@ IGPUProgram* CNullDriver::getGPUProgram(
 //---------------------------------------------------------------------------
 
 IGPUProgram* CNullDriver::_getGPUProgramFromFile(
-	const c8 *file_name, const c8 *tag,
+	const c8 *file_name, const c8 *tag, E_RENDER_PATH renderPath,
 	bool reload_if_exists, bool additional_logging, bool return_any_if_no_tagged)
 {
-	SGPUProgram *program = NULL;
+	SGPUProgram *program;
+
 	do
 	{
-		program = (SGPUProgram*)_Cache.m_GPUProgramsHashByFileName.get_value(file_name);
+		program = (SGPUProgram*)_Cache.m_GPUProgramsHashByFileName[renderPath].get_value(file_name);
 		if (program && !reload_if_exists)
 			break;
 
@@ -809,7 +814,7 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 		for (u32 i = 0; i < shadersp->size(); i++)
 		{
 			if ((*shadersp)[i].Driver == getDriverType()
-					&& (*shadersp)[i].RenderPath == m_RenderPath)
+					&& (*shadersp)[i].RenderPath == renderPath)
 			{
 				vsh_ver	  = (*shadersp)[i].VertexVer;
 				psh_ver	  = (*shadersp)[i].PixelVer;
@@ -880,7 +885,7 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 						//hash != (u64)0 &&
 						lights != (u32)-1)
 				{
-					program = (SGPUProgram*)_Cache.m_GPUProgramsHash[m_RenderPath][vertex_type][lights].get_value(hash);
+					program = (SGPUProgram*)_Cache.m_GPUProgramsHash[renderPath][vertex_type][lights].get_value(hash);
 					if (program && !reload_if_exists)
 						break;
 				}
@@ -904,7 +909,7 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 							hash != (u64)-1 &&
 							//hash != (u64)0 &&
 							lights != (u32)-1)
-						_Cache.m_GPUProgramsHash[m_RenderPath][vertex_type][lights].set_value(hash, program);
+						_Cache.m_GPUProgramsHash[renderPath][vertex_type][lights].set_value(hash, program);
 				}
 			}
 			while (0);
@@ -916,7 +921,7 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 		{
 			if (m_CacheShaders)
 				program->Name = file_name;
-			_Cache.m_GPUProgramsHashByFileName.set_value(file_name, program);
+			_Cache.m_GPUProgramsHashByFileName[renderPath].set_value(file_name, program);
 			_Cache.m_GPUProgramsHashFileNames.set_value(program->Program, file_name);
 			if (justAllocated)
 				program->drop();

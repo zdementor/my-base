@@ -1666,7 +1666,7 @@ enum E_RENDER_PATH
 	//! Standard rendering with multipass lighting
 	ERP_FORWARD_RENDERING = 0,
 
-	//! Rendering with deferred lighting pass
+	//! Rendering with deferred lighting model
 	ERP_DEFERRED_SHADING,
 
 	E_RENDER_PATH_COUNT,
