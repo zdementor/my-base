@@ -795,8 +795,6 @@ protected:
 		const c8 *file_name, const c8 *tag,
 		bool reload_if_exists, bool additional_logging, bool return_any_if_no_tagged);
 
-	CGPUCache m_GPUCache;
-
 	u32 m_ColorMask;
 
 	E_RENDER_PASS m_CurrentRenderPassType;
