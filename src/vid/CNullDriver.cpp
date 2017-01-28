@@ -255,14 +255,7 @@ void CNullDriver::free()
 void CNullDriver::clearGPUProgramHash()
 {
 	_bindGPUProgram(NULL);
-	 m_GPUPrograms.clear();
- 	for (u32 k = 0; k < E_RENDER_PATH_COUNT; k++)
-		for (u32 i = 0; i < E_VERTEX_TYPE_COUNT; i++)
-			for (u32 j = 0; j <= PRL_MAX_SHADER_LIGHTS; j++)
-				m_GPUProgramsHash[k][i][j].clear();
-	m_GPUProgramsHashByContent.clear();
-	m_GPUProgramsHashByFileName.clear();
-	m_GPUProgramsHashFileNames.clear();
+	m_GPUCache.clear();
 
 	LOGGER.logInfo("Cleared GPU program hash.");
 }
@@ -3884,7 +3877,7 @@ const c8* CNullDriver::findGPUProgramFileName(vid::IGPUProgram *gpu_prog)
 const c8* CNullDriver::findGPUProgramFullFileName(vid::IGPUProgram *gpu_prog)
 {
     static core::stringc filename;
-	filename = m_GPUProgramsHashFileNames.get_value(gpu_prog);
+	filename = m_GPUCache.m_GPUProgramsHashFileNames.get_value(gpu_prog);
 	//filename.make_lower();
 	if (filename.size() == 0)
 		filename = NONAME_FILE_NAME;
@@ -3913,7 +3906,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 				lightcnt : PRL_MAX_SHADER_LIGHTS;
 
 		u64 hash = pass.getHashGPU();
-		program = (SGPUProgram*)m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].get_value(hash);
+		program = (SGPUProgram*)m_GPUCache.m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].get_value(hash);
 		if (program)
 		{
 			LOGGER.logErr("Possibble hash conflict, same GPU program already exists "
@@ -3935,10 +3928,10 @@ IGPUProgram* CNullDriver::addGPUProgram(
 			psh.sprintf("%X.%s", hash_psh, MY_PIXEL_SHADER_EXT);
 			keyname.sprintf("%s_%s", vsh.c_str(), psh.c_str());
 		}
-		program = (SGPUProgram*)m_GPUProgramsHashByContent.get_value(keyname);
+		program = (SGPUProgram*)m_GPUCache.m_GPUProgramsHashByContent.get_value(keyname);
 		if (program)
 		{
-			m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].set_value(hash, program);
+			m_GPUCache.m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].set_value(hash, program);
 			break;
 		}
 
@@ -4018,9 +4011,9 @@ IGPUProgram* CNullDriver::addGPUProgram(
 				progname.c_str());
 		}
 		program = new SGPUProgram(gpu_prog, gpu_file_name_c);
-		m_GPUPrograms.push_back(program->Program);
-		m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].set_value(hash, program);
-		m_GPUProgramsHashByContent.set_value(keyname, program);
+		m_GPUCache.m_GPUPrograms.push_back(program->Program);
+		m_GPUCache.m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].set_value(hash, program);
+		m_GPUCache.m_GPUProgramsHashByContent.set_value(keyname, program);
 		program->drop();
 	}
 	while (0);
@@ -4052,7 +4045,7 @@ IGPUProgram* CNullDriver::addGPUProgram(
 		psh.sprintf("%X.%s", hash_psh, MY_PIXEL_SHADER_EXT);
 		keyname.sprintf("%s_%s", vsh.c_str(), psh.c_str());
 
-		program = (SGPUProgram*)m_GPUProgramsHashByContent.get_value(keyname);
+		program = (SGPUProgram*)m_GPUCache.m_GPUProgramsHashByContent.get_value(keyname);
 		if (program)
 			break;
 
@@ -4063,8 +4056,8 @@ IGPUProgram* CNullDriver::addGPUProgram(
 			LOGGER.logErr("While creating GPU program");
 
 		program = new SGPUProgram(gpu_prog);
-		m_GPUPrograms.push_back(program->Program);
-		m_GPUProgramsHashByContent.set_value(keyname, program);
+		m_GPUCache.m_GPUPrograms.push_back(program->Program);
+		m_GPUCache.m_GPUProgramsHashByContent.set_value(keyname, program);
 		program->drop();
 	}
 	while (0);
@@ -4103,7 +4096,7 @@ IGPUProgram* CNullDriver::getGPUProgram(
 
 	u64 hash = pass.getHashGPU();
 	SGPUProgram *program =
-		(SGPUProgram*)m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].get_value(hash);
+		(SGPUProgram*)m_GPUCache.m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].get_value(hash);
 	gpu_prog = program ? program->Program : NULL;
 	if (!gpu_prog)
 	{			
@@ -4111,7 +4104,7 @@ IGPUProgram* CNullDriver::getGPUProgram(
 		if (SCRIPT_MANAGER.runScriptCallback(scr::ESCT_GEN_GPU_PROGRAM, &res,
 				vertex_type, (void*)&pass, lightcnt))
 		{
-			program = (SGPUProgram*)m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].get_value(hash);
+			program = (SGPUProgram*)m_GPUCache.m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].get_value(hash);
 			gpu_prog = program ? program->Program : NULL;
 			if (!gpu_prog)
 				LOGGER.logErr("Can't add GPU program "
@@ -4132,7 +4125,7 @@ IGPUProgram* CNullDriver::getGPUProgram(
 	lightcnt = lightcnt <= PRL_MAX_SHADER_LIGHTS ?
 		lightcnt : PRL_MAX_SHADER_LIGHTS;
 	SGPUProgram *program =
-		(SGPUProgram*)m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].get_value(hash);
+		(SGPUProgram*)m_GPUCache.m_GPUProgramsHash[m_RenderPath][vertex_type][lightcnt].get_value(hash);
 	IGPUProgram *gpu_prog = program ? program->Program : NULL;
 	return gpu_prog;
 }
@@ -4161,7 +4154,7 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 	SGPUProgram *program = NULL;
 	do
 	{
-		program = (SGPUProgram*)m_GPUProgramsHashByFileName.get_value(file_name);
+		program = (SGPUProgram*)m_GPUCache.m_GPUProgramsHashByFileName.get_value(file_name);
 		if (program && !reload_if_exists)
 			break;
 
@@ -4265,7 +4258,7 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 						//hash != (u64)0 &&
 						lights != (u32)-1)
 				{
-					program = (SGPUProgram*)m_GPUProgramsHash[m_RenderPath][vertex_type][lights].get_value(hash);
+					program = (SGPUProgram*)m_GPUCache.m_GPUProgramsHash[m_RenderPath][vertex_type][lights].get_value(hash);
 					if (program && !reload_if_exists)
 						break;
 				}
@@ -4282,14 +4275,14 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 						vsh_ver, &vertex_shader[0],
 						psh_ver, &pixel_shader[0]);
 					program = new SGPUProgram(gpu_prog, file_name);
-					m_GPUPrograms.push_back(program->Program);
+					m_GPUCache.m_GPUPrograms.push_back(program->Program);
 					justAllocated = true;
 
 					if (vertex_type != (vid::E_VERTEX_TYPE)-1 &&
 							hash != (u64)-1 &&
 							//hash != (u64)0 &&
 							lights != (u32)-1)
-						m_GPUProgramsHash[m_RenderPath][vertex_type][lights].set_value(hash, program);
+						m_GPUCache.m_GPUProgramsHash[m_RenderPath][vertex_type][lights].set_value(hash, program);
 				}
 			}
 			while (0);
@@ -4301,8 +4294,8 @@ IGPUProgram* CNullDriver::_getGPUProgramFromFile(
 		{
 			if (m_CacheShaders)
 				program->Name = file_name;
-			m_GPUProgramsHashByFileName.set_value(file_name, program);
-			m_GPUProgramsHashFileNames.set_value(program->Program, file_name);
+			m_GPUCache.m_GPUProgramsHashByFileName.set_value(file_name, program);
+			m_GPUCache.m_GPUProgramsHashFileNames.set_value(program->Program, file_name);
 			if (justAllocated)
 				program->drop();
 		}

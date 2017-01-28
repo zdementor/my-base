@@ -51,6 +51,35 @@ const u32 MY_MAX_POINT_SPECULAR_LIGHTS = 3;
 
 //---------------------------------------------------------------------------
 
+class CGPUCache
+{
+	friend class CNullDriver;
+private:
+	void clear()
+	{
+		m_GPUPrograms.clear();
+	 	for (u32 k = 0; k < E_RENDER_PATH_COUNT; k++)
+		for (u32 i = 0; i < E_VERTEX_TYPE_COUNT; i++)
+			for (u32 j = 0; j <= PRL_MAX_SHADER_LIGHTS; j++)
+				m_GPUProgramsHash[k][i][j].clear();
+		m_GPUProgramsHashByContent.clear();
+		m_GPUProgramsHashByFileName.clear();
+		m_GPUProgramsHashFileNames.clear();
+	}
+
+	core::array      <IGPUProgram*>   m_GPUPrograms;
+
+	core::hash_table <u64, IUnknown*>
+		m_GPUProgramsHash[E_RENDER_PATH_COUNT][E_VERTEX_TYPE_COUNT][PRL_MAX_SHADER_LIGHTS + 1];
+
+	core::hash_table <core::stringc, IUnknown*>
+		m_GPUProgramsHashByContent, m_GPUProgramsHashByFileName;
+
+	core::hash_table <IGPUProgram*, core::stringc> m_GPUProgramsHashFileNames;
+};
+
+//---------------------------------------------------------------------------
+
 class CNullDriver : public IVideoDriver
 {
 public:
@@ -797,10 +826,7 @@ protected:
 		const c8 *file_name, const c8 *tag,
 		bool reload_if_exists, bool additional_logging, bool return_any_if_no_tagged);
 
-	core::array      <IGPUProgram*>   m_GPUPrograms;
-	core::hash_table <u64, IUnknown*> m_GPUProgramsHash[E_RENDER_PATH_COUNT][E_VERTEX_TYPE_COUNT][PRL_MAX_SHADER_LIGHTS + 1];
-	core::hash_table <core::stringc, IUnknown*> m_GPUProgramsHashByContent, m_GPUProgramsHashByFileName;
-	core::hash_table <IGPUProgram*, core::stringc> m_GPUProgramsHashFileNames;
+	CGPUCache m_GPUCache;
 
 	u32 m_ColorMask;
 
