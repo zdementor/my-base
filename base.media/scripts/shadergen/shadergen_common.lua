@@ -248,17 +248,31 @@ function AppendMaterialDiffuse()
 	return "    VEC4 mDif = M_DIF("..Uniforms.MatColors..");\n"
 end
 
+function AppendMaterialAmbient()
+	return "    VEC4 mAmb = M_AMB("..Uniforms.MatColors..");\n"
+end
+
+function AppendMaterialSpecular()
+	return "    VEC4 mSpec = M_SPEC("..Uniforms.MatColors..");\n"
+end
+
 function AppendMaterialEmissive()
 	return "    VEC4 mEmis = M_EMIS("..Uniforms.MatColors..");\n"
+end
+
+function AppendMaterialColors()
+	local text = ""
+	text = text..AppendMaterialDiffuse()
+	text = text..AppendMaterialAmbient()
+	text = text..AppendMaterialSpecular()
+	text = text..AppendMaterialEmissive()
+	return text
 end
 
 function AppendLighting(info, vsh, pass)
 	local text = ""
 	
-	text = text..AppendMaterialDiffuse()
-	text = text.."    VEC4 mAmb = M_AMB("..Uniforms.MatColors..");\n"
-	text = text.."    VEC4 mSpec = M_SPEC("..Uniforms.MatColors..");\n"
-	text = text..AppendMaterialEmissive()
+	text = text..AppendMaterialColors()
 	text = text.."\n"
 	text = text.."    VEC3 specular = VEC3(0.0,0.0,0.0);\n"
 	text = text.."    VEC4 color = VEC4(0.0, 0.0, 0.0, mDif.a);\n"
@@ -433,7 +447,7 @@ function AppendVertShaderBody(info, pass)
 		text = text.."    "..info.Varyings[VARY_NORM]._VarName.." = tbn[2];\n"
 	else
 		if info.Varyings[VARY_TANG] ~= nil then
-			text = text.."    "..info.Varyings[VARY_TANG]._VarName.." = "..Tokens.Tangent.."; //asd\n"
+			text = text.."    "..info.Varyings[VARY_TANG]._VarName.." = "..Tokens.Tangent..";\n"
 		end
 		if info.Varyings[VARY_BINORM] ~= nil then
 			text = text.."    "..info.Varyings[VARY_BINORM]._VarName.." = "..Tokens.Binormal..";\n"			
@@ -670,14 +684,13 @@ function AppendPixelShaderBody(info, pass)
 			text = text.."    "..N.." = (N + 1.) / 2.;\n"
 		end
 		text = text.."\n"
-		text = text.."    VEC4 mDif = M_DIF("..Uniforms.MatColors..");\n"
-		text = text.."    VEC4 mAmb = M_AMB("..Uniforms.MatColors..");\n"
+		text = text..AppendMaterialColors()
 		text = text.."    VEC4 color = mDif;\n"
 		text = text.."\n"	
 	elseif info.light and info.vnormal then
 		if info.perpixel then
 			if info.hasNMap then
-				text = text.."    VEC3 "..Tokens.Normal.." = normalize((tnmap*2.0-1.0).xyz);\n"
+				text = text.."    VEC3 "..Tokens.Normal.." = normalize(tnmap.xyz*2.0-1.0);\n"
 			else
 				text = text.."    VEC3 "..Tokens.Normal.." = normalize("..info.Varyings[VARY_NORM]._VarName..");\n"
 			end
@@ -736,10 +749,7 @@ function AppendPixelShaderBody(info, pass)
 				"1."..
 				");\n"
 		end
-	end
-	text = text.."\n"
-
-	if info.isDS then
+		text = text.."\n"
 		if table.getn(lmapTbl) > 0 then
 			text = text.."    PS_OUT(FragData,3).rgba = VEC4(0.,0.,0.,0.);\n"
 		else
