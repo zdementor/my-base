@@ -23,7 +23,7 @@ attribute vec3 aNormal;
 
 uniform mat4 uModelViewProjMatrix;
 uniform mat4 uModelViewMatrix;
-uniform mat3 uNormalMatrix;
+uniform mat3 uModelViewMatrix3x3;
 uniform vec4 uGlobalAmbientColor;
 uniform vec4 uMaterialColors[4];
 uniform float uMaterialShininess;
@@ -35,7 +35,7 @@ void main(void)
 {
     vec3 position = vec3(uModelViewMatrix * aPosition);
     vec3 eyeVec = -normalize(position);
-    vec3 normal = normalize(uNormalMatrix * aNormal);
+    vec3 normal = (uModelViewMatrix3x3 * aNormal);
 
     vec4 mDiffuse = M_DIFFUSE(uMaterialColors);
     vec4 mAmbient = M_AMBIENT(uMaterialColors);

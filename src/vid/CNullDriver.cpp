@@ -147,6 +147,8 @@ CNullDriver::CNullDriver(const core::dimension2d<s32>& screenSize)
 	{
 		name = getUniformReadableName((E_UNIFORM_TYPE)i);
 		m_UniformTypes.set_value(name, (E_UNIFORM_TYPE)i);
+		name += "[0]";
+		m_UniformTypes.set_value(name, (E_UNIFORM_TYPE)i);
 	}
 
 	m_Fullscreen		= DEVICE.getDeviceFlagValue(dev::EDCF_FULLSCREEN);

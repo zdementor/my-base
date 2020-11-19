@@ -1,10 +1,9 @@
 #version 120
 
-#define M_DIFFUSE(mat)   mat[0].rgba
-#define M_AMBIENT(mat)   mat[1].rgba
-#define M_SPECULAR(mat)  vec4(mat[2].rgb,1.0)
-#define M_EMISSIVE(mat)  vec4(mat[3].rgb,1.0)
-#define M_SHININESS(mat) mat[2].a
+#define M_DIFFUSE(mat)  mat[0].rgba
+#define M_AMBIENT(mat)  mat[1].rgba
+#define M_SPECULAR(mat) mat[2].rgba
+#define M_EMISSIVE(mat) mat[3].rgba
 
 #define L_DIFFUSE(lig)  vec4(lig[0].rgb,1.0)
 #define L_AMBIENT(lig)  vec4(lig[1].rgb,1.0)
@@ -21,112 +20,72 @@ uniform mat4 uLighting[4];
 uniform sampler2D uTexture0;
 uniform sampler2D uTexture3;
 
+varying vec2 TexCoord0;
+varying vec2 TexCoord3;
 varying vec3 Position;
 varying vec3 EyeVec;
-varying vec3 LightVec[4];
+varying vec3 Tangent;
+varying vec3 Binormal;
+varying vec3 Normal;
 
 #define scale 0.04
 #define bias -scale/2.0
 
 void main(void)
 {
-	vec3 eyeVec 	= normalize(EyeVec);
-    vec3 position	= Position.xyz;
+	vec3 T = normalize(Tangent);
+	vec3 B = normalize(Binormal);
+	vec3 N = normalize(Normal);
+	vec3 eyeVec = normalize(EyeVec);
+    vec3 position = Position.xyz;
 
 	// get corrected height
-	float h = scale * (texture2D(uTexture3, gl_TexCoord[0].st).a) + bias;
-	vec2 tcoord0 = gl_TexCoord[0].st + vec2(eyeVec.x,-eyeVec.y) * h;
-
-	vec3 normal = normalize((texture2D(uTexture3, tcoord0)* 2 - 1).xyz);
+	float h = scale * (texture2D(uTexture3, TexCoord3.xy).a) + bias;
+	vec2 tcoord0 = TexCoord0.xy + vec2(eyeVec.x,-eyeVec.y) * h;
 
     vec4 tcol0 = texture2D(uTexture0, tcoord0);
+	vec3 normal = normalize((texture2D(uTexture3, tcoord0)* 2 - 1).xyz);
     vec4 tcol = tcol0;
 
     vec4 mDiffuse = M_DIFFUSE(uMaterialColors);
     vec4 mAmbient = M_AMBIENT(uMaterialColors);
     vec4 mSpecular = M_SPECULAR(uMaterialColors);
     vec4 mEmissive = M_EMISSIVE(uMaterialColors);
-	float mShininess = uMaterialShininess;
 
-	vec3 SeparateSpecular = vec3(0.0,0.0,0.0);
+    vec3 SeparateSpecular = vec3(0.0,0.0,0.0);
     vec4 color = vec4(0.0, 0.0, 0.0, mDiffuse.a);
     color.rgb = uGlobalAmbientColor.rgb * mAmbient.rgb + mEmissive.rgb;
 
-    // calculating lighting from point lights
+    // calculating lighting
+	for (int i = 0; i < 4; i++)
 	{
-		int i = 0;
-	    vec4 lDiffuse  = L_DIFFUSE(uLighting[i]);
-    	vec4 lAmbient  = L_AMBIENT(uLighting[i]);
-	    vec4 lSpecular = L_SPECULAR(uLighting[i]);
-    	vec3 lPosition = L_POSITION(uLighting[i]);
-	    float lRadius  = L_RADIUS(uLighting[i]);
-    	float lDist = length(lPosition - position);
-		vec3 lightVec = normalize(LightVec[i].xyz);
+        vec4 lDiffuse  = L_DIFFUSE(uLighting[i]);
+        vec4 lAmbient  = L_AMBIENT(uLighting[i]);
+        vec4 lSpecular = L_SPECULAR(uLighting[i]);
+        vec3 lPosition = L_POSITION(uLighting[i]);
+        float lRadius  = L_RADIUS(uLighting[i]);
+		vec3 lightVec  = lPosition - position;
+        float lDist = length(lightVec);
+		lightVec = vec3(
+			dot(lightVec, T),
+			dot(lightVec, B),
+			dot(lightVec, N));
+		lightVec = normalize(lightVec);
+		float NdotL = max(dot(normal, lightVec), 0.0);
 		float idx = min(lDist / lRadius, 1.0);
 		float attenuation = -idx * idx + 1.0;
-		float NdotL = max(dot(normal, lightVec), 0.0);
-    	color.rgb += attenuation * NdotL * lDiffuse.rgb * mDiffuse.rgb;
-		vec3 reflVec = reflect(-lightVec, normal);
-    	float specPow = pow(max(dot(eyeVec, reflVec),0.0), mShininess);
-	    SeparateSpecular += attenuation *
-			specPow * mSpecular.rgb * lSpecular.rgb;
-	}
-	{
-		int i = 1;
-	    vec4 lDiffuse  = L_DIFFUSE(uLighting[i]);
-    	vec4 lAmbient  = L_AMBIENT(uLighting[i]);
-	    vec4 lSpecular = L_SPECULAR(uLighting[i]);
-    	vec3 lPosition = L_POSITION(uLighting[i]);
-	    float lRadius  = L_RADIUS(uLighting[i]);
-    	float lDist = length(lPosition - position);
-		vec3 lightVec = normalize(LightVec[i].xyz);
-		float idx = min(lDist / lRadius, 1.0);
-		float attenuation = -idx * idx + 1.0;
-		float NdotL = max(dot(normal, lightVec), 0.0);
-    	color.rgb += attenuation * NdotL * lDiffuse.rgb * mDiffuse.rgb;
-		vec3 reflVec = reflect(-lightVec, normal);
-    	float specPow = pow(max(dot(eyeVec, reflVec),0.0), mShininess);
-	    SeparateSpecular += attenuation *
-			specPow * mSpecular.rgb * lSpecular.rgb;
-	}
-	{
-		int i = 2;
-	    vec4 lDiffuse  = L_DIFFUSE(uLighting[i]);
-    	vec4 lAmbient  = L_AMBIENT(uLighting[i]);
-	    vec4 lSpecular = L_SPECULAR(uLighting[i]);
-    	vec3 lPosition = L_POSITION(uLighting[i]);
-	    float lRadius  = L_RADIUS(uLighting[i]);
-    	float lDist = length(lPosition - position);
-		vec3 lightVec = normalize(LightVec[i].xyz);
-		float idx = min(lDist / lRadius, 1.0);
-		float attenuation = -idx * idx + 1.0;
-		float NdotL = max(dot(normal, lightVec), 0.0);
-    	color.rgb += attenuation * NdotL * lDiffuse.rgb * mDiffuse.rgb;
-		vec3 reflVec = reflect(-lightVec, normal);
-    	float specPow = pow(max(dot(eyeVec, reflVec),0.0), mShininess);
-	    SeparateSpecular += attenuation *
-			specPow * mSpecular.rgb * lSpecular.rgb;
-	}
-	{
-		int i = 3;
-	    vec4 lDiffuse  = L_DIFFUSE(uLighting[i]);
-    	vec4 lAmbient  = L_AMBIENT(uLighting[i]);
-	    vec4 lSpecular = L_SPECULAR(uLighting[i]);
-    	vec3 lPosition = L_POSITION(uLighting[i]);
-	    float lRadius  = L_RADIUS(uLighting[i]);
-    	float lDist = length(lPosition - position);
-		vec3 lightVec = normalize(LightVec[i].xyz);
-		float idx = min(lDist / lRadius, 1.0);
-		float attenuation = -idx * idx + 1.0;
-		float NdotL = max(dot(normal, lightVec), 0.0);
-    	color.rgb += attenuation * NdotL * lDiffuse.rgb * mDiffuse.rgb;
-		vec3 reflVec = reflect(-lightVec, normal);
-    	float specPow = pow(max(dot(eyeVec, reflVec),0.0), mShininess);
-	    SeparateSpecular += attenuation *
-			specPow * mSpecular.rgb * lSpecular.rgb;
-	}
+        color.rgb += attenuation * (
+            NdotL * lDiffuse.rgb * mDiffuse.rgb + // diffuse component
+            lAmbient.rgb * mAmbient.rgb // ambient component
+            );
+        vec3 halfVec = normalize(eyeVec + lightVec);
+        float NdotHV = max(dot(normal, halfVec),0.0);
+        // separate specular component
+        SeparateSpecular += attenuation *
+            pow(NdotHV, uMaterialShininess) * mSpecular.rgb * lSpecular.rgb;
+    }
 
     gl_FragColor = tcol;
     gl_FragColor *= color;
-	gl_FragColor.rgb += SeparateSpecular;
+    gl_FragColor.rgb += SeparateSpecular;
 }

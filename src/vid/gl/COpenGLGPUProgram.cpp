@@ -233,7 +233,6 @@ bool COpenGLGPUProgram::recreate(u32 uniforms, u32 attributes, u32 lights_count,
 		else
 		{
 			LOGGER.logWarn("Unknown uniform '%s'", buf.pointer());
-			errors++;
 		}
 	}
 

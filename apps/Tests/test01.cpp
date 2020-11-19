@@ -26,7 +26,6 @@ u32 GPUProgCur = 0;
 const c8 *GPUProgNames[] =
 {
 	"vertex_lighting.gpu",
-	"perpixel_paralax_1_lighting.gpu",
 	"perpixel_paralax_4_lighting.gpu",
 };
 
@@ -37,9 +36,9 @@ scn::ICameraSceneNode *Cameras[] =
 {NULL, NULL, NULL};
 
 scn::ILightSceneNode *Lights[] =
-{NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+{NULL, NULL, NULL, NULL};
 
-scn::ISceneNode *Nodes[] = { NULL, NULL};
+scn::ISceneNode *Nodes[] = {NULL};
 
 struct SMediaEntry
 {
@@ -218,7 +217,6 @@ namespace test
 
 }
 
-
 //-------------------------------------------------------------------------
 
 int main(int argc, char* argv[]) 
@@ -270,6 +268,7 @@ int main(int argc, char* argv[])
 	Flags |= dev::EDCF_USE_SHADERS;
 	//Flags |= dev::EDCF_USE_FFP;
 	Flags |= dev::EDCF_LIGHTING_MEDIUM_QUALITY;
+	Flags |= dev::EDCF_SHADOWS;
 
 	dev::SDeviceCreationParameters creation_params; 
 
@@ -329,21 +328,6 @@ int main(int argc, char* argv[])
 
 		Nodes[0] = node;
 	}
-	
-	{
-		scn::IAnimatedMeshSceneNode *node =
-			SCENE_MANAGER.addAnimatedMeshSceneNode();
-		scn::IAnimatedMesh *mesh = SCENE_MANAGER.getMesh(
-			core::stringc().sprintf("%s%s",
-				RESOURCE_MANAGER.getMediaDirFull(res::EMT_MESHES),
-				"room.3ds").c_str());
-		node->setAnimatedMesh(mesh);
-		node->setScale(core::vector3df(1.0f, 1.0f, 1.0f));
-		node->setPosition(core::vector3df(-1000.0f,0.0f,0.0f));
-		node->setOccluder(false);
-
-		Nodes[1] = node;
-	}
 
 	VIDEO_DRIVER.loadGPUProgramsFromDir(
 		RESOURCE_MANAGER.getMediaDirFull(res::EMT_MATERIALS));
@@ -353,7 +337,7 @@ int main(int argc, char* argv[])
 	for (u32 i = 0; i < sizeof(GPUProg)/sizeof(*GPUProg); i++)
 	{
 		const c8 *dir = RESOURCE_MANAGER.getMediaDirFull(res::EMT_MATERIALS);
-		GPUProg[i] = VIDEO_DRIVER.getGPUProgram(
+		GPUProg[i] = !GPUProgNames[i] ? NULL : VIDEO_DRIVER.getGPUProgram(
 			core::stringc().sprintf("%s%s", dir, GPUProgNames[i]).c_str());
 	}
 
@@ -384,11 +368,12 @@ int main(int argc, char* argv[])
 				{
 					vid::SRenderPass &pass = mat.getPass(j);
 					pass.setLightingMode(vid::ELM_8_LIGHTS);
+					pass.setLightingMode(vid::ELM_NONE);
 					pass.Layers[0].setTexture(texture0);
 					pass.Layers[3].setTexture(texture1, vid::ETLT_NORMAL_MAP);
-					pass.setAmbientColor(0xff000000);
+					pass.setAmbientColor(0xff505050);
 					pass.setDiffuseColor(0xffffffff);
-					pass.setSpecularColor(0xff505050);
+					pass.setSpecularColor(0xff202020);
 					pass.setEmissiveColor(0xff000000);
 					pass.setShininess(127.0f);
 				}
@@ -411,22 +396,14 @@ int main(int argc, char* argv[])
 	scn::ICameraSceneNode *camera = Cameras[0];		
 	SCENE_MANAGER.setActiveCamera(camera);
 
-	Lights[0] = addRotatedLightWithLensFlare(img::SColorf(0.1f, 1.0f, 0.1f), 300.0f,
+	Lights[0] = addRotatedLightWithLensFlare(img::SColorf(0.1f, 1.0f, 0.1f), 350.0f,
 		core::vector3df(50,300,0),220.0f, -0.0015f);
-	Lights[1] = addRotatedLightWithLensFlare(img::SColorf(1.0f, 0.1f, 0.1f), 300.0f,
+	Lights[1] = addRotatedLightWithLensFlare(img::SColorf(1.0f, 0.1f, 0.1f), 350.0f,
 		core::vector3df(0,150,0), 200.0f, 0.0005f);
-	Lights[2] = addRotatedLightWithLensFlare(img::SColorf(0.1f, 0.1f, 1.0f), 300.0f,
+	Lights[2] = addRotatedLightWithLensFlare(img::SColorf(0.1f, 0.1f, 1.0f), 350.0f,
 		core::vector3df(0,100,0), 300.0f, -0.0005f);
-	Lights[3] = addRotatedLightWithLensFlare(img::SColorf(0.1f, 1.0f, 1.0f), 300.0f,
+	Lights[3] = addRotatedLightWithLensFlare(img::SColorf(0.1f, 1.0f, 1.0f), 350.0f,
 		core::vector3df(0,70,0), 250.0f, -0.00025f);
-	Lights[4] = addRotatedLightWithLensFlare(img::SColorf(1.0f, 0.5f, 1.0f), 300.0f,
-		core::vector3df(0,60,0), 250.0f, 0.000125f);
-	Lights[5] = addRotatedLightWithLensFlare(img::SColorf(1.0f, 0.1f, 1.0f), 300.0f,
-		core::vector3df(0,50,0), 250.0f, 0.00125f);
-	Lights[6] = addRotatedLightWithLensFlare(img::SColorf(1.0f, 1.0f, 0.1f), 300.0f,
-		core::vector3df(0,40,0), 250.0f, -0.00125f);
-	Lights[7] = addRotatedLightWithLensFlare(img::SColorf(0.5f, 1.0f, 0.5f), 300.0f,
-		core::vector3df(50,200,0),220.0f, 0.0015f);
 
 	VIDEO_DRIVER.setBackgroundColor(0xff333333);
 
